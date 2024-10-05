@@ -34,8 +34,7 @@ brew "suzuki-shunsuke/ghalint/ghalint"
 brew "suzuki-shunsuke/pinact/pinact"
 brew "unzip"
 brew "xz"
-
-{{- if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 # cask
 cask "1password"
 cask "1password-cli"
@@ -65,4 +64,4 @@ cask "spotify"
 cask "tailscale"
 cask "warp"
 cask "zoom"
-{{- end -}}
+{{ end }}
