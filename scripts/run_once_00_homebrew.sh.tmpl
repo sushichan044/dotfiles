@@ -1,7 +1,13 @@
-{{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
+{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/sh
 # 必要なら Xcode Command Line Tools もインストールされる
-if ! type brew > /dev/null 2>&1; then
+if ! type "/opt/homebrew/bin/brew" >/dev/null 2>&1; then
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+brew bundle --file="$HOME/.Brewfile" || true
+{{ else if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+if ! type "/home/linuxbrew/.linuxbrew/bin/brew" >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 brew bundle --file="$HOME/.Brewfile" || true
