@@ -4,6 +4,9 @@ awscli = "2.15.41"
 java = "21"
 uv = "latest"
 go = "1.22.3"
+node = "latest"
+yarn = "latest"
+pnpm = "latest"
 
 [settings]
 experimental = true
