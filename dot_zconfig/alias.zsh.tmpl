@@ -51,7 +51,7 @@ if IsExistCmd fd; then
     alias find='fd'
 fi
 
-{{- if eq .osid "linux-debian" -}}
+{{- if eq .chezmoi.os "linux" -}}
 # apt
 alias agi='sudo apt install'
 alias agu='sudo apt update && sudo apt upgrade'
