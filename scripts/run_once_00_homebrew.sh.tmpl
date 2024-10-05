@@ -11,6 +11,6 @@ brew bundle --file="$HOME/.Brewfile" || true
 if ! type "/home/linuxbrew/.linuxbrew/bin/brew" >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew bundle --file="$HOME/.Brewfile" || true
 {{ end -}}
