@@ -51,10 +51,10 @@ if IsExistCmd fd; then
     alias find='fd'
 fi
 
-{{- if eq .chezmoi.os "linux" -}}
+{{ if eq .chezmoi.os "linux" -}}
 # apt
 alias agi='sudo apt install'
 alias agu='sudo apt update && sudo apt upgrade'
 alias agc='sudo apt autoremove -y && sudo apt autoclean -y'
 alias agr='sudo apt remove'
-{{- end -}}
+{{ end -}}
