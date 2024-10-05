@@ -1,0 +1,38 @@
+shell = "zsh"
+
+[plugins]
+
+[plugins.zsh-defer]
+github = 'romkatv/zsh-defer'
+apply = ["source"]
+
+[plugins.fast-syntax-highlighting]
+github = 'zdharma-continuum/fast-syntax-highlighting'
+apply = ["defer"]
+
+[plugins.zsh-completions]
+github = 'zsh-users/zsh-completions'
+apply = ["defer"]
+
+[plugins.zsh-autosuggestions]
+github = 'zsh-users/zsh-autosuggestions'
+use = ["{{ name }}.zsh"]
+apply = ["defer"]
+
+[plugins.history-search-multi-word]
+github = 'zdharma/history-search-multi-word'
+apply = ["defer"]
+
+[plugins.powerlevel10k]
+github = 'romkatv/powerlevel10k'
+
+[plugins.zsh-256color]
+github = 'chrissicool/zsh-256color'
+apply = ["defer"]
+
+[plugins.pnpm-shell-completion]
+github = 'g-plane/pnpm-shell-completion'
+apply = ["defer"]
+
+[templates]
+defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"

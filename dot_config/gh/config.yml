@@ -1,0 +1,24 @@
+git_protocol: ssh
+editor: vim
+prompt: enabled
+pager:
+http_unix_socket:
+browser:
+version: "1"
+aliases:
+    st: status
+    # PR
+    p: pr
+    pc: pr create
+    pco: pr checkout
+    pv: pr view
+    # Repo
+    r: repo
+    rc: repo create
+    rv: repo view
+    rf: repo fork
+    rs: repo sync
+    # browse
+    b: browse
+    bs: browse --settings
+    br: browse --repo

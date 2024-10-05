@@ -1,0 +1,9 @@
+[tools]
+python = "3.12"
+awscli = "2.15.41"
+java = "21"
+uv = "latest"
+go = "1.22.3"
+
+[settings]
+experimental = true

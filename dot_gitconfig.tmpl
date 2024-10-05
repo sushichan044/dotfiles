@@ -1,0 +1,67 @@
+{{- if (eq .chezmoi.username "sushichan044") -}}
+[user]
+name = sushichan044
+email = mail@sushichan.live
+signingkey = {{- onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" -}}
+{{- end -}}
+
+[init]
+defaultBranch = main
+
+[core]
+autocrlf = input
+ignorecase = false
+pager = delta
+
+[interactive]
+diffFilter = delta --color-only
+
+[delta]
+navigate = true
+
+[diff]
+colorMoved = default
+
+[color]
+ui = true
+diff = auto
+status = auto
+branch = auto
+
+[push]
+autoSetupRemote = true
+default = current
+
+[pull]
+rebase = true
+
+[fetch]
+prune = true
+
+[merge]
+conflictStyle = diff3
+
+# Commit signing
+# Not configured for .ostype == "linux"
+{{- if eq .ostype "darwin" -}}
+[commit]
+gpgsign = true
+[gpg]
+format = ssh
+[gpg "ssh"]
+program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+{{- else if eq .ostype "wsl" -}}
+[commit]
+gpgsign = true
+[gpg]
+format = ssh
+[gpg "ssh"]
+program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl"
+{{- else if eq .ostype "windows" -}}
+[commit]
+gpgsign = true
+[gpg]
+format = ssh
+[gpg "ssh"]
+program = "C:/Program Files/1Password/app/8/op-ssh-sign.exe"
+{{- end -}}

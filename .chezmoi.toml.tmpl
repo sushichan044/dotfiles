@@ -1,0 +1,17 @@
+# https://www.chezmoi.io/user-guide/machines/linux/
+# add linux-debian, linux-"rhel fedora"
+{{- $osid := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "idLike" -}}
+{{- $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.idLike -}}
+{{- end -}}
+[data]
+osid = {{ $osid | quote }}
+
+{{- $ostype := .chezmoi.os -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $choices := list "wsl" "linux" -}}
+{{- $ostype = promptChoiceOnce . "ostype" "What type of linux is this?" $choices -}}
+{{- end -}}
+# .ostype: darwin | linux | wsl | windows
+[data]
+ostype = {{ $ostype | quote }}
