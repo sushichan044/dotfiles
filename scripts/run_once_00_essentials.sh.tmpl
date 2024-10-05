@@ -13,8 +13,10 @@ brew bundle --file="$HOME/.Brewfile"
 sudo apt update && sudo apt upgrade -y
 
 sudo apt install -y fonts-ipafont fontconfig &&
-  fc-cache -fv &&
-  sudo dpkg-reconfigure tzdata
+  fc-cache -fv
+
+sudo sh -c 'echo Asia/Tokyo > /etc/timezone' &&
+  sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 sudo update-alternatives --set editor /usr/bin/vim.basic
 
@@ -30,5 +32,5 @@ brew install gcc git
 brew bundle --file="$HOME/.Brewfile"
 # zsh有効化
 which zsh | sudo tee -a /etc/shell &&
-sudo chsh -s "$(command -v zsh)" "${USER}"
+  sudo chsh -s "$(command -v zsh)" "${USER}"
 {{ end -}}
