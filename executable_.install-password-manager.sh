@@ -6,10 +6,9 @@ type op >/dev/null 2>&1 && exit
 case "$(uname -s)" in
 Darwin)
     # commands to install password-manager-binary on Darwin
-    curl -OL https://downloads.1password.com/mac/1Password.zip
-    open -n "$HOME/Downloads/1Password Installer.app"
-    curl -OL https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_apple_universal_v2.30.0.pkg
-    sudo installer -pkg "$HOME/Downloads/op_apple_universal_v2.30.0.pkg" -target /
+    mkdir -p ~/.dotfiles/.tmp ~/.dotfiles/.bin
+    curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.dotfiles/.tmp/op.zip
+    unzip ~/.dotfiles/.tmp/op.zip -d ~/.dotfiles/.bin
     ;;
 Linux)
     # commands to install password-manager-binary on Linux
