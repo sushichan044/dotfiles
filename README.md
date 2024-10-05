@@ -9,5 +9,5 @@ Install [1Password CLI](https://developer.1password.com/docs/cli/get-started/) a
 
 ```bash
 op account add --address my.1password.com --email $EMAIL
-eval $(op signin --account "my")
+eval $(op signin my.1password.com $EMAIL)
 ```
