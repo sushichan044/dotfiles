@@ -4,11 +4,13 @@
 if ! type "/opt/homebrew/bin/brew" >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
+eval $(/opt/homebrew/bin/brew shellenv)
 brew bundle --file="$HOME/.Brewfile" || true
 {{ else if eq .chezmoi.os "linux" -}}
 #!/bin/sh
 if ! type "/home/linuxbrew/.linuxbrew/bin/brew" >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
+eval $(/opt/homebrew/bin/brew shellenv)
 brew bundle --file="$HOME/.Brewfile" || true
 {{ end -}}
