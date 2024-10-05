@@ -6,12 +6,9 @@ type op >/dev/null 2>&1 && exit
 case "$(uname -s)" in
 Darwin)
     # commands to install password-manager-binary on Darwin
-    mkdir -p ~/.tmp/.dotfiles
-    curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.tmp/.dotfiles/op.zip
-    unzip ~/.tmp/.dotfiles/op.zip -d ~/.tmp/.dotfiles
-    sudo mkdir -p /usr/local/bin
-    sudo mv ~/.tmp/.dotfiles/op /usr/local/bin/op
-    sudo chmod 700 /usr/local/bin/op
+    mkdir -p ~/.dotfiles/.tmp ~/.dotfiles/.bin
+    curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.dotfiles/.tmp/op.zip
+    unzip ~/.dotfiles/.tmp/op.zip -d ~/.dotfiles/.bin
     ;;
 Linux)
     # commands to install password-manager-binary on Linux
