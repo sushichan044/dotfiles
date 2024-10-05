@@ -1,1 +1,5 @@
-{{- onepasswordDocument "f2jwujtwyqto65injozijyezkq" -}}
+{{ if eq .chezmoi.os "darwin" -}}
+Host *
+	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{ end }}
+{{- onepasswordDocument "f2jwujtwyqto65injozijyezkq" }}
