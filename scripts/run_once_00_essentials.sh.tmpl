@@ -1,14 +1,5 @@
-{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/sh
-# 必要なら Xcode Command Line Tools もインストールされる
-if ! type "/opt/homebrew/bin/brew" >/dev/null 2>&1; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-eval $(/opt/homebrew/bin/brew shellenv)
-brew install gcc git
-brew bundle --file="$HOME/.Brewfile"
-{{ else if eq .chezmoi.os "linux" -}}
-#!/bin/sh
+{{ if eq .chezmoi.os "linux" -}}
 # 最低限のセットアップ
 sudo apt update && sudo apt upgrade -y
 
@@ -22,15 +13,25 @@ sudo update-alternatives --set editor /usr/bin/vim.basic
 
 sudo apt-get update &&
   sudo apt-get install -y build-essential procps wget ca-certificates curl file git libc++1
+{{ end -}}
 
-# Homebrew入れる
-if ! type "/home/linuxbrew/.linuxbrew/bin/brew" >/dev/null 2>&1; then
+# Install Homebrew
+{{ if eq .chezmoi.os "darwin" -}}
+if ! type brew >/dev/null 2>&1; then
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval $(/opt/homebrew/bin/brew shellenv)
+brew install gcc git
+brew bundle --file="$HOME/.Brewfile"
+{{ else if eq .chezmoi.os "linux" -}}
+if ! type brew >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew install gcc git
 brew bundle --file="$HOME/.Brewfile"
-# zsh有効化
+
+# Switch to zsh
 which zsh | sudo tee -a /etc/shell &&
   sudo chsh -s "$(command -v zsh)" "${USER}"
 {{ end -}}
