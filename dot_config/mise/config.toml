@@ -7,6 +7,10 @@ go = "1.22.3"
 node = "20"
 yarn = "4"
 pnpm = "9"
+ni = "latest"
+
+[plugins]
+ni = "https://github.com/CanRau/asdf-ni.git"
 
 [settings]
 experimental = true
