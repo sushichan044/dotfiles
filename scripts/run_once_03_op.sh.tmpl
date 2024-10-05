@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+if type op >/dev/null 2>&1; then
+  op plugin init gh
+else
+  echo "1Password CLI is not installed. Cannot install 1Password CLI plugin."
+  exit 1
+fi
+{{ end -}}

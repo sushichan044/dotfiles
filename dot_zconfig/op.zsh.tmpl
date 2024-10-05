@@ -1,0 +1,6 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+if [ -f "$HOME/.config/op/plugins.sh" ]; then
+    source $HOME/.config/op/plugins.sh
+fi
+{{ end -}}
