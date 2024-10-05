@@ -1,9 +1,9 @@
-{{- if (or (eq .chezmoi.username "sushi") (eq .chezmoi.username "sushichan044")) -}}
+{{- if (or (eq .chezmoi.username "sushi") (eq .chezmoi.username "sushichan044")) }}
 [user]
 name = sushichan044
 email = mail@sushichan.live
-signingkey = {{- onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" -}}
-{{- end -}}
+signingkey = {{ onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" }}
+{{- end }}
 
 [init]
 defaultBranch = main
@@ -43,25 +43,25 @@ conflictStyle = diff3
 
 # Commit signing
 # Not configured for .ostype == "linux"
-{{- if eq .ostype "darwin" -}}
+{{ if eq .ostype "darwin" -}}
 [commit]
 gpgsign = true
 [gpg]
 format = ssh
 [gpg "ssh"]
 program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
-{{- else if eq .ostype "wsl" -}}
+{{ else if eq .ostype "wsl" -}}
 [commit]
 gpgsign = true
 [gpg]
 format = ssh
 [gpg "ssh"]
 program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl"
-{{- else if eq .ostype "windows" -}}
+{{ else if eq .ostype "windows" -}}
 [commit]
 gpgsign = true
 [gpg]
 format = ssh
 [gpg "ssh"]
 program = "C:/Program Files/1Password/app/8/op-ssh-sign.exe"
-{{- end -}}
+{{ end -}}

@@ -1,4 +1,4 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
-xcode-select --install
+xcode-select --install || true
 {{ end -}}

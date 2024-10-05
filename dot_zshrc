@@ -4,28 +4,30 @@
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Load External config in ~/.zconfig
 ZSHHOME="$HOME/.zconfig"
-if [ -d "$ZSHHOME" ] && [ -r "$ZSHHOME" ] && [ -x "$ZSHHOME" ]; then
+if [ -d "$ZSHHOME" -a -r "$ZSHHOME" -a \
+      -x "$ZSHHOME" ]; then
     for i in "$ZSHHOME"/*; do
         [[ ${i##*/} = *.zsh ]] &&
-            [ \( -f "$i" -o -h "$i" \) ] && [ -r "$i" ] && . "$i"
+            [ \( -f $i -o -h $i \) -a -r $i ] && . $i
     done
 fi
+
 # load completion
-fpath=(~/.zcompletion "$fpath")
+fpath=("$HOME/.zcompletion" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
 
 # sheldon
 if type sheldon &>/dev/null; then
   eval "$(sheldon source)"
 fi
 
-# shell config
-autoload -Uz compinit
-compinit -
+# init completion
+autoload -Uz compinit && compinit
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 
@@ -35,6 +37,8 @@ if type mise &>/dev/null; then
 fi
 
 # proto
+export PROTO_HOME="$HOME/.proto";
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 eval "$(proto activate zsh)"
 
 # fzf

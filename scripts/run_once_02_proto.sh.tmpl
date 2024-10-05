@@ -1,5 +1,6 @@
 {{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
-curl -fsSL https://moonrepo.dev/install/proto.sh | /bin/bash --yes
+#!/bin/sh
+curl -fsSL https://moonrepo.dev/install/proto.sh | /bin/bash
 {{ else if eq .chezmoi.os "windows" -}}
 irm https://moonrepo.dev/install/proto.ps1 | iex
 {{ end -}}
