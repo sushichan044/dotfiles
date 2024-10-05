@@ -1,4 +1,4 @@
-    2#!/bin/sh
+#!/bin/sh
 
 # exit immediately if password-manager-binary is already in $PATH
 type op >/dev/null 2>&1 && exit
