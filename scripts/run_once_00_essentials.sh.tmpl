@@ -28,4 +28,7 @@ fi
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew install gcc git
 brew bundle --file="$HOME/.Brewfile"
+# zsh有効化
+which zsh | sudo tee -a /etc/shell &&
+sudo chsh -s "$(command -v zsh)" "${USER}"
 {{ end -}}
