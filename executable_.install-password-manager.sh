@@ -9,7 +9,7 @@ Darwin)
     mkdir -p ~/.tmp/.dotfiles
     curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.tmp/.dotfiles/op.zip
     unzip ~/.tmp/.dotfiles/op.zip -d ~/.tmp/.dotfiles
-    sudo mv ~/.tmp/.dotfiles/op /usr/local/bin
+    sudo mv ~/.tmp/.dotfiles/op /usr/local/bin/op
     ;;
 Linux)
     # commands to install password-manager-binary on Linux
