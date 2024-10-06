@@ -1,0 +1,2 @@
+{{- /* chezmoi:modify-template */ -}}
+{{ fromToml .chezmoi.stdin | setValueAtPath "settings.auto-clean" "true" | setValueAtPath "settings.builtin-plugins" (list "node" "bun" "deno" "npm" "pnpm" "yarn") | toToml }}
