@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/renovate.json",
+    "extends": [
+        "config:best-practices"
+    ],
+    "schedule": [
+        "before 4:00am on Sunday"
+    ],
+    "timezone": "Asia/Tokyo",
+    "prHourlyLimit": 0,
+    "automerge": false,
+    "rangeStrategy": "bump",
+    "branchConcurrentLimit": 0,
+    "enabledManagers": [
+        "mise"
+    ],
+    "labels": [
+        "renovate"
+    ],
+    "packageRules": [
+        {
+            "groupName": "mise",
+            "additionalBranchPrefix": "mise-",
+            "commitMessageSuffix": "(mise)",
+            "matchManagers": [
+                "mise"
+            ]
+        }
+    ]
+}
