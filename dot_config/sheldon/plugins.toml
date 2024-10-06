@@ -30,9 +30,5 @@ github = 'romkatv/powerlevel10k'
 github = 'chrissicool/zsh-256color'
 apply = ["defer"]
 
-[plugins.pnpm-shell-completion]
-github = 'g-plane/pnpm-shell-completion'
-apply = ["defer"]
-
 [templates]
 defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
