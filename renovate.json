@@ -6,6 +6,7 @@
     "schedule": [
         "before 4:00am on Sunday"
     ],
+    "reviewersFromCodeOwners": true,
     "timezone": "Asia/Tokyo",
     "prHourlyLimit": 0,
     "automerge": false,
