@@ -31,19 +31,19 @@
 
 [[ssh-keys]]
 item = "UEC-SSH"
-vault = "Personal"
+vault = "Private"
 
 [[ssh-keys]]
 item = "UEC-SOL"
-vault = "Personal"
+vault = "Private"
 
 [[ssh-keys]]
 item = "UEC-CED"
-vault = "Personal"
+vault = "Private"
 
 [[ssh-keys]]
 item = "GitHub"
-vault = "Personal"
+vault = "Private"
 
 [[ssh-keys]]
 item = "VLL-New-ConoHa"
@@ -58,7 +58,7 @@ item = "VLL-New-ConoHa-GitHub"
 vault = "VLL"
 
 [[ssh-keys]]
-vault = "Personal"
+vault = "Private"
 
 [[ssh-keys]]
 vault = "dotfiles"
