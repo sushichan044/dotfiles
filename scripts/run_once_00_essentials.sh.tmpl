@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
+mkdir -p "$CHEZMOI_BIN_DIR"
 {{ if eq .chezmoi.os "linux" -}}
 # 最低限のセットアップ
 cd /etc/apt
@@ -43,4 +45,7 @@ brew bundle --file="$HOME/.Brewfile"
 # Switch to zsh
 which zsh | sudo tee -a /etc/shell &&
   sudo chsh -s "$(command -v zsh)" "${USER}"
+{{ end -}}
+{{ if eq .ostype "wsl" -}}
+curl -o "$CHEZMOI_BIN_DIR/wsl-open" https://raw.githubusercontent.com/4U6U57/wsl-open/master/wsl-open.sh
 {{ end -}}

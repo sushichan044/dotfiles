@@ -47,3 +47,8 @@ source <(fzf --zsh)
 
 # task
 eval "$(task --completion zsh)"
+{{ if eq .ostype "wsl" }}
+# chezmoi-managed-bin
+CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
+[[ -e "$CHEZMOI_BIN_DIR" ]] && export PATH="$PATH:$CHEZMOI_BIN_DIR"
+{{ end }}

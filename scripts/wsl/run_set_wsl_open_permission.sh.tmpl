@@ -1,0 +1,10 @@
+{{ if eq .ostype "wsl" -}}
+#!/bin/sh
+
+FILE="$HOME/.chezmoi-bin/wsl-open"
+if [ -f "$FILE" ]; then
+    if [ "$(stat -c %a "$FILE")" != "700" ]; then
+        chmod 700 "$FILE"
+    fi
+fi
+{{ end -}}
