@@ -2,6 +2,7 @@
 #!/bin/sh
 set -e
 mkdir -p "$HOME/.proto" && touch "$HOME/.proto/.prototools"
+echo "[settings]\nauto-clean = true" > "$HOME/.proto/.prototools"
 curl -fsSL https://moonrepo.dev/install/proto.sh | /bin/bash -s -- --no-profile --yes
 {{ else if eq .chezmoi.os "windows" -}}
 irm https://moonrepo.dev/install/proto.ps1 | iex
