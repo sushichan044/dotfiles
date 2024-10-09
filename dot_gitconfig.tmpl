@@ -41,6 +41,13 @@ prune = true
 [merge]
 conflictStyle = diff3
 
+[filter "lfs"]
+process = git-lfs filter-process
+required = true
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+
+
 # Commit signing
 # Not configured for .ostype == "linux"
 {{ if eq .ostype "darwin" -}}
