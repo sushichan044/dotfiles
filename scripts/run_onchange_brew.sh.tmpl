@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run when .Brewfile Changed {{ include "dot_Brewfile.tmpl" | sha256sum }}
+if type brew >/dev/null 2>&1; then
+    brew bundle --file="$HOME/.Brewfile"
+fi
