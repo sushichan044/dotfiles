@@ -48,6 +48,9 @@ source <(fzf --zsh)
 # task
 eval "$(task --completion zsh)"
 
+# zoxide
+eval "$(zoxide init zsh)"
+
 # chezmoi-managed-bin
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 [[ -e "$CHEZMOI_BIN_DIR" ]] && export PATH="$PATH:$CHEZMOI_BIN_DIR"
