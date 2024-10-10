@@ -3,12 +3,16 @@
 # exit immediately if password-manager-binary is already in $PATH
 type op >/dev/null 2>&1 && exit
 
+CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
+mkdir -p "$CHEZMOI_BIN_DIR"
+
 case "$(uname -s)" in
 Darwin)
     # commands to install password-manager-binary on Darwin
-    mkdir -p ~/.dotfiles/.tmp ~/.dotfiles/.bin
+    mkdir -p ~/.dotfiles/.tmp
     curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.dotfiles/.tmp/op.zip
-    unzip ~/.dotfiles/.tmp/op.zip -d ~/.dotfiles/.bin
+    unzip ~/.dotfiles/.tmp/op.zip -d ~/.dotfiles/.tmp
+    mv ~/.dotfiles/.tmp/op "$CHEZMOI_BIN_DIR"
     ;;
 Linux)
     # commands to install password-manager-binary on Linux
