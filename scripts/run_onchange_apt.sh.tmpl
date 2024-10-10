@@ -1,0 +1,14 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+# Run when .chezmoidata/packages.yml Changed
+if ! type apt >/dev/null 2>&1; then
+    echo "apt is not available. Exiting..."
+    exit 1
+fi
+
+sudo apt update && sudo apt upgrade -y <<EOF
+{{ range .packages.linux.apt -}}
+{{ . }}
+{{ end -}}
+EOF
+{{ end -}}

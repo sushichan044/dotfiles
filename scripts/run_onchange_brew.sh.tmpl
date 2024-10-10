@@ -1,6 +1,9 @@
 #!/bin/sh
 # Run when .Brewfile Changed
 # {{ include "dot_Brewfile.tmpl" | sha256sum }}
-if type brew >/dev/null 2>&1; then
-    brew bundle --file="$HOME/.Brewfile"
+if ! type brew >/dev/null 2>&1; then
+    echo "brew is not available. Exiting..."
+    exit 1
 fi
+
+brew bundle --file="$HOME/.Brewfile"
