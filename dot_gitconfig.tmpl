@@ -47,6 +47,8 @@ required = true
 clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 
+[alias]
+clear-cache = "rm -r --cached ."
 
 # Commit signing
 # Not configured for .ostype == "linux"
