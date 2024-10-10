@@ -8,6 +8,7 @@ node = "20.18.0"
 yarn = "4"
 pnpm = "9"
 ni = "latest"
+zoxide = "latest"
 
 [plugins]
 ni = "https://github.com/CanRau/asdf-ni.git"

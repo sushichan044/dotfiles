@@ -1,0 +1,9 @@
+#!/bin/sh
+# Run when mise.toml Changed
+# {{ include "dot_config/mise/config.toml" | sha256sum }}
+if ! type mise >/dev/null 2>&1; then
+    echo "mise is not available. Exiting..."
+    exit 1
+fi
+
+cd "$HOME" && mise install
