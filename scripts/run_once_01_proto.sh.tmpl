@@ -1,8 +1,11 @@
 {{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
 #!/bin/sh
 set -e
-mkdir -p "$HOME/.proto" && touch "$HOME/.proto/.prototools"
-echo "[settings]\nauto-clean = true" > "$HOME/.proto/.prototools"
+PROTO_HOME="$HOME/.proto"
+PROTOTOOLS="$PROTO_HOME/.prototools"
+
+mkdir -p "$PROTO_HOME" && touch "$PROTOTOOLS"
+echo "[settings]\nauto-clean = true" > "$PROTOTOOLS"
 curl -fsSL https://moonrepo.dev/install/proto.sh | /bin/bash -s -- --no-profile --yes
 {{ else if eq .chezmoi.os "windows" -}}
 irm https://moonrepo.dev/install/proto.ps1 | iex
