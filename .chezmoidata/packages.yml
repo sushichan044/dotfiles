@@ -1,0 +1,13 @@
+packages:
+  linux:
+    apt:
+      - build-essential
+      - ca-certificates
+      - curl
+      - file
+      - fontconfig
+      - fonts-ipafont
+      - git
+      - libc++1
+      - procps
+      - wget

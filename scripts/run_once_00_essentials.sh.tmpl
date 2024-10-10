@@ -1,29 +1,23 @@
 #!/bin/sh
-set -e
+set -eu
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 mkdir -p "$CHEZMOI_BIN_DIR"
 {{ if eq .chezmoi.os "linux" -}}
 # 最低限のセットアップ
-cd /etc/apt
-
-sudo sed -i.bak -e \
-  "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" \
-  sources.list
-
-cd "$HOME"
-
 sudo apt update && sudo apt upgrade -y
 
-sudo apt install -y fonts-ipafont fontconfig &&
-  fc-cache -fv
+xargs sudo apt install -y <<EOF
+{{ range .packages.linux.apt -}}
+{{ . }}
+{{ end -}}
+EOF
+
+fc-cache -fv
 
 sudo sh -c 'echo Asia/Tokyo > /etc/timezone' &&
   sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 sudo update-alternatives --set editor /usr/bin/vim.basic
-
-sudo apt-get update &&
-  sudo apt-get install -y build-essential procps wget ca-certificates curl file git libc++1
 {{ end -}}
 
 # Install Homebrew
