@@ -1,6 +1,4 @@
 #!/bin/sh
-# Run when mise.toml Changed
-# {{ include "dot_config/mise/config.toml" | sha256sum }}
 set -eu
 
 if ! type mise >/dev/null 2>&1; then
@@ -8,4 +6,4 @@ if ! type mise >/dev/null 2>&1; then
     exit 1
 fi
 
-mise install
+mise up && mise prune
