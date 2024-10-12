@@ -49,6 +49,8 @@ smudge = git-lfs smudge -- %f
 
 [alias]
 clear-cache = "rm -r --cached ."
+com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
+fixit = "commit --amend --no-edit"
 
 # Commit signing
 # Not configured for .ostype == "linux"
