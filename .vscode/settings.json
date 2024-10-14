@@ -5,5 +5,8 @@
     "dot_z*.tmpl": "shellscript",
     "*.yml.tmpl": "yaml",
     "*.yaml.tmpl": "yaml"
+  },
+  "[yaml]": {
+    "editor.formatOnSave": false
   }
 }
