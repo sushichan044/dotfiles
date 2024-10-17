@@ -41,7 +41,7 @@ eval "$(proto activate zsh)"
 export PROTO_CONFIG_MODE="local"
 
 # uv
-eval "$(uv generate-shell-completion zsh)"
+eval "$($(mise which uv) generate-shell-completion zsh)"
 
 # fzf
 source <(fzf --zsh)
