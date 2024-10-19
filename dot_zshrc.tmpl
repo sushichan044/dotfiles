@@ -23,8 +23,7 @@ if type sheldon &>/dev/null; then
   eval "$(sheldon source)"
 fi
 
-# init completion
-autoload -Uz compinit && compinit
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -55,3 +54,6 @@ eval "$(zoxide init zsh)"
 # chezmoi-managed-bin
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 [[ -e "$CHEZMOI_BIN_DIR" ]] && export PATH="$PATH:$CHEZMOI_BIN_DIR"
+
+# init completion
+autoload -Uz compinit && compinit
