@@ -31,6 +31,13 @@ defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool false   #
 defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int "1"            # Use small sidebar icons
 defaults write com.apple.desktopservices "DSDontWriteNetworkStores" -bool true # Avoid creating .DS_Store files on network volumes
 defaults write com.apple.finder "_FXShowPosixPathInTitle" -bool true           # Show full path in Finder title
+defaults write com.apple.finder QLEnableTextSelection -bool true               # Allow text selection in Quick Look
+defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true   # Automatically quit printer app once the print jobs complete
+
+# Finder: Arrange by name for icons on the desktop and in other icon views
+/usr/libexec/PlistBuddy -c "Set :FK_DefaultIconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
 
 # Menu bar
 defaults write com.apple.menuextra.clock "ShowSeconds" -bool true      # Show seconds in menu bar clock
