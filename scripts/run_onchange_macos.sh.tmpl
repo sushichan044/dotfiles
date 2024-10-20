@@ -6,22 +6,21 @@ echo "🚚 Start running macOS configuration..."
 echo "🔐 Some config requires sudo permission."
 
 # System UI / UX
-sudo nvram SystemAudioVolume=" "                                   # Disable the sound effects on boot
+sudo nvram StartupMute=%01                                         # Disable the sound effects on boot
 defaults write com.apple.LaunchServices "LSQuarantine" -bool false # Disable the "Are you sure you want to open this application?" dialog
+defaults write NSGlobalDomain "AppleInterfaceStyle" -string "Dark" # Use dark menu bar and Dock
 
 # Dock
-defaults write com.apple.Dock autohide -bool true      # Autohide Dock
-defaults write com.apple.dock show-recents -bool false # Remove recent apps from Dock
-defaults write com.apple.dock launchanim -bool false   # Disable launch animation
-killall "Dock"
+defaults write com.apple.Dock autohide -bool true            # Autohide Dock
+defaults write com.apple.dock show-recents -bool false       # Remove recent apps from Dock
+defaults write com.apple.dock launchanim -bool false         # Disable launch animation
+defaults write com.apple.dock "expose-group-apps" -bool true # Group windows by application in Mission Control
 
 # Screenshot
 SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
 mkdir -p "$SCREENSHOT_DIR"
 defaults write com.apple.screencapture "location" -string "$SCREENSHOT_DIR" # Change screenshot save location
 defaults write com.apple.screencapture type -string "png"                   # Save screenshots in PNG format
-
-killall "SystemUIServer"
 
 # Finder
 defaults write NSGlobalDomain "AppleShowAllExtensions" -bool true # Show all file extensions
@@ -33,10 +32,9 @@ defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int "1"            #
 defaults write com.apple.desktopservices "DSDontWriteNetworkStores" -bool true # Avoid creating .DS_Store files on network volumes
 defaults write com.apple.finder "_FXShowPosixPathInTitle" -bool true           # Show full path in Finder title
 
-killall "Finder"
-
 # Menu bar
-defaults write com.apple.menuextra.clock "DateFormat" -string "\"EEE d MMM HH:mm:ss\"" # Show date and time in menu bar
+defaults write com.apple.menuextra.clock "ShowSeconds" -bool true      # Show seconds in menu bar clock
+defaults write com.apple.menuextra.battery "ShowPercent" -string "YES" # Show battery percentage in menu bar
 
 # Mouse
 defaults write NSGlobalDomain com.apple.mouse.linear -bool true # Disable mouse acceleration
@@ -58,6 +56,16 @@ defaults write NSGlobalDomain "com.apple.keyboard.fnState" -bool true # Use F1, 
 
 # Terminal
 defaults write com.apple.Terminal StringEncodings -array 4 # Only use UTF-8 in Terminal.app
+
+AFFETED_APPS=(
+    "Dock"
+    "Finder"
+    "SystemUIServer"
+)
+
+for app in "${AFFETED_APPS[@]}"; do
+    killall "${app}" &>/dev/null
+done
 
 echo "✅ Finished running macOS configuration. Some changes may require a restart to take effect."
 {{ end -}}
