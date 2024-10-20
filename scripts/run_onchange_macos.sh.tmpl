@@ -42,13 +42,9 @@ defaults write com.apple.menuextra.clock "DateFormat" -string "\"EEE d MMM HH:mm
 defaults write NSGlobalDomain com.apple.mouse.linear -bool true # Disable mouse acceleration
 
 # Trackpad
-# Trackpad: Enable three-finger drag
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
-
 # Trackpad: Enable dragging with trackpad
-defaults write com.apple.AppleMultitouchTrackpad "Dragging" -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad "Dragging" -bool true
+defaults write com.apple.AppleMultitouchTrackpad "DragLock" -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad "DragLock" -bool true
 
 # Trackpad: Enable tap to click for this user and for the login screen
 defaults write com.apple.driver.AppleMultitouchTrackpad Clicking -bool true
