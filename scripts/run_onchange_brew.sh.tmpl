@@ -6,4 +6,10 @@ if ! type brew >/dev/null 2>&1; then
     exit 1
 fi
 
+set -eu
+
+echo "🚚 Brewfile change detected. Executing brew bundle..."
+
 brew bundle --file="$HOME/.Brewfile"
+
+echo "✅ Finished running brew bundle."
