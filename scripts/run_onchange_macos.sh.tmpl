@@ -1,0 +1,67 @@
+{{ if eq .ostype "darwin" -}}
+#!/bin/sh
+set -eu
+
+echo "🚚 Start running macOS configuration..."
+echo "🔐 Some config requires sudo permission."
+
+# System UI / UX
+sudo nvram SystemAudioVolume=" "                                   # Disable the sound effects on boot
+defaults write com.apple.LaunchServices "LSQuarantine" -bool false # Disable the "Are you sure you want to open this application?" dialog
+
+# Dock
+defaults write com.apple.Dock autohide -bool true      # Autohide Dock
+defaults write com.apple.dock show-recents -bool false # Remove recent apps from Dock
+defaults write com.apple.dock launchanim -bool false   # Disable launch animation
+killall "Dock"
+
+# Screenshot
+SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
+mkdir -p "$SCREENSHOT_DIR"
+defaults write com.apple.screencapture "location" -string "$SCREENSHOT_DIR" # Change screenshot save location
+defaults write com.apple.screencapture type -string "png"                   # Save screenshots in PNG format
+
+killall "SystemUIServer"
+
+# Finder
+defaults write NSGlobalDomain "AppleShowAllExtensions" -bool true # Show all file extensions
+
+defaults write com.apple.finder "ShowPathbar" -bool true                       # Show path bar
+defaults write com.apple.finder "_FXSortFoldersFirst" -bool true               # Sort folders first
+defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool false   # Disable warning when changing file extension
+defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int "1"            # Use small sidebar icons
+defaults write com.apple.desktopservices "DSDontWriteNetworkStores" -bool true # Avoid creating .DS_Store files on network volumes
+defaults write com.apple.finder "_FXShowPosixPathInTitle" -bool true           # Show full path in Finder title
+
+killall "Finder"
+
+# Menu bar
+defaults write com.apple.menuextra.clock "DateFormat" -string "\"EEE d MMM HH:mm:ss\"" # Show date and time in menu bar
+
+# Mouse
+defaults write NSGlobalDomain com.apple.mouse.linear -bool true # Disable mouse acceleration
+
+# Trackpad
+# Trackpad: Enable three-finger drag
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+
+# Trackpad: Enable dragging with trackpad
+defaults write com.apple.AppleMultitouchTrackpad "Dragging" -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad "Dragging" -bool true
+
+# Trackpad: Enable tap to click for this user and for the login screen
+defaults write com.apple.driver.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+
+# Keyboard
+defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool false  # Disable press-and-hold for keys
+defaults write NSGlobalDomain "com.apple.keyboard.fnState" -bool true # Use F1, F2, etc. keys as standard function keys
+
+# Terminal
+defaults write com.apple.Terminal StringEncodings -array 4 # Only use UTF-8 in Terminal.app
+
+echo "✅ Finished running macOS configuration. Some changes may require a restart to take effect."
+{{ end -}}
