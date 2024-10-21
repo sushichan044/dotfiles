@@ -3,6 +3,13 @@
 if type "/opt/homebrew/bin/brew" >/dev/null 2>&1; then
     eval $(/opt/homebrew/bin/brew shellenv)
 fi
+
+# >>> coursier install directory >>>
+if [ -d "$HOME/Library/Application Support/Coursier/bin" ]; then
+    export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+fi
+# <<< coursier install directory <<<
+
 {{ else if eq .chezmoi.os "linux" -}}
 if type "/home/linuxbrew/.linuxbrew/bin/brew" >/dev/null 2>&1; then
     eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
