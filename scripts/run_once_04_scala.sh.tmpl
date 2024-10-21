@@ -6,27 +6,26 @@ echo "⏩ Start installing Scala..."
 echo "🚀 Installing coursier"
 
 {{ if eq .chezmoi.os "linux" -}}
-{{ if eq .chezmoi.arch "amd64" -}}
-curl -fL "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz" | gzip -d >cs
-{{ else if eq .chezmoi.arch "arm64" -}}
-curl -fL "https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-pc-linux.gz" | gzip -d >cs
-{{ else -}}
-TEMP_CHEZMOI_ARCH={{- .chezmoi.arch }}
-echo "🚧 Warning: Unsupported architecture: $TEMP_CHEZMOI_ARCH"
-exit 1
-{{ end -}}
+    {{ if eq .chezmoi.arch "amd64" -}}
+    curl -fL "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz" | gzip -d >cs
+    {{ else if eq .chezmoi.arch "arm64" -}}
+    curl -fL "https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-pc-linux.gz" | gzip -d >cs
+    {{ else -}}
+    TEMP_CHEZMOI_ARCH={{- .chezmoi.arch }}
+    echo "🚧 Warning: Unsupported architecture: $TEMP_CHEZMOI_ARCH"
+    exit 1
+    {{ end -}}
 {{ else if eq .chezmoi.os "darwin" -}}
-{{ if eq .chezmoi.arch "amd64" -}}
-curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-apple-darwin.gz | gzip -d > cs
-{{ else if eq .chezmoi.arch "arm64" -}}
-curl -fL https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-apple-darwin.gz | gzip -d > cs
-{{ else -}}
-TEMP_CHEZMOI_ARCH={{- .chezmoi.arch }}
-echo "🚧 Warning: Unsupported architecture: $TEMP_CHEZMOI_ARCH"
-exit 1
-{{ end -}}
-{{ end -}}
-
+    {{ if eq .chezmoi.arch "amd64" -}}
+    curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-apple-darwin.gz | gzip -d > cs
+    {{ else if eq .chezmoi.arch "arm64" -}}
+    curl -fL https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-apple-darwin.gz | gzip -d > cs
+    {{ else -}}
+    TEMP_CHEZMOI_ARCH={{- .chezmoi.arch }}
+    echo "🚧 Warning: Unsupported architecture: $TEMP_CHEZMOI_ARCH"
+    exit 1
+    {{ end -}}
+{{ end }}
 chmod +x cs
 
 echo "🚚 Moving cs to /usr/local/bin. This may require sudo access."
