@@ -43,6 +43,9 @@ export PROTO_CONFIG_MODE="local"
 # uv
 eval "$($(mise which uv) generate-shell-completion zsh)"
 
+# direnv
+eval "$(direnv hook zsh)"
+
 # fzf
 source <(fzf --zsh)
 
