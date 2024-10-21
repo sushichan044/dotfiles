@@ -1,10 +1,15 @@
 {{ if eq .ostype "wsl" -}}
 #!/bin/sh
+set -e
+
+echo "⏩ Start setting wsl-open permission..."
 
 FILE="$HOME/.chezmoi-bin/wsl-open"
 if [ -f "$FILE" ]; then
     if [ "$(stat -c %a "$FILE")" != "700" ]; then
         chmod 700 "$FILE"
+        echo "🔓 Set wsl-open permission to 700."
     fi
 fi
+echo "✅ Finished setting wsl-open permission!"
 {{ end -}}

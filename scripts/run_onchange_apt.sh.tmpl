@@ -2,13 +2,13 @@
 #!/bin/sh
 # Run when .chezmoidata/packages.yml Changed
 if ! type apt >/dev/null 2>&1; then
-    echo "apt is not available. Exiting..."
+    echo "❌ apt is not available. Exiting..."
     exit 1
 fi
 
 set -eu
 
-echo "🚚 .chezmoidata/packages.yml change detected. Executing apt update and upgrade..."
+echo " .chezmoidata/packages.yml change detected. Executing apt update and upgrade..."
 
 sudo apt update && sudo apt upgrade -y <<EOF
 {{ range .packages.linux.apt -}}

@@ -2,7 +2,7 @@
 # Run when .Brewfile Changed
 # {{ include "dot_Brewfile.tmpl" | sha256sum }}
 if ! type brew >/dev/null 2>&1; then
-    echo "brew is not available. Exiting..."
+    echo "❌ brew is not available. Exiting..."
     exit 1
 fi
 

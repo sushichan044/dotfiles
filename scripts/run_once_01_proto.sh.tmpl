@@ -4,9 +4,13 @@ set -e
 PROTO_HOME="$HOME/.proto"
 PROTOTOOLS="$PROTO_HOME/.prototools"
 
+echo "⏩ Start installing Proto..."
+
 mkdir -p "$PROTO_HOME" && touch "$PROTOTOOLS"
 echo "[settings]\nauto-clean = true" > "$PROTOTOOLS"
 curl -fsSL https://moonrepo.dev/install/proto.sh | /bin/bash -s -- --no-profile --yes
+
+echo "✅ Finished installing Proto!"
 {{ else if eq .chezmoi.os "windows" -}}
 irm https://moonrepo.dev/install/proto.ps1 | iex
 {{ end -}}

@@ -2,6 +2,8 @@
 set -eu
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 mkdir -p "$CHEZMOI_BIN_DIR"
+
+echo "⏩ Start installing essentials..."
 {{ if eq .chezmoi.os "linux" -}}
 # 最低限のセットアップ
 sudo apt update && sudo apt upgrade -y
@@ -21,6 +23,7 @@ sudo update-alternatives --set editor /usr/bin/vim.basic
 {{ end -}}
 
 # Install Homebrew
+echo "🚀 Installing Homebrew..."
 {{ if eq .chezmoi.os "darwin" -}}
 if ! type brew >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -41,5 +44,8 @@ which zsh | sudo tee -a /etc/shell &&
   sudo chsh -s "$(command -v zsh)" "${USER}"
 {{ end -}}
 {{ if eq .ostype "wsl" -}}
+echo "🚚 Moving wsl-open to $CHEZMOI_BIN_DIR ..."
 curl -o "$CHEZMOI_BIN_DIR/wsl-open" https://raw.githubusercontent.com/4U6U57/wsl-open/master/wsl-open.sh
 {{ end -}}
+
+echo "✅ Finished installing essentials!"

@@ -1,6 +1,11 @@
 {{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
 #!/bin/sh
+set -e
+echo "⏩ Start installing Rust..."
+
 if ! type rustup > /dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
+
+echo "✅ Finished installing Rust!"
 {{ end -}}

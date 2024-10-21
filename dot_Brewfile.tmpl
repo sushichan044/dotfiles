@@ -2,12 +2,10 @@
 tap "homebrew/bundle"
 tap "homebrew/services"
 tap "cloudflare/cloudflare"
-tap "coursier/formulas"
 tap "suzuki-shunsuke/ghalint"
 tap "suzuki-shunsuke/pinact"
 
 # brew
-brew "coursier/formulas/coursier"
 brew "suzuki-shunsuke/ghalint/ghalint"
 brew "suzuki-shunsuke/pinact/pinact"
 brew "act"
@@ -46,7 +44,6 @@ brew "zoxide"
 # zsh
 brew "zsh"
 {{ end }}
-
 {{ if eq .chezmoi.os "darwin" }}
 # cask
 cask "1password"
