@@ -7,6 +7,9 @@ echo "🔐 Some config requires sudo permission."
 
 # System UI / UX
 sudo nvram StartupMute=%01                                         # Disable the sound effects on boot
+sudo pmset -a sleep 30                                             # Sleep the computer after 30 minutes
+sudo pmset -a displaysleep 15                                      # Sleep the display after 15 minutes
+sudo pmset -a disksleep 15                                         # Put the hard disk(s) to sleep after 10 minutes
 defaults write com.apple.LaunchServices "LSQuarantine" -bool false # Disable the "Are you sure you want to open this application?" dialog
 defaults write NSGlobalDomain "AppleInterfaceStyle" -string "Dark" # Use dark menu bar and Dock
 
