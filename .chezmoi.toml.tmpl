@@ -6,7 +6,7 @@
 {{- end -}}
 {{- $for_personal := true -}}
 {{- if (or (eq $ostype "darwin") (eq .chezmoi.os "linux")) -}}
-{{-   $for_personal = (not (promptBoolOnce . "for_personal" "Do you use this computer for work")) -}}
+{{-   $for_personal = promptBoolOnce . "for_personal" "Is this computer for personal use" -}}
 {{- end -}}
 # .for_personal: true | false (default: true)
 # .ostype: darwin | linux | wsl | windows
