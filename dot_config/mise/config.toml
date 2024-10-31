@@ -9,6 +9,7 @@ yarn = "4"
 pnpm = "9"
 ni = "latest"
 bun = "latest"
+watchexec = "latest"
 
 [plugins]
 ni = "https://github.com/CanRau/asdf-ni.git"
