@@ -16,3 +16,6 @@ ni = "https://github.com/CanRau/asdf-ni.git"
 
 [settings]
 experimental = true
+
+[settings.python]
+venv_stdlib = true
