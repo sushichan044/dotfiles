@@ -1,11 +1,12 @@
 {{- $ostype := .chezmoi.os -}}
 {{- if eq .chezmoi.os "linux" -}}
-{{- $choices := list "wsl" "linux" -}}
-{{- $ostype = promptChoiceOnce . "ostype" "What type of linux is this?" $choices -}}
+{{-   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{-     $ostype = "wsl" -}}
+{{-   end -}}
 {{- end -}}
 {{- $for_personal := true -}}
 {{- if (or (eq $ostype "darwin") (eq .chezmoi.os "linux")) -}}
-{{- $for_personal = (not (promptBoolOnce . "usage" "Do you use this computer for work?")) -}}
+{{-   $for_personal = (not (promptBoolOnce . "usage" "Do you use this computer for work?")) -}}
 {{- end -}}
 # .for_personal: true | false (default: true)
 # .ostype: darwin | linux | wsl | windows
