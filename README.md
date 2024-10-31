@@ -3,5 +3,5 @@
 
 
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply sushichan044
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply sushichan044 --ssh
 ```
