@@ -22,3 +22,10 @@ aliases:
     b: browse
     bs: browse --settings
     br: browse --repo
+{{ if (or (eq .ostype "windows") (eq .ostype "wsl")) }}
+    # Copy Repo Url
+    cpr: '!gh repo view --json url --jq ".url" | clip.exe && echo "✅ Copied GitHub Repo URL to clipboard"'
+{{ else if eq .ostype "darwin" }}
+    # Copy Repo Url
+    cpr: '!gh repo view --json url --jq ".url" | pbcopy && echo "✅ Copied GitHub Repo URL to clipboard"'
+{{ end }}
