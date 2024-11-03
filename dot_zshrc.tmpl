@@ -32,14 +32,7 @@ autoload -Uz compinit && compinit
 # mise
 if type mise &>/dev/null; then
   eval "$(mise activate zsh)"
-  export PATH="$HOME/.local/share/mise/shims:$PATH"
 fi
-
-# proto
-export PROTO_HOME="$HOME/.proto";
-export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
-eval "$(proto activate zsh)"
-export PROTO_CONFIG_MODE="local"
 
 # uv
 eval "$($(mise which uv) generate-shell-completion zsh)"
@@ -59,3 +52,6 @@ eval "$(zoxide init zsh)"
 # chezmoi-managed-bin
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 [[ -e "$CHEZMOI_BIN_DIR" ]] && export PATH="$PATH:$CHEZMOI_BIN_DIR"
+
+# proto
+eval "$(proto activate zsh)"

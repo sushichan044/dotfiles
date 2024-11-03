@@ -1,3 +1,5 @@
+typeset -U path PATH
+
 # Homebrew
 {{ if eq .chezmoi.os "darwin" -}}
 if type "/opt/homebrew/bin/brew" >/dev/null 2>&1; then
