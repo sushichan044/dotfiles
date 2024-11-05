@@ -5,13 +5,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Load External config in ~/.zconfig
-ZSHHOME="$HOME/.zconfig"
-if [ -d "$ZSHHOME" -a -r "$ZSHHOME" -a \
-      -x "$ZSHHOME" ]; then
-    for i in "$ZSHHOME"/*; do
-        [[ ${i##*/} = *.zsh ]] &&
-            [ \( -f $i -o -h $i \) -a -r $i ] && . $i
+# Load External config in ~/.zsh.d
+ZSHHOME="$HOME/.zsh.d"
+if [ -d "$ZSHHOME" ] && [ -r "$ZSHHOME" ] && [ -x "$ZSHHOME" ]; then
+  for i in "$ZSHHOME"/*; do
+    # shellcheck disable=SC1090
+    [[ ${i##*/} = *.zsh ]] && { [ -f "$i" ] || [ -h "$i" ]; } && [ -r "$i" ] && . "$i"
     done
 fi
 
