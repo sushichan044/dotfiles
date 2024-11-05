@@ -6,10 +6,12 @@ uv = "latest"
 go = "1.23.2"
 ni = "latest"
 bun = "latest"
+tenv = "latest"
 watchexec = "latest"
 
 [plugins]
 ni = "https://github.com/CanRau/asdf-ni.git"
+tenv = "https://github.com/tofuutils/asdf-tenv.git"
 
 [settings]
 experimental = true
