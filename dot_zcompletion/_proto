@@ -17,7 +17,7 @@ _proto() {
     _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -36,7 +36,7 @@ _proto() {
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--export[Print the activate instructions in shell specific-syntax]' \
 '--json[Print the activate instructions in JSON format]' \
 '--no-bin[Don'\''t include ~/.proto/bin in path lookup]' \
@@ -46,7 +46,7 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-'::shell -- Shell to activate for:' \
+'::shell -- Shell to activate for:_default' \
 && ret=0
 ;;
 (alias)
@@ -54,23 +54,23 @@ _arguments "${_arguments_options[@]}" : \
 '--to=[Location of .prototools to add to]:TO:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Add to the global ~/.proto/.prototools]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-':alias -- Alias name:' \
-':spec -- Version or alias to associate with:' \
+':id -- ID of tool:_default' \
+':alias -- Alias name:_default' \
+':spec -- Version or alias to associate with:_default' \
 && ret=0
 ;;
 (bin)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--bin[Display symlinked binary path when available]' \
 '--shim[Display shim path when available]' \
 '--dump[Dump a trace profile to the working directory]' \
@@ -78,17 +78,17 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-'::spec -- Version or alias of tool:' \
+':id -- ID of tool:_default' \
+'::spec -- Version or alias of tool:_default' \
 && ret=0
 ;;
 (clean)
 _arguments "${_arguments_options[@]}" : \
-'--days=[Clean tools and plugins older than the specified number of days]:DAYS: ' \
-'--purge=[Purge and delete the installed tool by ID]:TOOL: ' \
+'--days=[Clean tools and plugins older than the specified number of days]:DAYS:_default' \
+'--purge=[Purge and delete the installed tool by ID]:TOOL:_default' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--purge-plugins[Purge and delete all installed plugins]' \
 '--yes[Avoid and force confirm prompts]' \
 '--dump[Dump a trace profile to the working directory]' \
@@ -100,10 +100,10 @@ _arguments "${_arguments_options[@]}" : \
 ;;
 (completions)
 _arguments "${_arguments_options[@]}" : \
-'--shell=[Shell to generate for]:SHELL: ' \
+'--shell=[Shell to generate for]:SHELL:_default' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -115,7 +115,7 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -135,7 +135,7 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the list in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
@@ -148,7 +148,7 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -162,10 +162,10 @@ esac
 ;;
 (diagnose)
 _arguments "${_arguments_options[@]}" : \
-'--shell=[Shell to diagnose for]:SHELL: ' \
+'--shell=[Shell to diagnose for]:SHELL:_default' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the diagnosis in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
@@ -179,64 +179,65 @@ _arguments "${_arguments_options[@]}" : \
 '--pin=[When installing one, pin the resolved version to .prototools]' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--canary[When installing one, use a canary (nightly, etc) version]' \
+'--force[Force reinstallation of tool even if it is already installed]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-'::id -- ID of a single tool to install:' \
-'::spec -- When installing one, the version or alias to install:' \
-'*::passthrough -- When installing one, additional arguments to pass to the tool:' \
+'::id -- ID of a single tool to install:_default' \
+'::spec -- When installing one, the version or alias to install:_default' \
+'*::passthrough -- When installing one, additional arguments to pass to the tool:_default' \
 && ret=0
 ;;
 (list)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--aliases[Include local aliases in the output]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
+':id -- ID of tool:_default' \
 && ret=0
 ;;
 (list-remote)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--aliases[Include remote aliases in the output]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
+':id -- ID of tool:_default' \
 && ret=0
 ;;
 (migrate)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':operation -- Operation to migrate:' \
+':operation -- Operation to migrate:_default' \
 && ret=0
 ;;
 (outdated)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the outdated tools in JSON format]' \
 '--latest[When updating versions, use the latest version instead of newest]' \
 '--update[Update and write the versions to their respective configuration]' \
@@ -252,7 +253,7 @@ _arguments "${_arguments_options[@]}" : \
 '--to=[Location of .prototools to pin to]:TO:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Pin to the global ~/.proto/.prototools]' \
 '--resolve[Resolve the version before pinning]' \
 '--dump[Dump a trace profile to the working directory]' \
@@ -260,15 +261,15 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-':spec -- Version or alias of tool:' \
+':id -- ID of tool:_default' \
+':spec -- Version or alias of tool:_default' \
 && ret=0
 ;;
 (plugin)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -289,36 +290,36 @@ _arguments "${_arguments_options[@]}" : \
 '--to=[Location of .prototools to add to]:TO:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Add to the global ~/.proto/.prototools]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of plugin:' \
-':plugin -- Locator string to find and load the plugin:' \
+':id -- ID of plugin:_default' \
+':plugin -- Locator string to find and load the plugin:_default' \
 && ret=0
 ;;
 (info)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the info in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of plugin:' \
+':id -- ID of plugin:_default' \
 && ret=0
 ;;
 (list)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--aliases[Include resolved aliases in the output]' \
 '--json[Print the list in JSON format]' \
 '--versions[Include installed versions in the output]' \
@@ -327,7 +328,7 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-'*::ids -- ID of plugins to list:' \
+'*::ids -- ID of plugins to list:_default' \
 && ret=0
 ;;
 (remove)
@@ -335,28 +336,28 @@ _arguments "${_arguments_options[@]}" : \
 '--from=[Location of .prototools to remove from]:FROM:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Remove from the global ~/.proto/.prototools]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of plugin:' \
+':id -- ID of plugin:_default' \
 && ret=0
 ;;
 (search)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the plugins in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':query -- Query to search available plugins:' \
+':query -- Query to search available plugins:_default' \
 && ret=0
 ;;
         esac
@@ -367,7 +368,7 @@ esac
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--bin[Also recreate binary symlinks]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
@@ -378,26 +379,26 @@ _arguments "${_arguments_options[@]}" : \
 ;;
 (run)
 _arguments "${_arguments_options[@]}" : \
-'--alt=[Name of an alternate (secondary) binary to run]:ALT: ' \
+'--alt=[Name of an alternate (secondary) binary to run]:ALT:_default' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-'::spec -- Version or alias of tool:' \
-'*::passthrough -- Arguments to pass through to the underlying command:' \
+':id -- ID of tool:_default' \
+'::spec -- Version or alias of tool:_default' \
+'*::passthrough -- Arguments to pass through to the underlying command:_default' \
 && ret=0
 ;;
 (setup)
 _arguments "${_arguments_options[@]}" : \
-'--shell=[Shell to setup for]:SHELL: ' \
+'--shell=[Shell to setup for]:SHELL:_default' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--no-modify-profile[Don'\''t update a shell profile]' \
 '--no-modify-path[Don'\''t update the system path]' \
 '-y[Avoid interactive prompts and use defaults]' \
@@ -413,7 +414,7 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--json[Print the active tools in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
@@ -427,30 +428,30 @@ _arguments "${_arguments_options[@]}" : \
 '--from=[Location of .prototools to remove from]:FROM:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Remove from the global ~/.proto/.prototools]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-':alias -- Alias name:' \
+':id -- ID of tool:_default' \
+':alias -- Alias name:_default' \
 && ret=0
 ;;
 (uninstall)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--yes[Avoid and force confirm prompts]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
-'::spec -- Version or alias of tool:' \
+':id -- ID of tool:_default' \
+'::spec -- Version or alias of tool:_default' \
 && ret=0
 ;;
 (unpin)
@@ -458,21 +459,21 @@ _arguments "${_arguments_options[@]}" : \
 '--from=[Location of .prototools to unpin from]:FROM:(global local user)' \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--global[Unpin from the global ~/.proto/.prototools]' \
 '--dump[Dump a trace profile to the working directory]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-':id -- ID of tool:' \
+':id -- ID of tool:_default' \
 && ret=0
 ;;
 (upgrade)
 _arguments "${_arguments_options[@]}" : \
 '-c+[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
 '--config-mode=[Mode in which to load configuration]:CONFIG_MODE:(global local upwards upwards-global)' \
-'--log=[Lowest log level to output]:LOG:(off error warn info debug trace)' \
+'--log=[Lowest log level to output]:LOG:(off error warn info debug trace verbose)' \
 '--check[Check versions only and avoid upgrading]' \
 '--json[Print the upgrade in JSON format]' \
 '--dump[Dump a trace profile to the working directory]' \
@@ -480,7 +481,7 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help]' \
 '-V[Print version]' \
 '--version[Print version]' \
-'::target -- Explicit version to upgrade or downgrade to:' \
+'::target -- Explicit version to upgrade or downgrade to:_default' \
 && ret=0
 ;;
         esac
