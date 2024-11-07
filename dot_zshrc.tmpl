@@ -40,19 +40,30 @@ if type mise &>/dev/null; then
 fi
 
 # uv
-eval "$($(mise which uv) generate-shell-completion zsh)"
+if type mise &>/dev/null; then
+  eval "$($(mise which uv) generate-shell-completion zsh)"
+fi
 
 # direnv
-eval "$(direnv hook zsh)"
+if type direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+fi
 
 # fzf
-source <(fzf --zsh)
+if type fzf &> /dev/null; then
+  # shellcheck disable=SC1090
+  source <(fzf --zsh)
+fi
 
 # task
-eval "$(task --completion zsh)"
+if type task &>/dev/null; then
+  eval "$(task --completion zsh)"
+fi
 
 # zoxide
-eval "$(zoxide init zsh)"
+if type zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
 # chezmoi-managed-bin
 CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
@@ -61,5 +72,7 @@ CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
 # proto
 PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
-eval "$(proto activate zsh)"
+if type proto &>/dev/null; then
+  eval "$(proto activate zsh)"
+fi
 export PROTO_CONFIG_MODE="local"
