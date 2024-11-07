@@ -14,8 +14,9 @@ if [ -d "$ZSHHOME" ] && [ -r "$ZSHHOME" ] && [ -x "$ZSHHOME" ]; then
     done
 fi
 
+COMPLETION_HOME="$ZSHHOME/completions"
 # load completion
-fpath=("$HOME/.zcompletion" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
+fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
 
 # sheldon
 if type sheldon &>/dev/null; then
