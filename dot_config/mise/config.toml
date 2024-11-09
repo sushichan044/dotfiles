@@ -1,9 +1,9 @@
 [tools]
 python = "3.13.0"
-awscli = "2.19.1"
+awscli = "2.19.4"
 java = "21"
 uv = "latest"
-go = "1.23.2"
+go = "1.23.3"
 ni = "latest"
 bun = "latest"
 tenv = "latest"
