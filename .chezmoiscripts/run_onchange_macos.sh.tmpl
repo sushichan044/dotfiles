@@ -75,5 +75,10 @@ for app in "${AFFETED_APPS[@]}"; do
     killall "${app}" &>/dev/null
 done
 
+if [ ! -f /etc/pam.d/sudo_local ]; then
+    echo "🤖 Creating /etc/pam.d/sudo_local to enable Touch ID for sudo..."
+    sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local
+fi
+
 echo "✅ Finished running macOS configuration. Some changes may require a restart to take effect."
 {{ end -}}
