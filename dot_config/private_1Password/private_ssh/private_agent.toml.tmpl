@@ -28,7 +28,7 @@
 #
 # More examples can be found here:
 #  https://developer.1password.com/docs/ssh/agent/config
-
+{{ if .for_personal -}}
 [[ssh-keys]]
 item = "UEC-SSH"
 vault = "Private"
@@ -40,11 +40,14 @@ vault = "Private"
 [[ssh-keys]]
 item = "UEC-CED"
 vault = "Private"
+{{- end }}
 
+# この鍵は、個人用ではないセットアップでも優先的に読み込まれる
 [[ssh-keys]]
 item = "GitHub"
-vault = "Private"
+vault = "dotfiles"
 
+{{ if .for_personal -}}
 [[ssh-keys]]
 item = "VLL-New-ConoHa"
 vault = "VLL"
@@ -56,6 +59,7 @@ vault = "VLL"
 [[ssh-keys]]
 item = "VLL-New-ConoHa-GitHub"
 vault = "VLL"
+{{- end }}
 
 [[ssh-keys]]
 vault = "Private"
