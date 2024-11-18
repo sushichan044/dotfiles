@@ -4,7 +4,9 @@
     "*.zsh.tmpl": "shellscript",
     "dot_z*.tmpl": "shellscript",
     "*.yml.tmpl": "yaml",
-    "*.yaml.tmpl": "yaml"
+    "*.yaml.tmpl": "yaml",
+    "*.toml.tmpl": "toml",
+    "dot_zsh.d/completions/*.tmpl": "shellscript"
   },
   "[yaml]": {
     "editor.formatOnSave": false
