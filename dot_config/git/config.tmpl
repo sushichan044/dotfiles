@@ -35,6 +35,7 @@ autoSetupRemote = true
 default = current
 
 [pull]
+autoStash = true
 rebase = true
 
 [fetch]
@@ -42,6 +43,9 @@ prune = true
 
 [merge]
 conflictStyle = diff3
+
+[rebase]
+autoStash = true
 
 [filter "lfs"]
 process = git-lfs filter-process
