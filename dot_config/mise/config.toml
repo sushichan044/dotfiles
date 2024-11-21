@@ -9,9 +9,9 @@ bun = "latest"
 tenv = "latest"
 watchexec = "latest"
 
-[plugins]
-ni = "https://github.com/CanRau/asdf-ni.git"
-tenv = "https://github.com/tofuutils/asdf-tenv.git"
+[alias]
+ni = "asdf:https://github.com/CanRau/asdf-ni"
+tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [settings]
 experimental = true
