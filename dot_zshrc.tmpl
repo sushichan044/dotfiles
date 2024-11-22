@@ -34,14 +34,23 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+{{ if eq .chezmoi.os "linux" "darwin" -}}
+{{ if eq .chezmoi.os "linux" -}}
 # mise
-if type mise &>/dev/null; then
-  eval "$(mise activate zsh)"
+MISE_EXECUTABLE="/home/linuxbrew/.linuxbrew/bin/mise"
+{{ else if eq .chezmoi.os "darwin" -}}
+# mise
+MISE_EXECUTABLE="/opt/homebrew/bin/mise"
+{{ end -}}
+{{- end -}}
+if [ -x "$MISE_EXECUTABLE" ]; then
+  eval "$($MISE_EXECUTABLE activate zsh)"
 fi
 
 # uv
-if type mise &>/dev/null; then
-  eval "$($(mise which uv) generate-shell-completion zsh)"
+if [ -x "$MISE_EXECUTABLE" ]; then
+  eval "$("$($MISE_EXECUTABLE which uv)" generate-shell-completion zsh)"
+  eval "$("$($MISE_EXECUTABLE which uvx)" --generate-shell-completion zsh)"
 fi
 
 # direnv
