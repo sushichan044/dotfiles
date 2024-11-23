@@ -1,6 +1,6 @@
 [tools]
 python = "3.13.0"
-awscli = "2.21.3"
+awscli = "2.22.4"
 java = "21"
 uv = "latest"
 go = "1.23.3"
