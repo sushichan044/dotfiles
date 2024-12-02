@@ -85,3 +85,14 @@ if type proto &>/dev/null; then
   eval "$(proto activate zsh)"
 fi
 export PROTO_CONFIG_MODE="local"
+
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --prompt="repositories >" --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src
