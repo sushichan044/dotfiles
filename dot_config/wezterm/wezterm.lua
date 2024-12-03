@@ -10,7 +10,15 @@ config.window_close_confirmation = "NeverPrompt"
 config.use_ime = true
 
 -- Appearance
-config.color_scheme = 'OneHalfDark'
+function scheme_for_appearance(appearance)
+    if appearance:find "Dark" then
+        return "Catppuccin Macchiato"
+    else
+        return "Catppuccin Latte"
+    end
+end
+
+config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 config.font = wezterm.font 'MesloLGS NF'
 config.initial_rows = 36
 config.initial_cols = 120
