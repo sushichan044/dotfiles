@@ -20,7 +20,6 @@ function scheme_for_appearance(appearance)
 end
 
 config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
-config.font = wezterm.font 'MesloLGS NF'
 config.initial_rows = 36
 config.initial_cols = 120
 config.window_background_opacity = 0.8
@@ -31,6 +30,7 @@ config.default_cursor_style = "BlinkingBar"
 config.cursor_thickness = 2.0
 
 -- Character
+config.font = wezterm.font 'MesloLGS NF'
 config.font_size = 13.0
 
 -- Tabs
@@ -45,6 +45,34 @@ config.colors = {
     },
 }
 
+-- Keybindings
+config.keys = {
+    {
+        key = "m",
+        mods = "CMD",
+        action = wezterm.action.DisableDefaultAssignment,
+    },
+    {
+        key = "w",
+        mods = "CMD",
+        action = wezterm.action.CloseCurrentPane { confirm = false },
+    },
+    {
+        key = "d",
+        mods = "CMD",
+        action = wezterm.action.SplitHorizontal { domain = "CurrentPaneDomain" },
+    },
+    {
+        key = "[",
+        mods = "CMD",
+        action = wezterm.action.ActivatePaneDirection "Prev"
+    },
+    {
+        key = "]",
+        mods = "CMD",
+        action = wezterm.action.ActivatePaneDirection "Next"
+    },
+}
 
 -- and finally, return the configuration to wezterm
 return config
