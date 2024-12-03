@@ -17,4 +17,3 @@ function peco-ghq() {
 }
 zle -N peco-ghq
 bindkey '^]' peco-ghq
-alias gz='peco-ghq'
