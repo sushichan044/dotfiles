@@ -8,6 +8,7 @@ local config = wezterm.config_builder()
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.use_ime = true
+config.window_decorations = "RESIZE"
 
 -- Appearance
 function scheme_for_appearance(appearance)
@@ -38,11 +39,6 @@ config.show_new_tab_button_in_tab_bar = false
 config.show_close_tab_button_in_tabs = false
 config.tab_and_split_indices_are_zero_based = true
 config.tab_max_width = 6
-
-
--- This is where you actually apply your config choices
-
-config.window_decorations = "RESIZE"
 config.colors = {
     tab_bar = {
         inactive_tab_edge = "none",
