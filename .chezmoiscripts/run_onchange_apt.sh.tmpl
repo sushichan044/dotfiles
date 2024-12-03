@@ -1,6 +1,7 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/bin/sh
 # Run when .chezmoidata/packages.yml Changed
+# Detect change by hash: {{ .packages.linux.apt | quoteList | join ", " | sha256sum }}
 if ! type apt >/dev/null 2>&1; then
     echo "❌ apt is not available. Exiting..."
     exit 1
@@ -8,7 +9,7 @@ fi
 
 set -eu
 
-echo " .chezmoidata/packages.yml change detected. Executing apt update and upgrade..."
+echo "🚚 .chezmoidata/packages.yml change detected. Executing apt update and upgrade..."
 
 sudo apt update && sudo apt upgrade -y <<EOF
 {{ range .packages.linux.apt -}}
