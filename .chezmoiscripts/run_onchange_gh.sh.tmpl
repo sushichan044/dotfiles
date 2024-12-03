@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# gh extensions hash: {{ .packages.tools.gh | quoteList | join ", " | sha256sum }}
+
+if ! type gh >/dev/null 2>&1; then
+    echo "❌ gh is not available. Exiting..."
+    exit 1
+fi
+
+{{ range .packages.tools.gh -}}
+gh extension install {{ . }}
+{{ end -}}

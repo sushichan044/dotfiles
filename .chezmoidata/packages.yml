@@ -11,3 +11,8 @@ packages:
       - libc++1
       - procps
       - wget
+  tools:
+    gh:
+      - 'github/gh-copilot'
+      - 'yusukebe/gh-markdown-preview'
+      - 'davidraviv/gh-clean-branches'
