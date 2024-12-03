@@ -15,8 +15,7 @@ config.font = wezterm.font 'MesloLGS NF'
 config.initial_rows = 36
 config.initial_cols = 120
 config.window_background_opacity = 0.8
-config.macos_window_background_blur = 20
-
+config.macos_window_background_blur = 30
 
 -- Cursor
 config.default_cursor_style = "BlinkingBar"
@@ -36,18 +35,10 @@ config.tab_max_width = 6
 -- This is where you actually apply your config choices
 
 config.window_decorations = "RESIZE"
-
-config.window_frame = {
-    inactive_titlebar_bg = "none",
-    active_titlebar_bg = "none",
-}
 config.colors = {
     tab_bar = {
         inactive_tab_edge = "none",
     },
-}
-config.window_background_gradient = {
-    colors = { "#222222" },
 }
 
 
