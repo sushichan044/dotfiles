@@ -18,6 +18,9 @@ COMPLETION_HOME="$ZSHHOME/completions"
 # load completion
 fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
 
+# Auto suggestion text color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+
 # sheldon
 if type sheldon &>/dev/null; then
   eval "$(sheldon source)"
