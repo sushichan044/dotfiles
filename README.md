@@ -10,11 +10,11 @@
 Linux / macOS / WSL
 
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply sushichan044 --ssh
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply sushichan044
 ```
 
 Windows (PowerShell)
 
 ```powershell
-iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply sushichan044 --ssh"
+iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply sushichan044"
 ```
