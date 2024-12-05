@@ -1,6 +1,10 @@
 {{- if eq .chezmoi.username "sushi" "sushichan044" -}}
 [user]
+{{- if .for_personal -}}
 signingkey = {{ onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" }}
+{{ - else - }}
+signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
+{{- end -}}
 
 [include]
 # Load user.name and user.email from ~/.config/git/config.d/user.conf
