@@ -7,6 +7,6 @@ if ! type gh >/dev/null 2>&1; then
     exit 1
 fi
 
-{{ range .packages.tools.gh -}}
-gh extension install {{ . }}
-{{ end -}}
+# {{ range .packages.tools.gh -}}
+# gh extension install {{ . }}
+# {{ end -}}
