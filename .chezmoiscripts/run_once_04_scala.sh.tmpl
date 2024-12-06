@@ -1,4 +1,4 @@
-{{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
+{{ if eq .chezmoi.os "darwin" "linux" -}}
 #!/bin/sh
 set -e
 echo "⏩ Start installing Scala..."
@@ -15,7 +15,7 @@ echo "🚀 Installing coursier"
     echo "🚧 Warning: Unsupported architecture: $TEMP_CHEZMOI_ARCH"
     exit 1
     {{ end -}}
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ else -}}
     {{ if eq .chezmoi.arch "amd64" -}}
     curl -fL https://github.com/coursier/launchers/raw/master/cs-x86_64-apple-darwin.gz | gzip -d > cs
     {{ else if eq .chezmoi.arch "arm64" -}}

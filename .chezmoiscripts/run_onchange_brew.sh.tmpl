@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "darwin" "linux" -}}
 #!/bin/sh
 # Run when .Brewfile Changed
 # {{ include "dot_Brewfile.tmpl" | sha256sum }}
@@ -13,3 +14,4 @@ echo "🚚 Brewfile change detected. Executing brew bundle..."
 brew bundle --file="$HOME/.Brewfile"
 
 echo "✅ Finished running brew bundle."
+{{ end -}}

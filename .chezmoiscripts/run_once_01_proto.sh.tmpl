@@ -1,4 +1,4 @@
-{{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
+{{ if eq .chezmoi.os "darwin" "linux" -}}
 #!/bin/sh
 set -e
 PROTO_HOME="$HOME/.proto"
@@ -6,7 +6,7 @@ PROTOTOOLS="$PROTO_HOME/.prototools"
 
 {{ if eq .chezmoi.os "linux" -}}
 BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ else -}}
 BREW_BIN="/opt/homebrew/bin/brew"
 {{ end -}}
 
