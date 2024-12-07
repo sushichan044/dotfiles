@@ -8,8 +8,8 @@ if ! type gh >/dev/null 2>&1; then
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-    echo "❌ gh is not authenticated. Exiting..."
-    exit 1
+    echo "🚧 gh is not authenticated. Exiting..."
+    exit 0
 fi
 
 {{ range .packages.tools.gh -}}
