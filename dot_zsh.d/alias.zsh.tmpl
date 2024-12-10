@@ -53,6 +53,10 @@ if IsExistCmd fd; then
     alias find='fd'
 fi
 
+if IsExistCmd fzf-make; then
+    alias fm='fzf-make'
+fi
+
 {{ if eq .chezmoi.os "linux" }}
 # apt
 alias agi='sudo apt install'
