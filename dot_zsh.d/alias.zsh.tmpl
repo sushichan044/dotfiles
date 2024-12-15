@@ -8,8 +8,6 @@ alias clr='clear'
 alias mkdir='mkdir -p'
 alias rm='rm -i'
 alias mv='mv -i'
-alias cv='code .'
-alias cz='chezmoi'
 
 alias sz="source $HOME/.zshrc"
 alias rrr="exec $SHELL -l"
@@ -42,6 +40,12 @@ alias dcd='docker compose down'
 alias tl='sudo tlmgr'
 alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 
+# misc
+alias cv='code .'
+alias cz='chezmoi'
+alias fm='fzf-make'
+alias prt='proto'
+
 if IsExistCmd eza; then
     alias ls='eza'
     alias ll='eza -abghHliS --time-style=iso --group-directories-first'
@@ -52,14 +56,6 @@ fi
 
 if IsExistCmd fd; then
     alias find='fd'
-fi
-
-if IsExistCmd fzf-make; then
-    alias fm='fzf-make'
-fi
-
-if IsExistCmd proto; then
-    alias prt='proto'
 fi
 
 {{ if eq .chezmoi.os "linux" }}
