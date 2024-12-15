@@ -9,6 +9,7 @@ bun = "latest"
 tenv = "latest"
 watchexec = "latest"
 ruby = "latest"
+"npm:@typespec/compiler" = "latest"
 
 [alias]
 ni = "asdf:https://github.com/CanRau/asdf-ni"
