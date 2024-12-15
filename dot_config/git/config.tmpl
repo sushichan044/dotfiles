@@ -65,6 +65,9 @@ fixit = "commit --amend --no-edit"
 bk = 'git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M')'
 f = "fetch"
 
+[url "git@github.com:"]
+insteadOf = https://github.com/
+
 # Commit signing
 # Not configured for .ostype == "linux"
 {{ if eq .ostype "darwin" -}}
