@@ -1,0 +1,17 @@
+# Behavior
+window-step-resize = true
+window-vsync = true
+confirm-close-surface = false
+quit-after-last-window-closed = true
+
+# Appearance
+theme = dark:catppuccin-macchiato,light:catppuccin-latte
+background-opacity = 0.8
+background-blur-radius = 30
+
+# Cursor
+cursor-style = bar
+
+# Character
+font-family = MesloLGS NF
+theme = catppuccin-macchiato
