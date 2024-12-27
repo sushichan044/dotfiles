@@ -8,6 +8,7 @@ quit-after-last-window-closed = true
 theme = dark:catppuccin-macchiato,light:catppuccin-latte
 background-opacity = 0.8
 background-blur-radius = 30
+mouse-hide-while-typing = true
 
 # Cursor
 cursor-style = bar
