@@ -1,4 +1,5 @@
 # Behavior
+window-inherit-working-directory = true
 window-step-resize = true
 window-vsync = true
 confirm-close-surface = false
@@ -9,6 +10,7 @@ theme = dark:catppuccin-macchiato,light:catppuccin-latte
 background-opacity = 0.8
 background-blur-radius = 30
 mouse-hide-while-typing = true
+resize-overlay = never
 
 # Cursor
 cursor-style = bar
