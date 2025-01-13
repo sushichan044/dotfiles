@@ -11,6 +11,7 @@ tenv = "latest"
 watchexec = "latest"
 ruby = "latest"
 "npm:@typespec/compiler" = "latest"
+"npm:pnpm" = "latest"
 
 [alias]
 ni = "asdf:https://github.com/CanRau/asdf-ni"
