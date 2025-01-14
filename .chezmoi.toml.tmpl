@@ -21,4 +21,4 @@ command = "code"
 args = [ "-n", "--wait"]
 
 [hooks.read-source-state.pre]
-command = ".local/share/chezmoi/executable_.install-password-manager.sh"
+script = ".local/share/chezmoi/.hooks/read-source-state/executable_.pre.sh"
