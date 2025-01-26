@@ -13,6 +13,9 @@ path = ~/.config/git/config.d/ghq.conf
 
 [includeIf "gitdir:~/workspace/github.com/sushichan044/"]
 path = ~/.config/git/config.d/user.personal.conf
+
+[includeIf "gitdir:~/.local/share/chezmoi/"]
+path = ~/.config/git/config.d/user.personal.conf
 {{- end }}
 
 [init]
