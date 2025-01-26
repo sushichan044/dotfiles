@@ -1,6 +1,6 @@
 {{- if eq .chezmoi.username "sushi" "sushichan044" -}}
 {{- if .for_personal -}}
-{{- onepasswordRead "op://dotfiles/gitconfig_secret/user.txt" -}}
+{{- onepasswordRead "op://dotfiles/gitconfig_user/user.txt" -}}
 {{- else -}}
 {{- onepasswordRead "op://Employee/gitconfig_user_personal/user_personal.txt" -}}
 {{- end -}}
