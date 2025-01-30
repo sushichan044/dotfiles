@@ -1,3 +1,4 @@
 .mise.local.toml
 .DS_Store
 ,
+.solargraph.yml
