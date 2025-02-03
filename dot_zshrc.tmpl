@@ -88,3 +88,5 @@ if type proto &>/dev/null; then
   eval "$(proto activate zsh)"
 fi
 export PROTO_CONFIG_MODE="upwards"
+# .prototools.local を git で無視することで .mise.local.toml のような運用をしたい
+export PROTO_ENV="local"

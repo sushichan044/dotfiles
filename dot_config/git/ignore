@@ -1,4 +1,5 @@
 .mise.local.toml
+.prototools.local
 .DS_Store
 ,
 .solargraph.yml
