@@ -90,3 +90,17 @@ fi
 export PROTO_CONFIG_MODE="upwards"
 # .prototools.local を git で無視することで .mise.local.toml のような運用をしたい
 export PROTO_ENV="local"
+
+{{ if eq .chezmoi.os "linux" "darwin" -}}
+{{ if eq .chezmoi.os "linux" -}}
+# TBD pnpm
+{{ else if eq .chezmoi.os "darwin" -}}
+# pnpm
+export PNPM_HOME="~/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+{{ end -}}
+{{- end -}}
