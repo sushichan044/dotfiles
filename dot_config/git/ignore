@@ -1,6 +1,12 @@
+# general
+.DS_Store
+
+# dev env
 .mise.local.toml
 .prototools.local
-.DS_Store
-,
-.solargraph.yml
 .vscode/**/*.local.json
+.solargraph.yml
+.graphqlrc.yml
+
+# personal playground
+,
