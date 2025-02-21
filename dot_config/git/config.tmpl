@@ -70,7 +70,7 @@ com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); 
 fixit = "commit --amend --no-edit"
 fixup = "commit --fixup"
 apply-fixup = "!f() { git rebase -i --autosquash $1^; }; f"
-bk = 'git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M')'
+bk = '!git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M')'
 f = "fetch"
 
 # Commit signing
