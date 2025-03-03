@@ -6,4 +6,4 @@ if ! type proto >/dev/null 2>&1; then
     exit 1
 fi
 
-proto upgrade
+# proto upgrade
