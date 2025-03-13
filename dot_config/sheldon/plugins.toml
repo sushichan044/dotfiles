@@ -34,5 +34,9 @@ apply = ["defer"]
 github = 'sunlei/zsh-ssh'
 apply = ["defer"]
 
+[plugins.zsh-fzf-history-search]
+github = 'joshskidmore/zsh-fzf-history-search'
+apply = ["defer"]
+
 [templates]
 defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
