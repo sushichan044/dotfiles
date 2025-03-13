@@ -12,9 +12,9 @@ watchexec = "latest"
 ruby = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:pnpm" = "latest"
+"npm:@antfu/ni" = "24.0.0"
 
 [alias]
-ni = "asdf:https://github.com/CanRau/asdf-ni"
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [settings]
