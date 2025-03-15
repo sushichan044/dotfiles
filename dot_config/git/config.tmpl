@@ -30,6 +30,9 @@ branch = auto
 [column]
 ui = auto
 
+[commit]
+verbose = true
+
 [core]
 autocrlf = input
 ignorecase = false
@@ -39,10 +42,21 @@ pager = delta
 navigate = true
 
 [diff]
-colorMoved = default
+algorithm = histogram
+colorMoved = true
+mnemonicPrefix = true
+renames = true
 
 [fetch]
 prune = true
+pruneTags = true
+all = true
+
+[feature]
+experimental = true
+
+[help]
+autocorrect = prompt
 
 [init]
 defaultBranch = main
@@ -51,11 +65,12 @@ defaultBranch = main
 diffFilter = delta --color-only
 
 [merge]
-conflictStyle = diff3
+conflictStyle = zdiff3
 
 [push]
 autoSetupRemote = true
-default = current
+default = simple
+followTags = true
 
 [pull]
 autoStash = true
@@ -63,6 +78,12 @@ rebase = true
 
 [rebase]
 autoStash = true
+autoSquash = true
+updateRefs = true
+
+[rerere]
+autoupdate = true
+enabled = true
 
 [tag]
 sort = version:refname
