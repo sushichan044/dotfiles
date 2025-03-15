@@ -18,16 +18,22 @@ path = ~/.config/git/config.d/user.personal.conf
 path = ~/.config/git/config.d/user.personal.conf
 {{- end }}
 
-[init]
-defaultBranch = main
+[branch]
+sort = -committerdate
+
+[color]
+ui = true
+diff = auto
+status = auto
+branch = auto
+
+[column]
+ui = auto
 
 [core]
 autocrlf = input
 ignorecase = false
 pager = delta
-
-[interactive]
-diffFilter = delta --color-only
 
 [delta]
 navigate = true
@@ -35,11 +41,17 @@ navigate = true
 [diff]
 colorMoved = default
 
-[color]
-ui = true
-diff = auto
-status = auto
-branch = auto
+[fetch]
+prune = true
+
+[init]
+defaultBranch = main
+
+[interactive]
+diffFilter = delta --color-only
+
+[merge]
+conflictStyle = diff3
 
 [push]
 autoSetupRemote = true
@@ -49,14 +61,11 @@ default = current
 autoStash = true
 rebase = true
 
-[fetch]
-prune = true
-
-[merge]
-conflictStyle = diff3
-
 [rebase]
 autoStash = true
+
+[tag]
+sort = version:refname
 
 [filter "lfs"]
 process = git-lfs filter-process
