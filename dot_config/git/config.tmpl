@@ -1,132 +1,132 @@
 {{- if eq .chezmoi.username "sushi" "sushichan044" -}}
 [user]
 {{- if .for_personal }}
-signingkey = {{ onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" }}
+    signingkey = {{ onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" }}
 {{- else }}
-signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
+    signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
 {{- end }}
 
 [include]
 # Load user.name and user.email from ~/.config/git/config.d/user.conf
-path = ~/.config/git/config.d/user.conf
-path = ~/.config/git/config.d/ghq.conf
+    path = ~/.config/git/config.d/user.conf
+    path = ~/.config/git/config.d/ghq.conf
 
 [includeIf "gitdir:~/workspace/github.com/sushichan044/"]
-path = ~/.config/git/config.d/user.personal.conf
+    path = ~/.config/git/config.d/user.personal.conf
 
 [includeIf "gitdir:~/.local/share/chezmoi/"]
-path = ~/.config/git/config.d/user.personal.conf
+    path = ~/.config/git/config.d/user.personal.conf
 {{- end }}
 
 [branch]
-sort = -committerdate
+    sort = -committerdate
 
 [color]
-ui = true
-diff = auto
-status = auto
-branch = auto
+    ui = true
+    diff = auto
+    status = auto
+    branch = auto
 
 [column]
-ui = auto
+    ui = auto
 
 [commit]
-verbose = true
+    verbose = true
 
 [core]
-autocrlf = input
-fsmonitor = true
-ignorecase = false
-pager = delta
-untrackedCache = true
+    autocrlf = input
+    fsmonitor = true
+    ignorecase = false
+    pager = delta
+    untrackedCache = true
 
 [delta]
-navigate = true
+    navigate = true
 
 [diff]
-algorithm = histogram
-colorMoved = true
-mnemonicPrefix = true
-renames = true
+    algorithm = histogram
+    colorMoved = true
+    mnemonicPrefix = true
+    renames = true
 
 [fetch]
-prune = true
-pruneTags = true
-all = true
+    prune = true
+    pruneTags = true
+    all = true
 
 [feature]
-experimental = true
+    experimental = true
 
 [help]
-autocorrect = prompt
+    autocorrect = prompt
 
 [init]
-defaultBranch = main
+    defaultBranch = main
 
 [interactive]
-diffFilter = delta --color-only
+    diffFilter = delta --color-only
 
 [merge]
-conflictStyle = zdiff3
+    conflictStyle = zdiff3
 
 [push]
-autoSetupRemote = true
-default = simple
-followTags = true
+    autoSetupRemote = true
+    default = simple
+    followTags = true
 
 [pull]
-autoStash = true
-rebase = true
+    autoStash = true
+    rebase = true
 
 [rebase]
-autoStash = true
-autoSquash = true
-updateRefs = true
+    autoStash = true
+    autoSquash = true
+    updateRefs = true
 
 [rerere]
-autoupdate = true
-enabled = true
+    autoupdate = true
+    enabled = true
 
 [tag]
-sort = version:refname
+    sort = version:refname
 
 [filter "lfs"]
-process = git-lfs filter-process
-required = true
-clean = git-lfs clean -- %f
-smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
 
 [alias]
-clear-cache = "rm -r --cached ."
-com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
-fixit = "commit --amend --no-edit"
-fixup = "commit --fixup"
-apply-fixup = "!f() { git rebase -i --autosquash $1^; }; f"
-bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
-f = "fetch"
-clean-branch = "!git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | awk '{print $1}' | xargs -I {} git branch -d {}"
+    clear-cache = "rm -r --cached ."
+    com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
+    fixit = "commit --amend --no-edit"
+    fixup = "commit --fixup"
+    apply-fixup = "!f() { git rebase -i --autosquash $1^; }; f"
+    bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
+    f = "fetch"
+    clean-branch = "!git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | awk '{print $1}' | xargs -I {} git branch -d {}"
 
 # Commit signing
 # Not configured for .ostype == "linux"
 {{ if eq .ostype "darwin" -}}
 [commit]
-gpgsign = true
+    gpgsign = true
 [gpg]
-format = ssh
+    format = ssh
 [gpg "ssh"]
-program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 {{ else if eq .ostype "wsl" -}}
 [commit]
-gpgsign = true
+    gpgsign = true
 [gpg]
-format = ssh
+    format = ssh
 [gpg "ssh"]
-program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl"
+    program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl"
 {{ else if eq .ostype "windows" -}}
 [commit]
-gpgsign = true
+    gpgsign = true
 [gpg]
-format = ssh
+    format = ssh
 [gpg "ssh"]
-program = "C:/Program Files/1Password/app/8/op-ssh-sign.exe"
+    program = "C:/Program Files/1Password/app/8/op-ssh-sign.exe"
 {{ end -}}
