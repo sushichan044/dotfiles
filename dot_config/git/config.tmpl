@@ -7,15 +7,8 @@
 {{- end }}
 
 [include]
-# Load user.name and user.email from ~/.config/git/config.d/user.conf
-    path = ~/.config/git/config.d/user.conf
     path = ~/.config/git/config.d/ghq.conf
-
-[includeIf "gitdir:~/workspace/github.com/sushichan044/"]
-    path = ~/.config/git/config.d/user.personal.conf
-
-[includeIf "gitdir:~/.local/share/chezmoi/"]
-    path = ~/.config/git/config.d/user.personal.conf
+    path = ~/.config/git/config.d/user.github.conf
 {{- end }}
 
 [branch]
