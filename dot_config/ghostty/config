@@ -18,3 +18,4 @@ cursor-style = bar
 # Character
 font-family = MesloLGS NF
 theme = catppuccin-macchiato
+font-feature = -dlig
