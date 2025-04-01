@@ -42,7 +42,11 @@ alias tl='sudo tlmgr'
 alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 
 # misc
-alias cv='code .'
+if IsExistCmd cursor; then
+    alias cv='cursor .'
+else
+    alias cv='code .'
+fi
 alias cz='chezmoi'
 alias fm='fzf-make'
 alias prt='proto'
