@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "GitHub": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+{{- if .for_personal }}
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{{ onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" }}"
+{{- else }}
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{{ onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" }}"
+{{- end }}
+      }
+    }
+  }
+}
