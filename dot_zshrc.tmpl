@@ -29,6 +29,7 @@ if type sheldon &>/dev/null; then
 fi
 
 # init completion
+autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 
 # 1password completion
@@ -57,6 +58,9 @@ if [ -x "$MISE_EXECUTABLE" ]; then
   eval "$("$($MISE_EXECUTABLE which uv)" generate-shell-completion zsh)"
   eval "$("$($MISE_EXECUTABLE which uvx)" --generate-shell-completion zsh)"
 fi
+
+# aws
+complete -C "$($MISE_EXECUTABLE which aws_completer)" aws
 
 # direnv
 if type direnv &>/dev/null; then
