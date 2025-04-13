@@ -1,9 +1,3 @@
-IsExistCmd() { type "$1" >/dev/null 2>&1; }
-
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-
 alias clr='clear'
 alias mkdir='mkdir -p'
 alias rm='rm -i'
@@ -42,16 +36,15 @@ alias tl='sudo tlmgr'
 alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 
 # misc
-if IsExistCmd code; then
-    alias cv='code .'
-else
-    alias cv='cursor .'
-fi
+alias cv='code .'
+alias crv='cursor .'
+alias rv='rubymine .'
+
 alias cz='chezmoi'
 alias fm='fzf-make'
 alias prt='proto'
 
-if IsExistCmd eza; then
+if command_exists eza; then
     alias ls='eza'
     alias ll='eza -abghHliS --time-style=iso --group-directories-first'
 else
@@ -59,7 +52,7 @@ else
     alias ll='ls -alh'
 fi
 
-if IsExistCmd fd; then
+if command_exists fd; then
     alias find='fd'
 fi
 

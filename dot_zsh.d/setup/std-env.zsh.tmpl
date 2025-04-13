@@ -1,0 +1,57 @@
+# This file should be sourced from .zshenv and .zprofile
+source "$HOME/.zsh.d/setup/init.zsh"
+
+add_to_path_if_not_exists "$HOME/.local/bin"
+add_to_path_if_not_exists /opt/local/bin
+add_to_path_if_not_exists /usr/local/bin
+add_to_path_if_not_exists /usr/bin
+add_to_path_if_not_exists /bin
+add_to_path_if_not_exists /usr/sbin
+add_to_path_if_not_exists /sbin
+
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
+
+{{ if eq .chezmoi.os "darwin" -}}
+BREW_BIN="/opt/homebrew/bin/brew"
+
+MISE_EXECUTABLE="/opt/homebrew/bin/mise"
+
+COURSIER_BIN_DIR="$HOME/Library/Application Support/Coursier/bin"
+{{ else if eq .chezmoi.os "linux" -}}
+BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
+
+MISE_EXECUTABLE="/home/linuxbrew/.linuxbrew/bin/mise"
+
+COURSIER_BIN_DIR="$HOME/.local/share/coursier/bin"
+{{ end -}}
+
+# Load homebrew
+if file_exists "$BREW_BIN"; then
+    eval "$($BREW_BIN shellenv)"
+fi
+
+# Load Scala coursier
+if dir_exists "$COURSIER_BIN_DIR"; then
+    add_to_path_if_not_exists "$COURSIER_BIN_DIR"
+fi
+
+# Load Rust
+source_if_exists "$HOME/.cargo/env"
+
+# Load chezmoi managed bin
+if dir_exists "$HOME/.chezmoi-bin"; then
+    add_to_path_if_not_exists "$HOME/.chezmoi-bin"
+fi
+
+# Jetbrains Scripts
+if is_mac; then
+    add_to_path_if_not_exists "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fi
+
+# Proto
+PROTO_HOME="$HOME/.proto"
+add_to_path_if_not_exists "$PROTO_HOME/bin"
+export PROTO_CONFIG_MODE="upwards"
+# Use .prototools.local to use proto, ignored by git
+export PROTO_ENV="local"

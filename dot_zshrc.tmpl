@@ -1,3 +1,5 @@
+source "$HOME/.zsh.d/setup/init.zsh"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -5,97 +7,35 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-export LANG='ja_JP.UTF-8'
-
-# Load External config in ~/.zsh.d
-ZSHHOME="$HOME/.zsh.d"
-if [ -d "$ZSHHOME" ] && [ -r "$ZSHHOME" ] && [ -x "$ZSHHOME" ]; then
-  for i in "$ZSHHOME"/*; do
-    # shellcheck disable=SC1090
-    [[ ${i##*/} = *.zsh ]] && { [ -f "$i" ] || [ -h "$i" ]; } && [ -r "$i" ] && . "$i"
-    done
-fi
-
-COMPLETION_HOME="$ZSHHOME/completions"
-# load completion
-fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
+load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
 
 # Auto suggestion text color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
-# sheldon
-if type sheldon &>/dev/null; then
+if command_exists sheldon; then
   eval "$(sheldon source)"
 fi
 
-# init completion
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
-
-# 1password completion
-if type op &>/dev/null; then
-  eval "$(op completion zsh)"; compdef _op op
+if command_exists mise; then
+  eval "$(mise activate zsh)"
 fi
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.zsh.d/p10k.zsh ]] || source ~/.zsh.d/p10k.zsh
-
-{{ if eq .chezmoi.os "linux" "darwin" -}}
-{{ if eq .chezmoi.os "linux" -}}
-# mise
-MISE_EXECUTABLE="/home/linuxbrew/.linuxbrew/bin/mise"
-{{ else if eq .chezmoi.os "darwin" -}}
-# mise
-MISE_EXECUTABLE="/opt/homebrew/bin/mise"
-{{ end -}}
-{{- end -}}
-if [ -x "$MISE_EXECUTABLE" ]; then
-  eval "$($MISE_EXECUTABLE activate zsh)"
-fi
-
-# uv
-if [ -x "$MISE_EXECUTABLE" ]; then
-  eval "$("$($MISE_EXECUTABLE which uv)" generate-shell-completion zsh)"
-  eval "$("$($MISE_EXECUTABLE which uvx)" --generate-shell-completion zsh)"
-fi
-
-# aws
-complete -C "$($MISE_EXECUTABLE which aws_completer)" aws
-
-# direnv
-if type direnv &>/dev/null; then
+if command_exists direnv; then
   eval "$(direnv hook zsh)"
 fi
 
-# fzf
-if type fzf &> /dev/null; then
-  # shellcheck disable=SC1090
+if command_exists fzf; then
   source <(fzf --zsh)
 fi
 
-# task
-if type task &>/dev/null; then
-  eval "$(task --completion zsh)"
-fi
-
-# zoxide
-if type zoxide &>/dev/null; then
+if command_exists zoxide; then
   eval "$(zoxide init zsh)"
 fi
 
-# chezmoi-managed-bin
-CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
-[[ -e "$CHEZMOI_BIN_DIR" ]] && export PATH="$PATH:$CHEZMOI_BIN_DIR"
-
-# proto
-PROTO_HOME="$HOME/.proto";
-export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
-if type proto &>/dev/null; then
+if command_exists proto; then
   eval "$(proto activate zsh)"
 fi
-export PROTO_CONFIG_MODE="upwards"
-# .prototools.local を git で無視することで .mise.local.toml のような運用をしたい
-export PROTO_ENV="local"
+
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
 {{ if eq .chezmoi.os "linux" -}}
@@ -111,10 +51,8 @@ esac
 {{ end -}}
 {{- end -}}
 
-
-{{ if eq .chezmoi.os "darwin" -}}
-# JetBrain Toolbox
-if [ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ]; then
-    export PATH="$PATH:$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+if file_exists "$HOME/.zsh.d/p10k.zsh"; then
+  # shellcheck disable=SC1090
+  source "$HOME/.zsh.d/p10k.zsh"
 fi
-{{ end -}}

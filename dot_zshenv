@@ -1,7 +1,22 @@
-# PATH
-export PATH="$HOME/.local/bin:$PATH"
+# shellcheck shell=bash
 
-# HOME
-export XDG_CONFIG_HOME="$HOME/.config"
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
+    export XDG_CONFIG_HOME="$HOME/.config"
+fi
+if [[ -z "$XDG_CACHE_HOME" ]]; then
+    export XDG_CACHE_HOME="$HOME/.cache"
+fi
+if [[ -z "$XDG_DATA_HOME" ]]; then
+    export XDG_DATA_HOME="$HOME/.local/share"
+fi
+if [[ -z "$XDG_DATA_DIRS" ]]; then
+    export XDG_DATA_DIRS=/usr/local/share:/usr/share
+fi
+if [[ -z "$XDG_CONFIG_DIRS" ]]; then
+    export XDG_CONFIG_DIRS=/etc/xdg
+else
+    export XDG_CONFIG_DIRS="/etc/xdg:$XDG_CONFIG_DIRS"
+fi
 
-. "$HOME/.cargo/env"
+# shellcheck disable=SC1091
+source "$HOME/.zsh.d/setup/std-env.zsh"
