@@ -97,7 +97,7 @@
     apply-fixup = "!f() { git rebase -i --autosquash $1^; }; f"
     bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
     f = "fetch"
-    clean-branch = "!git branch --format '%(refname:short) %(upstream:track)' | grep '\\[gone\\]' | awk '{print $1}' | xargs -I {} git branch -d {}"
+    rm-merged-branch = "!git branch --merged | grep -v '^*' | grep -v 'master' | xargs git branch -d"
 
 # Commit signing
 # Not configured for .ostype == "linux"

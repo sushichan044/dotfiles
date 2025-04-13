@@ -3,16 +3,11 @@ alias mkdir='mkdir -p'
 alias rm='rm -i'
 alias mv='mv -i'
 
-alias sz="source $HOME/.zshrc"
+alias reitou='tar -zcvf'
+alias kaitou='tar -xvf'
+
 alias rrr="exec $SHELL -l"
 
-# homebrew
-alias br='brew'
-alias bru='brew update && brew upgrade'
-alias bri='brew install'
-alias brr='brew remove'
-
-# git
 alias g='git'
 alias gs='git status'
 alias gp='git push'
@@ -24,7 +19,11 @@ alias gft="git fixit"
 alias lg='lazygit'
 alias gg='ghq get'
 
-# docker
+alias br='brew'
+alias bru='brew update && brew upgrade'
+alias bri='brew install'
+alias brr='brew remove'
+
 alias d='docker'
 alias dc='docker compose'
 alias dcb='docker compose build'
@@ -39,30 +38,34 @@ alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 alias cv='code .'
 alias crv='cursor .'
 alias rv='rubymine .'
-
 alias cz='chezmoi'
 alias fm='fzf-make'
 alias prt='proto'
 
 if command_exists eza; then
-    alias ls='eza'
-    alias ll='eza -abghHliS --time-style=iso --group-directories-first'
+    alias ls='eza --group-directories-first'
+    alias ll='eza -abghHliS --git --time-style=iso --group-directories-first'
 else
-    alias ls='ls --color=auto'
-    alias ll='ls -alh'
+    if is_mac; then
+        alias ls='ls -G'
+        alias ll='ls -l -G'
+    else
+        alias ls='ls --color=always'
+        alias ll='ls -l --color=always'
+    fi
 fi
 
 if command_exists fd; then
     alias find='fd'
 fi
 
-{{ if eq .chezmoi.os "linux" }}
-# apt
-alias agi='sudo apt install'
-alias agu='sudo apt update && sudo apt upgrade'
-alias agc='sudo apt autoremove -y && sudo apt autoclean -y'
-alias agr='sudo apt remove'
-{{ end }}
+if is_linux && command_exists apt; then
+    alias agi='sudo apt install'
+    alias agu='sudo apt update && sudo apt upgrade'
+    alias agc='sudo apt autoremove -y && sudo apt autoclean -y'
+    alias agr='sudo apt remove'
+fi
+
 {{ if eq .ostype "wsl" }}
 # wsl-open
 alias open='wsl-open'
