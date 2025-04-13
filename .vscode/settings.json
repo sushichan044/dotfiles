@@ -10,5 +10,11 @@
   },
   "[yaml]": {
     "editor.formatOnSave": false
-  }
+  },
+  "cSpell.words": [
+    "chezmoi",
+    "coursier",
+    "direnv",
+    "linuxbrew"
+  ]
 }
