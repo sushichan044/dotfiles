@@ -1,1 +1,4 @@
 @jsr:registry=https://npm.jsr.io
+save=true
+save-exact=true
+progress=true
