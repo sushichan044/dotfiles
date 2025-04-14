@@ -17,6 +17,14 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{{ onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" }}"
 {{- end }}
       }
+    },
+    "baseline-mcp-server": {
+      "command": "deno",
+      "args": [
+        "run",
+        "--allow-net=api.webstatus.dev",
+        "jsr:@yamanoku/baseline-mcp-server"
+      ]
     }
   }
 }
