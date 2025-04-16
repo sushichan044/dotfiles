@@ -25,6 +25,30 @@
         "--allow-net=api.webstatus.dev",
         "jsr:@yamanoku/baseline-mcp-server"
       ]
+    },
+    "playwright(ARIA)": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    },
+    "playwright(Vision)": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--vision"
+      ]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "site": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "sitemcp"
+      ]
     }
   }
 }
