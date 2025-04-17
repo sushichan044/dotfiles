@@ -28,27 +28,19 @@
     },
     "playwright(ARIA)": {
       "command": "npx",
-      "args": [
-        "@playwright/mcp@latest"
-      ]
+      "args": ["@playwright/mcp@latest"]
     },
     "playwright(Vision)": {
       "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--vision"
-      ]
+      "args": ["@playwright/mcp@latest", "--vision"]
     },
     "fetch": {
       "command": "uvx",
       "args": ["mcp-server-fetch"]
     },
-    "site": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "sitemcp"
-      ]
+    "bundlephobia": {
+      "command": "deno",
+      "args": ["run", "--allow-net=bundlephobia.com", "npm:bundlephobia-mcp"]
     }
   }
 }
