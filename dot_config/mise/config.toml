@@ -1,5 +1,5 @@
 [tools]
-python = ["3.11.12", "3.12.10", "3.13.3"]
+python = ["3.13.3", "3.12.10", "3.11.12"]
 awscli = "2.26.1"
 java = "21"
 uv = "latest"
@@ -9,7 +9,7 @@ bun = "latest"
 deno = "2.2.9"
 tenv = "latest"
 watchexec = "latest"
-ruby = ["3.3", "3.4"]
+ruby = ["3.4", "3.3"]
 "npm:@typespec/compiler" = "latest"
 "npm:pnpm" = "latest"
 "npm:@antfu/ni" = "latest"
