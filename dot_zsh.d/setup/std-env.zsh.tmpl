@@ -48,10 +48,3 @@ fi
 if is_mac; then
     add_to_path_if_not_exists "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fi
-
-# Proto
-PROTO_HOME="$HOME/.proto"
-add_to_path_if_not_exists "$PROTO_HOME/bin"
-export PROTO_CONFIG_MODE="upwards"
-# Use .prototools.local to use proto, ignored by git
-export PROTO_ENV="local"

@@ -8,7 +8,3 @@ source "$HOME/.zsh.d/setup/std-env.zsh"
 if command_exists mise; then
     eval "$(mise activate zsh --shims)"
 fi
-
-# Load proto shims
-PROTO_HOME="$HOME/.proto"
-add_to_path_if_not_exists "$PROTO_HOME/shims"
