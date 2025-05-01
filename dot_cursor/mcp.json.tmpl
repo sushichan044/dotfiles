@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+    "sentry": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.sentry.dev/sse"
+      ]
+    },
     "GitHub": {
       "command": "docker",
       "args": [
@@ -18,13 +26,32 @@
 {{- end }}
       }
     },
-    "baseline-mcp-server": {
+    "web-baseline": {
       "command": "deno",
       "args": [
         "run",
         "--allow-net=api.webstatus.dev",
         "jsr:@yamanoku/baseline-mcp-server"
       ]
+    },
+    "notionApi": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server@latest"],
+      "env": {
+{{- if .for_personal }}
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer dummy\", \"Notion-Version\": \"2022-06-28\" }"
+{{- else }}
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer {{ onepasswordRead "op://Employee/Notion_MCP/password" }}\", \"Notion-Version\": \"2022-06-28\" }"
+{{- end }}
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "bundlephobia": {
+      "type": "sse",
+      "url": "https://bundlephobia-mcp.sushichan044.workers.dev/sse"
     }
   }
 }
