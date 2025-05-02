@@ -1,3 +1,5 @@
+#:schema https://mise.jdx.dev/schema/mise.json
+
 [tools]
 python = ["3.13.3", "3.12.10", "3.11.12"]
 awscli = "2.27.2"
