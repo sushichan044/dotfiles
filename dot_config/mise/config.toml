@@ -22,7 +22,7 @@ tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [settings]
 experimental = true
-idiomatic_version_file_enable_tools = ["python", "go", "node", "ruby"]
+idiomatic_version_file_enable_tools = ["python", "go", "node", "ruby", "deno", "bun"]
 
 [settings.python]
 venv_stdlib = true
