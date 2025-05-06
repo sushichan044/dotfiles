@@ -10,6 +10,14 @@
                             "to": [{ "key_code": "right_option" }]
                         }
                     ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 34,
+                        "vendor_id": 1278
+                    },
+                    "ignore": true
                 }
             ],
             "name": "Default profile",
