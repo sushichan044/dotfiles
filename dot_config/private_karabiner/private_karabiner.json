@@ -8,6 +8,10 @@
                         {
                             "from": { "key_code": "right_command" },
                             "to": [{ "key_code": "right_option" }]
+                        },
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
                         }
                     ]
                 },
