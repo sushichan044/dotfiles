@@ -98,6 +98,8 @@
     bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
     f = "fetch"
     rm-merged-branch = "!git branch --merged | grep -v '^*' | grep -v 'master' | xargs git branch -d"
+    # rebase current branch with origin/HEAD
+    rbm = "!f() { CURRENT_BRANCH=$(git branch --show-current); git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; git com && git pull --rebase; git switch $CURRENT_BRANCH && git rebase $(git rev-parse --abbrev-ref origin/HEAD | sed 's/origin\\///') && git stash pop || { echo 'リベース中にコンフリクトが発生しました。修正後に「git rebase --continue」を実行し、その後「git stash pop」を実行してください。'; return 1; }; }; f"
 
 # Commit signing
 # Not configured for .ostype == "linux"
