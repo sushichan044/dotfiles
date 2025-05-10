@@ -1,1 +1,2 @@
 --theme="OneHalfDark"
+--map-syntax "*.Brewfile:Ruby"
