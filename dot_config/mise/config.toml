@@ -22,7 +22,20 @@ tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [settings]
 experimental = true
-idiomatic_version_file_enable_tools = ["python", "go", "node", "ruby", "deno", "bun"]
+idiomatic_version_file_enable_tools = [
+    # see: https://github.com/jdx/mise/tree/866ae1ba0c9483357072541dd575203d5034c231/src/plugins/core and search for `idiomatic_file`
+    "bun",
+    "deno",
+    "go",
+    "java",
+    "node",
+    "python",
+    "ruby",
+    "rust",
+    "swift",
+    "terraform",
+    "zig",
+]
 
 [settings.python]
 venv_stdlib = true
