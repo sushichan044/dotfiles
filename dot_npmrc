@@ -2,3 +2,5 @@
 save=true
 save-exact=true
 progress=true
+init-license=MIT
+init-type=module
