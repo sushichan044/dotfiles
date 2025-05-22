@@ -16,3 +16,4 @@ packages:
       - 'github/gh-copilot'
       - 'yusukebe/gh-markdown-preview'
       - 'davidraviv/gh-clean-branches'
+      - 'ryoppippi/gh-nippou'
