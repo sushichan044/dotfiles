@@ -28,7 +28,6 @@ brew "bat"
 brew "chezmoi"
 brew "cloudflared"
 brew "cmake"
-brew "coreutils"
 brew "cpanminus"
 brew "cppcheck"
 brew "cpplint"
@@ -49,7 +48,6 @@ brew "git-delta"
 brew "git-lfs"
 brew "go-task"
 brew "golangci-lint"
-brew "gnu-sed"
 brew "gzip"
 brew "hadolint"
 brew "httpie"
@@ -78,6 +76,10 @@ if OS.linux?
 end
 
 if OS.mac?
+    # GNU tools
+    brew "coreutils"
+    brew "gnu-sed"
+
     # cask
     cask "1password-cli"
     cask "alt-tab"
