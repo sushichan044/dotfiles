@@ -2,11 +2,11 @@
 
 [tools]
 python = ["3.13.3", "3.12.10", "3.11.12"]
-awscli = "2.27.17"
+awscli = "2.27.22"
 java = "21"
 uv = "latest"
 go = "1.24.3"
-node = "22.15.1"
+node = "22.16.0"
 bun = "latest"
 deno = "2.3.3"
 tenv = "latest"
