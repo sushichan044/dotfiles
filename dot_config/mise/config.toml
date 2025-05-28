@@ -14,6 +14,7 @@ watchexec = "latest"
 ruby = ["3.4", "3.3"]
 "npm:@typespec/compiler" = "latest"
 "npm:corepack" = "latest"
+"npm:git-cz" = "latest"
 "npm:pnpm" = "latest"
 "npm:@antfu/ni" = "latest"
 
