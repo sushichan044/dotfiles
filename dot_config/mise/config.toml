@@ -1,8 +1,10 @@
 #:schema https://mise.jdx.dev/schema/mise.json
 
 [tools]
+# When specifying multiple versions, dependabot will only update the first version.
+
+# Languages
 python = ["3.13.3", "3.12.10", "3.11.12"]
-awscli = "2.27.22"
 java = "21"
 uv = "latest"
 go = "1.24.3"
@@ -10,14 +12,19 @@ node = "22.16.0"
 bun = "latest"
 deno = "2.3.3"
 tenv = "latest"
-watchexec = "latest"
 ruby = ["3.4", "3.3"]
+
+# tools
+awscli = "2.27.22"
+watchexec = "latest"
+
+# tools with Backends
 "gem:foreman" = "latest"
+"npm:@antfu/ni" = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:corepack" = "latest"
 "npm:git-cz" = "latest"
 "npm:pnpm" = "latest"
-"npm:@antfu/ni" = "latest"
 
 [alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
