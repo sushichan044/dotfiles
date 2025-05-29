@@ -12,6 +12,7 @@ deno = "2.3.3"
 tenv = "latest"
 watchexec = "latest"
 ruby = ["3.4", "3.3"]
+"gem:foreman" = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:corepack" = "latest"
 "npm:git-cz" = "latest"
