@@ -91,6 +91,8 @@ smudge = git-lfs smudge -- %f
 
 [alias]
 cz = "!f() { git-cz }; f"
+wt = worktree
+wtc = "!f() { tree_name=$(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M%S'); dir_name=\"worktree-${tree_name}\"; git worktree add -b ${tree_name} ${dir_name}; echo \"Created worktree ${tree_name}\"; if command -v pbcopy >/dev/null 2>&1; then echo \"${dir_name}\" | pbcopy && echo \"Worktree path automatically copied: ${dir_name}\"; fi; }; f"
 clear-cache = "rm -r --cached ."
 com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
 fixit = "commit --amend --no-edit"
