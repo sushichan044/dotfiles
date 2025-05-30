@@ -61,10 +61,6 @@ else
     fi
 fi
 
-if command_exists fd; then
-    alias find='fd'
-fi
-
 if is_linux && command_exists apt; then
     alias agi='sudo apt install'
     alias agu='sudo apt update && sudo apt upgrade'
