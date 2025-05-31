@@ -10,12 +10,12 @@ uv = "latest"
 go = "1.24.3"
 node = "22.16.0"
 bun = "latest"
-deno = "2.3.3"
+deno = "2.3.5"
 tenv = "latest"
 ruby = ["3.4", "3.3"]
 
 # tools
-awscli = "2.27.22"
+awscli = "2.27.26"
 watchexec = "latest"
 
 # tools with Backends
