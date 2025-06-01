@@ -24,6 +24,7 @@ watchexec = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:corepack" = "latest"
 "npm:git-cz" = "latest"
+"npm:npkill" = "latest"
 "npm:pnpm" = "latest"
 
 [alias]
