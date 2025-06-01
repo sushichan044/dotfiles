@@ -26,6 +26,7 @@ watchexec = "latest"
 "npm:git-cz" = "latest"
 "npm:npkill" = "latest"
 "npm:pnpm" = "latest"
+"npm:repomix" = "latest"
 
 [alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
