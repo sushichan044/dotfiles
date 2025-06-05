@@ -5,7 +5,7 @@
 #
 # Usage:
 #   - Direct: fzf-worktree
-#   - Keybind: Alt+W (Meta+W)
+#   - Keybind: Ctrl+N
 #
 # Features:
 #   - Lists all git worktrees with enhanced preview
@@ -21,14 +21,18 @@ function fzf-worktree() {
     local selected_worktree=$(git worktree list | fzf \
         --prompt="worktrees > " \
         --header="Select a worktree to cd into" \
-        --preview="git -C {+1} log --oneline --graph --decorate --color=always -50" \
+        --preview="git -C {1} log --oneline --graph --decorate --color=always -50" \
         --preview-window="right:35%,wrap" \
         --reverse \
         --border \
         --ansi)
 
+    if [ $? -ne 0 ]; then
+        return 0
+    fi
+
     if [ -n "$selected_worktree" ]; then
-        local selected_path=$(echo "$selected_worktree" | awk '{print $1}')
+        local selected_path=${${(s: :)selected_worktree}[1]}
 
         if [ -d "$selected_path" ]; then
             if zle; then
@@ -38,7 +42,6 @@ function fzf-worktree() {
             else
                 # Called directly from command line
                 cd "$selected_path"
-                echo "Changed to: $selected_path"
             fi
         else
             echo "Directory not found: $selected_path"
