@@ -21,6 +21,8 @@ function fzf-worktree() {
     local selected_worktree=$(git worktree list | fzf \
         --prompt="worktrees > " \
         --header="Select a worktree to cd into" \
+        --preview="echo '📦 Branch:' && git -C {1} branch --show-current && echo '' && echo '📝 Changed files:' && git -C {1} status --porcelain | head -10 && echo '' && echo '📚 Recent commits:' && git -C {1} log --oneline --decorate -10" \
+        --preview-window="right:40%" \
         --reverse \
         --border \
         --ansi)
