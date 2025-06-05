@@ -92,7 +92,7 @@ smudge = git-lfs smudge -- %f
 [alias]
 cz = "!f() { git-cz }; f"
 wt = worktree
-wtc = "!f() { repo_dir=$(git rev-parse --show-toplevel); repo_name=$(basename ${repo_dir}); tree_name=$(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M%S'); dir_name=\"${repo_name}-worktree-${tree_name}\"; git worktree add -b ${tree_name} ${dir_name}; echo \"Created worktree ${tree_name}\"; if command -v pbcopy >/dev/null 2>&1; then echo \"${dir_name}\" | pbcopy && echo \"Worktree path automatically copied: ${dir_name}\"; fi; }; f"
+wtc = "!f() { repo_dir=$(git rev-parse --show-toplevel); repo_name=$(basename ${repo_dir}); current_branch=$(git branch --show-current | sed 's/\\//-/g'); tree_name=${current_branch}-$(TZ=UTC-9 date +'%Y%m%d%H%M%S'); dir_name=\"${repo_name}-worktree-${tree_name}\"; git worktree add -b ${tree_name} ${dir_name}; echo \"Created worktree ${tree_name}\"; if command -v pbcopy >/dev/null 2>&1; then echo \"${dir_name}\" | pbcopy && echo \"Worktree path automatically copied: ${dir_name}\"; fi; }; f"
 clear-cache = "rm -r --cached ."
 com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
 fixit = "commit --amend --no-edit"
@@ -102,7 +102,7 @@ bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d
 f = "fetch"
 rm-merged-branch = "!git branch --merged | grep -v '^*' | grep -v 'master' | xargs git branch -d"
 # rebase current branch with origin/HEAD
-rbm = "!f() { CURRENT_BRANCH=$(git branch --show-current); git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; git fetch origin && git com && git pull --rebase; git switch $CURRENT_BRANCH && git rebase $(git rev-parse --abbrev-ref origin/HEAD | sed 's/origin\\///') && git stash pop || { echo 'リベース中にコンフリクトが発生しました。修正後に「git rebase --continue」を実行し、その後「git stash pop」を実行してください。'; return 1; }; }; f"
+rbm = "!f() { CURRENT_BRANCH=$(git branch --show-current); git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; git fetch origin && git rebase $(git rev-parse --abbrev-ref origin/HEAD | sed 's/origin\\///') && git stash pop || { echo 'リベース中にコンフリクトが発生しました。修正後に「git rebase --continue」を実行し、その後「git stash pop」を実行してください。'; return 1; }; }; f"
 
 # Commit signing
 # Not configured for .ostype == "linux"
