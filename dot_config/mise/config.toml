@@ -19,6 +19,7 @@ awscli = "2.27.26"
 watchexec = "latest"
 
 # tools with Backends
+"cargo:cctx" = "latest"
 "gem:foreman" = "latest"
 "npm:@antfu/ni" = "latest"
 "npm:@typespec/compiler" = "latest"
