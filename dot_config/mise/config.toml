@@ -21,6 +21,7 @@ watchexec = "latest"
 # tools with Backends
 "cargo:cctx" = "latest"
 "gem:foreman" = "latest"
+"npm:@aku11i/phantom" = "latest"
 "npm:@antfu/ni" = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:corepack" = "latest"
