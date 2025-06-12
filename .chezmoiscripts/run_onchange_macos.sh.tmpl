@@ -14,9 +14,10 @@ defaults write com.apple.LaunchServices "LSQuarantine" -bool false # Disable the
 defaults write NSGlobalDomain "AppleInterfaceStyle" -string "Dark" # Use dark menu bar and Dock
 
 # Dock
-defaults write com.apple.Dock autohide -bool true      # Autohide Dock
-defaults write com.apple.dock show-recents -bool false # Remove recent apps from Dock
-defaults write com.apple.dock launchanim -bool false   # Disable launch animation
+defaults write com.apple.Dock autohide -bool true         # Autohide Dock
+defaults write com.apple.dock show-recents -bool false    # Remove recent apps from Dock
+defaults write com.apple.dock launchanim -bool false      # Disable launch animation
+defaults write com.apple.dock orientation -string "right" # Move Dock to the right side of the screen
 
 # Screenshot
 SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
