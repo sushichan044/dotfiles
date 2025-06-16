@@ -30,7 +30,7 @@ watchexec = "latest"
 "npm:npkill" = "latest"
 "npm:pnpm" = "latest"
 "npm:repomix" = "latest"
-"pipx:plamo-translate" = "latest"
+"pipx:plamo-translate" = { version = "latest", uvx_args = "--with mlx_lm --with numba --with git+https://github.com/google/sentencepiece.git@2734490#subdirectory=python" }
 
 [alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
@@ -51,6 +51,9 @@ idiomatic_version_file_enable_tools = [
     "terraform",
     "zig",
 ]
+
+[settings.pipx]
+uvx = true
 
 [settings.python]
 default_packages_file = "~/.config/mise/.default-python-packages"
