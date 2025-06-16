@@ -1,2 +1,7 @@
 --theme="OneHalfDark"
+
+# Syntax highlight
 --map-syntax "*.Brewfile:Ruby"
+--map-syntax "*.Brewfile.tmpl:Ruby"
+--map-syntax "*.irbrc:Ruby"
+--map-syntax "dot_irbrc:Ruby"
