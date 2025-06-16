@@ -1,1 +1,3 @@
 pipx
+mlx_lm
+git+https://github.com/google/sentencepiece.git@2734490#subdirectory=python

@@ -30,6 +30,7 @@ watchexec = "latest"
 "npm:npkill" = "latest"
 "npm:pnpm" = "latest"
 "npm:repomix" = "latest"
+"pipx:plamo-translate" = "latest"
 
 [alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
