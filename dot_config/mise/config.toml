@@ -52,4 +52,5 @@ idiomatic_version_file_enable_tools = [
 ]
 
 [settings.python]
+default_packages_file = "~/.config/mise/.default-python-packages"
 venv_stdlib = true
