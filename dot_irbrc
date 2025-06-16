@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+require_relative "./.irb/ruby"
+require_relative "./.irb/rails"
+
+#@rbs &block: () -> Array[String]
+#@rbs return: nil
+def normalized_print(&block)
+  output = begin
+    block.call
+  rescue StandardError => e
+    puts "Error: #{e.message}"
+    puts e.backtrace.join("\n")
+    nil
+  end
+
+  return if output.nil? || output.empty?
+
+  puts
+  puts output.join("\n")
+end
+
+# Display Ruby information when IRB starts
+normalized_print { show_ruby_info }
+
+# Display Rails information if available
+normalized_print { show_rails_info }
+
+# Display a new line at the end
+puts
