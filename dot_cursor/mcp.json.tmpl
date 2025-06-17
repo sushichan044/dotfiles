@@ -1,12 +1,7 @@
 {
   "mcpServers": {
     "sentry": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote@latest",
-        "https://mcp.sentry.dev/mcp"
-      ]
+      "url": "https://mcp.sentry.dev/mcp"
     },
     "GitHub": {
       "command": "docker",
@@ -16,7 +11,7 @@
         "--rm",
         "-e",
         "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
+        "ghcr.io/github/github-mcp-server:latest"
       ],
       "env": {
 {{- if .for_personal }}
@@ -30,7 +25,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
+        "@modelcontextprotocol/server-sequential-thinking@latest"
       ]
     },
     "notionApi": {
