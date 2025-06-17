@@ -1,0 +1,29 @@
+{
+  "claude": {
+    "settings": {
+      "preferredNotifChannel": "terminal_bell"
+    },
+    "mcpServers": {
+      "sentry": {
+        "type": "http",
+        "url": "https://mcp.sentry.dev/mcp"
+      },
+      "github": {
+        "type": "http",
+        "url": "https://api.githubcopilot.com/mcp/",
+        "headers": {
+          "X-MCP-Toolsets": "issues,pull_requests,repos",
+          "Authorization": "Bearer github_mcp_pat"
+        }
+      },
+      "context7": {
+        "type": "http",
+        "url": "https://mcp.context7.com/mcp"
+      },
+      "bundlephobia": {
+        "type": "http",
+        "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+      }
+    }
+  }
+}

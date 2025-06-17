@@ -19,3 +19,6 @@ cursor-style = bar
 font-family = MesloLGS NF
 theme = catppuccin-macchiato
 font-feature = -dlig
+
+# Keybindings
+keybind = shift+enter=text:\n

@@ -1,0 +1,8 @@
+{
+  "deny": ["Bash(curl:*)", "Bash(rm:*)"],
+  "env": {
+    "DISABLE_BUG_COMMAND": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_TELEMETRY": "1"
+  }
+}

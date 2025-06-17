@@ -1,0 +1,47 @@
+#!/bin/sh
+set -euo pipefail
+# shellcheck disable=SC1083
+{{- $github_mcp_pat := "" -}}
+{{- if .for_personal -}}
+{{- $github_mcp_pat = onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" -}}
+{{- else -}}
+{{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
+{{- end -}}
+{{/* Inject GitHub PAT dynamically */}}
+{{ $mcp_servers_json := .claude.mcpServers |
+    pruneEmptyDicts |
+    toJson |
+    replaceAllRegex "github_mcp_pat" $github_mcp_pat -}}
+
+tmp_payload=$(mktemp)
+cat >"$tmp_payload" <<'JSON'
+{{ $mcp_servers_json }}
+JSON
+
+original_claude_json_path="$HOME/.claude.json"
+current_claude_json_copy_path=$(mktemp)
+
+# ensure the temporary files are removed on script exit
+trap 'rm -f "$tmp_payload" "$current_claude_json_copy_path"' EXIT
+
+# Early exit if jq is not installed
+if ! type jq >/dev/null 2>&1; then
+    echo "❌ jq is not available. Exiting..."
+    exit 1
+fi
+
+if [ ! -f "$original_claude_json_path" ]; then
+    echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
+    exit 0
+fi
+
+# replace the mcpServers field in ~/.claude.json with the new payload file
+# shellcheck disable=SC2154
+if jq --slurpfile mcpServers "$tmp_payload" '.mcpServers = $mcpServers[0]' \
+    "$original_claude_json_path" >"$current_claude_json_copy_path" &&
+    mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
+    echo "✅ Successfully updated mcpServers in ~/.claude.json"
+else
+    echo "❌ Failed to update mcpServers in ~/.claude.json"
+    exit 1
+fi

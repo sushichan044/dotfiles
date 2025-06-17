@@ -9,5 +9,6 @@
 .solargraph.yml
 .graphqlrc.yml
 
-# personal playground
+# personal
 ,
+**/.claude/settings.local.json
