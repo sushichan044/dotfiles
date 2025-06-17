@@ -18,17 +18,17 @@ cat >"$tmp_payload" <<'JSON'
 {{ $mcp_servers_json }}
 JSON
 
-# ensure the temporary payload is removed on script exit
-trap 'rm -f "$tmp_payload"' EXIT
+original_claude_json_path="$HOME/.claude.json"
+current_claude_json_copy_path=$(mktemp)
+
+# ensure the temporary files are removed on script exit
+trap 'rm -f "$tmp_payload" "$current_claude_json_copy_path"' EXIT
 
 # Early exit if jq is not installed
 if ! type jq >/dev/null 2>&1; then
     echo "❌ jq is not available. Exiting..."
     exit 1
 fi
-
-original_claude_json_path="$HOME/.claude.json"
-current_claude_json_copy_path="$HOME/.claude.json.tmp.mcp"
 
 if [ ! -f "$original_claude_json_path" ]; then
     echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
