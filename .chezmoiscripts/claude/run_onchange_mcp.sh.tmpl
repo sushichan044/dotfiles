@@ -1,4 +1,5 @@
 #!/bin/sh
+set -euo pipefail
 # shellcheck disable=SC1083
 {{- $github_mcp_pat := "" -}}
 {{- if .for_personal -}}
@@ -16,9 +17,6 @@ tmp_payload=$(mktemp)
 cat >"$tmp_payload" <<'JSON'
 {{ $mcp_servers_json }}
 JSON
-
-#!/bin/sh
-+set -euo pipefail
 
 # Early exit if jq is not installed
 if ! type jq >/dev/null 2>&1; then
