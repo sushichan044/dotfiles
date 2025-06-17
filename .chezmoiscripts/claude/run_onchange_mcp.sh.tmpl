@@ -34,10 +34,16 @@ if [ ! -f "$original_claude_json_path" ]; then
     exit 0
 fi
 
-# replace the mcpServers field in ~/.claude.json with the new mcp_servers_str
+# replace the mcpServers field in ~/.claude.json with the new payload file
 # shellcheck disable=SC2154
-if jq --argjson mcpServers {{ $mcp_servers_str }} '.mcpServers = $mcpServers' "$original_claude_json_path" >"$current_claude_json_copy_path" && mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
+if jq --slurpfile mcpServers "$tmp_payload" '.mcpServers = $mcpServers[0]' \
+       "$original_claude_json_path" >"$current_claude_json_copy_path" \
+   && mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
     echo "✅ Successfully updated mcpServers in ~/.claude.json"
+fi
+
+# ensure the temporary payload is removed on script exit
+trap 'rm -f "$tmp_payload"' EXIT
 else
     echo "❌ Failed to update mcpServers in ~/.claude.json"
     exit 1
