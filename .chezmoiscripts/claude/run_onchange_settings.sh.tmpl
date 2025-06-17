@@ -1,4 +1,5 @@
 #!/bin/sh
+set -euo pipefail
 
 # Early exit if jq is not installed
 if ! type jq >/dev/null 2>&1; then
@@ -8,8 +9,9 @@ fi
 
 # Update each setting from .claude.settings to top-level in ~/.claude.json
 original_claude_json_path="$HOME/.claude.json"
-current_claude_json_copy_path="$HOME/.claude.json.tmp.settings"
-modified_claude_json_copy_path="$HOME/.claude.json.tmp.settings.modified"
+current_claude_json_copy_path=$(mktemp)
+modified_claude_json_copy_path=$(mktemp)
+trap 'rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"' EXIT
 
 if [ ! -f "$original_claude_json_path" ]; then
     echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
