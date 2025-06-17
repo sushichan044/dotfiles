@@ -1,13 +1,18 @@
+{{ if eq .chezmoi.os "darwin" "linux" -}}
 #!/bin/sh
 set -euo pipefail
-# shellcheck disable=SC1083
+
+{{/* Re-run if ~/.claude.json existence changed */ -}}
+{{- $lstatResult := joinPath .chezmoi.homeDir ".claude.json" | lstat -}}
+{{- $claude_json_status := and $lstatResult (eq $lstatResult.type "file") -}}
+
+{{/* Inject GitHub PAT dynamically */}}
 {{- $github_mcp_pat := "" -}}
 {{- if .for_personal -}}
 {{- $github_mcp_pat = onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" -}}
 {{- else -}}
 {{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
 {{- end -}}
-{{/* Inject GitHub PAT dynamically */}}
 {{ $mcp_servers_json := .claude.mcpServers |
     pruneEmptyDicts |
     toJson |
@@ -45,3 +50,4 @@ else
     echo "❌ Failed to update mcpServers in ~/.claude.json"
     exit 1
 fi
+{{ end -}}
