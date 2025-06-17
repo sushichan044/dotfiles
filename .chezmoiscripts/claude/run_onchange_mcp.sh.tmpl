@@ -1,0 +1,37 @@
+#!/bin/sh
+# shellcheck disable=SC1083
+{{- $github_mcp_pat := "" -}}
+{{- if .for_personal -}}
+{{- $github_mcp_pat = onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" -}}
+{{- else -}}
+{{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
+{{- end -}}
+{{/* Inject GitHub PAT dynamically */}}
+{{ $mcp_servers_str := .claude.mcpServers |
+    pruneEmptyDicts |
+    toJson |
+    replaceAllRegex "github_mcp_pat" $github_mcp_pat |
+    quote -}}
+
+# Early exit if jq is not installed
+if ! type jq >/dev/null 2>&1; then
+    echo "❌ jq is not available. Exiting..."
+    exit 1
+fi
+
+original_claude_json_path="$HOME/.claude.json"
+current_claude_json_copy_path="$HOME/.claude.json.tmp.mcp"
+
+if [ ! -f "$original_claude_json_path" ]; then
+    echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
+    exit 0
+fi
+
+# replace the mcpServers field in ~/.claude.json with the new mcp_servers_str
+# shellcheck disable=SC2154
+if jq --argjson mcpServers {{ $mcp_servers_str }} '.mcpServers = $mcpServers' "$original_claude_json_path" >"$current_claude_json_copy_path" && mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
+    echo "✅ Successfully updated mcpServers in ~/.claude.json"
+else
+    echo "❌ Failed to update mcpServers in ~/.claude.json"
+    exit 1
+fi

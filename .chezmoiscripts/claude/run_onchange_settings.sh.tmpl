@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Early exit if jq is not installed
+if ! type jq >/dev/null 2>&1; then
+    echo "❌ jq is not available. Exiting..."
+    exit 1
+fi
+
+# Update each setting from .claude.settings to top-level in ~/.claude.json
+original_claude_json_path="$HOME/.claude.json"
+current_claude_json_copy_path="$HOME/.claude.json.tmp.settings"
+modified_claude_json_copy_path="$HOME/.claude.json.tmp.settings.modified"
+
+if [ ! -f "$original_claude_json_path" ]; then
+    echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
+    exit 0
+fi
+
+cp "$original_claude_json_path" "$current_claude_json_copy_path"
+
+{{- range $key, $value := .claude.settings }}
+# shellcheck disable=SC1083
+if ! jq --arg key "{{ $key }}" --argjson value {{ $value | toJson | quote }} '.[$key] = $value' "$current_claude_json_copy_path" >"$modified_claude_json_copy_path"; then
+    echo "❌ Failed to update {{ $key }} in ~/.claude.json"
+    rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"
+    exit 1
+fi
+mv "$modified_claude_json_copy_path" "$current_claude_json_copy_path"
+{{- end }}
+
+{{ $settingsKeys := .claude.settings | keys | sortAlpha | join ", " -}}
+# Replace the original file with the updated one
+if mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
+    echo "✅ Successfully updated {{ $settingsKeys }} in ~/.claude.json"
+else
+    echo "❌ Failed to replace ~/.claude.json"
+    rm -f "$current_claude_json_copy_path"
+    exit 1
+fi
