@@ -7,11 +7,15 @@
 {{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
 {{- end -}}
 {{/* Inject GitHub PAT dynamically */}}
-{{ $mcp_servers_str := .claude.mcpServers |
+{{ $mcp_servers_json := .claude.mcpServers |
     pruneEmptyDicts |
     toJson |
-    replaceAllRegex "github_mcp_pat" $github_mcp_pat |
-    quote -}}
+    replaceAllRegex "github_mcp_pat" $github_mcp_pat -}}
+
+tmp_payload=$(mktemp)
+cat >"$tmp_payload" <<'JSON'
+{{ $mcp_servers_json }}
+JSON
 
 #!/bin/sh
 +set -euo pipefail
