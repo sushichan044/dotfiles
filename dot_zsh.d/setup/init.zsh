@@ -56,3 +56,8 @@ load_zsh_files_from_dir() {
         done
     fi
 }
+
+is_shell_for_ai_agent() {
+    # check if shell is for AI agent
+    [[ -n "$CURSOR_TRACE_ID" ]]
+}

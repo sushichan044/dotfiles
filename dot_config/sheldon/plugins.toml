@@ -25,6 +25,7 @@ apply = ["defer"]
 
 [plugins.powerlevel10k]
 github = 'romkatv/powerlevel10k'
+profiles = ["human"]
 
 [plugins.zsh-256color]
 github = 'chrissicool/zsh-256color'
@@ -33,6 +34,7 @@ apply = ["defer"]
 [plugins.zsh-ssh]
 github = 'sunlei/zsh-ssh'
 apply = ["defer"]
+profiles = ["human"]
 
 [plugins.zsh-fzf-history-search]
 github = 'joshskidmore/zsh-fzf-history-search'
