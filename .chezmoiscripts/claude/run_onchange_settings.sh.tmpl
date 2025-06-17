@@ -20,7 +20,7 @@ cp "$original_claude_json_path" "$current_claude_json_copy_path"
 
 {{- range $key, $value := .claude.settings }}
 # shellcheck disable=SC1083
-if ! jq --arg key "{{ $key }}" --argjson value {{ $value | toJson | quote }} '.[$key] = $value' "$current_claude_json_copy_path" >"$modified_claude_json_copy_path"; then
+if ! jq --arg key "{{ $key }}" --argjson value {{ $value | toJson }} '.[$key] = $value' "$current_claude_json_copy_path" >"$modified_claude_json_copy_path"; then
     echo "❌ Failed to update {{ $key }} in ~/.claude.json"
     rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"
     exit 1
