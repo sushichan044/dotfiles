@@ -1,14 +1,21 @@
 source "$HOME/.zsh.d/setup/init.zsh"
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
+
+# Workaround: Do not use p10k in Cursor Agent.
+# https://github.com/getcursor/cursor/issues/3215
+# https://forum.cursor.com/t/agent-not-detecting-that-a-command-has-completed/65052
+if [[ ! -n $CURSOR_TRACE_ID ]]; then
+  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+  # Initialization code that may require console input (password prompts, [y/n]
+  # confirmations, etc.) must go above this block; everything else may go below.
+  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  fi
+
+  [[ ! -f "$HOME/.zsh.d/p10k.zsh" ]] || source "$HOME/.zsh.d/p10k.zsh"
+fi
 
 # Auto suggestion text color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
@@ -44,8 +51,8 @@ fi
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 {{ end -}}
