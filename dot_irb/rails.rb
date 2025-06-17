@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "./color"
+require_relative "./nerd"
 
 # Rails environment information display
 #: () -> Array[String]
@@ -25,7 +26,7 @@ def show_rails_info
                       :blue
                     end
 
-  output << colorize("🚅 Rails Environment").bold.magenta
+  output << colorize("#{NerdIcons.rails} Rails Environment").bold.magenta
   output << "#{colorize('Environment:').bold} #{colorize(rails_env).send(env_color_method)}"
   output << "#{colorize('Rails:').bold}       #{colorize(rails_version).blue}" if rails_version
 
