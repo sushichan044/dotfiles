@@ -4,12 +4,6 @@
 {{- else -}}
 {{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
 {{- end -}}
-{{- $notion_mcp_token := "" -}}
-{{- if .for_personal -}}
-{{- $notion_mcp_token = "dummy" -}}
-{{- else -}}
-{{- $notion_mcp_token = onepasswordRead "op://Employee/Notion_MCP/password" -}}
-{{- end -}}
 {
   "mcpServers": {
     "sentry": {
@@ -37,12 +31,9 @@
         "Authorization": "Bearer {{ $github_mcp_pat }}"
       }
     },
-    "notionApi": {
-      "command": "npx",
-      "args": ["-y", "@notionhq/notion-mcp-server@latest"],
-      "env": {
-        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer {{ $notion_mcp_token }}\", \"Notion-Version\": \"2022-06-28\" }"
-      }
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
     },
     "context7": {
       "url": "https://mcp.context7.com/mcp"
