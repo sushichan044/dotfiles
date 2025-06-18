@@ -12,22 +12,22 @@
     },
     "github-issues": {
       "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/issues/",
-        "headers": {
+      "url": "https://api.githubcopilot.com/mcp/x/issues/",
+      "headers": {
         "Authorization": "Bearer {{ $github_mcp_pat }}"
       }
     },
     "github-prs": {
       "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/pull_requests/readonly",
-        "headers": {
+      "url": "https://api.githubcopilot.com/mcp/x/pull_requests/readonly",
+      "headers": {
         "Authorization": "Bearer {{ $github_mcp_pat }}"
       }
     },
     "github-repos": {
       "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/repos/readonly",
-        "headers": {
+      "url": "https://api.githubcopilot.com/mcp/x/repos/readonly",
+      "headers": {
         "Authorization": "Bearer {{ $github_mcp_pat }}"
       }
     },
@@ -36,9 +36,11 @@
       "url": "https://mcp.notion.com/mcp"
     },
     "context7": {
+      "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
     "bundlephobia": {
+      "type": "http",
       "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
     }
   }
