@@ -37,7 +37,7 @@ fi
 
 if [ ! -f "$original_claude_json_path" ]; then
     echo "🚧 $HOME/.claude.json not found. touching it to create an empty file..."
-    touch "$original_claude_json_path"
+    echo "{}\n" >"$original_claude_json_path"
 fi
 
 # replace the mcpServers field in ~/.claude.json with the new payload file
