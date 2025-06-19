@@ -36,8 +36,8 @@ if ! type jq >/dev/null 2>&1; then
 fi
 
 if [ ! -f "$original_claude_json_path" ]; then
-    echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
-    exit 0
+    echo "🚧 $HOME/.claude.json not found. touching it to create an empty file..."
+    touch "$original_claude_json_path"
 fi
 
 # replace the mcpServers field in ~/.claude.json with the new payload file

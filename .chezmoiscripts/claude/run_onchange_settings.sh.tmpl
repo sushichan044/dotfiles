@@ -19,8 +19,8 @@ modified_claude_json_copy_path=$(mktemp)
 trap 'rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"' EXIT
 
 if [ ! -f "$original_claude_json_path" ]; then
-    echo "🚧 $HOME/.claude.json not found. Run 'claude \"/init\"' to create it."
-    exit 0
+    echo "🚧 $HOME/.claude.json not found. touching it to create an empty file..."
+    touch "$original_claude_json_path"
 fi
 
 cp "$original_claude_json_path" "$current_claude_json_copy_path"
