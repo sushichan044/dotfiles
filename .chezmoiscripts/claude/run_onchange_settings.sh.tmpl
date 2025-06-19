@@ -1,5 +1,5 @@
 {{ if eq .chezmoi.os "darwin" "linux" -}}
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 
 {{/* Re-run if ~/.claude.json existence changed */ -}}
