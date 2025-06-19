@@ -19,19 +19,19 @@ Concentrate on fulfilling the user's software engineering request accurately and
 
 ### 2.1. Git / GitHub Use
 
-* Keep your git commits SMALL and ATOMIC.
-* Always use `git --no-pager` to get raw output.
+* YOU MUST: Keep your git commits SMALL and ATOMIC.
+* IMPORTANT: Use conventional commit messages.
+* Use `git --no-pager` to get raw output.
 * Use the GitHub CLI (`gh`) for All GitHub-related tasks.
+  * Must follow this way if user input github-like urls.
 * Respect `.github/pull_request_template.md` and `.github/issue_template.md` for pull requests and issues.
 
 ### 2.2. Tool Calling
 
 * After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
-* Prefer calling GitHub tools for retrieving information from GitHub or searching GitHub such as issues, PRs, code search.
-  * Must follow this way if user input github-like urls.
 * When a URL is provided, you can retrieve its content in Markdown format using the command:
      `npx -y @mizchi/readability --format=md <url>`
-* Always follow these steps when you searching anything about some libraries to get latest information.
+* Always follow these steps when you searching anything about some libraries to get latest information with context7.
   1. Call `resolve-library-id` tool to obtain the ID corresponding to the library name.
   2. Call `get-library-docs` tool with resolved ID to retrieve the documentation.
 

@@ -8,27 +8,6 @@
         "type": "http",
         "url": "https://mcp.sentry.dev/mcp"
       },
-      "github-issues": {
-        "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/issues/",
-        "headers": {
-          "Authorization": "Bearer github_mcp_pat"
-        }
-      },
-      "github-prs": {
-        "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/pull_requests/readonly",
-        "headers": {
-          "Authorization": "Bearer github_mcp_pat"
-        }
-      },
-      "github-repos": {
-        "type": "http",
-        "url": "https://api.githubcopilot.com/mcp/x/repos/readonly",
-        "headers": {
-          "Authorization": "Bearer github_mcp_pat"
-        }
-      },
       "context7": {
         "type": "http",
         "url": "https://mcp.context7.com/mcp"

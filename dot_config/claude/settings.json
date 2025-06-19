@@ -1,0 +1,53 @@
+{
+  "env": {
+    "DISABLE_BUG_COMMAND": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_TELEMETRY": "1"
+  },
+  "permissions": {
+    "allow": [
+      "List(*)",
+      "WebFetch(https://*)",
+      "Edit(*)",
+
+      "Bash(git:*)",
+
+      "Bash(mise install:*)",
+      "Bash(mise run:*)",
+
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+
+      "Bash(fd:*)",
+      "Bash(rg:*)",
+
+
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(na:*)",
+      "Bash(ni:*)",
+
+      "Bash(bundle:*)",
+
+      "Bash(go mod tidy:*)",
+      "Bash(go mod download:*)",
+      "Bash(go get:*)"
+    ],
+    "deny": [
+      "Bash(curl:*)",
+      "Bash(http:*)",
+      "Bash(wget:*)",
+
+      "Bash(rm:*)",
+      "Bash(rmdir:*)"
+    ]
+  }
+}
