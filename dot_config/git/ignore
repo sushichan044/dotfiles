@@ -12,3 +12,5 @@
 # personal
 ,
 **/.claude/settings.local.json
+**/.claude/sushichan044/
+**/CLAUDE.local.md

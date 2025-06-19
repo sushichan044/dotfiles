@@ -7,7 +7,7 @@
   "permissions": {
     "allow": [
       "List(*)",
-      "Fetch(https://*)",
+      "WebFetch(https://*)",
       "Edit(*)",
 
       "Bash(git:*)",
