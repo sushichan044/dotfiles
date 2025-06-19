@@ -32,7 +32,8 @@ Concentrate on fulfilling the user's software engineering request accurately and
 
 ### 2.3. Other commands
 
-* You can use ripgrep with `rg`.
+* You can use ripgrep with `rg` as better grep.
+* You can use sharkdp/fd with `fd` as better find.
 
 ## 3. Interaction Guidelines
 

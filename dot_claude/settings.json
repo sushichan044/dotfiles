@@ -1,8 +1,28 @@
 {
-  "deny": ["Bash(curl:*)", "Bash(rm:*)"],
+
   "env": {
     "DISABLE_BUG_COMMAND": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_TELEMETRY": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(fd:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git log:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)"
+    ],
+    "deny": ["Bash(curl:*)", "Bash(rm:*)"]
   }
 }
