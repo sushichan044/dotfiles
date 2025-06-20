@@ -3,18 +3,18 @@
   "schemes" : [
     {
       "scrolling" : {
-        "acceleration" : {
-          "vertical" : 1
-        },
         "reverse" : {
           "vertical" : true
+        },
+        "acceleration" : {
+          "vertical" : 1
         }
       },
       "if" : {
         "device" : {
           "category" : "mouse",
-          "vendorID" : "0x46d",
           "productName" : "USB Receiver",
+          "vendorID" : "0x46d",
           "productID" : "0xc547"
         }
       }
@@ -25,10 +25,29 @@
       },
       "if" : {
         "device" : {
-          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "productID" : "0x0",
           "vendorID" : "0x0",
           "category" : "trackpad",
-          "productID" : "0x0"
+          "productName" : "Apple Internal Keyboard \/ Trackpad"
+        }
+      }
+    },
+    {
+      "scrolling" : {
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "reverse" : {
+          "vertical" : true
+        }
+      },
+      "if" : {
+        "device" : {
+          "productName" : "PRO X Wireless",
+          "serialNumber" : "0BB5E886",
+          "productID" : "0xc094",
+          "category" : "mouse",
+          "vendorID" : "0x46d"
         }
       }
     },
@@ -43,11 +62,11 @@
       },
       "if" : {
         "device" : {
-          "productID" : "0xc094",
-          "vendorID" : "0x46d",
-          "productName" : "PRO X Wireless",
           "category" : "mouse",
-          "serialNumber" : "0BB5E886"
+          "productID" : "0x8008",
+          "vendorID" : "0x4a5",
+          "serialNumber" : "FA2635ACDA60",
+          "productName" : "BenQ ZOWIE Gaming Mouse"
         }
       }
     }
