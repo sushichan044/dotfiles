@@ -8,10 +8,40 @@
   "permissions": {
     "allow": [
       "List(*)",
+      "Fetch(https://*)",
       "WebFetch(https://*)",
       "Edit(*)",
 
       "Bash(git:*)",
+
+      "Bash(gh cache:*)",
+      "Bash(gh extension browse:*)",
+      "Bash(gh extension list:*)",
+      "Bash(gh extension search:*)",
+      "Bash(gh gist list:*)",
+      "Bash(gh gist view:*)",
+
+      "Bash(gh issue list:*)",
+      "Bash(gh issue status:*)",
+      "Bash(gh issue view:*)",
+
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr view:*)",
+
+      "Bash(gh repo gitignore:*)",
+      "Bash(gh repo license:*)",
+      "Bash(gh repo list:*)",
+      "Bash(gh repo sync:*)",
+      "Bash(gh repo view:*)",
+
+      "Bash(gh search:*)",
+
+      "Bash(gh workflow list:*)",
+      "Bash(gh workflow view:*)",
 
       "Bash(mise install:*)",
       "Bash(mise run:*)",
@@ -29,7 +59,6 @@
 
       "Bash(fd:*)",
       "Bash(rg:*)",
-
 
       "Bash(npm:*)",
       "Bash(pnpm:*)",
