@@ -1,35 +1,8 @@
-{{- $github_mcp_pat := "" -}}
-{{- if .for_personal -}}
-{{- $github_mcp_pat = onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" -}}
-{{- else -}}
-{{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
-{{- end -}}
 {
   "mcpServers": {
     "sentry": {
       "type": "http",
       "url": "https://mcp.sentry.dev/mcp"
-    },
-    "github-issues": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/x/issues/",
-      "headers": {
-        "Authorization": "Bearer {{ $github_mcp_pat }}"
-      }
-    },
-    "github-prs": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/x/pull_requests/readonly",
-      "headers": {
-        "Authorization": "Bearer {{ $github_mcp_pat }}"
-      }
-    },
-    "github-repos": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/x/repos/readonly",
-      "headers": {
-        "Authorization": "Bearer {{ $github_mcp_pat }}"
-      }
     },
     "notion": {
       "type": "http",
