@@ -22,8 +22,8 @@ Concentrate on fulfilling the user's software engineering request accurately and
 * YOU MUST: Keep your git commits SMALL and ATOMIC.
 * IMPORTANT: Use conventional commit messages.
 * Use `git --no-pager` to get raw output.
-* Use the GitHub CLI (`gh`) for All GitHub-related tasks.
-  * Must follow this way if user input github-like urls.
+* IMPORTANT: Use the GitHub CLI (`gh`) for All GitHub-related tasks.
+  * When reading github-like url, first use `gh` then fallback to `Fetch` tool if necessary.
 * Respect `.github/pull_request_template.md` and `.github/issue_template.md` for pull requests and issues.
 
 ### 2.2. Tool Calling
