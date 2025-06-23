@@ -33,10 +33,6 @@ if command_exists fzf; then
   source <(fzf --zsh)
 fi
 
-if command_exists zoxide; then
-  eval "$(zoxide init zsh)"
-fi
-
 if command_exists phantom; then
   eval "$(phantom completion zsh)"
 fi
