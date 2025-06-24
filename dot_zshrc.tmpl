@@ -37,6 +37,10 @@ if command_exists phantom; then
   eval "$(phantom completion zsh)"
 fi
 
+if command_exists claude; then
+  export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+fi
+
 {{ if eq .chezmoi.os "linux" "darwin" -}}
 {{ if eq .chezmoi.os "linux" -}}
 # TBD pnpm
