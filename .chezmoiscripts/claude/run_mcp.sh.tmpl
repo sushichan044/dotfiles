@@ -5,18 +5,10 @@ set -euo pipefail
 {{/* Re-run if ~/.claude.json existence changed */ -}}
 {{- $lstatResult := joinPath .chezmoi.homeDir ".claude.json" | lstat -}}
 {{- $claude_json_status := and $lstatResult (eq $lstatResult.type "file") -}}
-
-{{/* Inject GitHub PAT dynamically */}}
-{{- $github_mcp_pat := "" -}}
-{{- if .for_personal -}}
-{{- $github_mcp_pat = onepasswordRead "op://dotfiles/GITHUB_PAT_MCP/token" -}}
-{{- else -}}
-{{- $github_mcp_pat = onepasswordRead "op://Employee/GITHUB_PAT_MCP/token" -}}
-{{- end -}}
 {{ $mcp_servers_json := .claude.mcpServers |
     pruneEmptyDicts |
     toJson |
-    replaceAllRegex "github_mcp_pat" $github_mcp_pat -}}
+    -}}
 
 tmp_payload=$(mktemp)
 cat >"$tmp_payload" <<'JSON'
