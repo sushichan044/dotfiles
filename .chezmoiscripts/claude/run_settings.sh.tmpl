@@ -2,24 +2,20 @@
 #!/bin/bash
 set -euo pipefail
 
-{{/* Re-run if ~/.claude.json existence changed */ -}}
-{{- $lstatResult := joinPath .chezmoi.homeDir ".claude.json" | lstat -}}
-{{- $claude_json_status := and $lstatResult (eq $lstatResult.type "file") -}}
-
 # Early exit if jq is not installed
 if ! type jq >/dev/null 2>&1; then
     echo "❌ jq is not available. Exiting..."
     exit 1
 fi
 
-# Update each setting from .claude.settings to top-level in ~/.claude.json
-original_claude_json_path="$HOME/.claude.json"
+# Update each setting from .claude.settings to top-level in ~/.config/claude/.claude.json
+original_claude_json_path="$XDG_CONFIG_HOME/claude/.claude.json"
 current_claude_json_copy_path=$(mktemp)
 modified_claude_json_copy_path=$(mktemp)
 trap 'rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"' EXIT
 
 if [ ! -f "$original_claude_json_path" ]; then
-    echo "🚧 $HOME/.claude.json not found. touching it to create an empty file..."
+    echo "🚧 $original_claude_json_path not found. touching it to create an empty file..."
     echo "{}\n" >"$original_claude_json_path"
 fi
 
@@ -28,7 +24,7 @@ cp "$original_claude_json_path" "$current_claude_json_copy_path"
 {{- range $key, $value := .claude.settings }}
 # shellcheck disable=SC1083
 if ! jq --arg key "{{ $key }}" --arg value {{ $value | toJson }} '.[$key] = $value' "$current_claude_json_copy_path" >"$modified_claude_json_copy_path"; then
-    echo "❌ Failed to update {{ $key }} in ~/.claude.json"
+    echo "❌ Failed to update {{ $key }} in $original_claude_json_path"
     rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"
     exit 1
 fi
@@ -38,9 +34,9 @@ mv "$modified_claude_json_copy_path" "$current_claude_json_copy_path"
 {{ $settingsKeys := .claude.settings | keys | sortAlpha | join ", " -}}
 # Replace the original file with the updated one
 if mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
-    echo "✅ Successfully updated {{ $settingsKeys }} in ~/.claude.json"
+    echo "✅ Successfully updated {{ $settingsKeys }} in $original_claude_json_path"
 else
-    echo "❌ Failed to replace ~/.claude.json"
+    echo "❌ Failed to replace $original_claude_json_path"
     rm -f "$current_claude_json_copy_path"
     exit 1
 fi

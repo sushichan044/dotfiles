@@ -2,9 +2,6 @@
 #!/bin/bash
 set -euo pipefail
 
-{{/* Re-run if ~/.claude.json existence changed */ -}}
-{{- $lstatResult := joinPath .chezmoi.homeDir ".claude.json" | lstat -}}
-{{- $claude_json_status := and $lstatResult (eq $lstatResult.type "file") -}}
 {{ $mcp_servers_json := .claude.mcpServers |
     pruneEmptyDicts |
     toJson |
@@ -15,7 +12,7 @@ cat >"$tmp_payload" <<'JSON'
 {{ $mcp_servers_json }}
 JSON
 
-original_claude_json_path="$HOME/.claude.json"
+original_claude_json_path="$XDG_CONFIG_HOME/claude/.claude.json"
 current_claude_json_copy_path=$(mktemp)
 
 # ensure the temporary files are removed on script exit
@@ -28,18 +25,18 @@ if ! type jq >/dev/null 2>&1; then
 fi
 
 if [ ! -f "$original_claude_json_path" ]; then
-    echo "🚧 $HOME/.claude.json not found. touching it to create an empty file..."
+    echo "🚧 $original_claude_json_path not found. touching it to create an empty file..."
     echo "{}\n" >"$original_claude_json_path"
 fi
 
-# replace the mcpServers field in ~/.claude.json with the new payload file
+# replace the mcpServers field in ~/.config/claude/.claude.json with the new payload file
 # shellcheck disable=SC2154
 if jq --slurpfile mcpServers "$tmp_payload" '.mcpServers = $mcpServers[0]' \
     "$original_claude_json_path" >"$current_claude_json_copy_path" &&
     mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
-    echo "✅ Successfully updated mcpServers in ~/.claude.json"
+    echo "✅ Successfully updated mcpServers in $original_claude_json_path"
 else
-    echo "❌ Failed to update mcpServers in ~/.claude.json"
+    echo "❌ Failed to update mcpServers in $original_claude_json_path"
     exit 1
 fi
 {{ end -}}
