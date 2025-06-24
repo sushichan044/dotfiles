@@ -70,6 +70,10 @@ if is_linux && command_exists apt; then
     alias agr='sudo apt remove'
 fi
 
+if command_exists claude; then
+    alias c='claude'
+fi
+
 {{ if eq .ostype "wsl" }}
 # wsl-open
 alias open='wsl-open'
