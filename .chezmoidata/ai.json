@@ -30,9 +30,6 @@
       },
       "theme": "Atom One",
       "mcpServers": {
-        "sentry": {
-          "httpUrl": "https://mcp.sentry.dev/mcp"
-        },
         "context7": {
           "httpUrl": "https://mcp.context7.com/mcp",
           "trust": true
