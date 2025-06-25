@@ -1,0 +1,56 @@
+{
+  "claude": {
+    "settings": {
+      "preferredNotifChannel": "terminal_bell",
+      "mcpServers": {
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "context7": {
+          "type": "http",
+          "url": "https://mcp.context7.com/mcp"
+        },
+        "bundlephobia": {
+          "type": "http",
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "deepwiki": {
+          "type": "http",
+          "url": "https://mcp.deepwiki.com/mcp"
+        }
+      }
+    }
+  },
+  "gemini": {
+    "settings": {
+      "autoAccept": true,
+      "checkpointing": {
+        "enabled": true
+      },
+      "theme": "Atom One",
+      "mcpServers": {
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "context7": {
+          "type": "http",
+          "url": "https://mcp.context7.com/mcp",
+          "trust": true
+        },
+        "bundlephobia": {
+          "type": "http",
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
+          "trust": true
+        },
+        "deepwiki": {
+          "type": "http",
+          "url": "https://mcp.deepwiki.com/mcp",
+          "trust": true
+        }
+      },
+      "usageStatisticsEnabled": false
+    }
+  }
+}
