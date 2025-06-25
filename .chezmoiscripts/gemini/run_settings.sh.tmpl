@@ -1,6 +1,6 @@
 {{ if eq .chezmoi.os "darwin" "linux" -}}
 #!/bin/bash
-set -euox pipefail
+set -euo pipefail
 
 # Early exit if jq is not installed
 if ! type jq >/dev/null 2>&1; then
