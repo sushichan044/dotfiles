@@ -43,6 +43,7 @@ fi
 
 if command_exists gemini; then
   export GEMINI_SANDBOX="true"
+  export SEATBELT_PROFILE="permissive-open"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
