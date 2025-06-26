@@ -35,6 +35,7 @@ Concentrate on fulfilling the user's software engineering request accurately and
 ### 2.2. Tool Calling
 
 * After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
+* YOU SHOULD: use `sequential-thinking` tool for complex tasks that require multiple steps or iterations.
 * When a URL is provided, you can retrieve its content in Markdown format using the command:
      `npx -y @mizchi/readability --format=md <url>`
 * Always follow these steps when you searching anything about some libraries to get latest information with context7.
