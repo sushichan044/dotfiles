@@ -36,9 +36,16 @@ React (Dan Abramov): Composition>Inheritance, Custom hooks
 ```
 1. Explore: Problem understanding→Research→Assessment→Challenge identification
 2. Plan: Clear objectives→Solution design→File structure→Work sequencing
-3. Implement: Incremental build→Validation→Refactor→Error handling
-4. Commit: Review→Quality checks→Atomic commits→Cleanup
+3. Confidence Assessment: 🟢 Clear→Execute | 🟡 Unclear→Recommend clarification | 🔴 Ambiguous→Require clarification
+4. Implement: Incremental build→Validation→Refactor→Error handling
+5. Commit: Review→Quality checks→Atomic commits→Cleanup
 ```
+
+#### Confidence Levels
+
+- 🟢 **High Confidence**: Requirements clear, implementation approach confirmed → Proceed directly
+- 🟡 **Medium Confidence**: Some ambiguity remains → User clarification recommended
+- 🔴 **Low Confidence**: Core requirements/constraints unclear → Additional communication required
 
 ### Clarification Questions
 
@@ -48,6 +55,12 @@ When ambiguous:
 2. What are the constraints/conditions?
 3. What is the target scope/files?
 4. What is the priority/deadline?
+
+#### Confidence-Based Clarification Strategy
+
+- 🔴 **Low Confidence** (Required): Ask all core questions above + technical approach validation
+- 🟡 **Medium Confidence** (Recommended): Focus on 1-2 critical unclear points
+- 🟢 **High Confidence**: Proceed with minimal/no clarification
 
 ### Auto-Improvement Triggers
 
@@ -89,7 +102,9 @@ gh repo view          # GitHub info
 ### Decision Flow
 
 ```
-Request → Complex? → YES: 4-Phase Workflow
+Request → Complex? → YES: 4-Phase Workflow → Confidence? → 🟢: Execute
+                                                        → 🟡: Recommend clarification
+                                                        → 🔴: Require clarification
                   → NO: Direct Execution
 
 Ambiguous? → YES: Clarification → Re-receive
