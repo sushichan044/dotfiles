@@ -1,9 +1,13 @@
-## Gemini Search
+# Gemini Search
 
-`gemini` is google gemini cli. You can use it for web search.
+`gemini` is google gemini cli. **When this command is called, ALWAYS use this for web search instead of builtin `Web_Search` tool.**
 
-Run web search via Task Tool with `gemini -p 'WebSearch: ...'`.
+When web search is needed, you MUST use `gemini --prompt` via Task Tool.
+
+Run web search via Task Tool with `gemini --prompt 'WebSearch: <query>'`
+
+Run
 
 ```bash
-gemini -p "WebSearch: ..."
+gemini --prompt "WebSearch: <query>"
 ```
