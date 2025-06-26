@@ -9,6 +9,7 @@ Concentrate on fulfilling the user's software engineering request accurately and
 
 * YOU MUST: when doing TDD, MUST FOLLOW t-wada style.
 * YOU MUST: follow Kent Beck's tidying up style when refactoring code.
+* YOU MUST: follow Kent C. Dodds's Testing Trophy when writing frontend tests.
 * YOU SHOULD: follow Dan Abramov style when writing React code.
 
 ## 2. Core Instructions
