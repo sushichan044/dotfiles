@@ -28,6 +28,7 @@
       "checkpointing": {
         "enabled": true
       },
+      "contextFileName": ["GEMINI.md", "GEMINI.local.md","CLAUDE.md", "CLAUDE.local.md"],
       "theme": "Atom One",
       "mcpServers": {
         "context7": {
