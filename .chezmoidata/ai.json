@@ -18,6 +18,13 @@
         "deepwiki": {
           "type": "http",
           "url": "https://mcp.deepwiki.com/mcp"
+        },
+        "sequential-thinking": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ]
         }
       }
     }
@@ -28,7 +35,12 @@
       "checkpointing": {
         "enabled": true
       },
-      "contextFileName": ["GEMINI.md", "GEMINI.local.md","CLAUDE.md", "CLAUDE.local.md"],
+      "contextFileName": [
+        "GEMINI.md",
+        "GEMINI.local.md",
+        "CLAUDE.md",
+        "CLAUDE.local.md"
+      ],
       "theme": "Atom One",
       "mcpServers": {
         "context7": {
@@ -42,6 +54,13 @@
         "deepwiki": {
           "httpUrl": "https://mcp.deepwiki.com/mcp",
           "trust": true
+        },
+        "sequential-thinking": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ]
         }
       },
       "usageStatisticsEnabled": false
