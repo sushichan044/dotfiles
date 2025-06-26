@@ -39,6 +39,7 @@ fi
 
 if command_exists claude; then
   export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+  export DISABLE_AUTOUPDATER="1"
 fi
 
 if command_exists gemini; then
