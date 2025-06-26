@@ -17,7 +17,7 @@ trap 'rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"' 
 if [ ! -f "$original_claude_json_path" ]; then
     echo "🚧 $original_claude_json_path not found. touching it to create an empty file..."
     mkdir -p "$(dirname "$original_claude_json_path")"
-    echo "{}" >"$original_gemini_json_path"
+    echo "{}" >"$original_claude_json_path"
 fi
 
 cp "$original_claude_json_path" "$current_claude_json_copy_path"
