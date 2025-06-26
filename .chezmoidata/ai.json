@@ -25,6 +25,10 @@
             "-y",
             "@modelcontextprotocol/server-sequential-thinking@latest"
           ]
+        },
+        "readability": {
+          "command": "npx",
+          "args": ["-y", "@mizchi/readability@latest", "--mcp"]
         }
       }
     }
@@ -61,6 +65,10 @@
             "-y",
             "@modelcontextprotocol/server-sequential-thinking@latest"
           ]
+        },
+        "readability": {
+          "command": "npx",
+          "args": ["-y", "@mizchi/readability@latest", "--mcp"]
         }
       },
       "usageStatisticsEnabled": false

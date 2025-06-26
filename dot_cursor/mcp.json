@@ -23,6 +23,10 @@
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"]
+    },
+    "readability": {
+      "command": "npx",
+      "args": ["-y", "@mizchi/readability@latest", "--mcp"]
     }
   }
 }

@@ -37,8 +37,8 @@ Concentrate on fulfilling the user's software engineering request accurately and
 
 * After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
 * YOU SHOULD: use `sequential-thinking` tool for complex tasks that require multiple steps or iterations.
-* When a URL is provided, you can retrieve its content in Markdown format using the command:
-     `npx -y @mizchi/readability --format=md <url>`
+* You can read web pages as markdown with `read_url_content_as_markdown` tool.
+  * IMPORTANT: Try more appropriate tools for suitable tasks, such as `gh` CLI or context7
 * Always follow these steps when you searching anything about some libraries to get latest information with context7.
   1. Call `resolve-library-id` tool to obtain the ID corresponding to the library name.
   2. Call `get-library-docs` tool with resolved ID to retrieve the documentation.
