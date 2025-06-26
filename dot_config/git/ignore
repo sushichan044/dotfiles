@@ -14,3 +14,5 @@
 **/.claude/settings.local.json
 **/.claude/sushichan044/
 **/CLAUDE.local.md
+**/.gemini/sushichan044/
+**/GEMINI.local.md
