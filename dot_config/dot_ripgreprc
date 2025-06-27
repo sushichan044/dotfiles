@@ -1,0 +1,6 @@
+--smart-case
+
+# Custom type definitions
+## SCSS
+--type-add
+scss:*.scss
