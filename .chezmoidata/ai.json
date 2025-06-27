@@ -71,6 +71,7 @@
           "args": ["-y", "@mizchi/readability@latest", "--mcp"]
         }
       },
+      "sandbox": true,
       "usageStatisticsEnabled": false
     }
   }
