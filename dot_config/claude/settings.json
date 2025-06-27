@@ -71,7 +71,11 @@
 
       "Bash(go mod tidy:*)",
       "Bash(go mod download:*)",
-      "Bash(go get:*)"
+      "Bash(go get:*)",
+
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__sequential-thinking__sequentialthinking"
     ],
     "deny": [
       "Bash(sudo:*)",
