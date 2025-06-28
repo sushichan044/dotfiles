@@ -8,37 +8,56 @@ if ! type jq >/dev/null 2>&1; then
     exit 1
 fi
 
-# Update each setting from .claude.settings to top-level in ~/.config/claude/.claude.json
-original_claude_json_path="$XDG_CONFIG_HOME/claude/.claude.json"
-current_claude_json_copy_path=$(mktemp)
-modified_claude_json_copy_path=$(mktemp)
-trap 'rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"' EXIT
+# Function to update settings in a JSON file
+update_claude_settings() {
+    local json_path="$1"
+    local current_copy_path=$(mktemp)
+    local modified_copy_path=$(mktemp)
 
-if [ ! -f "$original_claude_json_path" ]; then
-    echo "🚧 $original_claude_json_path not found. touching it to create an empty file..."
-    mkdir -p "$(dirname "$original_claude_json_path")"
-    echo "{}" >"$original_claude_json_path"
-fi
+    # Setup cleanup for temp files
+    trap 'rm -f "$current_copy_path" "$modified_copy_path"' RETURN
 
-cp "$original_claude_json_path" "$current_claude_json_copy_path"
+    if [ ! -f "$json_path" ]; then
+        echo "🚧 $json_path not found. touching it to create an empty file..."
+        mkdir -p "$(dirname "$json_path")"
+        echo "{}" >"$json_path"
+    fi
 
-{{- range $key, $value := .claude.settings }}
-# shellcheck disable=SC1083
-if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson }}' '.[$key] = $value' "$current_claude_json_copy_path" >"$modified_claude_json_copy_path"; then
-    echo "❌ Failed to update {{ $key }} in $original_claude_json_path"
-    rm -f "$current_claude_json_copy_path" "$modified_claude_json_copy_path"
-    exit 1
-fi
-mv "$modified_claude_json_copy_path" "$current_claude_json_copy_path"
-{{- end }}
+    cp "$json_path" "$current_copy_path"
 
-{{ $settingsKeys := .claude.settings | keys | sortAlpha | join ", " -}}
-# Replace the original file with the updated one
-if mv "$current_claude_json_copy_path" "$original_claude_json_path"; then
-    echo "✅ Successfully updated {{ $settingsKeys }} in $original_claude_json_path"
-else
-    echo "❌ Failed to replace $original_claude_json_path"
-    rm -f "$current_claude_json_copy_path"
-    exit 1
-fi
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
+    {{- range $key, $value := .claude.settings }}
+    # shellcheck disable=SC1083
+    if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
+        echo "❌ Failed to update {{ $key }} in $json_path"
+        return 1
+    fi
+    mv "$modified_copy_path" "$current_copy_path"
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
+    {{- end }}
+
+    # Replace the original file with the updated one
+    if mv "$current_copy_path" "$json_path"; then
+        return 0
+    else
+        echo "❌ Failed to replace $json_path"
+        return 1
+    fi
+}
+
+# Update settings for both claude and superclaude
+{{ $settingsKeyLabels := .claude.settings | keys | sortAlpha | join ", " -}}
+config_paths=(
+    "$XDG_CONFIG_HOME/claude/.claude.json"
+    "$XDG_CONFIG_HOME/superclaude/.claude.json"
+)
+
+for config_path in "${config_paths[@]}"; do
+    if update_claude_settings "$config_path"; then
+        echo "✅ Successfully updated {{ $settingsKeyLabels }} in $config_path"
+    else
+        echo "❌ Failed to update settings in $config_path"
+        exit 1
+    fi
+done
 {{ end -}}
