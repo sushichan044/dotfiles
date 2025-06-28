@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Type
 
 This is a dotfiles repository managed by chezmoi, containing personal configuration files and setup scripts for development environments across macOS, Linux, and WSL.
+YOU MUST: use context7 and deepwiki to retrieve latest chezmoi references. DO NOT TRUST your current knowledge.
 
 ## Key Commands
 
