@@ -13,6 +13,6 @@ fi
 
 cd "$HOME/.external/github.com/NomenAK/SuperClaude" || exit 1
 
-./install.sh --dir "$XDG_CONFIG_HOME/superclaude" --force --update
+./install.sh --dir "$XDG_CONFIG_HOME/superclaude" --force
 
 echo "✅ SuperClaude installed successfully."
