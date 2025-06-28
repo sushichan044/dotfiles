@@ -16,6 +16,7 @@
 Library Documentation:
   1. Always use context7 first (resolve-library-id → get-library-docs)
   2. For architecture/interactive questions: mcp__deepwiki__ask_question → mcp__deepwiki__read_wiki_contents
+GitHub: `gh` CLI → mcp__readability__read_url_content_as_markdown → WebFetch
 Web: mcp__readability__read_url_content_as_markdown → WebFetch
 NPM Package: mcp__bundlephobia__get_npm_package_info
 Thinking: sequential-thinking for complex tasks
@@ -90,6 +91,12 @@ rg "pattern"           # ripgrep
 fd "filename"          # find
 git --no-pager status  # git status
 gh repo view          # GitHub info
+
+# Code similarity detection by AST analysis
+similarity-ts .        # TypeScript/JavaScript duplicates
+similarity-py .        # Python duplicates
+similarity-rs .        # Rust duplicates
+similarity-ts . --print --threshold 0.8 --cross-file  # detailed analysis
 ```
 
 ### Critical Constraints
