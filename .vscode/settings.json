@@ -16,5 +16,10 @@
     "coursier",
     "direnv",
     "linuxbrew"
+  ],
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "CLAUDE.md"
+    },
   ]
 }
