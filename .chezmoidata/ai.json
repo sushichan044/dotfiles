@@ -2,6 +2,7 @@
   "claude": {
     "settings": {
       "preferredNotifChannel": "terminal_bell",
+      "theme": "dark",
       "mcpServers": {
         "sentry": {
           "type": "http",
