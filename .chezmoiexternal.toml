@@ -1,0 +1,4 @@
+[".external/github.com/NomenAK/SuperClaude"]
+type = "git-repo"
+url = "https://github.com/NomenAK/SuperClaude.git"
+refreshPeriod = "24h"
