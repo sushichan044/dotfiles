@@ -2,8 +2,8 @@
 set -euo
 
 if [ ! -d "$HOME/.external/github.com/NomenAK/SuperClaude" ]; then
-    echo "⚠️ SuperClaude not found, please run 'chezmoi update' first."
-    exit 1
+    echo "⚠️ SuperClaude not found, please run 'chezmoi update' first. Exiting..."
+    exit 0
 fi
 
 if [ -z "${XDG_CONFIG_HOME:-}" ]; then
