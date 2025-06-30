@@ -34,6 +34,36 @@
       }
     }
   },
+  "claude_desktop": {
+    "settings": {
+      "globalShortcut": "",
+      "mcpServers": {
+        "sequential-thinking": {
+          "command": "mise",
+          "args": [
+            "x",
+            "node@22",
+            "--",
+            "npx",
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ]
+        },
+        "readability": {
+          "command": "mise",
+          "args": [
+            "x",
+            "node@22",
+            "--",
+            "npx",
+            "-y",
+            "@mizchi/readability@0.6.8",
+            "--mcp"
+          ]
+        }
+      }
+    }
+  },
   "gemini": {
     "settings": {
       "autoAccept": true,
