@@ -17,9 +17,9 @@ nts() {
         return 1
     fi
 
-    if npx -y semver -r ">=23.6.0 <24 || >=24.3.0" "$(node -v)"; then
+    if npx -y semver@latest -r ">=23.6.0 <24 || >=24.3.0" "$(node -v)"; then
         node --experimental-transform-types "$1"
-    elif npx -y semver -r ">=22.7.0 <23.6.0" "$(node -v)"; then
+    elif npx -y semver@latest -r ">=22.7.0 <23.6.0" "$(node -v)"; then
         node --experimental-transform-types --experimental-strip-types "$1"
     else
         echo "Node.js version does not support typescript execution."
