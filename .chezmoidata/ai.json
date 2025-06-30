@@ -64,6 +64,40 @@
       }
     }
   },
+  "cursor": {
+    "mcp": {
+      "mcpServers": {
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "context7": {
+          "type": "http",
+          "url": "https://mcp.context7.com/mcp"
+        },
+        "bundlephobia": {
+          "type": "http",
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "deepwiki": {
+          "type": "http",
+          "url": "https://mcp.deepwiki.com/mcp"
+        },
+        "sequential-thinking": {
+          "command": "npx",
+          "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"]
+        },
+        "readability": {
+          "command": "npx",
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
+        }
+      }
+    }
+  },
   "gemini": {
     "settings": {
       "autoAccept": true,
