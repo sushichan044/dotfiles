@@ -29,7 +29,7 @@
         },
         "readability": {
           "command": "npx",
-          "args": ["-y", "@mizchi/readability@latest", "--mcp"]
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
         }
       }
     }
@@ -69,7 +69,7 @@
         },
         "readability": {
           "command": "npx",
-          "args": ["-y", "@mizchi/readability@latest", "--mcp"]
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
         }
       },
       "sandbox": true,
