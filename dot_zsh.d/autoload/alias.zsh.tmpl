@@ -73,6 +73,7 @@ fi
 if command_exists claude; then
     alias c='claude'
     alias sc='CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/superclaude" claude'
+    alias scusage='CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/superclaude" ccusage'
 fi
 
 {{ if eq .ostype "wsl" }}
