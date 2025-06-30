@@ -8,6 +8,10 @@
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp"
         },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
         "context7": {
           "type": "http",
           "url": "https://mcp.context7.com/mcp"
@@ -89,7 +93,10 @@
         },
         "sequential-thinking": {
           "command": "npx",
-          "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"]
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ]
         },
         "readability": {
           "command": "npx",
