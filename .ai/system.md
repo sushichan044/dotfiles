@@ -15,7 +15,12 @@
 ```
 Library Documentation:
   1. Always use context7 first (resolve-library-id → get-library-docs)
-  2. For architecture/interactive questions: mcp__deepwiki__ask_question → mcp__deepwiki__read_wiki_contents
+  2. For architecture/interactive questions: GitHub Wiki Fallback Strategy (see below)
+GitHub Wiki Fallback Strategy (PER REPOSITORY):
+  Step 1: Try devin wiki first with any preferred tool (ask_question/read_contents/read_wiki_structure)
+  Step 2: If devin wiki succeeds → continue with devin tools
+  Step 3: If devin wiki fails/errors/repository not indexed → fallback to deepwiki tools
+  ⚠️  IMPORTANT: Apply this strategy for EACH repository separately - availability varies by repo
 GitHub: `gh` CLI → mcp__readability__read_url_content_as_markdown → WebFetch
 Web: mcp__readability__read_url_content_as_markdown → WebFetch
 NPM Package: mcp__bundlephobia__get_npm_package_info
