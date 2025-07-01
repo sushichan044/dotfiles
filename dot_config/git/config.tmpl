@@ -102,7 +102,7 @@ f = "fetch"
 rbm = "!f() { \
     CURRENT_BRANCH=$(git branch --show-current); \
     git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; \
-    git fetch origin && git rebase $(git rev-parse --abbrev-ref origin/HEAD | sed 's/origin\\///') && git stash pop || { echo 'Conflict occurred during rebase. Please run $(git rebase --continue) and then $(git stash pop) after resolving conflicts.'; return 1; }; \
+    git fetch origin && git rebase origin/HEAD && git stash pop || { echo 'Conflict occurred during rebase. Please run $(git rebase --continue) and then $(git stash pop) after resolving conflicts.'; return 1; }; \
 }; f"
 
 # Worktree aliases
