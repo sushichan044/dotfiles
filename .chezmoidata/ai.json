@@ -1,64 +1,56 @@
 {
   "claude": {
     "settings": {
-      "preferredNotifChannel": "terminal_bell",
-      "theme": "dark",
       "mcpServers": {
-        "sentry": {
+        "bundlephobia": {
           "type": "http",
-          "url": "https://mcp.sentry.dev/mcp"
-        },
-        "notion": {
-          "type": "http",
-          "url": "https://mcp.notion.com/mcp"
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
         },
         "context7": {
           "type": "http",
           "url": "https://mcp.context7.com/mcp"
         },
-        "bundlephobia": {
-          "type": "http",
-          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-        },
         "deepwiki": {
           "type": "http",
           "url": "https://mcp.deepwiki.com/mcp"
         },
-        "sequential-thinking": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
-          ]
-        },
-        "readability": {
-          "command": "npx",
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
-        },
         "devin": {
           "type": "http",
           "url": "https://mcp.devin.ai/mcp"
+        },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "readability": {
+          "args": [
+            "-y",
+            "@mizchi/readability@0.6.8",
+            "--mcp"
+          ],
+          "command": "npx"
+        },
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "sequential-thinking": {
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "npx"
         }
-      }
+      },
+      "preferredNotifChannel": "terminal_bell",
+      "theme": "dark"
     }
   },
   "claude_desktop": {
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
-        "sequential-thinking": {
-          "command": "mise",
-          "args": [
-            "x",
-            "node@22",
-            "--",
-            "npx",
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
-          ]
-        },
         "readability": {
-          "command": "mise",
           "args": [
             "x",
             "node@22",
@@ -67,7 +59,19 @@
             "-y",
             "@mizchi/readability@0.6.8",
             "--mcp"
-          ]
+          ],
+          "command": "mise"
+        },
+        "sequential-thinking": {
+          "args": [
+            "x",
+            "node@22",
+            "--",
+            "npx",
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "mise"
         }
       }
     }
@@ -75,40 +79,44 @@
   "cursor": {
     "mcp": {
       "mcpServers": {
-        "sentry": {
+        "bundlephobia": {
           "type": "http",
-          "url": "https://mcp.sentry.dev/mcp"
-        },
-        "notion": {
-          "type": "http",
-          "url": "https://mcp.notion.com/mcp"
-        },
-        "devin": {
-          "type": "http",
-          "url": "https://mcp.devin.ai/mcp"
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
         },
         "context7": {
           "type": "http",
           "url": "https://mcp.context7.com/mcp"
         },
-        "bundlephobia": {
-          "type": "http",
-          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-        },
         "deepwiki": {
           "type": "http",
           "url": "https://mcp.deepwiki.com/mcp"
         },
+        "devin": {
+          "type": "http",
+          "url": "https://mcp.devin.ai/mcp"
+        },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "readability": {
+          "args": [
+            "-y",
+            "@mizchi/readability@0.6.8",
+            "--mcp"
+          ],
+          "command": "npx"
+        },
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
         "sequential-thinking": {
-          "command": "npx",
           "args": [
             "-y",
             "@modelcontextprotocol/server-sequential-thinking@latest"
-          ]
-        },
-        "readability": {
-          "command": "npx",
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
+          ],
+          "command": "npx"
         }
       }
     }
@@ -125,37 +133,41 @@
         "CLAUDE.md",
         "CLAUDE.local.md"
       ],
-      "theme": "Atom One",
       "mcpServers": {
-        "context7": {
-          "httpUrl": "https://mcp.context7.com/mcp",
-          "trust": true
-        },
         "bundlephobia": {
           "httpUrl": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
           "trust": true
         },
-        "devin": {
-          "httpUrl": "https://mcp.devin.ai/mcp",
+        "context7": {
+          "httpUrl": "https://mcp.context7.com/mcp",
           "trust": true
         },
         "deepwiki": {
           "httpUrl": "https://mcp.deepwiki.com/mcp",
           "trust": true
         },
+        "devin": {
+          "httpUrl": "https://mcp.devin.ai/mcp",
+          "trust": true
+        },
+        "readability": {
+          "args": [
+            "-y",
+            "@mizchi/readability@0.6.8",
+            "--mcp"
+          ],
+          "command": "npx"
+        },
         "sequential-thinking": {
-          "command": "npx",
           "args": [
             "-y",
             "@modelcontextprotocol/server-sequential-thinking@latest"
-          ]
-        },
-        "readability": {
-          "command": "npx",
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
+          ],
+          "command": "npx"
         }
       },
       "sandbox": true,
+      "theme": "Atom One",
       "usageStatisticsEnabled": false
     }
   }
