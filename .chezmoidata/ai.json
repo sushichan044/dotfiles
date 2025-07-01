@@ -16,18 +16,17 @@
         },
         "devin": {
           "type": "http",
-          "url": "https://mcp.devin.ai/mcp"
+          "url": "https://mcp.devin.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer DEVIN_API_KEY"
+          }
         },
         "notion": {
           "type": "http",
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": [
-            "-y",
-            "@mizchi/readability@0.6.8",
-            "--mcp"
-          ],
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
           "command": "npx"
         },
         "sentry": {
@@ -93,18 +92,17 @@
         },
         "devin": {
           "type": "http",
-          "url": "https://mcp.devin.ai/mcp"
+          "url": "https://mcp.devin.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer DEVIN_API_KEY"
+          }
         },
         "notion": {
           "type": "http",
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": [
-            "-y",
-            "@mizchi/readability@0.6.8",
-            "--mcp"
-          ],
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
           "command": "npx"
         },
         "sentry": {
@@ -148,14 +146,13 @@
         },
         "devin": {
           "httpUrl": "https://mcp.devin.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer DEVIN_API_KEY"
+          },
           "trust": true
         },
         "readability": {
-          "args": [
-            "-y",
-            "@mizchi/readability@0.6.8",
-            "--mcp"
-          ],
+          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
           "command": "npx"
         },
         "sequential-thinking": {

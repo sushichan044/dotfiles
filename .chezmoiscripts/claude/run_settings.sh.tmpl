@@ -8,6 +8,12 @@ if ! type jq >/dev/null 2>&1; then
     exit 1
 fi
 
+{{/* Inject Devin API Key dynamically */}}
+{{- $devin_api_key := "" -}}
+{{- if not .for_personal -}}
+{{- $devin_api_key = onepasswordRead "op://Employee/DEVIN_API_KEY/credential" -}}
+{{- end -}}
+
 # Function to update settings in a JSON file
 update_claude_settings() {
     local json_path="$1"
@@ -28,7 +34,7 @@ update_claude_settings() {
     # shellcheck disable=SC1073,SC1009,SC1083,SC1072
     {{- range $key, $value := .claude.settings }}
     # shellcheck disable=SC1083
-    if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
+    if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson | replaceAllRegex "DEVIN_API_KEY" $devin_api_key }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
         echo "❌ Failed to update {{ $key }} in $json_path"
         return 1
     fi
