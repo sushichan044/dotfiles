@@ -55,7 +55,7 @@ Refactor: MUST FOLLOW 'Kent Beck' recommended practices
 
 1. Read the plan-to-todo command: `@.ai/claude/commands/plan-to-todo.md`
 2. Convert current plan to checklist format
-3. Save to `./.claude/sushichan044/plan/` directory
+3. Save to `{YOUR CURRENT WORKING DIRECTORY}/.claude/sushichan044/plan/` directory
 4. Then proceed with `exit_plan_mode`
 
 This ensures plans are preserved as actionable checklists before transitioning to implementation.
