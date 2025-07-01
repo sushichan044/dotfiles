@@ -31,41 +31,17 @@ update_claude_settings() {
 
     cp "$json_path" "$current_copy_path"
 
-    # shellcheck disable=all
-    {{/* Omit some settings based on environment */}}
-    {{- $omitted_keys := list -}}
-    {{- if .for_personal -}}
-        {{- $omitted_keys = append $omitted_keys "devin" -}}
-    {{- else -}}
-        {{- $omitted_keys = append $omitted_keys "deepwiki" -}}
-    {{- end -}}
-
-    {{/* Update Claude settings */}}
-    {{- range $key, $value := .claude.settings -}}
-        {{- if eq $key "mcpServers" -}}
-        {{- $claude_mcp := dict -}}
-            {{- range $mcp_key, $mcp_value := $value -}}
-                {{- if has $mcp_key $omitted_keys -}}
-                    {{- continue -}}
-                {{- else -}}
-                    {{- $claude_mcp = dict $mcp_key $mcp_value | merge $claude_mcp -}}
-                {{- end -}}
-            {{- end }}
-    if ! jq --argjson mcpServers '{{ $claude_mcp | toJson | replaceAllRegex "DEVIN_API_KEY" $devin_api_key }}' '.mcpServers = $mcpServers' "$current_copy_path" >"$modified_copy_path"; then
-        echo "❌ Failed to update mcpServers in $json_path"
-        return 1
-    fi
-    mv "$modified_copy_path" "$current_copy_path"
-        {{- else }}
-    if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
+    {{- range $key, $value := .claude.settings }}
+    # shellcheck disable=SC1083
+    if ! jq --arg key "{{ $key }}" --argjson value '{{ $value | toJson | replaceAllRegex "DEVIN_API_KEY" $devin_api_key }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
         echo "❌ Failed to update {{ $key }} in $json_path"
         return 1
     fi
     mv "$modified_copy_path" "$current_copy_path"
-        {{- end -}}
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
     {{- end }}
 
-    {{- $settingsKeyLabels := .claude.settings | keys | sortAlpha | join ", " -}}
     # Replace the original file with the updated one
     if mv "$current_copy_path" "$json_path"; then
         return 0
