@@ -28,13 +28,15 @@ Thinking: sequential-thinking for complex tasks
 Error: sentry__* tools for error tracking
 ```
 
-### Development Styles (Mandatory)
+### Development Styles (Mandatory, MUST FOLLOW)
 
 ```
-TDD: MUST FOLLOW t-wada recommended practices
-Refactor (Kent Beck): Work→Right→Fast, Two-hat rule
-Frontend Test (Kent C. Dodds): Static→Unit→Integration→E2E Trophy
-React (Dan Abramov): Composition>Inheritance, Custom hooks
+TDD: MUST FOLLOW 't-wada' recommended practices
+Frontend Test: MUST FOLLOW 'Kent C. Dodds' recommended practices
+React: MUST FOLLOW 'Dan Abramov' recommended practices
+Refactor: MUST FOLLOW 'Kent Beck' recommended practices
+  - Work→Right→Fast
+  - Two-hat rule
 ```
 
 ### 4-Phase Execution
