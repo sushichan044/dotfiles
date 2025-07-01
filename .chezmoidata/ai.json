@@ -34,6 +34,10 @@
         "readability": {
           "command": "npx",
           "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"]
+        },
+        "devin": {
+          "type": "http",
+          "url": "https://mcp.devin.ai/mcp"
         }
       }
     }
@@ -78,6 +82,10 @@
         "notion": {
           "type": "http",
           "url": "https://mcp.notion.com/mcp"
+        },
+        "devin": {
+          "type": "http",
+          "url": "https://mcp.devin.ai/mcp"
         },
         "context7": {
           "type": "http",
@@ -125,6 +133,10 @@
         },
         "bundlephobia": {
           "httpUrl": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
+          "trust": true
+        },
+        "devin": {
+          "httpUrl": "https://mcp.devin.ai/mcp",
           "trust": true
         },
         "deepwiki": {
