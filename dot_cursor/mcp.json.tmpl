@@ -3,4 +3,27 @@
 {{- if not .for_personal -}}
 {{- $devin_api_key = onepasswordRead "op://Employee/DEVIN_API_KEY/credential" -}}
 {{- end -}}
-{{ .cursor.mcp | toPrettyJson | replaceAllRegex "DEVIN_API_KEY" $devin_api_key }}
+
+{{/* Omit some MCP servers */}}
+{{- $omitted_keys := list -}}
+{{- if .for_personal -}}
+{{- $omitted_keys = append $omitted_keys "devin" -}}
+{{- else -}}
+{{- $omitted_keys = append $omitted_keys "deepwiki" -}}
+{{- end -}}
+
+{{/* Update MCP settings */}}
+{{- $cursor_mcp := dict -}}
+{{- range $key, $value := .cursor.mcp.mcpServers -}}
+    {{- if has $key $omitted_keys -}}
+        {{- continue -}}
+    {{- else -}}
+        {{- $cursor_mcp = dict $key $value | merge $cursor_mcp }}
+    {{- end -}}
+{{- end -}}
+
+{{/* Write MCP settings */}}
+{{ dict "mcpServers" $cursor_mcp |
+    toPrettyJson |
+    replaceAllRegex "DEVIN_API_KEY" $devin_api_key
+}}

@@ -144,13 +144,6 @@
           "httpUrl": "https://mcp.deepwiki.com/mcp",
           "trust": true
         },
-        "devin": {
-          "httpUrl": "https://mcp.devin.ai/mcp",
-          "headers": {
-            "Authorization": "Bearer DEVIN_API_KEY"
-          },
-          "trust": true
-        },
         "readability": {
           "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
           "command": "npx"
