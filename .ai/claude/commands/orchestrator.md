@@ -1,6 +1,12 @@
+---
+description: Split complex tasks into sequential steps with parallel subtasks for efficient execution and adaptive planning.
+---
+
 # Orchestrator
 
 Split complex tasks into sequential steps, where each step can contain multiple parallel subtasks.
+
+ultrathink
 
 ## Process
 
