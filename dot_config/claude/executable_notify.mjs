@@ -51,7 +51,8 @@ try {
           try
             set notificationTitle to system attribute "CLAUDE_NOTIFICATION_TITLE"
             set notificationMessage to system attribute "CLAUDE_NOTIFICATION_MESSAGE"
-            display notification notificationMessage with title notificationTitle with sound name "CLAUDE_NOTIFICATION_SOUND"
+            set notificationSound to system attribute "CLAUDE_NOTIFICATION_SOUND"
+            display notification notificationMessage with title notificationTitle sound name notificationSound
           end try
         `;
     execFileSync("osascript", ["-e", script], {
