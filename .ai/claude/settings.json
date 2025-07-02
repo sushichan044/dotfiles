@@ -10,6 +10,16 @@
     "MAX_THINKING_TOKENS": "6000"
   },
   "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/claude/play-funk.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

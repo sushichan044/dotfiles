@@ -1,4 +1,7 @@
 #! /usr/bin/env node
+/**
+ * @fileoverview Send a macOS notification with the last message content from a Claude transcript.
+ */
 
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -14,7 +17,15 @@ function getClaudeConfigPath() {
   return path.join(homeDir, ".claude");
 }
 
+function isMacOS() {
+  return process.platform === "darwin";
+}
+
 try {
+  if (!isMacOS()) {
+    process.exit(0);
+  }
+
   const input = JSON.parse(readFileSync(process.stdin.fd, "utf8"));
   if (!input.transcript_path) {
     process.exit(0);
