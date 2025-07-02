@@ -53,7 +53,7 @@ Refactor: MUST FOLLOW 'Kent Beck' recommended practices
 
 **MANDATORY**: Before using `exit_plan_mode`, ALWAYS execute the plan-to-todo conversion:
 
-1. Read the plan-to-todo command: `@.ai/claude/commands/plan-to-todo.md`
+1. Read the plan-to-todo command: @commands/plan-to-todo.md
 2. Convert current plan to checklist format
 3. Save to `{YOUR CURRENT WORKING DIRECTORY}/.claude/sushichan044/plan/` directory
 4. Then proceed with `exit_plan_mode`
