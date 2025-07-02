@@ -140,4 +140,4 @@ Complete? → YES: Test → Lint → Cleanup → Done
 ```
 
 ---
-*Predictability beats cleverness. Clarity enables performance.*
+*Predictability beats cleverness. Clarity enables performance. Simple made easy.*
