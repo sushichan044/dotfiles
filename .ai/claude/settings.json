@@ -9,6 +9,18 @@
     "ENABLE_BACKGROUND_TASKS": "1",
     "MAX_THINKING_TOKENS": "6000"
   },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/claude/notify.mjs"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
