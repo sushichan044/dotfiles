@@ -51,7 +51,7 @@ try {
           try
             set notificationTitle to system attribute "CLAUDE_NOTIFICATION_TITLE"
             set notificationMessage to system attribute "CLAUDE_NOTIFICATION_MESSAGE"
-            display notification notificationMessage with title notificationTitle
+            display notification notificationMessage with title notificationTitle with sound name "CLAUDE_NOTIFICATION_SOUND"
           end try
         `;
     execFileSync("osascript", ["-e", script], {
@@ -59,6 +59,7 @@ try {
         ...process.env,
         CLAUDE_NOTIFICATION_TITLE: "Claude Code",
         CLAUDE_NOTIFICATION_MESSAGE: lastMessageContent,
+        CLAUDE_NOTIFICATION_SOUND: "Funk",
       },
       stdio: "ignore",
     });
