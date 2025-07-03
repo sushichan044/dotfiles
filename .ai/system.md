@@ -7,6 +7,8 @@
 - **Files**: Read before edit, prefer existing files, cleanup temp files
 - **Quality**: Security-aware, error handling, atomic commits
 - **Workflow**: Simple(1-2 steps)→Direct, Complex(3+ steps)→4-Phase
+- **Attitude**: Don't hold back. Give it your all.
+- **Efficiency**: For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
 ## 🟡 ESSENTIAL DETAILS
 
