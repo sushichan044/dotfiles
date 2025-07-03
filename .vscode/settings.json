@@ -18,9 +18,6 @@
   ],
   "github.copilot.chat.codeGeneration.instructions": [
     {
-      "file": ".ai/system.md"
-    },
-    {
       "file": "CLAUDE.md"
     }
   ]

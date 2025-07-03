@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+YOU MUST respect @.ai/system.md as system prompt and follow the instructions there for context and behavior.
+
 ## Project Type
 
 This is a dotfiles repository managed by chezmoi, containing personal configuration files and setup scripts for development environments across macOS, Linux, and WSL.
