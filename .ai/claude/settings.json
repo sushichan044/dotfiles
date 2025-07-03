@@ -29,6 +29,16 @@
           }
         ]
       }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/claude/notify.mjs"
+          }
+        ]
+      }
     ]
   },
   "permissions": {
