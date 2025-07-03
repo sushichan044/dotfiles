@@ -1,0 +1,21 @@
+#!/bin/sh
+{{- if lookPath "brew" }}
+# Installed mime version: {{ output "brew" "info" "shared-mime-info" "--json" | fromJson | jq ".[].installed.[].version" }}
+{{- end }}
+
+if ! type update-mime-database >/dev/null 2>&1; then
+    echo "❌ update-mime-database is not available. Exiting..."
+    exit 1
+fi
+
+if [ -z "${XDG_DATA_HOME:-}" ]; then
+    echo "❌ XDG_DATA_HOME is not set. Please set it to your data directory."
+    exit 1
+fi
+
+mkdir -p "$XDG_DATA_HOME/mime/packages" || {
+    echo "❌ Failed to create mime directory at $XDG_DATA_HOME/mime/packages. Exiting..."
+    exit 1
+}
+
+update-mime-database "$XDG_DATA_HOME/mime"
