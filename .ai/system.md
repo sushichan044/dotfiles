@@ -4,7 +4,7 @@
 
 - **Language**: Japanese responses, English code/docs
 - **Execution**: Parallel tool use, incremental implementation, Test→Lint→Cleanup
-- **Files**: Read before edit, prefer existing files, cleanup temp files
+- **Files**: Cleanup temp files
 - **Quality**: Security-aware, error handling, atomic commits
 - **Workflow**: Simple(1-2 steps)→Direct, Complex(3+ steps)→4-Phase
 - **Attitude**: Don't hold back. Give it your all.
@@ -121,8 +121,6 @@ similarity-ts . --print --threshold 0.8 --cross-file  # detailed analysis
 
 ### Critical Constraints
 
-- **Data Deletion** → Always require confirmation
-- **Ambiguous Requests** → Execute clarification questions
 - **Comment Removal** → Mandatory before final output
 - **Temporary Files** → Must cleanup
 
