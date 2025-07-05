@@ -64,21 +64,13 @@ function parseInput(rawInput) {
 
   switch (input.hook_event_name) {
     case "Notification": {
-      if (
-        "title" in input &&
-        typeof input.title === "string" &&
-        "message" in input &&
-        typeof input.message === "string"
-      ) {
         return {
           hook_event_name: input.hook_event_name,
           session_id: input.session_id,
           transcript_path: input.transcript_path,
-          title: input.title,
-          message: input.message,
+          title: input["title"] ?? "Claude Code",
+          message: input["message"] ?? "Claude Code has sent a notification.",
         };
-      }
-      break;
     }
     case "Stop":
     case "SubagentStop": {
@@ -98,7 +90,7 @@ function parseInput(rawInput) {
   }
 
   throw new Error(
-    "Invalid input: hook_event_name must be 'Notification', 'Stop', or 'SubagentStop'."
+    `Invalid input: hook_event_name must be 'Notification', 'Stop', or 'SubagentStop'. Input: ${JSON.stringify(input)}`
   );
 }
 
