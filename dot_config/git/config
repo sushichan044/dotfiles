@@ -1,14 +1,7 @@
-{{- if eq .chezmoi.username "sushi" "sushichan044" -}}
-[user]
-{{- if .for_personal }}
-signingkey = {{ onepasswordRead "op://dotfiles/Github-Commit-Sign/public key" }}
-{{- else }}
-signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
-{{- end }}
-
 [include]
+path = ~/.config/git/config.d/one-password.conf
 path = ~/.config/git/config.d/user.github.conf
-{{- end }}
+path = ~/.config/git/config.d/signing-key.github.conf
 
 [branch]
 sort = -committerdate
@@ -108,28 +101,3 @@ rbm = "!f() { \
 # Worktree aliases
 wt = worktree
 wtl = "worktree list"
-
-# Commit signing
-# Not configured for .ostype == "linux"
-{{ if eq .ostype "darwin" -}}
-[commit]
-gpgsign = true
-[gpg]
-format = ssh
-[gpg "ssh"]
-program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
-{{ else if eq .ostype "wsl" -}}
-[commit]
-gpgsign = true
-[gpg]
-format = ssh
-[gpg "ssh"]
-program = "/mnt/c/Program Files/1Password/app/8/op-ssh-sign-wsl"
-{{ else if eq .ostype "windows" -}}
-[commit]
-gpgsign = true
-[gpg]
-format = ssh
-[gpg "ssh"]
-program = "C:/Program Files/1Password/app/8/op-ssh-sign.exe"
-{{ end -}}
