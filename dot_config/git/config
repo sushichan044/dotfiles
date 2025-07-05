@@ -34,6 +34,7 @@ colorMoved = true
 external = difft
 mnemonicPrefix = true
 renames = true
+submodule = log
 
 [fetch]
 prune = true
@@ -63,6 +64,7 @@ useForceIfIncludes = true
 
 [pull]
 autoStash = true
+ff = only
 rebase = true
 
 [rebase]
@@ -73,6 +75,12 @@ updateRefs = true
 [rerere]
 autoupdate = true
 enabled = true
+
+[status]
+submoduleSummary = true
+
+[submodule]
+recurse = true
 
 [tag]
 sort = version:refname

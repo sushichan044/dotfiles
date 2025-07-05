@@ -2,17 +2,14 @@
 .DS_Store
 .idea
 
-# dev env
-.mise.local.toml
-.prototools.local
-.vscode/**/*.local.json
-.solargraph.yml
-.graphqlrc.yml
-
 # personal
 ,
-**/.claude/settings.local.json
-**/.claude/sushichan044/
-**/CLAUDE.local.md
-**/.gemini/sushichan044/
-**/GEMINI.local.md
+
+.claude/sushichan044/
+.claude/settings.local.json
+.gemini/sushichan044/
+.vscode/**/*.local.json
+
+.mise.local.toml
+CLAUDE.local.md
+GEMINI.local.md
