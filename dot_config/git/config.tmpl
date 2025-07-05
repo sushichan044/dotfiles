@@ -95,8 +95,6 @@ cz = "!f() { git-cz }; f"
 clear-cache = "rm -r --cached ."
 com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
 fixit = "commit --amend --no-edit"
-fixup = "commit --fixup"
-apply-fixup = "!f() { git rebase -i --autosquash $1^; }; f"
 bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
 f = "fetch"
 # rebase current branch with origin/HEAD
