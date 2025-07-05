@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/play-funk.sh"
+            "command": "$HOME/.config/claude/notify.mjs"
           }
         ]
       }
