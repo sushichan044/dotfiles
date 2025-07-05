@@ -97,6 +97,7 @@ com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); 
 fixit = "commit --amend --no-edit"
 bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
 f = "fetch"
+s = "status"
 # rebase current branch with origin/HEAD
 rbm = "!f() { \
     CURRENT_BRANCH=$(git branch --show-current); \
