@@ -21,4 +21,4 @@ theme = catppuccin-macchiato
 font-feature = -dlig
 
 # Keybindings
-keybind = shift+enter=text:\n
+macos-option-as-alt = left
