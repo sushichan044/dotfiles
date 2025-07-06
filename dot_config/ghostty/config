@@ -11,6 +11,7 @@ background-opacity = 0.8
 background-blur-radius = 30
 mouse-hide-while-typing = true
 resize-overlay = never
+macos-icon = xray
 
 # Cursor
 cursor-style = bar
