@@ -1,13 +1,10 @@
-{{ if eq .chezmoi.os "darwin" }}
-Host *
-    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-{{ end }}
-{{- if eq .chezmoi.username "sushi" "sushichan044" }}
+include ~/.ssh/config.d/*.conf
+
 Host github github.com
     HostName github.com
     User git
     IdentityFile ~/.ssh/github
-{{ if .for_personal -}}
-{{- onepasswordRead "op://dotfiles/ssh_config/ssh.txt" }}
-{{- end -}}
-{{- end }}
+{{ if eq .chezmoi.os "darwin" }}
+Host *
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{ end }}
