@@ -76,6 +76,11 @@ if command_exists claude; then
     alias scusage='CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/superclaude" ccusage'
 fi
 
+if command_exists reviewit; then
+    alias rv='reviewit'
+    alias rvp='reviewit --pr'
+fi
+
 {{ if eq .ostype "wsl" }}
 # wsl-open
 alias open='wsl-open'
