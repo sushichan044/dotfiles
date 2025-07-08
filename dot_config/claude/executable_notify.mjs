@@ -9,7 +9,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
@@ -139,22 +139,47 @@ function buildNotificationFromNotificationHook(input) {
  * @returns {NotificationParams}
  */
 function buildNotificationFromStopHook(input) {
+  const fallbackMessage = "Claude Code process has completed.";
   const transcriptPath = resolvePath(input.transcript_path);
-  const lines = readFileSync(transcriptPath, "utf-8")
-    .split("\n")
-    .filter((line) => line.trim());
 
-  const lastLine = lines.at(-1);
-  const transcript = JSON.parse(lastLine ?? "{}");
-  /**
-   * @type {string | undefined}
-   */
-  const lastMessageContent = transcript?.message?.content?.[0]?.text;
+  // ファイルが存在しない場合はフォールバックメッセージを返す
+  if (!existsSync(transcriptPath)) {
+    return {
+      title: "Claude Code",
+      message: fallbackMessage,
+    };
+  }
 
-  return {
-    title: "Claude Code",
-    message: lastMessageContent ?? "Claude Code has stopped.",
-  };
+  try {
+    const lines = readFileSync(transcriptPath, "utf-8")
+      .split("\n")
+      .filter((line) => line.trim());
+
+    const lastLine = lines.at(-1);
+    if (!lastLine) {
+      return {
+        title: "Claude Code",
+        message: fallbackMessage,
+      };
+    }
+
+    const transcript = JSON.parse(lastLine);
+    /**
+     * @type {string | undefined}
+     */
+    const lastMessageContent = transcript?.message?.content?.[0]?.text;
+
+    return {
+      title: "Claude Code",
+      message: lastMessageContent ?? fallbackMessage,
+    };
+  } catch (error) {
+    // Maybe JSON parsing failed or file is not a valid transcript
+    return {
+      title: "Claude Code",
+      message: fallbackMessage,
+    };
+  }
 }
 
 try {
