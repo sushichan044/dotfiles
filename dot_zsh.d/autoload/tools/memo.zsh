@@ -8,7 +8,13 @@ __ensure_memo_base_directory() {
 
 memo() {
     local provided_name="$1"
-    # remove extension if provided
+    # remove extension if provided, and replace all slashes with dashes
+    if [[ -n "$provided_name" ]]; then
+        provided_name="${provided_name//\//-}"
+        provided_name="${provided_name// /-}"
+    fi
+    # remove extension if provided, but keep the name part
+    # this is useful if the user provides a name with extension like "my-memo.txt"
     if [[ "$provided_name" == *.* ]]; then
         provided_name="${provided_name%.*}"
     fi
