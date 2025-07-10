@@ -45,15 +45,16 @@ source_if_exists() {
     file_exists "$1" && source "$1"
 }
 
-# Load files from a directory with .zsh extension
+# Load files from a directory with .zsh extension recursively
 load_zsh_files_from_dir() {
     local dir="$1"
 
     if dir_exists "$dir" && is_readable "$dir" && is_executable "$dir"; then
-        for i in "$dir"/*; do
+        # Use find to recursively search for .zsh files
+        while IFS= read -r -d '' file; do
             # shellcheck disable=SC1090
-            [[ ${i##*/} = *.zsh ]] && { [ -f "$i" ] || [ -h "$i" ]; } && is_readable "$i" && source "$i"
-        done
+            is_readable "$file" && source "$file"
+        done < <(find "$dir" -name "*.zsh" -type f -print0 2>/dev/null | sort -z)
     fi
 }
 
