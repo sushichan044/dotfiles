@@ -62,7 +62,7 @@ is_shell_for_ai_agent() {
     [[ -n "$CURSOR_TRACE_ID" ]]
 }
 
-create_directory_for_new_file() {
+mkdir_for_file() {
     local file_path="$1"
     local dir_path
     dir_path=$(dirname "$file_path")
