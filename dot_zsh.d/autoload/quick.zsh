@@ -1,18 +1,5 @@
 #!/bin/sh
 
-copy_to_clipboard() {
-    local content="$1"
-
-    if command_exists pbcopy; then
-        pbcopy <<<"$content"
-    elif command_exists xclip; then
-        xclip -selection clipboard <<<"$content"
-    else
-        echo "No clipboard utility found"
-        return 1
-    fi
-}
-
 ai-rename() {
     local target_path="$1"
 
