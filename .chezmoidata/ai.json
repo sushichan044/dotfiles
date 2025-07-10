@@ -26,8 +26,8 @@
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
-          "command": "npx"
+          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "command": "deno"
         },
         "sentry": {
           "type": "http",
@@ -35,10 +35,11 @@
         },
         "sequential-thinking": {
           "args": [
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
           ],
-          "command": "npx"
+          "command": "deno"
         }
       },
       "preferredNotifChannel": "terminal_bell",
@@ -52,11 +53,16 @@
         "readability": {
           "args": [
             "x",
-            "node@22",
+            "deno",
             "--",
-            "npx",
-            "-y",
-            "@mizchi/readability@0.6.8",
+            "deno",
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
             "--mcp"
           ],
           "command": "mise"
@@ -64,11 +70,12 @@
         "sequential-thinking": {
           "args": [
             "x",
-            "node@22",
+            "deno",
             "--",
-            "npx",
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
+            "deno",
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
           ],
           "command": "mise"
         }
@@ -102,8 +109,8 @@
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
-          "command": "npx"
+          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "command": "deno"
         },
         "sentry": {
           "type": "http",
@@ -111,10 +118,11 @@
         },
         "sequential-thinking": {
           "args": [
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
           ],
-          "command": "npx"
+          "command": "deno"
         }
       }
     }
@@ -152,15 +160,16 @@
           "trust": true
         },
         "readability": {
-          "args": ["-y", "@mizchi/readability@0.6.8", "--mcp"],
-          "command": "npx"
+          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "command": "deno"
         },
         "sequential-thinking": {
           "args": [
-            "-y",
-            "@modelcontextprotocol/server-sequential-thinking@latest"
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
           ],
-          "command": "npx"
+          "command": "deno"
         }
       },
       "sandbox": true,
