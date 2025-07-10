@@ -139,6 +139,10 @@
         "CLAUDE.md",
         "CLAUDE.local.md"
       ],
+      "fileFiltering": {
+        "respectGitIgnore": true,
+        "enableRecursiveFileSearch": false
+      },
       "mcpServers": {
         "bundlephobia": {
           "httpUrl": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
