@@ -61,3 +61,16 @@ is_shell_for_ai_agent() {
     # check if shell is for AI agent
     [[ -n "$CURSOR_TRACE_ID" ]]
 }
+
+create_directory_for_new_file() {
+    local file_path="$1"
+    local dir_path
+    dir_path=$(dirname "$file_path")
+
+    if ! dir_exists "$dir_path"; then
+        mkdir -p "$dir_path" || {
+            echo "Failed to create directory: $dir_path"
+            return 1
+        }
+    fi
+}
