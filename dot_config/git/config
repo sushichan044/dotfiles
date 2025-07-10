@@ -105,6 +105,11 @@ rbm = "!f() { \
     git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; \
     git fetch origin && git rebase origin/HEAD && git stash pop || { echo 'Conflict occurred during rebase. Please run $(git rebase --continue) and then $(git stash pop) after resolving conflicts.'; return 1; }; \
 }; f"
+show-default-branch = "!f() { git remote show origin | grep 'HEAD branch' | awk '{print $NF}'; }; f"
+get-ancestor-commit= "!f() { DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}'); \
+    git merge-base HEAD $DEFAULT_BRANCH; }; f"
+diff-ancestor-commit = "!f() { ANCESTOR_COMMIT=$(git merge-base HEAD $(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')); \
+    git diff $ANCESTOR_COMMIT; }; f"
 
 # Worktree aliases
 wt = worktree
