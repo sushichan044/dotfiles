@@ -3,7 +3,8 @@
 .idea
 
 # personal
-,
+,/
+.sushichan044/
 
 .claude/sushichan044/
 .claude/settings.local.json
