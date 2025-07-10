@@ -26,7 +26,16 @@
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
           "command": "deno"
         },
         "sentry": {
@@ -109,7 +118,16 @@
           "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
-          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
           "command": "deno"
         },
         "sentry": {
@@ -164,7 +182,16 @@
           "trust": true
         },
         "readability": {
-          "args": ["run", "--allow-env", "--allow-net", "--allow-read", "--allow-run", "npm:@mizchi/readability@0.6.8", "--", "--mcp"],
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
           "command": "deno"
         },
         "sequential-thinking": {
