@@ -1,0 +1,6 @@
+{{- /* You must create secure memo "gemini_dot_env" in your 1Password vault. personal: dotfiles work: Employee */ -}}
+{{ if .for_personal }}
+{{- (onepasswordDetailsFields "lrj5tn3hiouije3ll73duxznea").notesPlain.value -}}
+{{ else }}
+{{- (onepasswordDetailsFields "lan4ixvgnp5xsxwfjuq7lbaafa").notesPlain.value -}}
+{{ end }}
