@@ -56,6 +56,7 @@
       "List(*)",
       "Edit(*)",
       "Bash(git:*)",
+      "Bash(cp:*)",
 
       "Bash(gh cache:*)",
       "Bash(gh extension browse:*)",
