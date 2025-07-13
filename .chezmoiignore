@@ -2,3 +2,5 @@
 CLAUDE.md
 README.md
 renovate.json
+deno.jsonc
+deno.lock

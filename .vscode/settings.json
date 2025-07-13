@@ -20,5 +20,6 @@
     {
       "file": "CLAUDE.md"
     }
-  ]
+  ],
+  "deno.enable": true
 }
