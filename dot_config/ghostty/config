@@ -6,7 +6,7 @@ confirm-close-surface = false
 quit-after-last-window-closed = true
 
 # Appearance
-theme = dark:catppuccin-macchiato,light:catppuccin-latte
+theme = catppuccin-macchiato
 background-opacity = 0.8
 background-blur-radius = 30
 mouse-hide-while-typing = true
@@ -18,7 +18,6 @@ cursor-style = bar
 
 # Character
 font-family = MesloLGS NF
-theme = catppuccin-macchiato
 font-feature = -dlig
 
 # Keybindings
