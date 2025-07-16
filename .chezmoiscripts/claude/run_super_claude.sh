@@ -3,7 +3,7 @@ set -euo
 
 if ! type SuperClaude >/dev/null 2>&1; then
     echo "⚠️ SuperClaude is not installed. Exiting..."
-    exit 1
+    exit 0
 fi
 
 SuperClaude install \
