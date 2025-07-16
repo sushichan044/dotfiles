@@ -77,9 +77,9 @@ if command_exists claude; then
     alias scusage='CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/superclaude" ccusage'
 fi
 
-if command_exists reviewit; then
-    alias rv='reviewit'
-    alias rvp='reviewit --pr'
+if command_exists difit; then
+    alias dv='difit'
+    alias dvp='difit --pr'
 fi
 
 {{ if eq .ostype "wsl" }}
