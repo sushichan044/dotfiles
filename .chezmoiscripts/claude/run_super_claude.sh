@@ -9,6 +9,7 @@ fi
 SuperClaude install \
     --profile developer \
     --install-dir "$XDG_CONFIG_HOME/superclaude" \
+    --components core commands \
     --force --yes
 
 echo "✅ SuperClaude installed successfully."
