@@ -6,6 +6,10 @@
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
         },
+        "cloudflare-docs": {
+          "type": "http",
+          "url": "https://docs.mcp.cloudflare.com/mcp"
+        },
         "context7": {
           "type": "http",
           "url": "https://mcp.context7.com/mcp"
@@ -59,6 +63,10 @@
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
+        "cloudflare-docs": {
+          "type": "http",
+          "url": "https://docs.mcp.cloudflare.com/mcp"
+        },
         "readability": {
           "args": [
             "x",
@@ -97,6 +105,10 @@
         "bundlephobia": {
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "cloudflare-docs": {
+          "type": "http",
+          "url": "https://docs.mcp.cloudflare.com/mcp"
         },
         "context7": {
           "type": "http",
@@ -164,6 +176,10 @@
       "mcpServers": {
         "bundlephobia": {
           "httpUrl": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
+          "trust": true
+        },
+        "cloudflare-docs": {
+          "httpUrl": "https://docs.mcp.cloudflare.com/mcp",
           "trust": true
         },
         "context7": {
