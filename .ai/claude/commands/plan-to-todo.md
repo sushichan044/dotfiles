@@ -10,7 +10,7 @@ description: Create a checklist document from a plan using a specific template.
 Step 1: Decide checklist filename. Use $ARGUMENTS if provided, or choose a filename you recommend that is fewer than 25 characters.
       Tip: you should not include the file extension in the filename.
 
-Step 2: **MANDATORY**: YOU MUST Use the exact template structure. Use !`mkdir -p {YOUR_CURRENT_WORKING_DIRECTORY}/.claude/sushichan044/plan && cp ~/ai/templates/task-checklist.md {YOUR_CURRENT_WORKING_DIRECTORY}/.claude/sushichan044/plan/<FILENAME_YOU_DECIDED>.md` to copy the template.
+Step 2: **MANDATORY**: YOU MUST Use the exact template structure. Use !`mkdir -p .claude/sushichan044/plan` then `cp ~/ai/templates/task-checklist.md .claude/sushichan044/plan/<FILENAME_YOU_DECIDED>.md` to copy the template.
 
 Step 3: Check the plan you created and convert it into a checklist in Markdown format.
 
