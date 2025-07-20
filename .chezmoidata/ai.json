@@ -82,7 +82,8 @@
             "--",
             "--mcp"
           ],
-          "command": "mise"
+          "command": "mise",
+          "type": "stdio"
         },
         "sequential-thinking": {
           "args": [
@@ -94,7 +95,8 @@
             "--allow-env",
             "npm:@modelcontextprotocol/server-sequential-thinking@latest"
           ],
-          "command": "mise"
+          "command": "mise",
+          "type": "stdio"
         }
       }
     }
