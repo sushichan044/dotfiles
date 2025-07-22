@@ -1,0 +1,35 @@
+#!/bin/bash
+set -eu
+CHEZMOI_BIN_DIR="$HOME/.chezmoi-bin"
+mkdir -p "$CHEZMOI_BIN_DIR"
+
+echo "⏩ Start installing latest JSONnet Language Server..."
+
+{{/* Re-Run if new version released */ -}}
+{{ $latest_release_asset_url := gitHubLatestReleaseAssetURL "grafana/jsonnet-language-server" (printf "jsonnet-language-server_*_%s_%s" .chezmoi.os .chezmoi.arch) -}}
+
+install_or_update_jsonnet_ls() {
+    local latest_asset_url="{{ $latest_release_asset_url }}"
+
+    if [ -z "$latest_asset_url" ]; then
+        echo "❌ No suitable release found for JSONnet Language Server."
+        echo "OS: {{ .chezmoi.os }}, Arch: {{ .chezmoi.arch }}"
+        return 1
+    fi
+
+    local bin_dest="$CHEZMOI_BIN_DIR/jsonnet-language-server"
+
+    curl -fsSL "$latest_asset_url" -o "$bin_dest"
+    if [ $? -ne 0 ]; then
+        echo "❌ Failed to download JSONnet Language Server from $latest_asset_url"
+        return 1
+    fi
+}
+
+if install_or_update_jsonnet_ls; then
+    chmod +x "$CHEZMOI_BIN_DIR/jsonnet-language-server"
+    echo "✅ JSONnet Language Server installed successfully at $CHEZMOI_BIN_DIR/jsonnet-language-server"
+else
+    echo "❌ Failed to install JSONnet Language Server."
+    exit 1
+fi
