@@ -37,10 +37,23 @@
             "--allow-read",
             "--allow-run",
             "npm:@mizchi/readability@0.6.8",
-            "--",
             "--mcp"
           ],
           "command": "deno"
+        },
+        "repomix": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net=github.com",
+            "--allow-run=sh",
+            "--allow-sys",
+            "--allow-read",
+            "npm:repomix@latest",
+            "--mcp"
+          ],
+          "command": "deno",
+          "type": "stdio"
         },
         "sentry": {
           "type": "http",
@@ -76,6 +89,24 @@
             "--allow-run",
             "npm:@mizchi/readability@0.6.8",
             "--",
+            "--mcp"
+          ],
+          "command": "mise",
+          "type": "stdio"
+        },
+        "repomix": {
+          "args": [
+            "x",
+            "deno",
+            "--",
+            "deno",
+            "run",
+            "--allow-env",
+            "--allow-net=github.com",
+            "--allow-run=sh",
+            "--allow-sys",
+            "--allow-read",
+            "npm:repomix@latest",
             "--mcp"
           ],
           "command": "mise",
@@ -139,6 +170,20 @@
             "--mcp"
           ],
           "command": "deno"
+        },
+        "repomix": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net=github.com",
+            "--allow-run=sh",
+            "--allow-sys",
+            "--allow-read",
+            "npm:repomix@latest",
+            "--mcp"
+          ],
+          "command": "deno",
+          "type": "stdio"
         },
         "sentry": {
           "type": "http",
@@ -204,6 +249,19 @@
             "--allow-run",
             "npm:@mizchi/readability@0.6.8",
             "--",
+            "--mcp"
+          ],
+          "command": "deno"
+        },
+        "repomix": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net=github.com",
+            "--allow-run=sh",
+            "--allow-sys",
+            "--allow-read",
+            "npm:repomix@latest",
             "--mcp"
           ],
           "command": "deno"
