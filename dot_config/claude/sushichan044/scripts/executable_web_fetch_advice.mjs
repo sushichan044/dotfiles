@@ -137,7 +137,7 @@ function exitWithWarningForUser(messageForUser = undefined) {
  * @param {PreToolUseHookOutput} output
  */
 function exitWithBlockingError(output) {
-  console.error(JSON.stringify(output));
+  console.log(JSON.stringify(output));
   process.exit(2);
 }
 
