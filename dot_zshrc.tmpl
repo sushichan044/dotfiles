@@ -59,3 +59,8 @@ esac
 # pnpm end
 {{ end -}}
 {{- end -}}
+
+{{ if not .for_personal }}
+{{/* Load Private zshrc */}}
+{{- (onepasswordDetailsFields "2pybemjhmpdlmbog3ssdgom5uq").notesPlain.value -}}
+{{ end }}
