@@ -63,10 +63,6 @@
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
-        "cloudflare-docs": {
-          "type": "http",
-          "url": "https://docs.mcp.cloudflare.com/mcp"
-        },
         "readability": {
           "args": [
             "x",
