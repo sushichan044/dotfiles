@@ -1,22 +1,22 @@
 ---
-allowed-tools: Bash(gh issue view:*), Bash(git checkout -b:*)
+allowed-tools: Bash(gh issue view:*), Bash(git switch -c:*)
 description: Find and fix an issue in the codebase by following a strict process.
 argument-hint: [issueNumber]
 ---
 
-# Find and fix issue #$ARGUMENTS
+# Find and fix issue
 
 ## Goal
 
-Recreate the issue and fix the bug
+Understand the issue and meet the completion requirements by implementing a fix.
 
 ## Steps (obey strictly)
 
-Bug description user provided: $ARGUMENTS
+YOUR_ISSUE_TO_FIX: $ARGUMENTS
 
-1. **FIRST** check if issue is open: !`gh issue view $ARGUMENTS --json state -q .state` (must be "OPEN")
-2. **IMMEDIATELY** create branch: !`git switch -c fix-issue-$ARGUMENTS` (DO THIS BEFORE ANY OTHER WORK!)
-3. Now read issue details: !`gh issue view $ARGUMENTS` to understand the issue
+1. **FIRST** check if issue is open: `gh issue view $ARGUMENTS --json state -q .state` (must be "OPEN")
+2. **IMMEDIATELY** create branch: `git switch -c fix-issue-$ARGUMENTS` (DO THIS BEFORE ANY OTHER WORK!)
+3. Now read issue details: `gh issue view $ARGUMENTS` to understand the issue
 4. Locate the relevant code in our codebase
 5. Implement a solution that addresses the root cause
      - Tool like `context7` can be used to search for relevant code, documentation, or examples
