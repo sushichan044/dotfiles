@@ -23,6 +23,7 @@ import {
 
 import * as v from "jsr:@valibot/valibot";
 import { isNonEmptyString } from "../../ai/scripts/utils/string.ts";
+import $ from "jsr:@david/dax";
 
 function isMacOS(): boolean {
   return process.platform === "darwin";
@@ -131,20 +132,7 @@ try {
       ? buildNotificationFromNotificationHook(input)
       : buildNotificationFromStopHook(input);
 
-  execFileSync(
-    "terminal-notifier",
-    [
-      "-sound",
-      "Funk",
-      "-title",
-      notification.title,
-      "-message",
-      notification.message,
-    ],
-    {
-      stdio: "ignore",
-    }
-  );
+  await $`terminal-notifier -sound Funk -title ${notification.title} -message ${notification.message}`;
 } catch (error) {
   console.error("Error processing transcript or sending notification.");
   console.error(error);
