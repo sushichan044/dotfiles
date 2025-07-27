@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/notify.mjs"
+            "command": "$HOME/.config/claude/notify.ts"
           }
         ]
       }
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/notify.mjs"
+            "command": "$HOME/.config/claude/notify.ts"
           }
         ]
       }
