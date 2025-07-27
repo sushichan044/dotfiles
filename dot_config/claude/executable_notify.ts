@@ -119,23 +119,20 @@ try {
       ? buildNotificationFromNotificationHook(input)
       : buildNotificationFromStopHook(input);
 
-  const script = `
-          try
-            set notificationTitle to system attribute "CLAUDE_NOTIFICATION_TITLE"
-            set notificationMessage to system attribute "CLAUDE_NOTIFICATION_MESSAGE"
-            set notificationSound to system attribute "CLAUDE_NOTIFICATION_SOUND"
-            display notification notificationMessage with title notificationTitle sound name notificationSound
-          end try
-        `;
-  execFileSync("osascript", ["-e", script], {
-    env: {
-      ...process.env,
-      CLAUDE_NOTIFICATION_TITLE: notification.title,
-      CLAUDE_NOTIFICATION_MESSAGE: notification.message,
-      CLAUDE_NOTIFICATION_SOUND: "Funk",
-    },
-    stdio: "ignore",
-  });
+  execFileSync(
+    "terminal-notifier",
+    [
+      "-sound",
+      "Funk",
+      "-title",
+      notification.title,
+      "-message",
+      notification.message,
+    ],
+    {
+      stdio: "ignore",
+    }
+  );
 } catch (error) {
   console.error("Error processing transcript or sending notification.");
   console.error(error);
