@@ -22,6 +22,7 @@ import {
 } from "../../ai/scripts/claude-code-hooks/input.ts";
 
 import * as v from "jsr:@valibot/valibot";
+import { isNonEmptyString } from "../../ai/scripts/utils/string.ts";
 
 function isMacOS(): boolean {
   return process.platform === "darwin";
@@ -74,9 +75,20 @@ function buildNotificationFromStopHook(input: StopOrSubAgentStopInput) {
       | string
       | undefined;
 
+    // Get the first 100 characters in first line of the last message
+    const truncatedMessage = lastMessageContent
+      ?.split("\n")
+      .at(0)
+      ?.trim()
+      .substring(0, 100);
+
+    const message = isNonEmptyString(truncatedMessage)
+      ? `${truncatedMessage}...`
+      : fallbackMessage;
+
     return {
       title: "Claude Code",
-      message: lastMessageContent ?? fallbackMessage,
+      message,
     };
   } catch (_error) {
     // Maybe JSON parsing failed or file is not a valid transcript
