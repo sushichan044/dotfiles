@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read
+#!/usr/bin/env -S deno run --allow-env --allow-read --allow-run="wc"
 
 import { readFileSync } from "node:fs";
 import process from "node:process";
