@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-run="terminal-notifier"
+#!/usr/bin/env -S deno run --allow-env --allow-read --allow-run
 // @ts-check
 /**
  * @fileoverview
@@ -8,7 +8,6 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
-import { execFileSync } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import os from "node:os";
