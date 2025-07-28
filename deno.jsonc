@@ -9,6 +9,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "verbatimModuleSyntax": true,
+    "exactOptionalPropertyTypes": true
   }
 }
