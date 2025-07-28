@@ -9,7 +9,7 @@ import {
   exitHook,
   PreToolUseOutput,
 } from "../../../../ai/scripts/claude-code-hooks/output.ts";
-import { preToolUseInputSchema } from "../../../../ai/scripts/claude-code-hooks/input.ts";
+import { HookInputSchemas } from "../../../../ai/scripts/claude-code-hooks/input.ts";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await Deno.realPath(path);
@@ -36,7 +36,7 @@ const main = async () => {
     const rawInput = readFileSync(process.stdin.fd, "utf-8");
 
     const input = JSON.parse(rawInput);
-    const parsed = v.parse(preToolUseInputSchema.Read, input);
+    const parsed = v.parse(HookInputSchemas.PreToolUse.Read, input);
 
     if (!parsed.tool_input.file_path.endsWith(".md")) {
       return exitHook.success();

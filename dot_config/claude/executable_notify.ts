@@ -14,10 +14,8 @@ import os from "node:os";
 import process from "node:process";
 
 import {
-  NotificationInput,
-  notificationInputSchema,
-  StopOrSubAgentStopInput,
-  stopOrSubAgentStopInputSchema,
+  HookInputSchemas,
+  type HookInputs,
 } from "../../ai/scripts/claude-code-hooks/input.ts";
 
 import * as v from "jsr:@valibot/valibot";
@@ -37,14 +35,18 @@ function resolvePath(pathString: string): string {
   return path.resolve(resolvedPath);
 }
 
-function buildNotificationFromNotificationHook(input: NotificationInput) {
+function buildNotificationFromNotificationHook(
+  input: HookInputs["Notification"]["default"]
+) {
   return {
     title: "Claude Code",
     message: input.message ?? "Claude sent you a message.",
   };
 }
 
-function buildNotificationFromStopHook(input: StopOrSubAgentStopInput) {
+function buildNotificationFromStopHook(
+  input: HookInputs["Stop"]["default"] | HookInputs["SubagentStop"]["default"]
+) {
   const fallbackMessage = "Claude Code process has completed.";
   const transcriptPath = resolvePath(input.transcript_path);
 
@@ -113,7 +115,11 @@ try {
   const raw = JSON.parse(rawInput);
 
   const input = v.parse(
-    v.union([notificationInputSchema, stopOrSubAgentStopInputSchema]),
+    v.union([
+      HookInputSchemas.Notification.default,
+      HookInputSchemas.Stop.default,
+      HookInputSchemas.SubagentStop.default,
+    ]),
     raw
   );
 
