@@ -40,15 +40,6 @@
         ]
       },
       {
-        "matcher": "Grep",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/scripts/block_PreToolUse.sh 'Use ripgrep with Bash(rg <query>) instead.'"
-          }
-        ]
-      },
-      {
         "matcher": "Read",
         "hooks": [
           {
