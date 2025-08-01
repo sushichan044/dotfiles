@@ -51,17 +51,6 @@ Refactor: MUST FOLLOW 'Kent Beck' recommended practices
 5. Commit: Review→Quality checks→Atomic commits→Cleanup
 ```
 
-### Plan Mode Exit Protocol
-
-**MANDATORY**: Before using `exit_plan_mode`, ALWAYS execute the plan-to-todo conversion:
-
-1. Read the plan-to-todo command: @commands/plan-to-todo.md
-2. Convert current plan to checklist format
-3. Save to `{YOUR CURRENT WORKING DIRECTORY}/.claude/sushichan044/plan/` directory
-4. Then proceed with `exit_plan_mode`
-
-This ensures plans are preserved as actionable checklists before transitioning to implementation.
-
 #### Confidence Levels
 
 - 🟢 **High Confidence**: Requirements clear, implementation approach confirmed → Proceed directly
