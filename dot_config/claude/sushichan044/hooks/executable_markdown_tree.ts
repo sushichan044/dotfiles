@@ -46,14 +46,16 @@ const hook = defineHook({
     );
 
     return c.blockingError({
-      hookEventName: "PreToolUse",
-      permissionDecision: "deny",
-      permissionDecisionReason: [
-        "Warning: The file is too long to read directly.",
-        "Instead, I recommend you to read the file in smaller chunks or use a more efficient method.",
-        "Here is the heading tree extracted from the file:",
-        JSON.stringify(headingTree.root.children, null, 2),
-      ].join("\n"),
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason: [
+          "Warning: The file is too long to read directly.",
+          "Instead, I recommend you to read the file in smaller chunks or use a more efficient method.",
+          "Here is the heading tree extracted from the file:",
+          JSON.stringify(headingTree.root.children, null, 2),
+        ].join("\n"),
+      },
     });
   },
 });
