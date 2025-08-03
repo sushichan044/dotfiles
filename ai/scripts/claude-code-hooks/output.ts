@@ -94,6 +94,13 @@ type HookOutput = {
     reason: string;
   }>;
 
+  SessionStart: HookOutputBase<{
+    hookSpecificOutput: {
+      hookEventName: "SessionStart";
+      additionalContext: string;
+    };
+  }>;
+
   // Hooks below does not have additional output fields.
 
   Notification: HookOutputBase;

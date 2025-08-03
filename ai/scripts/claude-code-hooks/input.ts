@@ -87,6 +87,11 @@ export const HookInputSchemas = {
       custom_instructions: v.string(),
     }),
   },
+  SessionStart: {
+    default: buildHookInputSchema("SessionStart", {
+      source: v.string(),
+    }),
+  },
 } as const satisfies Record<
   SupportedHookEvent,
   {

@@ -6,6 +6,7 @@ export const SUPPORTED_HOOK_EVENTS = [
   "Stop",
   "SubagentStop",
   "PreCompact",
+  "SessionStart",
 ] as const;
 
 export type SupportedHookEvent = (typeof SUPPORTED_HOOK_EVENTS)[number];
