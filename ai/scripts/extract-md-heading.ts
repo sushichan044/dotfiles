@@ -41,7 +41,9 @@ const buildHeadingTree = (
     extractedHeadings.push({
       level: node.depth,
       value: text,
-      line: node.position?.start.line,
+      ...(node.position?.start.line !== undefined
+        ? { line: node.position.start.line }
+        : {}),
     });
 
     return CONTINUE;

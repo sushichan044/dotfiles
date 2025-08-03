@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env -S deno run --allow-env
 // @ts-check
 /**
  * @fileoverview
