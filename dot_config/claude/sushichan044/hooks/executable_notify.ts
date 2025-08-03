@@ -13,18 +13,11 @@ import path from "node:path";
 import os from "node:os";
 import process from "node:process";
 
-import {
-  HookInputSchemas,
-  type HookInputs,
-} from "../../ai/scripts/claude-code-hooks/input.ts";
-
-import * as v from "jsr:@valibot/valibot";
-import { isNonEmptyString } from "../../ai/scripts/utils/string.ts";
+import { isNonEmptyString } from "../../../../ai/scripts/utils/string.ts";
 import $ from "jsr:@david/dax";
-
-function isMacOS(): boolean {
-  return process.platform === "darwin";
-}
+import { defineHook } from "../../../../ai/scripts/claude-code-hooks/define.ts";
+import { runHook } from "../../../../ai/scripts/claude-code-hooks/run.ts";
+import type { ExtractInputSchema } from "../../../../ai/scripts/claude-code-hooks/types.ts";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;
@@ -35,9 +28,14 @@ function resolvePath(pathString: string): string {
   return path.resolve(resolvedPath);
 }
 
+type NotificationPayload = {
+  title: string;
+  message: string;
+};
+
 function buildNotificationFromNotificationHook(
-  input: HookInputs["Notification"]["default"]
-) {
+  input: ExtractInputSchema<"Notification">
+): NotificationPayload {
   return {
     title: "Claude Code",
     message: input.message ?? "Claude sent you a message.",
@@ -45,8 +43,8 @@ function buildNotificationFromNotificationHook(
 }
 
 function buildNotificationFromStopHook(
-  input: HookInputs["Stop"]["default"] | HookInputs["SubagentStop"]["default"]
-) {
+  input: ExtractInputSchema<"Stop">
+): NotificationPayload {
   const fallbackMessage = "Claude Code process has completed.";
   const transcriptPath = resolvePath(input.transcript_path);
 
@@ -101,45 +99,25 @@ function buildNotificationFromStopHook(
   }
 }
 
-type NotificationPayload = {
-  title: string;
-  message: string;
-};
+const hook = defineHook({
+  trigger: {
+    Stop: true,
+    Notification: true,
+  },
+  shouldRun: () => process.platform === "darwin",
+  run: async (c) => {
+    if (c.input.hook_event_name === "Stop" && c.input.stop_hook_active) {
+      return c.success();
+    }
 
-try {
-  if (!isMacOS()) {
-    process.exit(0);
-  }
+    const notification =
+      c.input.hook_event_name === "Notification"
+        ? buildNotificationFromNotificationHook(c.input)
+        : buildNotificationFromStopHook(c.input);
 
-  const rawInput = readFileSync(process.stdin.fd, "utf8");
-  const raw = JSON.parse(rawInput);
+    await $`terminal-notifier -sound Funk -title ${notification.title} -message ${notification.message}`;
+    return c.success();
+  },
+});
 
-  const input = v.parse(
-    v.union([
-      HookInputSchemas.Notification.default,
-      HookInputSchemas.Stop.default,
-      HookInputSchemas.SubagentStop.default,
-    ]),
-    raw
-  );
-
-  if (
-    (input.hook_event_name === "Stop" ||
-      input.hook_event_name === "SubagentStop") &&
-    input.stop_hook_active
-  ) {
-    // If the stop hook is already active, we do not send a notification.
-    process.exit(0);
-  }
-
-  const notification: NotificationPayload =
-    input.hook_event_name === "Notification"
-      ? buildNotificationFromNotificationHook(input)
-      : buildNotificationFromStopHook(input);
-
-  await $`terminal-notifier -sound Funk -title ${notification.title} -message ${notification.message}`;
-} catch (error) {
-  console.error("Error processing transcript or sending notification.");
-  console.error(error);
-  process.exit(1);
-}
+await runHook(hook);

@@ -1,15 +1,9 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read --allow-run
 
-import { readFileSync } from "node:fs";
-import process from "node:process";
 import { headingTreeOfMarkdownFile } from "../../../../ai/scripts/extract-md-heading.ts";
 import $ from "jsr:@david/dax";
-import * as v from "jsr:@valibot/valibot";
-import {
-  exitHook,
-  PreToolUseOutput,
-} from "../../../../ai/scripts/claude-code-hooks/output.ts";
-import { HookInputSchemas } from "../../../../ai/scripts/claude-code-hooks/input.ts";
+import { defineHook } from "../../../../ai/scripts/claude-code-hooks/define.ts";
+import { runHook } from "../../../../ai/scripts/claude-code-hooks/run.ts";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await Deno.realPath(path);
@@ -31,28 +25,27 @@ const getLineCount = async (path: string): Promise<number | null> => {
 
 const DO_NOT_READ_DIRECTLY_IF_LINES_OVER = 750;
 
-const main = async () => {
-  try {
-    const rawInput = readFileSync(process.stdin.fd, "utf-8");
-
-    const input = JSON.parse(rawInput);
-    const parsed = v.parse(HookInputSchemas.PreToolUse.Read, input);
-
-    if (!parsed.tool_input.file_path.endsWith(".md")) {
-      return exitHook.success();
+const hook = defineHook({
+  trigger: {
+    PreToolUse: {
+      Read: true,
+    },
+  },
+  run: async (c) => {
+    if (!c.input.tool_input.file_path.endsWith(".md")) {
+      return c.success();
     }
 
-    const lines = await getLineCount(parsed.tool_input.file_path);
+    const lines = await getLineCount(c.input.tool_input.file_path);
     if (lines == null || lines < DO_NOT_READ_DIRECTLY_IF_LINES_OVER) {
-      return exitHook.success();
+      return c.success();
     }
 
     const headingTree = await headingTreeOfMarkdownFile(
-      parsed.tool_input.file_path
+      c.input.tool_input.file_path
     );
 
-    return exitHook.errorForClaude<PreToolUseOutput>({
-      continue: true,
+    return c.blockingError({
       decision: "block",
       reason: [
         "Warning: The file is too long to read directly.",
@@ -61,13 +54,7 @@ const main = async () => {
         JSON.stringify(headingTree.root.children, null, 2),
       ].join("\n"),
     });
-  } catch (error) {
-    return exitHook.warnForUser(
-      `Error reading file: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    );
-  }
-};
+  },
+});
 
-await main();
+await runHook(hook);

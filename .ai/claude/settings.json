@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/notify.ts"
+            "command": "$HOME/.config/claude/sushichan044/hooks/notify.ts"
           }
         ]
       }
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/notify.ts"
+            "command": "$HOME/.config/claude/sushichan044/hooks/notify.ts"
           }
         ]
       }
@@ -35,7 +35,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/scripts/block_PreToolUse.sh 'Use Bash(gemini --prompt \"WebSearch: <query>\") instead.'"
+            "command": "$HOME/.config/claude/sushichan044/hooks/block_PreToolUse.sh 'Use Bash(gemini --prompt \"WebSearch: <query>\") instead.'"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/claude/sushichan044/hooks/web_fetch_advice.ts"
           }
         ]
       },
@@ -44,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/scripts/markdown_tree.ts"
+            "command": "$HOME/.config/claude/sushichan044/hooks/markdown_tree.ts"
           }
         ]
       }
