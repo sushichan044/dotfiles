@@ -1,12 +1,14 @@
 import * as v from "jsr:@valibot/valibot";
-import { HookEvents } from "./types.ts";
+import { SUPPORTED_HOOK_EVENTS, type SupportedHookEvent } from "./event.ts";
 
 const baseHookInputSchema = v.object({
   session_id: v.string(),
   transcript_path: v.string(),
-  hook_event_name: v.string(),
+  hook_event_name: v.union(SUPPORTED_HOOK_EVENTS.map((e) => v.literal(e))),
   cwd: v.string(),
 });
+
+export type HookInputBase = v.InferOutput<typeof baseHookInputSchema>;
 
 const buildHookInputSchema = <
   TName extends string,
@@ -86,8 +88,12 @@ export const HookInputSchemas = {
     }),
   },
 } as const satisfies Record<
-  HookEvents,
+  SupportedHookEvent,
   {
+    default: v.ObjectSchema<
+      v.ObjectEntries,
+      v.ErrorMessage<v.ObjectIssue> | undefined
+    >;
     [key: string]: v.ObjectSchema<
       v.ObjectEntries,
       v.ErrorMessage<v.ObjectIssue> | undefined
@@ -95,17 +101,17 @@ export const HookInputSchemas = {
   }
 >;
 
-type HookInputSchemaDefs = typeof HookInputSchemas;
+export type HookInputSchemaType = typeof HookInputSchemas;
 
 export type HookInputs = {
-  [EventKey in HookEvents]: {
-    [SchemaKey in keyof HookInputSchemaDefs[EventKey]]: v.InferOutput<
-      HookInputSchemaDefs[EventKey][SchemaKey] extends v.BaseSchema<
+  [EventKey in SupportedHookEvent]: {
+    [SchemaKey in keyof HookInputSchemaType[EventKey]]: v.InferOutput<
+      HookInputSchemaType[EventKey][SchemaKey] extends v.BaseSchema<
         unknown,
         unknown,
         v.BaseIssue<unknown>
       >
-        ? HookInputSchemaDefs[EventKey][SchemaKey]
+        ? HookInputSchemaType[EventKey][SchemaKey]
         : never
     >;
   };
