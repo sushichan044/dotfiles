@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-net
+#!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-net
 // @ts-check
 /**
  * @fileoverview

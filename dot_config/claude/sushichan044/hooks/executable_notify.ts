@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-run
+#!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-run
 // @ts-check
 /**
  * @fileoverview
