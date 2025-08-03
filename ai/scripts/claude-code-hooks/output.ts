@@ -27,17 +27,16 @@ type HookOutputBase<T extends Record<string, unknown> = {}> = T & {
 
 type HookOutput = {
   PreToolUse: HookOutputBase<{
-    /**
-     * - `approve` bypasses the permission system. `reason` is shown to the user but not to Claude.
-     * - `block` prevents the tool call from executing. `reason` is shown to Claude.
-     * - `undefined` leads to the existing permission flow. `reason` is ignored.
-     */
-    decision: "approve" | "block" | undefined;
+    hookEventName: "PreToolUse";
 
     /**
-     * Reason for the decision.
+     * - `allow` bypasses the permission system. `permissionDecisionReason` is shown to the user but not to Claude.
+     * - `deny` prevents the tool call from executing. `permissionDecisionReason` is shown to Claude.
+     * - `ask` asks the user to confirm the tool call in the UI. `permissionDecisionReason` is shown to the user but not to Claude.
      */
-    reason: string;
+    permissionDecision: "allow" | "deny" | "ask";
+
+    permissionDecisionReason: string;
   }>;
 
   PostToolUse: HookOutputBase<{
@@ -66,6 +65,15 @@ type HookOutput = {
      * Reason for the decision.
      */
     reason: string;
+
+    hookSpecificOutput: {
+      hookEventName: "UserPromptSubmit";
+
+      /**
+       * adds the string to the context if not blocked.
+       */
+      additionalContext: string;
+    };
   }>;
 
   Stop: HookOutputBase<{

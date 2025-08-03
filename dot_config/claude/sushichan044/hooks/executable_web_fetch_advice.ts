@@ -21,8 +21,10 @@ const hook = defineHook({
 
     if (urlObj.hostname.includes("notion.so")) {
       return c.blockingError({
-        decision: "block",
-        reason: "Use mcp__notion__fetch instead of web fetch for Notion URLs.",
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason:
+          "Use mcp__notion__fetch instead of web fetch for Notion URLs.",
       });
     }
 
