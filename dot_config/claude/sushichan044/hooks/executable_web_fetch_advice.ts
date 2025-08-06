@@ -54,6 +54,7 @@ const hook = defineHook({
           "```",
         ].join("\n"),
       },
+      suppressOutput: true,
     });
   },
 });
