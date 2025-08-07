@@ -8,6 +8,7 @@ sort = -committerdate
 
 [color]
 ui = true
+grep = auto
 diff = auto
 status = auto
 branch = auto
