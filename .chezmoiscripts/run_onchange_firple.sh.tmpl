@@ -1,0 +1,37 @@
+{{ if eq .chezmoi.os "darwin" -}}
+{{- $latestUrl := gitHubLatestReleaseAssetURL "negset/Firple" "Firple.zip" -}}
+#!/bin/bash
+set -eu
+
+install_font() {
+    local url="{{ $latestUrl }}"
+
+    if [ -z "$url" ]; then
+        echo "⚠️ Cannot resolve firple url"
+        exit 0
+    fi
+
+    if ! type curl >/dev/null; then
+        echo "⚠️ curl is not installed"
+        exit 0
+    fi
+
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+
+    curl -fsSL "$url" -o "$tmp_dir/Firple.zip"
+
+    unzip -o "$tmp_dir/Firple.zip" -d "$tmp_dir/Firple"
+
+    cp -f -r "$tmp_dir/Firple"/* "$HOME/Library/Fonts/"
+}
+
+echo "⏩ Installing Firple font..."
+
+if install_font; then
+    echo "✅ Firple font installed successfully"
+else
+    echo "⚠️ Failed to install Firple font"
+fi
+
+{{ end -}}
