@@ -13,6 +13,7 @@
     "jsr:@std/path@1": "1.1.1",
     "jsr:@std/path@^1.1.1": "1.1.1",
     "jsr:@valibot/valibot@*": "1.1.0",
+    "npm:@mizchi/readability@0.6.8": "0.6.8",
     "npm:@mizchi/readability@0.7.7": "0.7.7",
     "npm:@modelcontextprotocol/server-sequential-thinking@latest": "2025.7.1",
     "npm:@types/node@*": "22.15.15",
@@ -100,6 +101,15 @@
       "dependencies": [
         "@isaacs/balanced-match"
       ]
+    },
+    "@mizchi/readability@0.6.8": {
+      "integrity": "sha512-CIJAkZmqlhs5HzQiAUd2z87MGgQlN9cwZyIQMtxWt/upOO41YfbXo0knmcC+2PcrF7wetno4wlmbJXbDOWE5Tg==",
+      "dependencies": [
+        "@modelcontextprotocol/sdk@1.17.1_express@5.1.0_zod@3.25.76",
+        "htmlparser2",
+        "zod"
+      ],
+      "bin": true
     },
     "@mizchi/readability@0.7.7": {
       "integrity": "sha512-t/rvZudYN4RZ70T/URmrO1vRZHURrMuqA8bM1LLPXl/W2vwjhuTuYV5uMoXkLrGpuj1bje3TVKJyDde0eswvcA==",
