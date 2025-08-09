@@ -1,3 +1,5 @@
+{{ if eq .chezmoi.os "darwin" -}}
+
 #!/bin/sh
 {{- if lookPath "brew" }}
 # Installed mime version: {{ output "brew" "info" "shared-mime-info" "--json" | fromJson | jq ".[].installed.[].version" }}
@@ -19,3 +21,5 @@ mkdir -p "$XDG_DATA_HOME/mime/packages" || {
 }
 
 update-mime-database "$XDG_DATA_HOME/mime"
+
+{{ end -}}
