@@ -10,6 +10,10 @@
     "DISABLE_TELEMETRY": "1",
     "ENABLE_BACKGROUND_TASKS": "1"
   },
+  "statusLine": {
+    "type": "command",
+    "command": "ccusage statusline"
+  },
   "hooks": {
     "Notification": [
       {
