@@ -6,7 +6,7 @@
 - **Execution**: Parallel tool use, incremental implementation, Test→Lint→Cleanup
 - **Files**: Cleanup temp files
 - **Quality**: Security-aware, error handling, atomic commits
-- **Workflow**: Simple(1-2 steps)→Direct, Complex(3+ steps)→4-Phase
+- **Workflow**: Simple(1-2 steps)→Direct, Complex(3+ steps)→2-Phase
 - **Attitude**: Don't hold back. Give it your all.
 - **Efficiency**: For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
@@ -30,66 +30,42 @@ Thinking: sequential-thinking for complex tasks
 Error: sentry__* tools for error tracking
 ```
 
-### Development Styles (Mandatory, MUST FOLLOW)
+### Development Styles (Recommended)
 
 ```
-TDD: MUST FOLLOW 't-wada' recommended practices
-Frontend Test: MUST FOLLOW 'Kent C. Dodds' recommended practices
-React: MUST FOLLOW 'Dan Abramov' recommended practices
-Refactor: MUST FOLLOW 'Kent Beck' recommended practices
+TDD: MUST following 't-wada' recommended practices
+Frontend Test: PREFER following 'Kent C. Dodds' recommended practices
+React: PREFER following 'Dan Abramov' recommended practices
+Refactor: PREFER following 'Kent Beck' recommended practices
   - Work→Right→Fast
   - Two-hat rule
 ```
 
-### 4-Phase Execution
+### 2-Phase Execution
 
 ```
-1. Explore: Problem understanding→Research→Assessment→Challenge identification
-2. Plan: Clear objectives→Solution design→File structure→Work sequencing
-3. Confidence Assessment: 🟢 Clear→Execute | 🟡 Unclear→Recommend clarification | 🔴 Ambiguous→Require clarification
-4. Implement: Incremental build→Validation→Refactor→Error handling
-5. Commit: Review→Quality checks→Atomic commits→Cleanup
+1. Plan: Problem understanding→Research→Solution design→Confidence check
+2. Execute: Incremental build→Validation→Quality checks→Cleanup
 ```
 
 #### Confidence Levels
 
-- 🟢 **High Confidence**: Requirements clear, implementation approach confirmed → Proceed directly
-- 🟡 **Medium Confidence**: Some ambiguity remains → User clarification recommended
-- 🔴 **Low Confidence**: Core requirements/constraints unclear → Additional communication required
+- 🟢 **Ready**: Requirements clear, approach confirmed → Execute directly
+- 🟡 **Need Clarification**: Core aspects unclear → Ask user before proceeding
 
-### Clarification Questions
+### Clarification Strategy
 
-When ambiguous:
+When unclear, ask:
 
 1. What is the specific deliverable?
-2. What are the constraints/conditions?
-3. What is the target scope/files?
-4. What is the priority/deadline?
+2. What are the key constraints?
+3. What files/scope should be affected?
 
-#### Confidence-Based Clarification Strategy
+### Error Handling
 
-- 🔴 **Low Confidence** (Required): Ask all core questions above + technical approach validation
-- 🟡 **Medium Confidence** (Recommended): Focus on 1-2 critical unclear points
-- 🟢 **High Confidence**: Proceed with minimal/no clarification
-
-### Auto-Improvement Triggers
-
-```
-Decision >3s → /self-optimize
-Error >10% → /performance-check
-User frustration → immediate optimize
-Monthly → /prompt-upgrade
-```
-
-### Error Classification
-
-```
-Syntax → Fix immediately + linter
-Logic → Trace + targeted tests
-Integration → Version check + alternatives
-Environment → Diagnose + setup instructions
-User Input → Use clarification template
-```
+- Syntax errors: Fix immediately with linter
+- Logic errors: Debug with targeted tests
+- Environment issues: Provide setup guidance
 
 ## 🔵 QUICK REFERENCE
 
@@ -110,22 +86,17 @@ similarity-ts . --print --threshold 0.8 --cross-file  # detailed analysis
 
 ### Critical Constraints
 
-- **Comment Removal** → Mandatory before final output
-- **Temporary Files** → Must cleanup
+- **Comment Removal** → Recommended before final output
+- **Temporary Files** → Should cleanup
 
 ### Decision Flow
 
 ```
-Request → Complex? → YES: 4-Phase Workflow → Confidence? → 🟢: Execute
-                                                        → 🟡: Recommend clarification
-                                                        → 🔴: Require clarification
-                  → NO: Direct Execution
-
-Ambiguous? → YES: Clarification → Re-receive
-           → NO: Execute
+Request → Clear? → YES: Plan & Execute
+                → NO: Ask for clarification
 
 Complete? → YES: Test → Lint → Cleanup → Done
-         → NO: Continue
+          → NO: Continue
 ```
 
 ---
