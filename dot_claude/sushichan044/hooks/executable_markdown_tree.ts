@@ -1,9 +1,9 @@
 #!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-run
 
-import { headingTreeOfMarkdownFile } from "../../../../ai/scripts/extract-md-heading.ts";
+import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading.ts";
 import $ from "jsr:@david/dax";
-import { defineHook } from "../../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../../ai/scripts/claude-code-hooks/run.ts";
+import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
+import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await Deno.realPath(path);

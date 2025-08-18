@@ -13,11 +13,11 @@ import path from "node:path";
 import os from "node:os";
 import process from "node:process";
 
-import { isNonEmptyString } from "../../../../ai/scripts/utils/string.ts";
+import { isNonEmptyString } from "../../../ai/scripts/utils/string.ts";
 import $ from "jsr:@david/dax";
-import { defineHook } from "../../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../../ai/scripts/claude-code-hooks/run.ts";
-import type { ExtractInputSchema } from "../../../../ai/scripts/claude-code-hooks/types.ts";
+import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
+import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
+import type { ExtractInputSchema } from "../../../ai/scripts/claude-code-hooks/types.ts";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;

@@ -7,8 +7,8 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
-import { defineHook } from "../../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../../ai/scripts/claude-code-hooks/run.ts";
+import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
+import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
 
 import { extract, toMarkdown } from "npm:@mizchi/readability@0.7.7";
 

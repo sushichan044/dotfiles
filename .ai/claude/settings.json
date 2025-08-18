@@ -4,7 +4,7 @@
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "1200000",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
-    "DISABLE_AUTOUPDATER": "0",
+    "DISABLE_AUTOUPDATER": "1",
     "DISABLE_BUG_COMMAND": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_TELEMETRY": "1",
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/hooks/notify.ts"
+            "command": "$HOME/.claude/sushichan044/hooks/notify.ts"
           }
         ]
       }
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/hooks/notify.ts"
+            "command": "$HOME/.claude/sushichan044/hooks/notify.ts"
           }
         ]
       }
@@ -41,7 +41,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/hooks/block_PreToolUse.sh 'Use Bash(gemini --prompt \"WebSearch: <query>\") instead.'"
+            "command": "$HOME/.claude/sushichan044/hooks/block_PreToolUse.sh 'Use Bash(gemini --prompt \"WebSearch: <query>\") instead.'"
           }
         ]
       },
@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/hooks/web_fetch_advice.ts"
+            "command": "$HOME/.claude/sushichan044/hooks/web_fetch_advice.ts"
           }
         ]
       },
@@ -59,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.config/claude/sushichan044/hooks/markdown_tree.ts"
+            "command": "$HOME/.claude/sushichan044/hooks/markdown_tree.ts"
           }
         ]
       }

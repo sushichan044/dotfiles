@@ -54,7 +54,7 @@ update_claude_settings() {
 # Update settings for both claude and superclaude
 {{ $settingsKeyLabels := .claude.settings | keys | sortAlpha | join ", " -}}
 config_paths=(
-    "$XDG_CONFIG_HOME/claude/.claude.json"
+    "$HOME/.claude.json"
     "$XDG_CONFIG_HOME/superclaude/.claude.json"
 )
 
