@@ -19,12 +19,10 @@ if command_exists sheldon; then
   fi
 
   eval "$(sheldon source)"
-  eval "$(sheldon completions --shell zsh)"
 fi
 
 if command_exists mise; then
   eval "$(mise activate zsh)"
-  eval "$(mise completion zsh)"
 fi
 
 if command_exists fzf; then
@@ -32,8 +30,6 @@ if command_exists fzf; then
 fi
 
 if command_exists rg; then
-  eval "$(rg --generate complete-zsh)"
-
   export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/.ripgreprc"
 fi
 
@@ -43,22 +39,6 @@ fi
 
 if command_exists gemini; then
   export SEATBELT_PROFILE="permissive-open"
-fi
-
-if command_exists uv; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
-
-if command_exists uvx; then
-  eval "$(uvx --generate-shell-completion zsh)"
-fi
-
-if command_exists gh; then
-  eval "$(gh completion -s zsh)"
-fi
-
-if command_exists docker; then
-  eval "$(docker completion zsh)"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
