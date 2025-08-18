@@ -36,9 +36,11 @@ is_linux() {
 
 add_to_path_if_not_exists() {
     local dir="$1"
-    if [[ ":$PATH:" != *":$dir:"* ]]; then
-        export PATH="$PATH:$dir"
-    fi
+
+    case ":$PATH:" in
+    *":$dir:"*) ;;
+    *) export PATH="$dir:$PATH" ;;
+    esac
 }
 
 source_if_exists() {
