@@ -7,6 +7,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# prepare completions
+COMPLETION_HOME="$HOME/.zsh.d/completions"
+fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
 
@@ -25,28 +31,12 @@ if command_exists mise; then
   eval "$(mise activate zsh)"
 fi
 
-if command_exists fzf; then
-  source <(fzf --zsh)
-fi
-
 if command_exists rg; then
   export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/.ripgreprc"
 fi
 
-if command_exists phantom; then
-  eval "$(phantom completion zsh)"
-fi
-
 if command_exists gemini; then
   export SEATBELT_PROFILE="permissive-open"
-fi
-
-if command_exists uv; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
-
-if command_exists uvx; then
-  eval "$(uvx --generate-shell-completion zsh)"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
@@ -65,3 +55,26 @@ add_to_path_if_not_exists "$PNPM_HOME"
 {{/* Load Private zshrc */}}
 {{- (onepasswordDetailsFields "2pybemjhmpdlmbog3ssdgom5uq").notesPlain.value -}}
 {{ end }}
+
+
+# Dynamic Shell Completions
+if command_exists fzf; then
+  source <(fzf --zsh)
+fi
+
+# AWS CLI
+if command_exists aws_completer; then
+  complete -C aws_completer aws
+fi
+
+if command_exists uv; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
+
+if command_exists uvx; then
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+
+if command_exists phantom; then
+  eval "$(phantom completion zsh)"
+fi
