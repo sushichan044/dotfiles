@@ -34,6 +34,8 @@ if command_exists fzf; then
 fi
 
 if command_exists rg; then
+  source <(rg --generate complete-zsh)
+
   export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/.ripgreprc"
 fi
 
