@@ -94,6 +94,7 @@ smudge = git-lfs smudge -- %f
 
 [alias]
 alias = "!f() { git config --get-regexp '^alias' | sed 's/^alias\\.//g'; }; f"
+swc = "!f() { git switch -c $(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
 cz = "!f() { git-cz }; f"
 clear-cache = "rm -r --cached ."
 com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
