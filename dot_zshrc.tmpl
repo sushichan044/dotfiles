@@ -75,6 +75,8 @@ if command_exists uvx; then
   eval "$(uvx --generate-shell-completion zsh)"
 fi
 
-if command_exists phantom; then
-  eval "$(phantom completion zsh)"
-fi
+# 内部で compinit を呼んでいて補完を破壊されるので無効化する
+# コレで治る: https://github.com/aku11i/phantom/pull/221
+# if command_exists phantom; then
+#   eval "$(phantom completion zsh)"
+# fi
