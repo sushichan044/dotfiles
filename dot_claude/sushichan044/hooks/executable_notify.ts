@@ -15,9 +15,11 @@ import process from "node:process";
 
 import { isNonEmptyString } from "../../../ai/scripts/utils/string.ts";
 import $ from "jsr:@david/dax";
-import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
-import type { ExtractInputSchema } from "../../../ai/scripts/claude-code-hooks/types.ts";
+import {
+  defineHook,
+  runHook,
+  type ExtractAllHookInputsForEvent,
+} from "npm:cc-hooks-ts@0.0.2";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;
@@ -34,7 +36,7 @@ type NotificationPayload = {
 };
 
 function buildNotificationFromNotificationHook(
-  input: ExtractInputSchema<"Notification">
+  input: ExtractAllHookInputsForEvent<"Notification">
 ): NotificationPayload {
   return {
     title: "Claude Code",
@@ -43,7 +45,7 @@ function buildNotificationFromNotificationHook(
 }
 
 function buildNotificationFromStopHook(
-  input: ExtractInputSchema<"Stop">
+  input: ExtractAllHookInputsForEvent<"Stop">
 ): NotificationPayload {
   const fallbackMessage = "Claude Code process has completed.";
   const transcriptPath = resolvePath(input.transcript_path);

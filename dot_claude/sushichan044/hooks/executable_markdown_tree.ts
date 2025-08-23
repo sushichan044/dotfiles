@@ -2,8 +2,8 @@
 
 import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading.ts";
 import $ from "jsr:@david/dax";
-import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
+
+import { defineHook, runHook } from "npm:cc-hooks-ts@0.0.2";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await Deno.realPath(path);
@@ -44,17 +44,19 @@ const hook = defineHook({
     const headingTree = await headingTreeOfMarkdownFile(
       c.input.tool_input.file_path
     );
-
-    return c.blockingError({
-      hookSpecificOutput: {
-        hookEventName: "PreToolUse",
-        permissionDecision: "deny",
-        permissionDecisionReason: [
-          "Warning: The file is too long to read directly.",
-          "Instead, I recommend you to read the file in smaller chunks or use a more efficient method.",
-          "Here is the heading tree extracted from the file:",
-          JSON.stringify(headingTree.root.children, null, 2),
-        ].join("\n"),
+    return c.json({
+      event: "PreToolUse",
+      output: {
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "deny",
+          permissionDecisionReason: [
+            "Warning: The file is too long to read directly.",
+            "Instead, I recommend you to read the file in smaller chunks or use a more efficient method.",
+            "Here is the heading tree extracted from the file:",
+            JSON.stringify(headingTree.root.children, null, 2),
+          ].join("\n"),
+        },
       },
     });
   },

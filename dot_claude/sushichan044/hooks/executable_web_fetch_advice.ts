@@ -7,10 +7,8 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
-import { defineHook } from "../../../ai/scripts/claude-code-hooks/define.ts";
-import { runHook } from "../../../ai/scripts/claude-code-hooks/run.ts";
-
 import { extract, toMarkdown } from "npm:@mizchi/readability@0.7.7";
+import { defineHook, runHook } from "npm:cc-hooks-ts@0.0.2";
 
 const hook = defineHook({
   trigger: {
@@ -22,12 +20,15 @@ const hook = defineHook({
     const urlObj = new URL(c.input.tool_input.url);
 
     if (urlObj.hostname.includes("notion.so")) {
-      return c.blockingError({
-        hookSpecificOutput: {
-          hookEventName: "PreToolUse",
-          permissionDecision: "deny",
-          permissionDecisionReason:
-            "Use mcp__notion__fetch instead of web fetch for Notion URLs.",
+      return c.json({
+        event: "PreToolUse",
+        output: {
+          hookSpecificOutput: {
+            hookEventName: "PreToolUse",
+            permissionDecision: "deny",
+            permissionDecisionReason:
+              "Use mcp__notion__fetch instead of web fetch for Notion URLs.",
+          },
         },
       });
     }
@@ -42,19 +43,22 @@ const hook = defineHook({
     const content = extract(html);
     const markdown = toMarkdown(content.root);
 
-    return c.blockingError({
-      hookSpecificOutput: {
-        hookEventName: "PreToolUse",
-        permissionDecision: "deny",
-        permissionDecisionReason: [
-          "You should not use web fetch for this URL.",
-          "Here is the markdown content I fetched from the page:",
-          "```markdown",
-          markdown,
-          "```",
-        ].join("\n"),
+    return c.json({
+      event: "PreToolUse",
+      output: {
+        suppressOutput: true,
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "deny",
+          permissionDecisionReason: [
+            "You should not use web fetch for this URL.",
+            "Here is the markdown content I fetched from the page:",
+            "```markdown",
+            markdown,
+            "```",
+          ].join("\n"),
+        },
       },
-      suppressOutput: true,
     });
   },
 });
