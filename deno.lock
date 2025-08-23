@@ -17,8 +17,7 @@
     "npm:@mizchi/readability@0.7.7": "0.7.7",
     "npm:@modelcontextprotocol/server-sequential-thinking@latest": "2025.7.1",
     "npm:@types/node@*": "22.15.15",
-    "npm:cc-hooks-ts@*": "0.0.1",
-    "npm:cc-hooks-ts@0.0.2": "0.0.2",
+    "npm:cc-hooks-ts@*": "0.0.3",
     "npm:repomix@latest": "1.2.1"
   },
   "jsr": {
@@ -298,6 +297,12 @@
     },
     "cc-hooks-ts@0.0.2": {
       "integrity": "sha512-N58ELGg3I0pawMNzrE4UC5ZSMcM1nXYI1J5W0p2+BwEI3b/czswdhMajkoMbRjZmJmbAKARm3qViOYxikh4lYw==",
+      "dependencies": [
+        "valibot"
+      ]
+    },
+    "cc-hooks-ts@0.0.3": {
+      "integrity": "sha512-/k/I9gh8pzdksKclXQfuAJeaPeQNFTmNmsvOJKR3vDne4Ym8HQoUMlhA3nlE11yFOQPTragE+JKEOEj8LQlLDA==",
       "dependencies": [
         "valibot"
       ]

@@ -3,7 +3,7 @@
 import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading.ts";
 import $ from "jsr:@david/dax";
 
-import { defineHook, runHook } from "npm:cc-hooks-ts@0.0.2";
+import { defineHook, runHook } from "npm:cc-hooks-ts";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await Deno.realPath(path);

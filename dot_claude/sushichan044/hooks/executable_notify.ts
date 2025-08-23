@@ -19,7 +19,7 @@ import {
   defineHook,
   runHook,
   type ExtractAllHookInputsForEvent,
-} from "npm:cc-hooks-ts@0.0.2";
+} from "npm:cc-hooks-ts";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;

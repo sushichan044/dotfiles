@@ -8,7 +8,7 @@
  */
 
 import { extract, toMarkdown } from "npm:@mizchi/readability@0.7.7";
-import { defineHook, runHook } from "npm:cc-hooks-ts@0.0.2";
+import { defineHook, runHook } from "npm:cc-hooks-ts";
 
 const hook = defineHook({
   trigger: {
