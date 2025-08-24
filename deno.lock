@@ -17,7 +17,7 @@
     "npm:@mizchi/readability@0.7.7": "0.7.7",
     "npm:@modelcontextprotocol/server-sequential-thinking@latest": "2025.7.1",
     "npm:@types/node@*": "22.15.15",
-    "npm:cc-hooks-ts@*": "0.0.3",
+    "npm:cc-hooks-ts@*": "0.0.5",
     "npm:repomix@latest": "1.2.1"
   },
   "jsr": {
@@ -303,6 +303,18 @@
     },
     "cc-hooks-ts@0.0.3": {
       "integrity": "sha512-/k/I9gh8pzdksKclXQfuAJeaPeQNFTmNmsvOJKR3vDne4Ym8HQoUMlhA3nlE11yFOQPTragE+JKEOEj8LQlLDA==",
+      "dependencies": [
+        "valibot"
+      ]
+    },
+    "cc-hooks-ts@0.0.4": {
+      "integrity": "sha512-Bsi0uG3ys8zPUGm13B/cuRzfIVCwDFJvtuYP7XE8PzFWDf3iOc9VYGZ/wOsrOmkH/8AEuWnhcVl1ujTy+wmYjA==",
+      "dependencies": [
+        "valibot"
+      ]
+    },
+    "cc-hooks-ts@0.0.5": {
+      "integrity": "sha512-y/V/XbhxLoFMeYJhrQvbLP/QZ4nUcdMldOrQjMIkqByycQX+gvNwrkasgbE9inasrPgdBTTk4+zWHbTzNlcisw==",
       "dependencies": [
         "valibot"
       ]
@@ -1311,7 +1323,9 @@
     "https://esm.sh/unist-util-is@^6.0.0?target=denonext": "https://esm.sh/unist-util-is@6.0.0?target=denonext",
     "https://esm.sh/unist-util-stringify-position@^4.0.0?target=denonext": "https://esm.sh/unist-util-stringify-position@4.0.0?target=denonext",
     "https://esm.sh/unist-util-visit-parents@^6.0.0?target=denonext": "https://esm.sh/unist-util-visit-parents@6.0.1?target=denonext",
-    "https://esm.sh/unist-util-visit@5": "https://esm.sh/unist-util-visit@5.0.0"
+    "https://esm.sh/unist-util-visit@5": "https://esm.sh/unist-util-visit@5.0.0",
+    "https://pkg.pr.new/cc-hooks-ts@8": "https://pkg.pr.new/sushichan044/cc-hooks-ts/cc-hooks-ts@8",
+    "https://pkg.pr.new/sushichan044/cc-hooks-ts/cc-hooks-ts@8": "https://pkg.pr.new/sushichan044/cc-hooks-ts/cc-hooks-ts@1d2c6993b19064ccd9b7c48fe514486713f3c3bd"
   },
   "remote": {
     "https://esm.sh/@types/mdast@4.0.4/index.js": "fabf6997a3adf11e45d11e3c4d58d0634ab98f9d72f3116f3694123818ccd457",
