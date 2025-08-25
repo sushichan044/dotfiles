@@ -1,22 +1,24 @@
-#!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-run
+#!/usr/bin/env -S bun run --silent
 
-import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading.ts";
-import $ from "jsr:@david/dax";
+import { $ } from "bun";
+import { defineHook, runHook } from "cc-hooks-ts";
+import { realpath, stat } from "node:fs/promises";
 
-import { defineHook, runHook } from "npm:cc-hooks-ts";
+import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading";
 
 const getLineCount = async (path: string): Promise<number | null> => {
-  const realPath = await Deno.realPath(path);
+  const realPath = await realpath(path);
 
-  if (!(await Deno.stat(realPath)).isFile) {
+  if (!(await stat(realPath)).isFile()) {
     return null;
   }
 
   const lines = await $`wc -l ${realPath}`.text();
 
   const numberRegex = /^\s*(\d+)\s/;
-  const matches = lines.match(numberRegex);
+  const matches = numberRegex.exec(lines);
   if (matches && matches?.length >= 2) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return parseInt(matches[1]!, 10);
   }
 
@@ -31,6 +33,7 @@ const hook = defineHook({
       Read: true,
     },
   },
+
   run: async (c) => {
     if (!c.input.tool_input.file_path.endsWith(".md")) {
       return c.success();
@@ -42,7 +45,7 @@ const hook = defineHook({
     }
 
     const headingTree = await headingTreeOfMarkdownFile(
-      c.input.tool_input.file_path
+      c.input.tool_input.file_path,
     );
     return c.json({
       event: "PreToolUse",

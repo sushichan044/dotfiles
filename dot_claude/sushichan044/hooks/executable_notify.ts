@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-run
+#!/usr/bin/env -S bun run --silent
 // @ts-check
 /**
  * @fileoverview
@@ -8,18 +8,18 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
-import { readFileSync, existsSync } from "node:fs";
-import path from "node:path";
-import os from "node:os";
-import process from "node:process";
-
-import { isNonEmptyString } from "../../../ai/scripts/utils/string.ts";
-import $ from "jsr:@david/dax";
+import { $ } from "bun";
 import {
   defineHook,
-  runHook,
   type ExtractAllHookInputsForEvent,
-} from "npm:cc-hooks-ts";
+  runHook,
+} from "cc-hooks-ts";
+import { existsSync, readFileSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import process from "node:process";
+
+import { isNonEmptyString } from "../../../ai/scripts/utils/string";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;
@@ -31,21 +31,21 @@ function resolvePath(pathString: string): string {
 }
 
 type NotificationPayload = {
-  title: string;
   message: string;
+  title: string;
 };
 
 function buildNotificationFromNotificationHook(
-  input: ExtractAllHookInputsForEvent<"Notification">
+  input: ExtractAllHookInputsForEvent<"Notification">,
 ): NotificationPayload {
   return {
-    title: "Claude Code",
     message: input.message ?? "Claude sent you a message.",
+    title: "Claude Code",
   };
 }
 
 function buildNotificationFromStopHook(
-  input: ExtractAllHookInputsForEvent<"Stop">
+  input: ExtractAllHookInputsForEvent<"Stop">,
 ): NotificationPayload {
   const fallbackMessage = "Claude Code process has completed.";
   const transcriptPath = resolvePath(input.transcript_path);
@@ -53,8 +53,8 @@ function buildNotificationFromStopHook(
   // ファイルが存在しない場合はフォールバックメッセージを返す
   if (!existsSync(transcriptPath)) {
     return {
-      title: "Claude Code",
       message: fallbackMessage,
+      title: "Claude Code",
     };
   }
 
@@ -64,15 +64,17 @@ function buildNotificationFromStopHook(
       .filter((line) => line.trim());
 
     const lastLine = lines.at(-1);
-    if (!lastLine) {
+    if (!isNonEmptyString(lastLine)) {
       return {
-        title: "Claude Code",
         message: fallbackMessage,
+        title: "Claude Code",
       };
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const transcript = JSON.parse(lastLine);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const lastMessageContent = transcript?.message?.content?.[0]?.text as
       | string
       | undefined;
@@ -89,26 +91,29 @@ function buildNotificationFromStopHook(
       : fallbackMessage;
 
     return {
-      title: "Claude Code",
       message,
+      title: "Claude Code",
     };
-  } catch (_error) {
+  } catch {
     // Maybe JSON parsing failed or file is not a valid transcript
     return {
-      title: "Claude Code",
       message: fallbackMessage,
+      title: "Claude Code",
     };
   }
 }
 
 const hook = defineHook({
   trigger: {
-    Stop: true,
     Notification: true,
+    Stop: true,
   },
-  shouldRun: () => process.platform === "darwin",
+
   run: async (c) => {
-    if (c.input.hook_event_name === "Stop" && c.input.stop_hook_active) {
+    if (
+      c.input.hook_event_name === "Stop" &&
+      c.input.stop_hook_active === true
+    ) {
       return c.success();
     }
 
@@ -120,6 +125,7 @@ const hook = defineHook({
     await $`terminal-notifier -sound Funk -title ${notification.title} -message ${notification.message}`;
     return c.success();
   },
+  shouldRun: () => process.platform === "darwin",
 });
 
 await runHook(hook);

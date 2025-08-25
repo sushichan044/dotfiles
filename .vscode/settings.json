@@ -1,25 +1,41 @@
 {
-  "files.associations": {
-    "*.sh.tmpl": "shellscript",
-    "*.zsh.tmpl": "shellscript",
-    "dot_z*.tmpl": "shellscript",
-    "*.yml.tmpl": "yaml",
-    "*.yaml.tmpl": "yaml",
-    "*.toml.tmpl": "toml",
-    "dot_zsh.d/completions/*.tmpl": "shellscript"
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[yaml]": {
     "editor.formatOnSave": false
   },
-  "cSpell.words": [
-    "chezmoi",
-    "coursier",
-    "linuxbrew"
+  "biome.enabled": true,
+  "cSpell.words": ["chezmoi", "coursier", "linuxbrew"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
   ],
+  "files.associations": {
+    "*.sh.tmpl": "shellscript",
+    "*.toml.tmpl": "toml",
+    "*.yaml.tmpl": "yaml",
+    "*.yml.tmpl": "yaml",
+    "*.zsh.tmpl": "shellscript",
+    "dot_z*.tmpl": "shellscript",
+    "dot_zsh.d/completions/*.tmpl": "shellscript"
+  },
   "github.copilot.chat.codeGeneration.instructions": [
     {
       "file": "CLAUDE.md"
     }
   ],
-  "deno.enable": true
+  "prettier.enable": false,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

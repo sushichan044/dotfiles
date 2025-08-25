@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --quiet --allow-env --allow-read --allow-net
+#!/usr/bin/env -S bun run --silent
 // @ts-check
 /**
  * @fileoverview
@@ -7,8 +7,8 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
-import { extract, toMarkdown } from "npm:@mizchi/readability@0.7.7";
-import { defineHook, runHook } from "npm:cc-hooks-ts";
+import { extract, toMarkdown } from "@mizchi/readability";
+import { defineHook, runHook } from "cc-hooks-ts";
 
 const hook = defineHook({
   trigger: {
@@ -16,6 +16,7 @@ const hook = defineHook({
       WebFetch: true,
     },
   },
+
   run: async (c) => {
     const urlObj = new URL(c.input.tool_input.url);
 
@@ -46,7 +47,6 @@ const hook = defineHook({
     return c.json({
       event: "PreToolUse",
       output: {
-        suppressOutput: true,
         hookSpecificOutput: {
           hookEventName: "PreToolUse",
           permissionDecision: "deny",
@@ -58,6 +58,7 @@ const hook = defineHook({
             "```",
           ].join("\n"),
         },
+        suppressOutput: true,
       },
     });
   },

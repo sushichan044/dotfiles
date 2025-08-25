@@ -1,0 +1,27 @@
+{
+  "name": "@sushichan044/dotfiles",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --max-warnings 0 --fix .",
+    "format": "biome format --write .",
+    "format:check": "biome format . --reporter=github",
+    "typecheck": "tsc --noEmit"
+  },
+    "dependencies": {
+    "@mizchi/readability": "0.7.7",
+    "cc-hooks-ts": "0.0.5",
+    "mdast-util-from-markdown": "2.0.2",
+    "pathe": "2.0.3",
+    "unist-util-visit": "5.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.2",
+    "@types/bun": "latest",
+    "@types/mdast": "4.0.4",
+    "@virtual-live-lab/eslint-config": "2.2.24",
+    "@virtual-live-lab/tsconfig": "2.1.21",
+    "eslint": "9.34.0",
+    "typescript": "5.9.2"
+  }
+}

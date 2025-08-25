@@ -2,6 +2,9 @@
 CLAUDE.md
 README.md
 renovate.json
-deno.jsonc
-deno.lock
 node_modules/
+package.json
+bun.lock
+tsconfig.json
+eslint.config.js
+biome.json

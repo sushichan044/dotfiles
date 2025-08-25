@@ -1,32 +1,32 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read
+#!/usr/bin/env -S bun run --silent
 
-import { CONTINUE, visit } from "https://esm.sh/unist-util-visit@5";
+import type { Root } from "mdast";
 
-import { fromMarkdown } from "https://esm.sh/mdast-util-from-markdown@2";
-
-import type { Root } from "https://esm.sh/@types/mdast@4.0.4/index.js";
+import { fromMarkdown } from "mdast-util-from-markdown";
+import { readFile, realpath, stat } from "node:fs/promises";
+import { CONTINUE, visit } from "unist-util-visit";
 
 type HeadingTreeNodeData = {
   level: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-  value: string;
   line?: number;
+  value: string;
 };
 
 type HeadingTreeNode = {
-  data: HeadingTreeNodeData;
   children: HeadingTreeNode[];
+  data: HeadingTreeNodeData;
 };
 
 type HeadingTree = {
-  root: HeadingTreeNode;
   metadata: {
     filepath: string;
   };
+  root: HeadingTreeNode;
 };
 
 const buildHeadingTree = (
   tree: Root,
-  metadata: HeadingTree["metadata"]
+  metadata: HeadingTree["metadata"],
 ): HeadingTree => {
   /**
    * sorted by appearance in the document
@@ -50,29 +50,32 @@ const buildHeadingTree = (
   });
 
   const root: HeadingTreeNode = {
+    children: [],
     data: {
       level: 0,
       value: "Root",
     },
-    children: [],
   };
   const stack: HeadingTreeNode[] = [root];
 
   for (const heading of extractedHeadings) {
     const newNode: HeadingTreeNode = {
-      data: heading,
       children: [],
+      data: heading,
     };
 
     // Get parent node based on heading level
     // Pop nodes from the stack until we find the right parent
-    while (stack.length > 0 && stack.at(-1)!.data.level >= heading.level) {
+    while (
+      stack.length > 0 &&
+      (stack.at(-1)?.data.level ?? -1) >= heading.level
+    ) {
       stack.pop();
     }
 
     if (stack.length > 0) {
       // Parent found
-      stack.at(-1)!.children.push(newNode);
+      stack.at(-1)?.children.push(newNode);
     } else {
       // If no parent found, since it's a top-level heading, add it to the root
       root.children.push(newNode);
@@ -82,19 +85,19 @@ const buildHeadingTree = (
     stack.push(newNode);
   }
 
-  return { root, metadata };
+  return { metadata, root };
 };
 
 export const headingTreeOfMarkdownFile = async (
-  markdownPath: string
+  markdownPath: string,
 ): Promise<HeadingTree> => {
-  const resolvedPath = await Deno.realPath(markdownPath);
+  const resolvedPath = await realpath(markdownPath);
 
-  if (!(await Deno.stat(resolvedPath)).isFile) {
+  if (!(await stat(resolvedPath)).isFile()) {
     throw new Error(`Error: ${markdownPath} is not a valid file.`);
   }
 
-  const doc = await Deno.readTextFile(resolvedPath);
+  const doc = await readFile(resolvedPath, "utf-8");
   const mdTree = fromMarkdown(doc);
 
   return buildHeadingTree(mdTree, { filepath: markdownPath });
