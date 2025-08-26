@@ -23,6 +23,7 @@ GitHub Wiki Fallback Strategy (PER REPOSITORY):
   Step 2: If devin wiki succeeds → continue with devin tools
   Step 3: If devin wiki fails/errors/repository not indexed → fallback to deepwiki tools
   ⚠️  IMPORTANT: Apply this strategy for EACH repository separately - availability varies by repo
+GitHub Code Search: mcp__grep__searchGitHub (for code pattern search across public repos)
 GitHub: `gh` CLI → mcp__readability__read_url_content_as_markdown → WebFetch
 Web: mcp__readability__read_url_content_as_markdown → WebFetch
 NPM Package: mcp__bundlephobia__get_npm_package_info

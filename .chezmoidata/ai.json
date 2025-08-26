@@ -19,11 +19,15 @@
           "url": "https://mcp.deepwiki.com/mcp"
         },
         "devin": {
-          "type": "http",
-          "url": "https://mcp.devin.ai/mcp",
           "headers": {
             "Authorization": "Bearer DEVIN_API_KEY"
-          }
+          },
+          "type": "http",
+          "url": "https://mcp.devin.ai/mcp"
+        },
+        "grep": {
+          "type": "http",
+          "url": "https://mcp.grep.app"
         },
         "notion": {
           "type": "http",
@@ -148,11 +152,15 @@
           "url": "https://mcp.deepwiki.com/mcp"
         },
         "devin": {
-          "type": "http",
-          "url": "https://mcp.devin.ai/mcp",
           "headers": {
             "Authorization": "Bearer DEVIN_API_KEY"
-          }
+          },
+          "type": "http",
+          "url": "https://mcp.devin.ai/mcp"
+        },
+        "grep": {
+          "type": "http",
+          "url": "https://mcp.grep.app"
         },
         "notion": {
           "type": "http",
@@ -213,8 +221,8 @@
         "CLAUDE.local.md"
       ],
       "fileFiltering": {
-        "respectGitIgnore": true,
-        "enableRecursiveFileSearch": false
+        "enableRecursiveFileSearch": false,
+        "respectGitIgnore": true
       },
       "mcpServers": {
         "bundlephobia": {
@@ -233,11 +241,15 @@
           "httpUrl": "https://mcp.deepwiki.com/mcp",
           "trust": true
         },
+        "grep": {
+          "httpUrl": "https://mcp.grep.app",
+          "trust": true
+        },
         "devin": {
-          "httpUrl": "https://mcp.devin.ai/mcp",
           "headers": {
             "Authorization": "Bearer DEVIN_API_KEY"
           },
+          "httpUrl": "https://mcp.devin.ai/mcp",
           "trust": true
         },
         "readability": {
