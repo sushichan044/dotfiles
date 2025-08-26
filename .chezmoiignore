@@ -3,8 +3,6 @@ CLAUDE.md
 README.md
 renovate.json
 node_modules/
-package.json
-bun.lock
 tsconfig.json
 eslint.config.js
 biome.json
