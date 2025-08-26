@@ -1,6 +1,7 @@
 {
   "claude": {
     "settings": {
+      "installMethod": "unknown",
       "mcpServers": {
         "bundlephobia": {
           "type": "http",
@@ -73,7 +74,9 @@
         }
       },
       "preferredNotifChannel": "terminal_bell",
-      "theme": "dark"
+      "theme": "dark",
+      "shiftEnterKeyBindingInstalled": true,
+      "checkpointingEnabled": true
     }
   },
   "claude_desktop": {
