@@ -1,4 +1,4 @@
-#!/usr/bin/env -S bun run --silent
+#!/usr/bin/env -S bun run --silent -i
 
 import { $ } from "bun";
 import { defineHook, runHook } from "cc-hooks-ts";

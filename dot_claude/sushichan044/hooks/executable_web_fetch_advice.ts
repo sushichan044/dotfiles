@@ -1,4 +1,4 @@
-#!/usr/bin/env -S bun run --silent
+#!/usr/bin/env -S bun run --silent -i
 // @ts-check
 /**
  * @fileoverview
