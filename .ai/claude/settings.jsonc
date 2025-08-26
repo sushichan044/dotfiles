@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "awsAuthRefresh": "aws sso login", // must set AWS_PROFILE env to work
   "env": {
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "1200000",
@@ -12,7 +13,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "ccusage statusline"
+    "command": "ccusage statusline --cost-source both"
   },
   "hooks": {
     "Notification": [
@@ -75,7 +76,7 @@
       "Glob(**)",
       "Grep(**)",
       "WebSearch(**)",
-      "TodoRead()",
+      "TodoRead(**)",
       "TodoWrite(**)",
 
       "Bash(git:*)",
@@ -163,7 +164,11 @@
       "mcp__context7__get-library-docs",
       "mcp__sequential-thinking__sequentialthinking",
       "mcp__bundlephobia__get_npm_package_info",
-      "mcp__notion__fetch"
+      "mcp__deepwiki__read_wiki_structure",
+      "mcp__deepwiki__read_wiki_contents",
+      "mcp__deepwiki__ask_question",
+      "mcp__notion__fetch",
+      "mcp__grep__searchGitHub"
     ],
     "deny": [
       "Bash(sudo:*)",

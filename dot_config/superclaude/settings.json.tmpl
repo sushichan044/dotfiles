@@ -1,1 +1,1 @@
-{{- include ".ai/claude/settings.json" -}}
+{{- include ".ai/claude/settings.jsonc" | fromJsonc | toPrettyJson -}}
