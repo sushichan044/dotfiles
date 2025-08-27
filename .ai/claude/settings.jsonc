@@ -63,6 +63,15 @@
             "command": "$HOME/.claude/sushichan044/hooks/markdown_tree.ts"
           }
         ]
+      },
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/sushichan044/hooks/typescript/no_restricted_edit.ts"
+          }
+        ]
       }
     ]
   },
