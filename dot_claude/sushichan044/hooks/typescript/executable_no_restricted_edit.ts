@@ -78,7 +78,7 @@ const hook = defineHook({
             hookEventName: "PreToolUse",
             permissionDecision: "deny",
             permissionDecisionReason:
-              "Do not use 'as any' or 'as unknown' to suppress type checking. Get diagnostics from IDE and use correct types.",
+              "Do not use type assertion or type annotation with 'any' or 'unknown' to suppress type checking. Remove type assertion / annotation and get diagnostics from IDE or tsc, then use correct types.",
           },
         },
       });
