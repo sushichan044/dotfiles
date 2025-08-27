@@ -5,7 +5,7 @@
       "name": "chezmoi",
       "dependencies": {
         "@mizchi/readability": "0.7.7",
-        "cc-hooks-ts": "0.0.5",
+        "cc-hooks-ts": "0.0.6",
         "mdast-util-from-markdown": "2.0.2",
         "pathe": "2.0.3",
         "unist-util-visit": "5.0.0",
@@ -212,7 +212,7 @@
 
     "camelcase-css": ["camelcase-css@2.0.1", "", {}, "sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA=="],
 
-    "cc-hooks-ts": ["cc-hooks-ts@0.0.5", "", { "dependencies": { "valibot": "^1.1.0" } }, "sha512-y/V/XbhxLoFMeYJhrQvbLP/QZ4nUcdMldOrQjMIkqByycQX+gvNwrkasgbE9inasrPgdBTTk4+zWHbTzNlcisw=="],
+    "cc-hooks-ts": ["cc-hooks-ts@0.0.6", "", { "dependencies": { "valibot": "^1.1.0" } }, "sha512-UxcIrOL0NzvnFfGLsTbYgKJiWpzelbZ/ZCmGbzgihpfSpkru4rw9enNm20O9cEMtdyeEDkGkEsVQNYtFrzF+gg=="],
 
     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
 
