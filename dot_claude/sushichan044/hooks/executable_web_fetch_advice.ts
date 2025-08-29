@@ -24,16 +24,12 @@ declare module "cc-hooks-ts" {
   }
 }
 
-const isGitHubIssueLike = (url: string | URL) => {
-  const path = typeof url === "string" ? url : url.pathname;
-
-  return /\/issues\/[0-9]+/.test(path);
+const isGitHubIssueLike = (url: URL) => {
+  return /\/issues\/[0-9]+/.test(url.pathname);
 };
 
-const isGitHubPRLike = (url: string | URL) => {
-  const path = typeof url === "string" ? url : url.pathname;
-
-  return /\/pulls\/[0-9]+/.test(path);
+const isGitHubPRLike = (url: URL) => {
+  return /\/pulls\/[0-9]+/.test(url.pathname);
 };
 
 const hook = defineHook({
