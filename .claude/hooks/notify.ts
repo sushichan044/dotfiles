@@ -1,4 +1,3 @@
-#!/usr/bin/env -S bun run --silent -i
 // @ts-check
 /**
  * @fileoverview
@@ -19,7 +18,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-import { isNonEmptyString } from "../../../ai/scripts/utils/string";
+import { isNonEmptyString } from "../../ai/scripts/utils/string";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;

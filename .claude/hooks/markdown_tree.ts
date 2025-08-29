@@ -1,10 +1,8 @@
-#!/usr/bin/env -S bun run --silent -i
-
 import { $ } from "bun";
 import { defineHook, runHook } from "cc-hooks-ts";
 import { realpath, stat } from "node:fs/promises";
 
-import { headingTreeOfMarkdownFile } from "../../../ai/scripts/extract-md-heading";
+import { headingTreeOfMarkdownFile } from "../../ai/scripts/extract-md-heading";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await realpath(path);

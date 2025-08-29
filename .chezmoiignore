@@ -6,3 +6,5 @@ node_modules/
 tsconfig.json
 eslint.config.js
 biome.json
+package.json
+bun.lock

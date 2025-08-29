@@ -24,6 +24,8 @@
   "files.associations": {
     "*.sh.tmpl": "shellscript",
     "*.toml.tmpl": "toml",
+    "*.json.tmpl": "json",
+    "*.jsonc.tmpl": "jsonc",
     "*.yaml.tmpl": "yaml",
     "*.yml.tmpl": "yaml",
     "*.zsh.tmpl": "shellscript",

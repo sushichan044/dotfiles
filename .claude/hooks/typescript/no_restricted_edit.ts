@@ -1,5 +1,3 @@
-#!/usr/bin/env -S bun run --silent -i
-
 import { defineHook, runHook } from "cc-hooks-ts";
 import { extname } from "pathe";
 

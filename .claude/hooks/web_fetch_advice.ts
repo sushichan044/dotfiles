@@ -1,4 +1,3 @@
-#!/usr/bin/env -S bun run --silent -i
 // @ts-check
 /**
  * @fileoverview
