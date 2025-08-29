@@ -55,7 +55,6 @@ update_claude_settings() {
 {{ $settingsKeyLabels := .claude.settings | keys | sortAlpha | join ", " -}}
 config_paths=(
     "$HOME/.claude.json"
-    "$XDG_CONFIG_HOME/superclaude/.claude.json"
 )
 
 for config_path in "${config_paths[@]}"; do
