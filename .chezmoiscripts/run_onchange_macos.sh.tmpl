@@ -14,9 +14,9 @@ defaults write com.apple.LaunchServices "LSQuarantine" -bool false # Disable the
 defaults write NSGlobalDomain "AppleInterfaceStyle" -string "Dark" # Use dark menu bar and Dock
 
 # Dock
-defaults write com.apple.Dock autohide -bool true         # Autohide Dock
-defaults write com.apple.dock show-recents -bool false    # Remove recent apps from Dock
-defaults write com.apple.dock launchanim -bool false      # Disable launch animation
+defaults write com.apple.Dock autohide -bool true          # Autohide Dock
+defaults write com.apple.dock show-recents -bool false     # Remove recent apps from Dock
+defaults write com.apple.dock launchanim -bool false       # Disable launch animation
 defaults write com.apple.dock orientation -string "bottom" # Move Dock to the bottom side of the screen
 
 # Screenshot
@@ -79,6 +79,38 @@ done
 if [ ! -f /etc/pam.d/sudo_local ]; then
     echo "🤖 Creating /etc/pam.d/sudo_local to enable Touch ID for sudo..."
     sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local
+fi
+
+# 1Password SSH LaunchAgent setup (run once)
+# sizeof SSH_AUTH_SOCK.plist (sentinel to trigger on_change hook if needed)
+{{- $s := stat (joinPath .chezmoi.homeDir "Library" "LaunchAgents" "com.1password.SSH_AUTH_SOCK.plist") }}
+# {{ if $s }}
+# {{ $s.size }}
+# {{ else }}
+# {{ false }}
+# {{ end }}
+if [[ -d "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password" ]] && [[ ! -f "$HOME/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist" ]]; then
+    mkdir -p "$HOME/Library/LaunchAgents"
+    cat <<'EOF' >"$HOME/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.1password.SSH_AUTH_SOCK</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>/bin/ln -sf $HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock $SSH_AUTH_SOCK</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>
+EOF
+
+    launchctl load -w ~/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist
 fi
 
 echo "✅ Finished running macOS configuration. Some changes may require a restart to take effect."
