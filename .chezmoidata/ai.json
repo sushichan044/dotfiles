@@ -141,10 +141,71 @@
       "network_access": true,
       "notify": [
         "bash",
-        "$HOME/.codex/sushichan044/scripts/notify_mac.sh"
+        "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
       ],
       "tools": {
         "web_search": true
+      },
+      "mcp_servers": {
+        "bundlephobia": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "mcp-remote@latest",
+            "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+          ]
+        },
+        "context7": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote@latest", "https://mcp.context7.com/mcp"]
+        },
+        "deepwiki": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote@latest", "https://mcp.deepwiki.com/mcp"]
+        },
+        "grep": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote@latest", "https://mcp.grep.app"]
+        },
+        "notion": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote@latest", "https://mcp.notion.com/mcp"]
+        },
+        "readability": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
+          "command": "deno"
+        },
+        "repomix": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net=github.com",
+            "--allow-run=sh",
+            "--allow-sys",
+            "--allow-read",
+            "npm:repomix@latest",
+            "--mcp"
+          ],
+          "command": "deno",
+          "type": "stdio"
+        },
+        "sequential-thinking": {
+          "args": [
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "deno"
+        }
       }
     }
   },
