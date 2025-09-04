@@ -7,7 +7,7 @@
     "format:check": "biome format . --reporter=github",
     "typecheck": "tsc --noEmit"
   },
-    "dependencies": {
+  "dependencies": {
     "@mizchi/readability": "0.7.7",
     "cc-hooks-ts": "0.0.6",
     "mdast-util-from-markdown": "2.0.2",

@@ -36,13 +36,5 @@
       }
     }
   },
-  "html": { "formatter": { "selfCloseVoidElements": "always" } },
-  "overrides": [
-    {
-      "includes": ["**/*.json", "**/*.json5", "**/*.jsonc"],
-      "formatter": {
-        "enabled": false
-      }
-    }
-  ]
+  "html": { "formatter": { "selfCloseVoidElements": "always" } }
 }
