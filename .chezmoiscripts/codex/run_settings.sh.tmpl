@@ -2,10 +2,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Early exit if required tools are not installed
+# Early exit if tomlq is not installed
 if ! type tomlq >/dev/null 2>&1; then
-    echo "❌ tomlq is not available. Exiting..."
-    exit 1
+    echo "⚠️ tomlq is not available. Exiting..."
+    exit 0
 fi
 
 # Function to update settings in a TOML file

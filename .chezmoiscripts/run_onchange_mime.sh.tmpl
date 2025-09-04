@@ -6,8 +6,8 @@
 {{- end }}
 
 if ! type update-mime-database >/dev/null 2>&1; then
-    echo "❌ update-mime-database is not available. Exiting..."
-    exit 1
+    echo "⚠️ update-mime-database is not available. Exiting..."
+    exit 0
 fi
 
 if [ -z "${XDG_DATA_HOME:-}" ]; then
