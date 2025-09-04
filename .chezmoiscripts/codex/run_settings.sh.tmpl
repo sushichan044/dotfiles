@@ -1,0 +1,62 @@
+{{ if eq .chezmoi.os "darwin" "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Early exit if required tools are not installed
+if ! type tomlq >/dev/null 2>&1; then
+    echo "❌ tomlq is not available. Exiting..."
+    exit 1
+fi
+
+# Function to update settings in a TOML file
+update_codex_settings() {
+    local toml_path="$1"
+    local current_copy_path=$(mktemp)
+    local modified_copy_path=$(mktemp)
+
+    # Setup cleanup for temp files
+    trap 'rm -f "$current_copy_path" "$modified_copy_path"' RETURN
+
+    if [ ! -f "$toml_path" ]; then
+        echo "🚧 $toml_path not found. creating it as an empty TOML file..."
+        mkdir -p "$(dirname "$toml_path")"
+        echo "" >"$toml_path"
+    fi
+
+    cp "$toml_path" "$current_copy_path"
+
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
+    {{- range $key, $value := .codex.config }}
+    # shellcheck disable=SC1083
+    if ! tomlq -t --arg key "{{ $key }}" --argjson value '{{ $value | toJson }}' '.[$key] = $value' "$current_copy_path" >"$modified_copy_path"; then
+        echo "❌ Failed to update {{ $key }} in $toml_path"
+        return 1
+    fi
+    mv "$modified_copy_path" "$current_copy_path"
+    # shellcheck disable=SC1073,SC1009,SC1083,SC1072
+    {{- end }}
+
+    # Replace the original file with the updated one
+    if mv "$current_copy_path" "$toml_path"; then
+        return 0
+    else
+        echo "❌ Failed to replace $toml_path"
+        return 1
+    fi
+}
+
+# Update settings for codex
+{{ $settingsKeyLabels := .codex.config | keys | sortAlpha | join ", " -}}
+config_paths=(
+    "$HOME/.codex/config.toml"
+)
+
+for config_path in "${config_paths[@]}"; do
+    if update_codex_settings "$config_path"; then
+        echo "✅ Successfully updated {{ $settingsKeyLabels }} in $config_path"
+    else
+        echo "❌ Failed to update settings in $config_path"
+        exit 1
+    fi
+done
+{{ end -}}

@@ -135,6 +135,19 @@
       }
     }
   },
+  "codex": {
+    "config": {
+      "model_reasoning_effort": "high",
+      "network_access": true,
+      "notify": [
+        "bash",
+        "$HOME/.codex/sushichan044/scripts/notify_mac.sh"
+      ],
+      "tools": {
+        "web_search": true
+      }
+    }
+  },
   "cursor": {
     "mcp": {
       "mcpServers": {
