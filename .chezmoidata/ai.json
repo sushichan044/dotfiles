@@ -138,6 +138,8 @@
   "codex": {
     "config": {
       "model_reasoning_effort": "high",
+      "sandbox_mode": "workspace-write",
+      "approval_policy": "on-request",
       "network_access": true,
       "notify": [
         "bash",
