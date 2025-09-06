@@ -26,10 +26,9 @@ memo() {
 
     mkdir_for_file "$memo_file_path"
     touch "$memo_file_path"
-    copy_to_clipboard "$memo_file_path"
 
     # message for human, print to stderr
-    echo "✅ Memo created at: $memo_file_path. Path copied to clipboard." 1>&2
+    echo "✅ Memo created at: $memo_file_path." 1>&2
 
     # print the file path to stdout, useful for piping
     echo "$memo_file_path"
