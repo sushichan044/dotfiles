@@ -19,10 +19,6 @@ github = 'zsh-users/zsh-autosuggestions'
 use = ["{{ name }}.zsh"]
 apply = ["defer"]
 
-[plugins.history-search-multi-word]
-github = 'zdharma/history-search-multi-word'
-apply = ["defer"]
-
 [plugins.powerlevel10k]
 github = 'romkatv/powerlevel10k'
 profiles = ["human"]
@@ -38,10 +34,6 @@ profiles = ["human"]
 
 [plugins.zsh-fzf-history-search]
 github = 'joshskidmore/zsh-fzf-history-search'
-apply = ["defer"]
-
-[plugins.fzf-git]
-github = 'junegunn/fzf-git.sh'
 apply = ["defer"]
 
 [templates]
