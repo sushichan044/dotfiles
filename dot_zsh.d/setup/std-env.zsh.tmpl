@@ -13,18 +13,15 @@ export LANG=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
 
 {{ if eq .chezmoi.os "darwin" -}}
-export BREW_BIN="/opt/homebrew/bin/brew"
-
-export MISE_BIN="/opt/homebrew/bin/mise"
+export BREW_BASE="/opt/homebrew"
 
 COURSIER_BIN_DIR="$HOME/Library/Application Support/Coursier/bin"
 {{ else if eq .chezmoi.os "linux" -}}
-export BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
-
-export MISE_BIN="/home/linuxbrew/.linuxbrew/bin/mise"
+export BREW_BASE="/home/linuxbrew/.linuxbrew"
 
 COURSIER_BIN_DIR="$HOME/.local/share/coursier/bin"
 {{ end -}}
+export BREW_BIN="${BREW_BASE}/bin/brew"
 
 # Load homebrew
 if file_exists "$BREW_BIN"; then
