@@ -10,14 +10,6 @@ fi
 # prepare completions
 COMPLETION_HOME="$HOME/.zsh.d/completions"
 fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
-
-# To customize prompt, run `p10k configure` or edit dot_zsh.d/autoload/p10k.zsh.
-load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
-
-# Auto suggestion text color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists sheldon; then
   if ! is_shell_for_ai_agent; then
@@ -26,6 +18,15 @@ if command_exists sheldon; then
 
   eval "$(sheldon source)"
 fi
+
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
+# To customize prompt, run `p10k configure` or edit dot_zsh.d/autoload/p10k.zsh.
+load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
+
+# Auto suggestion text color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
   eval "$(mise activate zsh)"
