@@ -12,7 +12,7 @@ apply = ["defer"]
 
 [plugins.zsh-completions]
 github = 'zsh-users/zsh-completions'
-apply = ["defer"]
+# do not apply defer or completions will not work
 
 [plugins.zsh-autosuggestions]
 github = 'zsh-users/zsh-autosuggestions'
