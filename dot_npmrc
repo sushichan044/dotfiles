@@ -4,3 +4,4 @@ save-exact=true
 progress=true
 init-license=MIT
 init-type=module
+engine-strict=true
