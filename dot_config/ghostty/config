@@ -6,7 +6,7 @@ confirm-close-surface = false
 quit-after-last-window-closed = true
 
 # Appearance
-theme = catppuccin-macchiato
+theme = Catppuccin Macchiato
 background-opacity = 0.8
 background-blur-radius = 30
 mouse-hide-while-typing = true
