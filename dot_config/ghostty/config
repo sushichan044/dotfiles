@@ -3,7 +3,6 @@ window-inherit-working-directory = true
 window-step-resize = true
 window-vsync = true
 confirm-close-surface = false
-quit-after-last-window-closed = true
 
 # Appearance
 theme = Catppuccin Macchiato
@@ -23,3 +22,7 @@ font-feature = -dlig
 # Keybindings
 macos-option-as-alt = left
 keybind = shift+enter=text:\n
+
+# Quick Terminal
+keybind = global:ctrl+j=toggle_quick_terminal
+quick-terminal-size = 25%,50%
