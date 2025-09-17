@@ -36,7 +36,8 @@
     "*.yml.tmpl": "yaml",
     "*.zsh.tmpl": "shellscript",
     "dot_z*.tmpl": "shellscript",
-    "dot_zsh.d/completions/*.tmpl": "shellscript"
+    "dot_zsh.d/completions/*.tmpl": "shellscript",
+    "dot_Brewfile.tmpl": "ruby"
   },
   "github.copilot.chat.codeGeneration.instructions": [
     {
