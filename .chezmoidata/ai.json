@@ -141,7 +141,9 @@
       "model_reasoning_effort": "medium",
       "sandbox_mode": "workspace-write",
       "approval_policy": "on-request",
-      "network_access": true,
+      "sandbox_workspace_write": {
+        "network_access": true
+      },
       "notify": [
         "bash",
         "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
