@@ -105,7 +105,7 @@ if OS.mac?
     brew "terminal-notifier"
 
     # brew
-    brew "batt", post_install: "sudo brew services start batt"
+    brew "batt", postinstall: "sudo brew services start batt"
 
     # cask
     cask "alt-tab"
