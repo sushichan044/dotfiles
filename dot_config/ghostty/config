@@ -23,6 +23,16 @@ font-feature = -dlig
 macos-option-as-alt = left
 keybind = shift+enter=text:\n
 
+## from v1.2, ghostty refers W3C KeyboardEvent Code, so some keybinds are changed on JIS keyboard layout
+## Spec: https://www.w3.org/TR/uievents-code/
+## debug: https://keyjs.dev/
+keybind = super+shift+bracket_left=unbind
+keybind = super+shift+bracket_right=previous_tab
+keybind = super+shift+backslash=next_tab
+keybind = super+bracket_left=unbind
+keybind = super+bracket_right=goto_split:previous
+keybind = super+backslash=goto_split:next
+
 # Quick Terminal
 keybind = global:ctrl+j=toggle_quick_terminal
 quick-terminal-size = 25%,50%
