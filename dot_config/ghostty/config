@@ -23,6 +23,10 @@ font-feature = -dlig
 macos-option-as-alt = left
 keybind = shift+enter=text:\n
 
+## setting `alt+¥` does not work as expected
+## https://qiita.com/tadsan/items/399b99ea5261273792f9
+keybind = ¥=text:\\
+
 ## from v1.2, ghostty refers W3C KeyboardEvent Code, so some keybinds are changed on JIS keyboard layout
 ## Spec: https://www.w3.org/TR/uievents-code/
 ## debug: https://keyjs.dev/
