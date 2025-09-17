@@ -101,11 +101,13 @@ if OS.mac?
     brew "mas"
     brew "terminal-notifier"
 
+    # brew
+    brew "batt", post_install: "sudo brew services start batt"
+
     # cask
     cask "1password-cli"
     cask "alt-tab"
     cask "appcleaner"
-    cask "battery"
     cask "claude"
     cask "coconutbattery"
     cask "cursor"
