@@ -87,6 +87,9 @@ brew "tree"
 brew "unzip"
 brew "xz"
 
+# cask
+cask "1password-cli"
+
 # Linux only
 if OS.linux?
     brew "zsh"
@@ -105,7 +108,6 @@ if OS.mac?
     brew "batt", post_install: "sudo brew services start batt"
 
     # cask
-    cask "1password-cli"
     cask "alt-tab"
     cask "appcleaner"
     cask "claude"
@@ -116,7 +118,7 @@ if OS.mac?
     cask "discord"
     cask "docker-desktop"
     cask "figma"
-    cask "gcloud-cli"
+    cask "gcloud-cli", greedy: true
     cask "ghostty"
     cask "google-drive"
     cask "google-japanese-ime"
@@ -130,7 +132,7 @@ if OS.mac?
     cask "neohtop"
     cask "notchnook"
     cask "notion"
-    cask "raycast"
+    cask "raycast", greedy: true
     cask "session-manager-plugin"
     cask "slack-cli"
     cask "spotify"
