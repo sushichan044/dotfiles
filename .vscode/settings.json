@@ -39,11 +39,6 @@
     "dot_zsh.d/completions/*.tmpl": "shellscript",
     "dot_Brewfile.tmpl": "ruby"
   },
-  "github.copilot.chat.codeGeneration.instructions": [
-    {
-      "file": "CLAUDE.md"
-    }
-  ],
   "prettier.enable": false,
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib"
