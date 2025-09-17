@@ -105,7 +105,7 @@ if OS.mac?
     brew "terminal-notifier"
 
     # brew
-    brew "batt", postinstall: "sudo brew services start batt && sudo batt status && sudo batt limit 80"
+    brew "batt", postinstall: "sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80"
 
     # cask
     cask "alt-tab"
