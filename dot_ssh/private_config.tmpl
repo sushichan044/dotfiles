@@ -3,6 +3,7 @@ include config.d/*.conf
 Host github github.com
     HostName github.com
     User git
+    IdentitiesOnly yes
     IdentityFile ~/.ssh/github
 {{ if eq .chezmoi.os "darwin" }}
 Host *
