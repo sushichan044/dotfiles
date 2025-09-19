@@ -133,6 +133,7 @@ if OS.mac?
     cask "neohtop"
     cask "notchnook"
     cask "notion"
+    cask "proxyman", postinstall: "echo '⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission.' && sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
     cask "raycast", greedy: true
     cask "session-manager-plugin"
     cask "slack-cli"
