@@ -5,6 +5,10 @@ set -eu
 echo "⏩ Start running macOS configuration..."
 echo "🔐 Some config requires sudo permission."
 
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
 # System UI / UX
 sudo nvram StartupMute=%01                                         # Disable the sound effects on boot
 sudo pmset -a sleep 30                                             # Sleep the computer after 30 minutes
