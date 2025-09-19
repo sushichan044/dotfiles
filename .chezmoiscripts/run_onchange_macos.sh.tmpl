@@ -89,28 +89,19 @@ fi
 # {{ else }}
 # {{ false }}
 # {{ end }}
-if [[ -d "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password" ]] && [[ ! -f "$HOME/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist" ]]; then
-    mkdir -p "$HOME/Library/LaunchAgents"
-    cat <<'EOF' >"$HOME/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist"
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>Label</key>
-  <string>com.1password.SSH_AUTH_SOCK</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>/bin/sh</string>
-    <string>-c</string>
-    <string>/bin/ln -sf $HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock $SSH_AUTH_SOCK</string>
-  </array>
-  <key>RunAtLoad</key>
-  <true/>
-</dict>
-</plist>
-EOF
 
-    launchctl load -w ~/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist
+OP_SSH_AUTH_SOCK_PLIST="$HOME/Library/LaunchAgents/com.1password.SSH_AUTH_SOCK.plist"
+if [[ -d "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password" ]] && [[ ! -f "$OP_SSH_AUTH_SOCK_PLIST" ]]; then
+    mkdir -p "$(dirname "$OP_SSH_AUTH_SOCK_PLIST")"
+
+    /usr/libexec/PlistBuddy -c "add Label string 'com.1password.SSH_AUTH_SOCK'" "$OP_SSH_AUTH_SOCK_PLIST"
+    /usr/libexec/PlistBuddy -c "add ProgramArguments array" "$OP_SSH_AUTH_SOCK_PLIST"
+    /usr/libexec/PlistBuddy -c "add ProgramArguments:0 string '/bin/sh'" "$OP_SSH_AUTH_SOCK_PLIST"
+    /usr/libexec/PlistBuddy -c "add ProgramArguments:1 string '-c'" "$OP_SSH_AUTH_SOCK_PLIST"
+    /usr/libexec/PlistBuddy -c "add ProgramArguments:2 string '/bin/ln -sf \$HOME/Library/Group\\\ Containers/2BUA8C4S2C.com.1password/t/agent.sock \$SSH_AUTH_SOCK'" "$OP_SSH_AUTH_SOCK_PLIST"
+    /usr/libexec/PlistBuddy -c "add RunAtLoad bool true" "$OP_SSH_AUTH_SOCK_PLIST"
+
+    launchctl load -w "$OP_SSH_AUTH_SOCK_PLIST"
 fi
 
 echo "✅ Finished running macOS configuration. Some changes may require a restart to take effect."
