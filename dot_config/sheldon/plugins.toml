@@ -36,5 +36,10 @@ profiles = ["human"]
 github = 'joshskidmore/zsh-fzf-history-search'
 apply = ["defer"]
 
+[plugins.ni-completion]
+github = 'snowsman/ni-completion'
+use = [".ni.zsh"]
+apply = ["defer"]
+
 [templates]
 defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
