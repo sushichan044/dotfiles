@@ -26,12 +26,14 @@ defaults write com.apple.screencapture "location" -string "$SCREENSHOT_DIR" # Ch
 defaults write com.apple.screencapture type -string "png"                   # Save screenshots in PNG format
 
 # Finder
+defaults write NSGlobalDomain "AppleShowAllFiles" -bool true # Show all file extensions
 defaults write NSGlobalDomain "AppleShowAllExtensions" -bool true # Show all file extensions
 
 defaults write com.apple.finder "ShowPathbar" -bool true                       # Show path bar
 defaults write com.apple.finder "_FXSortFoldersFirst" -bool true               # Sort folders first
 defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool false   # Disable warning when changing file extension
 defaults write com.apple.desktopservices "DSDontWriteNetworkStores" -bool true # Avoid creating .DS_Store files on network volumes
+defaults write com.apple.desktopservices "DSDontWriteUSBStores" -bool true     # Avoid creating .DS_Store files on USB volumes
 defaults write com.apple.finder "_FXShowPosixPathInTitle" -bool true           # Show full path in Finder title
 defaults write com.apple.finder QLEnableTextSelection -bool true               # Allow text selection in Quick Look
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true   # Automatically quit printer app once the print jobs complete
@@ -65,6 +67,9 @@ defaults write NSGlobalDomain "com.apple.keyboard.fnState" -bool true # Use F1, 
 
 # Terminal
 defaults write com.apple.Terminal StringEncodings -array 4 # Only use UTF-8 in Terminal.app
+
+# Safari
+defaults write com.apple.Safari "IncludeDevelopMenu" -bool true                     # Show Develop menu in menu bar
 
 AFFETED_APPS=(
     "Dock"
