@@ -9,3 +9,5 @@ eslint.config.js
 biome.json
 package.json
 bun.lock
+Gemfile
+Gemfile.lock

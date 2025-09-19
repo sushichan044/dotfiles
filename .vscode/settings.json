@@ -8,6 +8,9 @@
   "[jsonc]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "[ruby]": {
+    "editor.defaultFormatter": "Shopify.ruby-lsp"
+  },
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
@@ -45,6 +48,7 @@
     "dot_zsh.d/completions/*.tmpl": "shellscript"
   },
   "prettier.enable": false,
+  "rubyLsp.formatter": "standard",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }
