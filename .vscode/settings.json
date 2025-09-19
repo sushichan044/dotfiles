@@ -18,11 +18,7 @@
     "editor.formatOnSave": false
   },
   "biome.enabled": true,
-  "cSpell.words": [
-    "chezmoi",
-    "coursier",
-    "linuxbrew"
-  ],
+  "cSpell.words": ["chezmoi", "coursier", "linuxbrew"],
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.fixAll.eslint": "explicit"
@@ -49,6 +45,7 @@
   },
   "prettier.enable": false,
   "rubyLsp.formatter": "standard",
+  "rubyLsp.linters": ["standard"],
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib"
 }
