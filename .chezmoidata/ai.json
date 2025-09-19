@@ -145,7 +145,6 @@
         "network_access": true
       },
       "notify": [
-        "bash",
         "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
       ],
       "tools": {
