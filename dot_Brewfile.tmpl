@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # tap
 tap "homebrew/bundle"
 tap "homebrew/services"
@@ -143,7 +145,7 @@ if OS.mac?
       puts "⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission."
 
       "sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
-  end
+    end
   cask "raycast", greedy: true
   cask "session-manager-plugin"
   cask "slack-cli"
