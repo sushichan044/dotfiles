@@ -109,11 +109,8 @@ if OS.mac?
 
   # brew
   brew "batt",
-    postinstall: begin
-      puts "⏩ Installing Background Service of Batt... This requires sudo permission."
-
-      "sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80"
-    end
+    postinstall:
+      "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80"
 
   # cask
   cask "alt-tab"
@@ -141,11 +138,7 @@ if OS.mac?
   cask "notchnook"
   cask "notion"
   cask "proxyman",
-    postinstall: begin
-      puts "⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission."
-
-      "sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
-    end
+    postinstall: "echo '⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission.' && sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
   cask "raycast", greedy: true
   cask "session-manager-plugin"
   cask "slack-cli"
