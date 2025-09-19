@@ -93,82 +93,92 @@ cask "1password-cli"
 
 # Linux only
 if OS.linux?
-    brew "zsh"
+  brew "zsh"
 end
 
 if OS.mac?
-    # GNU tools
-    brew "coreutils"
-    brew "findutils"
-    brew "gnu-sed"
-    brew "grep"
-    brew "mas"
-    brew "terminal-notifier"
+  # GNU tools
+  brew "coreutils"
+  brew "findutils"
+  brew "gnu-sed"
+  brew "grep"
+  brew "mas"
+  brew "terminal-notifier"
 
-    # brew
-    brew "batt", postinstall: "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80"
+  # brew
+  brew "batt",
+    postinstall: begin
+      puts "⏩ Installing Background Service of Batt... This requires sudo permission."
 
-    # cask
-    cask "alt-tab"
-    cask "appcleaner"
-    cask "claude"
-    cask "coconutbattery"
-    cask "cursor"
-    cask "cursor-cli"
-    cask "deskpad"
-    cask "discord"
-    cask "docker-desktop"
-    cask "figma"
-    cask "gcloud-cli", greedy: true
-    cask "ghostty"
-    cask "google-drive"
-    cask "google-japanese-ime"
-    cask "hhkb"
-    cask "httpie-desktop"
-    cask "jetbrains-toolbox"
-    cask "jordanbaird-ice@beta"
-    cask "karabiner-elements"
-    cask "linearmouse"
-    cask "mongodb-compass"
-    cask "neohtop"
-    cask "notchnook"
-    cask "notion"
-    cask "proxyman", postinstall: "echo '⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission.' && sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
-    cask "raycast", greedy: true
-    cask "session-manager-plugin"
-    cask "slack-cli"
-    cask "spotify"
-    cask "thebrowsercompany-dia"
-    cask "visual-studio-code"
-    cask "voiceink"
-    cask "wezterm@nightly"
-    cask "xcodes-app"
-    cask "zoom"
-    # fonts
-    cask "font-fira-code"
-    cask "font-meslo-for-powerlevel10k"
-    cask "font-moralerspace"
-    cask "font-moralerspace-nf"
-    cask "font-noto-sans-jp"
+      "sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80"
+    end
 
-    # mas
-    mas "Flow", id: 1423210932
-    mas "1Password for Safari", id: 1569813296
+  # cask
+  cask "alt-tab"
+  cask "appcleaner"
+  cask "claude"
+  cask "coconutbattery"
+  cask "cursor"
+  cask "cursor-cli"
+  cask "deskpad"
+  cask "discord"
+  cask "docker-desktop"
+  cask "figma"
+  cask "gcloud-cli", greedy: true
+  cask "ghostty"
+  cask "google-drive"
+  cask "google-japanese-ime"
+  cask "hhkb"
+  cask "httpie-desktop"
+  cask "jetbrains-toolbox"
+  cask "jordanbaird-ice@beta"
+  cask "karabiner-elements"
+  cask "linearmouse"
+  cask "mongodb-compass"
+  cask "neohtop"
+  cask "notchnook"
+  cask "notion"
+  cask "proxyman",
+    postinstall: begin
+      puts "⏩ Installing Proxy Helper Tool of Proxyman... This requires sudo permission."
+
+      "sudo /Applications/Proxyman.app/Contents/MacOS/proxyman --install-privileged-components"
+  end
+  cask "raycast", greedy: true
+  cask "session-manager-plugin"
+  cask "slack-cli"
+  cask "spotify"
+  cask "thebrowsercompany-dia"
+  cask "visual-studio-code"
+  cask "voiceink"
+  cask "wezterm@nightly"
+  cask "xcodes-app"
+  cask "zoom"
+  # fonts
+  cask "font-fira-code"
+  cask "font-meslo-for-powerlevel10k"
+  cask "font-moralerspace"
+  cask "font-moralerspace-nf"
+  cask "font-noto-sans-jp"
+
+  # mas
+  mas "Flow", id: 1423210932
+  mas "1Password for Safari", id: 1569813296
 {{ if .for_personal }}
-    # for personal mac only
-    cask "1password"
-    cask "anydesk"
-    cask "cyberduck"
-    cask "gimp"
-    cask "google-chrome"
-    cask "mactex-no-gui"
-    cask "prismlauncher"
-    cask "readdle-spark"
-    cask "slack"
-    cask "tailscale-app"
+  # for personal mac only
+  cask "1password"
+  cask "anydesk"
+  cask "cyberduck"
+  cask "gimp"
+  cask "google-chrome"
+  cask "mactex-no-gui"
+  cask "prismlauncher"
+  cask "readdle-spark"
+  cask "slack"
+  cask "tailscale-app"
 
-    # mas
-    mas "OneDrive", id: 823766827
+  # mas
+  mas "OneDrive", id: 823766827
 {{ end }}
 end
 
