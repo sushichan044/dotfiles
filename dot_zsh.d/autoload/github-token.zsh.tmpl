@@ -1,7 +1,0 @@
-#!/bin/sh
-
-{{- if .for_personal }}
-export GITHUB_TOKEN="{{ onepasswordRead "op://dotfiles/GH-PAT-CLI/token" }}"
-{{- else }}
-export GITHUB_TOKEN="{{ onepasswordRead "op://Employee/GH-PAT-CLI/token" }}"
-{{- end -}}
