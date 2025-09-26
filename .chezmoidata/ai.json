@@ -278,20 +278,6 @@
           ],
           "command": "deno"
         },
-        "repomix": {
-          "args": [
-            "run",
-            "--allow-env",
-            "--allow-net=github.com",
-            "--allow-run=sh",
-            "--allow-sys",
-            "--allow-read",
-            "npm:repomix@latest",
-            "--mcp"
-          ],
-          "command": "deno",
-          "type": "stdio"
-        },
         "sentry": {
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp"
