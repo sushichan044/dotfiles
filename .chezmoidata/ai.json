@@ -1,11 +1,16 @@
 {
   "claude": {
     "settings": {
+      "checkpointingEnabled": true,
       "installMethod": "unknown",
       "mcpServers": {
         "bundlephobia": {
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest"],
+          "command": "npx"
         },
         "cloudflare-docs": {
           "type": "http",
@@ -74,15 +79,19 @@
         }
       },
       "preferredNotifChannel": "terminal_bell",
-      "theme": "dark",
       "shiftEnterKeyBindingInstalled": true,
-      "checkpointingEnabled": true
+      "theme": "dark"
     }
   },
   "claude_desktop": {
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest"],
+          "command": "npx",
+          "type": "stdio"
+        },
         "readability": {
           "args": [
             "x",
@@ -137,43 +146,35 @@
   },
   "codex": {
     "config": {
-      "mode": "gpt-5-codex",
-      "model_reasoning_effort": "medium",
-      "sandbox_mode": "workspace-write",
       "approval_policy": "on-request",
-      "sandbox_workspace_write": {
-        "network_access": true
-      },
-      "notify": [
-        "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
-      ],
-      "tools": {
-        "web_search": true
-      },
       "mcp_servers": {
         "bundlephobia": {
-          "command": "npx",
           "args": [
             "-y",
             "mcp-remote@latest",
             "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-          ]
+          ],
+          "command": "npx"
+        },
+        "chrome-devtools": {
+          "command": "npx",
+          "args": ["-y", "chrome-devtools-mcp@latest"]
         },
         "context7": {
-          "command": "npx",
-          "args": ["-y", "mcp-remote@latest", "https://mcp.context7.com/mcp"]
+          "args": ["-y", "mcp-remote@latest", "https://mcp.context7.com/mcp"],
+          "command": "npx"
         },
         "deepwiki": {
-          "command": "npx",
-          "args": ["-y", "mcp-remote@latest", "https://mcp.deepwiki.com/mcp"]
+          "args": ["-y", "mcp-remote@latest", "https://mcp.deepwiki.com/mcp"],
+          "command": "npx"
         },
         "grep": {
-          "command": "npx",
-          "args": ["-y", "mcp-remote@latest", "https://mcp.grep.app"]
+          "args": ["-y", "mcp-remote@latest", "https://mcp.grep.app"],
+          "command": "npx"
         },
         "notion": {
-          "command": "npx",
-          "args": ["-y", "mcp-remote@latest", "https://mcp.notion.com/mcp"]
+          "args": ["-y", "mcp-remote@latest", "https://mcp.notion.com/mcp"],
+          "command": "npx"
         },
         "readability": {
           "args": [
@@ -210,6 +211,18 @@
           ],
           "command": "deno"
         }
+      },
+      "mode": "gpt-5-codex",
+      "model_reasoning_effort": "medium",
+      "notify": [
+        "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
+      ],
+      "sandbox_mode": "workspace-write",
+      "sandbox_workspace_write": {
+        "network_access": true
+      },
+      "tools": {
+        "web_search": true
       }
     }
   },
@@ -219,6 +232,11 @@
         "bundlephobia": {
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest"],
+          "command": "npx",
+          "type": "stdio"
         },
         "cloudflare-docs": {
           "type": "http",
@@ -323,15 +341,15 @@
           "httpUrl": "https://mcp.deepwiki.com/mcp",
           "trust": true
         },
-        "grep": {
-          "httpUrl": "https://mcp.grep.app",
-          "trust": true
-        },
         "devin": {
           "headers": {
             "Authorization": "Bearer DEVIN_API_KEY"
           },
           "httpUrl": "https://mcp.devin.ai/mcp",
+          "trust": true
+        },
+        "grep": {
+          "httpUrl": "https://mcp.grep.app",
           "trust": true
         },
         "readability": {
