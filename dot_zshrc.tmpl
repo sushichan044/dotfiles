@@ -22,6 +22,9 @@ fi
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 
+# Only make targets appear in `make` completions
+zstyle ':completion:*:*:make:*' tag-order 'targets'
+
 # To customize prompt, run `p10k configure` or edit dot_zsh.d/autoload/p10k.zsh.
 load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
 
