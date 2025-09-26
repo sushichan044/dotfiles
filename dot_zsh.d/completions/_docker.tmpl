@@ -1,3 +1,4 @@
-{{ if lookPath "docker" }}
+{{- /* zsh completion is automatically installed by Homebrew on macOS */ -}}
+{{ if (and (lookPath "docker") (ne .chezmoi.os "darwin")) -}}
 {{- output "docker" "completion" "zsh" | trim }}
-{{ end }}
+{{ end -}}
