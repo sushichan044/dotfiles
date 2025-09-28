@@ -61,7 +61,7 @@ watchexec = "latest"
 
 {{ if eq .chezmoi.os "darwin" -}}
 # Only in macOS
-"pipx:plamo-translate" = { version = "latest", uvx_args = "--with mlx_lm --with numba --with git+https://github.com/google/sentencepiece.git@2734490#subdirectory=python" }
+"pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13" }
 {{- end }}
 
 [alias]
