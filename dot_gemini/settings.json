@@ -28,13 +28,6 @@
       "httpUrl": "https://mcp.deepwiki.com/mcp",
       "trust": true
     },
-    "devin": {
-      "headers": {
-        "Authorization": "Bearer DEVIN_API_KEY"
-      },
-      "httpUrl": "https://mcp.devin.ai/mcp",
-      "trust": true
-    },
     "grep": {
       "httpUrl": "https://mcp.grep.app",
       "trust": true
