@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# if ! gh auth status --hostname github.com >/dev/null 2>&1; then
-#     echo "⏩ running gh auth login..."
-#     gh auth login
-# fi
-
 ensure_login_with_hostname() {
     local hostname="$1"
 
