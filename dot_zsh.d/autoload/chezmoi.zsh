@@ -1,8 +1,6 @@
 #!/bin/bash
 
 update() {
-    chezmoi update
-
     local env_files=(
         "$HOME/.sushichan044/op/chezmoi.env"
         "$HOME/.sushichan044/op/mise.env"
@@ -13,5 +11,5 @@ update() {
         args+=(--env-file="$f")
     done
 
-    op run "${args[@]}" -- chezmoi apply
+    op run "${args[@]}" -- chezmoi update
 }
