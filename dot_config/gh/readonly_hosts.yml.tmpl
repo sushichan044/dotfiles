@@ -2,9 +2,4 @@
 github.com:
   user: sushichan044
   git_protocol: ssh
-{{- if .for_personal }}
-  oauth_token: {{ onepasswordRead "op://dotfiles/GH-PAT-CLI/token" }}
-{{- else }}
-  oauth_token: {{ onepasswordRead "op://Employee/GH-PAT-CLI/token" }}
 {{- end -}}
-{{- end }}
