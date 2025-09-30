@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "./.irb/ruby"
-require_relative "./.irb/rails"
+require_relative ".irb/ruby"
+require_relative ".irb/rails"
 
-#@rbs &block: () -> Array[String]
-#@rbs return: nil
+#: &block: () -> Array[String]
+#: return: nil
 def normalized_print(&block)
   output = begin
     block.call
-  rescue StandardError => e
+  rescue => e
     puts "Error: #{e.message}"
     puts e.backtrace.join("\n")
     nil
