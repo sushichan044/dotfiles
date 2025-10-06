@@ -146,35 +146,27 @@
   },
   "codex": {
     "config": {
+      "experimental_use_rmcp_client": true,
       "approval_policy": "on-request",
       "mcp_servers": {
         "bundlephobia": {
-          "args": [
-            "-y",
-            "mcp-remote@latest",
-            "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-          ],
-          "command": "npx"
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
         },
         "chrome-devtools": {
           "command": "npx",
           "args": ["-y", "chrome-devtools-mcp@latest"]
         },
         "context7": {
-          "args": ["-y", "mcp-remote@latest", "https://mcp.context7.com/mcp"],
-          "command": "npx"
+          "url": "https://mcp.context7.com/mcp"
         },
         "deepwiki": {
-          "args": ["-y", "mcp-remote@latest", "https://mcp.deepwiki.com/mcp"],
-          "command": "npx"
+          "url": "https://mcp.deepwiki.com/mcp"
         },
         "grep": {
-          "args": ["-y", "mcp-remote@latest", "https://mcp.grep.app"],
-          "command": "npx"
+          "url": "https://mcp.grep.app"
         },
         "notion": {
-          "args": ["-y", "mcp-remote@latest", "https://mcp.notion.com/mcp"],
-          "command": "npx"
+          "url": "https://mcp.notion.com/mcp"
         },
         "readability": {
           "args": [
