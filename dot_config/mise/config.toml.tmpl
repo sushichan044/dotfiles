@@ -19,8 +19,7 @@ awscli = "2.27.35"
 watchexec = "latest"
 
 # tools with Backends
-"cargo:cctx" = "latest"
-"cargo:confirm-pam" = "latest"
+"cargo:cargo-binstall" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:similarity-py" = "latest"
 "cargo:similarity-rs" = "latest"
@@ -61,7 +60,7 @@ watchexec = "latest"
 "pipx:markitdown" = { version = "latest", extras = "all" }
 "pipx:yq" = "latest"
 "pipx:git+https://github.com/github/spec-kit.git" = "latest"
-
+"pipx:docling" = "latest"
 
 {{ if eq .chezmoi.os "darwin" -}}
 # Only in macOS
