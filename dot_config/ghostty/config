@@ -36,7 +36,3 @@ keybind = super+shift+backslash=next_tab
 keybind = super+bracket_left=unbind
 keybind = super+bracket_right=goto_split:previous
 keybind = super+backslash=goto_split:next
-
-# Quick Terminal
-keybind = global:ctrl+j=toggle_quick_terminal
-quick-terminal-size = 25%,50%
