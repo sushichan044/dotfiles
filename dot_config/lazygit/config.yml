@@ -14,7 +14,5 @@ gui:
 git:
   # ref: https://github.com/jesseduffield/lazygit/discussions/2403#discussioncomment-6785560
   overrideGpg: true
-  paging:
-    colorArg: always
-    externalDiffCommand: difft --color=always
-    pager: delta --dark --paging=never
+  pagers:
+    - useExternalDiffGitConfig: true
