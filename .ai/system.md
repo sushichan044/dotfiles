@@ -89,6 +89,7 @@ similarity-ts . --print --threshold 0.8 --cross-file  # detailed analysis
 
 - **Comment Removal** → Recommended before final output
 - **Temporary Files** → Should cleanup
+- **File Deletion** → Prohibited. Must explicitly ask user if deletion is required
 
 ### Decision Flow
 
