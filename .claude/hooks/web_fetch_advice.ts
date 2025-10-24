@@ -24,11 +24,11 @@ declare module "cc-hooks-ts" {
 }
 
 const isGitHubIssueLike = (url: URL) => {
-  return /\/issues\/[0-9]+/.test(url.pathname);
+  return /\/issues\/[0-9]+$/.test(url.pathname);
 };
 
 const isGitHubPRLike = (url: URL) => {
-  return /\/pulls\/[0-9]+/.test(url.pathname);
+  return /\/pull\/[0-9]+$/.test(url.pathname);
 };
 
 const hook = defineHook({
