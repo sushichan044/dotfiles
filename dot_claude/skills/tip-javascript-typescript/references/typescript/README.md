@@ -1,0 +1,69 @@
+# TypeScript Language-Level Patterns
+
+This directory contains language-level coding techniques for TypeScript/JavaScript.
+
+## Directory Structure
+
+All patterns and subdirectories are indexed here. This README links to every file in the hierarchy.
+
+### Current Files
+
+- [type-safety.md](./type-safety.md) - Type safety, type system patterns
+- [async-patterns.md](./async-patterns.md) - Async operations, Promises, error handling
+- [functional.md](./functional.md) - Functional programming, immutability, composition
+
+### Subdirectories
+
+None yet. Create subdirectories when needed (e.g., `advanced/`, `patterns/`).
+
+## Adding New Patterns
+
+### Add to Existing File
+
+1. Open the relevant file
+2. Find the appropriate section
+
+### Create New Category
+
+If existing files don't fit:
+
+1. Create new `.md` file or subdirectory in this directory
+2. Use the template format above for patterns
+3. Update this README's "Directory Structure" section with a link
+4. No need to update SKILL.md (it delegates to this README)
+
+## Pattern Writing Best Practices
+
+### DO
+
+- **Use concrete examples**: Include working code
+- **Clarify context**: Explain when and why to use
+- **Show contrast**: Provide both good and bad examples
+- **Stay concise**: Focus on essentials, avoid verbosity
+- **Include types**: Explicit TypeScript type definitions
+
+### DON'T
+
+- **Abstract theory only**: Patterns must be practical
+- **Over-explain**: Focus on pattern essence, not implementation details
+- **Keep outdated patterns**: Remove or mark deprecated patterns
+- **Over-comment code**: Prefer self-explanatory code
+
+## Maintenance Guidelines
+
+### Regular Review
+
+- Update when TypeScript/JavaScript versions change
+- Replace patterns when better approaches emerge
+- Remove or mark deprecated patterns
+
+### Pattern Priority
+
+1. **Frequently used**: Daily patterns take priority
+2. **Error prevention**: Bug-preventing patterns are high priority
+3. **Readability**: Patterns that improve team understanding
+4. **Performance**: Only when necessary; avoid premature optimization
+
+## Usage
+
+Claude Code automatically references patterns in this directory when writing TypeScript/JavaScript code. These techniques are applied without explicit user requests.
