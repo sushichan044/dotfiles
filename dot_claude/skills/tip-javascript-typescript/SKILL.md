@@ -15,6 +15,8 @@ Use this skill automatically in the following scenarios:
 
 - Writing new TypeScript/JavaScript code
 - Refactoring existing TypeScript/JavaScript code
+- Planning improvements of code quality
+  - e.g. reduce duplication, improve readability, enhance maintainability, etc.
 - Reviewing code for improvements
 - Making architectural decisions in TypeScript/JavaScript projects
 

@@ -4,17 +4,34 @@ This directory contains language-level coding techniques for TypeScript/JavaScri
 
 ## Directory Structure
 
-All patterns and subdirectories are indexed here. This README links to every file in the hierarchy.
+**Principle**: This directory contains topic-specific files with descriptive names for TypeScript/JavaScript language-level patterns.
 
-### Current Files
+Each file focuses on a specific aspect of the language. For example:
 
-- [type-safety.md](./type-safety.md) - Type safety, type system patterns
-- [async-patterns.md](./async-patterns.md) - Async operations, Promises, error handling
-- [functional.md](./functional.md) - Functional programming, immutability, composition
+```tree
+typescript/
+├── type-safety.md
+├── async-patterns.md
+├── functional.md
+└── code-quality.md
+```
 
-### Subdirectories
+Create subdirectories when patterns need hierarchical organization (e.g., `advanced/`, `patterns/`).
 
-None yet. Create subdirectories when needed (e.g., `advanced/`, `patterns/`).
+## File Naming Guidelines
+
+**DO**: Use descriptive topic names
+
+- `type-safety.md`
+- `async-patterns.md`
+- `error-handling.md`
+- `performance-optimization.md`
+
+**DON'T**: Use generic names
+
+- ❌ `README.md` (reserved for this directory index)
+- ❌ `typescript.md` (redundant with directory name)
+- ❌ `patterns.md` (too vague)
 
 ## Adding New Patterns
 
@@ -28,9 +45,9 @@ None yet. Create subdirectories when needed (e.g., `advanced/`, `patterns/`).
 If existing files don't fit:
 
 1. Create new `.md` file or subdirectory in this directory
-2. Use the template format above for patterns
-3. Update this README's "Directory Structure" section with a link
-4. No need to update SKILL.md (it delegates to this README)
+2. Follow the "File Naming Guidelines" above for naming
+3. Use consistent pattern format for content
+4. No need to update this README or SKILL.md (patterns are discovered automatically)
 
 ## Pattern Writing Best Practices
 
