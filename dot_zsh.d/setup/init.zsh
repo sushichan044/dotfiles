@@ -90,3 +90,17 @@ copy_to_clipboard() {
         return 1
     fi
 }
+
+# Get RAM size in GB.
+# $ get_ram_in_gb
+# 64
+get_ram_in_gb() {
+    if is_mac; then
+        sysctl -n hw.memsize | awk '{print int($1 / 1024 / 1024 / 1024)}'
+    elif is_linux; then
+        echo $(($(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024 / 1024))
+    else
+        echo "Unsupported OS" 1>&2
+        return 1
+    fi
+}
