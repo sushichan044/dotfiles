@@ -179,6 +179,8 @@ if OS.mac?
   cask "readdle-spark"
   cask "slack"
   cask "tailscale-app"
+{{ else }}
+  cask "ollama-app" # needs high machine resource, expected to have 32GB+ RAM
 {{ end }}
 end
 
