@@ -8,4 +8,4 @@ fi
 
 brew bundle --file="$HOME/.Brewfile" cleanup --force
 
-brew update && brew bundle install --file="$HOME/.Brewfile"
+brew update && brew bundle install --file="$HOME/.Brewfile" && brew upgrade
