@@ -43,9 +43,9 @@ defaults write com.apple.finder QLEnableTextSelection -bool true               #
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true   # Automatically quit printer app once the print jobs complete
 
 # Finder: Arrange by name for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :FK_DefaultIconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_DefaultIconViewSettings:arrangeBy name" $HOME/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" $HOME/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" $HOME/Library/Preferences/com.apple.finder.plist
 
 # Menu bar
 defaults write com.apple.menuextra.clock "ShowSeconds" -bool true      # Show seconds in menu bar clock
