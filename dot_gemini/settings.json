@@ -32,6 +32,18 @@
       "httpUrl": "https://mcp.grep.app",
       "trust": true
     },
+    "mcpdoc": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcpdoc",
+        "mcpdoc",
+        "--json",
+        "${HOME}/ai/config/mcpdoc.json",
+        "--transport",
+        "stdio"
+      ]
+    },
     "readability": {
       "args": [
         "run",
