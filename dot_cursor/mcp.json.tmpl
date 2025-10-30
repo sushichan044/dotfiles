@@ -1,6 +1,1 @@
-{{/* Inject Devin API Key dynamically */}}
-{{- $devin_api_key := "" -}}
-{{- if not .for_personal -}}
-{{- $devin_api_key = onepasswordRead "op://Employee/DEVIN_API_KEY/credential" -}}
-{{- end -}}
-{{ .cursor.mcp | toPrettyJson | replaceAllRegex "DEVIN_API_KEY" $devin_api_key }}
+{{ .cursor.mcp | toPrettyJson }}

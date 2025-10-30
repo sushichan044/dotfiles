@@ -24,13 +24,6 @@
           "type": "http",
           "url": "https://mcp.deepwiki.com/mcp"
         },
-        "devin": {
-          "headers": {
-            "Authorization": "Bearer DEVIN_API_KEY"
-          },
-          "type": "http",
-          "url": "https://mcp.devin.ai/mcp"
-        },
         "grep": {
           "type": "http",
           "url": "https://mcp.grep.app"
@@ -219,13 +212,6 @@
         "deepwiki": {
           "type": "http",
           "url": "https://mcp.deepwiki.com/mcp"
-        },
-        "devin": {
-          "headers": {
-            "Authorization": "Bearer DEVIN_API_KEY"
-          },
-          "type": "http",
-          "url": "https://mcp.devin.ai/mcp"
         },
         "grep": {
           "type": "http",
