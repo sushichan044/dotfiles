@@ -93,18 +93,27 @@
             "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/typescript/no_restricted_edit.ts"
           }
         ]
+      },
+      {
+        "matcher": "mcp__deepwiki__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/check_github_repo_visibility.ts"
+          }
+        ]
       }
     ]
   },
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
-            "Edit",
+      "Edit",
       "Write",
       "NotebookEdit",
       "SlashCommand",
       "WebSearch",
-      
+
       "Bash(git:*)",
 
       "Bash(gh cache:*)",
