@@ -12,6 +12,18 @@
     "DISABLE_TELEMETRY": "1",
     "ENABLE_BACKGROUND_TASKS": "1"
   },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["git", "docker", "gh"],
+    "allowLocalBinding": true,
+    "network": {
+      "allowUnixSockets": [
+        "/var/run/docker.sock",
+        "{{ .chezmoi.homeDir }}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      ]
+    }
+  },
   "cleanupPeriodDays": 99999,
   "statusLine": {
     "type": "command",
