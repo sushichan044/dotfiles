@@ -12,6 +12,10 @@
     "hasSeenNudge": true
   },
   "mcpServers": {
+    "aws-knowledge": {
+      "httpUrl": "https://knowledge-mcp.global.api.aws",
+      "trust": true
+    },
     "bundlephobia": {
       "httpUrl": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
       "trust": true
