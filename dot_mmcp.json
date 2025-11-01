@@ -8,9 +8,6 @@
     "github-copilot-cli"
   ],
   "mcpServers": {
-    "aws-knowledge": {
-      "url": "https://knowledge-mcp.global.api.aws"
-    },
     "bundlephobia": {
       "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
     },
