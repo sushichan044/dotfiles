@@ -3,6 +3,72 @@
     "settings": {
       "checkpointingEnabled": true,
       "installMethod": "unknown",
+      "mcpServers": {
+        "bundlephobia": {
+          "type": "http",
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest", "--categoryEmulation=false"],
+          "command": "npx"
+        },
+        "cloudflare-docs": {
+          "type": "http",
+          "url": "https://docs.mcp.cloudflare.com/mcp"
+        },
+        "context7": {
+          "type": "http",
+          "url": "https://mcp.context7.com/mcp"
+        },
+        "deepwiki": {
+          "type": "http",
+          "url": "https://mcp.deepwiki.com/mcp"
+        },
+        "grep": {
+          "type": "http",
+          "url": "https://mcp.grep.app"
+        },
+        "mcpdoc": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "mcpdoc",
+            "mcpdoc",
+            "--json",
+            "${HOME}/ai/config/mcpdoc.json",
+            "--transport",
+            "stdio"
+          ]
+        },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "readability": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--mcp"
+          ],
+          "command": "deno"
+        },
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "sequential-thinking": {
+          "args": [
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "deno"
+        }
+      },
       "preferredNotifChannel": "terminal_bell",
       "shiftEnterKeyBindingInstalled": true,
       "theme": "dark"
@@ -10,13 +76,105 @@
   },
   "claude_desktop": {
     "settings": {
-      "globalShortcut": ""
+      "globalShortcut": "",
+      "mcpServers": {
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest", "--categoryEmulation=false"],
+          "command": "npx",
+          "type": "stdio"
+        },
+        "readability": {
+          "args": [
+            "x",
+            "deno",
+            "--",
+            "deno",
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
+          "command": "mise",
+          "type": "stdio"
+        },
+        "sequential-thinking": {
+          "args": [
+            "x",
+            "deno",
+            "--",
+            "deno",
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "mise",
+          "type": "stdio"
+        }
+      }
     }
   },
   "codex": {
     "config": {
       "experimental_use_rmcp_client": true,
       "approval_policy": "on-request",
+      "mcp_servers": {
+        "bundlephobia": {
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "chrome-devtools": {
+          "command": "npx",
+          "args": ["-y", "chrome-devtools-mcp@latest", "--categoryEmulation=false"]
+        },
+        "context7": {
+          "url": "https://mcp.context7.com/mcp"
+        },
+        "deepwiki": {
+          "url": "https://mcp.deepwiki.com/mcp"
+        },
+        "grep": {
+          "url": "https://mcp.grep.app"
+        },
+        "notion": {
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "mcpdoc": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "mcpdoc",
+            "mcpdoc",
+            "--json",
+            "${HOME}/ai/config/mcpdoc.json",
+            "--transport",
+            "stdio"
+          ]
+        },
+        "readability": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
+          "command": "deno"
+        },
+        "sequential-thinking": {
+          "args": [
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "deno"
+        }
+      },
       "mode": "gpt-5-codex",
       "model_reasoning_effort": "medium",
       "notify": [
@@ -28,6 +186,78 @@
       },
       "tools": {
         "web_search": true
+      }
+    }
+  },
+  "cursor": {
+    "mcp": {
+      "mcpServers": {
+        "bundlephobia": {
+          "type": "http",
+          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
+        },
+        "chrome-devtools": {
+          "args": ["-y", "chrome-devtools-mcp@latest", "--categoryEmulation=false"],
+          "command": "npx",
+          "type": "stdio"
+        },
+        "cloudflare-docs": {
+          "type": "http",
+          "url": "https://docs.mcp.cloudflare.com/mcp"
+        },
+        "context7": {
+          "type": "http",
+          "url": "https://mcp.context7.com/mcp"
+        },
+        "deepwiki": {
+          "type": "http",
+          "url": "https://mcp.deepwiki.com/mcp"
+        },
+        "grep": {
+          "type": "http",
+          "url": "https://mcp.grep.app"
+        },
+        "mcpdoc": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "mcpdoc",
+            "mcpdoc",
+            "--json",
+            "${HOME}/ai/config/mcpdoc.json",
+            "--transport",
+            "stdio"
+          ]
+        },
+        "notion": {
+          "type": "http",
+          "url": "https://mcp.notion.com/mcp"
+        },
+        "readability": {
+          "args": [
+            "run",
+            "--allow-env",
+            "--allow-net",
+            "--allow-read",
+            "--allow-run",
+            "npm:@mizchi/readability@0.6.8",
+            "--",
+            "--mcp"
+          ],
+          "command": "deno"
+        },
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp"
+        },
+        "sequential-thinking": {
+          "args": [
+            "run",
+            "--allow-env",
+            "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+          ],
+          "command": "deno"
+        }
       }
     }
   }
