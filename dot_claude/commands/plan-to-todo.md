@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(mkdir:*), Bash(cp:*), Edit(*), Read(*), Read(~/ai/templates/plan-template.md)
+allowed-tools: Edit(*), Read(*), Read(~/ai/templates/plan-template.md), Bash(memo new:*), Bash(cp:*), Bash(read:*)
 description: Create simple implementation plan from task description using single plan file.
 ---
 
@@ -10,19 +10,13 @@ description: Create simple implementation plan from task description using singl
 **Step 1: Task Name**
 Use $ARGUMENTS if provided, or choose a descriptive task name (under 25 characters).
 
-**Step 2: Create Directory**
+**Step 2: Scaffold Memo**
 
 ```bash
-mkdir -p .claude/sushichan044/plan/<TASK_NAME>
+memo new "plan-{your-task-name}" | { read -r target; cp ~/ai/templates/plan-template.md  "$target"; }
 ```
 
-**Step 3: Copy Template**
-
-```bash
-cp ~/ai/templates/plan-template.md .claude/sushichan044/plan/<TASK_NAME>/plan.md
-```
-
-**Step 4: Populate Plan**
+**Step 3: Populate Plan**
 Edit the plan.md file with:
 
 - Clear objective from the task description
@@ -30,7 +24,7 @@ Edit the plan.md file with:
 - Technical requirements
 - Completion criteria
 
-**Step 5: Keep It Simple**
+**Step 4: Keep It Simple**
 
 - One plan file per task
 - Focus on actionable steps
