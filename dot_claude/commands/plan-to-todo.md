@@ -1,5 +1,5 @@
 ---
-allowed-tools: Edit(*), Read(*), Read(~/ai/templates/plan-template.md), Bash(memo new:*), Bash(cp:*), Bash(read:*)
+allowed-tools: Edit(*), Read(*), Read(~/ai/templates/plan-template.md), Bash(memo new:*), Bash(cp:*)
 description: Create simple implementation plan from task description using single plan file.
 ---
 
@@ -13,7 +13,7 @@ Use $ARGUMENTS if provided, or choose a descriptive task name (under 25 characte
 **Step 2: Scaffold Memo**
 
 ```bash
-memo new "plan-{your-task-name}" | { read -r target; cp ~/ai/templates/plan-template.md  "$target"; }
+cp ~/ai/templates/plan-template.md "$(memo new plan-<your-task-name>)"
 ```
 
 **Step 3: Populate Plan**
