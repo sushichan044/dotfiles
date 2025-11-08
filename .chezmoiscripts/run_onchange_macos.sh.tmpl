@@ -22,6 +22,7 @@ defaults write com.apple.Dock autohide -bool true          # Autohide Dock
 defaults write com.apple.dock show-recents -bool false     # Remove recent apps from Dock
 defaults write com.apple.dock launchanim -bool false       # Disable launch animation
 defaults write com.apple.dock orientation -string "bottom" # Move Dock to the bottom side of the screen
+defaults write com.apple.dock mineffect -string "scale" # Simplify minimize/maximize window effect
 
 # Screenshot
 SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
@@ -64,6 +65,7 @@ defaults write com.apple.driver.AppleMultitouchTrackpad Clicking -bool true
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSAutomaticPeriodSubstitutionEnabled -bool false  # Disable automatic period substitution with double-space
 
 # Keyboard
 defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool false  # Disable press-and-hold for keys
