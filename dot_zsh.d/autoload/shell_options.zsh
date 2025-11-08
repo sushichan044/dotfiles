@@ -18,7 +18,7 @@ setopt hist_ignore_all_dups
 setopt hist_ignore_space
 setopt hist_reduce_blanks
 
-HISTFILE=$ZDOTDIR/.zsh_history
+HISTFILE=$HOME/.zsh_history
 HISTSIZE=2000
 SAVEHIST=2000
 
