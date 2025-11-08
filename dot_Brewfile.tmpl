@@ -120,6 +120,7 @@ if OS.mac?
       "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80 && sudo ${HOMEBREW_PREFIX}/bin/batt magsafe-led enable"
 
   # cask
+  cask "1password"
   cask "alt-tab"
   cask "altair-graphql-client"
   cask "appcleaner"
@@ -170,7 +171,6 @@ if OS.mac?
   mas "1Password for Safari", id: 1569813296
 {{ if .for_personal }}
   # for personal mac only
-  cask "1password"
   cask "anydesk"
   cask "cyberduck"
   cask "gimp"
