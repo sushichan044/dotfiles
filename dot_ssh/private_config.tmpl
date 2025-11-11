@@ -1,3 +1,7 @@
+{{ if stat (joinPath .chezmoi.homeDir ".orbstack" "ssh" "config") -}}
+include ~/.orbstack/ssh/config
+{{- end }}
+
 include config.d/*.conf
 
 Host github github.com
