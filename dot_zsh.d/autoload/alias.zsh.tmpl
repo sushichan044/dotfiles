@@ -53,7 +53,25 @@ alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 
 # misc
 alias cv='code .'
+cw() {
+    local ws=(*.code-workspace)
+    if ((${#ws[@]} == 1)); then
+        code "$ws"
+    else
+        echo "Multiple or no .code-workspace files found."
+        return 1
+    fi
+}
 alias crv='cursor .'
+crw() {
+    local ws=(*.code-workspace)
+    if ((${#ws[@]} == 1)); then
+        cursor "$ws"
+    else
+        echo "Multiple or no .code-workspace files found."
+        return 1
+    fi
+}
 alias rv='rubymine .'
 alias cz='chezmoi'
 
