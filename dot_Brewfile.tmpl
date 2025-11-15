@@ -139,7 +139,14 @@ if OS.mac?
   cask "httpie-desktop"
   cask "inkscape"
   cask "jetbrains-toolbox"
-  cask "jordanbaird-ice@beta"
+
+  if OS::Mac.version >= :tahoe
+    cask "jordanbaird-ice@beta"
+  else
+    # beta build seems not working on macOS Ventura and earlier
+    cask "jordanbaird-ice"
+  end
+
   cask "karabiner-elements"
   cask "linearmouse"
   cask "mongodb-compass"
