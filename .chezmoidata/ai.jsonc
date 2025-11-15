@@ -131,8 +131,12 @@
   },
   "codex": {
     "config": {
-      "experimental_use_rmcp_client": true,
       "approval_policy": "on-request",
+      "features": {
+        "rmcp_client": true,
+        "web_search_request": true,
+        "experimental_sandbox_command_assessment": true
+      },
       "mcp_servers": {
         "bundlephobia": {
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
@@ -199,9 +203,6 @@
       "sandbox_mode": "workspace-write",
       "sandbox_workspace_write": {
         "network_access": true
-      },
-      "tools": {
-        "web_search": true
       }
     }
   },
