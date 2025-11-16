@@ -150,38 +150,47 @@ const hook = defineHook({
       return c.success();
     }
 
-    if (c.input.tool_name === "WebFetch") {
-      // use markdown fetch instead of WebFetch
-      const resp = await fetch(c.input.tool_input.url);
-      const html = await resp.text();
-      if (!resp.ok) {
-        // if not 200, we don't process the HTML
-        return c.success();
-      }
-
-      const content = extract(html);
-      const markdown = toMarkdown(content.root);
-
-      return c.json({
-        event: "PreToolUse",
-        output: {
-          hookSpecificOutput: {
-            hookEventName: "PreToolUse",
-            permissionDecision: "deny",
-            permissionDecisionReason: [
-              "You should not use web fetch for this URL.",
-              "Here is the markdown content I fetched from the page:",
-              "```markdown",
-              markdown,
-              "```",
-            ].join("\n"),
-          },
-          suppressOutput: true,
-        },
-      });
+    if (
+      c.input.tool_name === "mcp__readability__read_url_content_as_markdown"
+    ) {
+      return c.success();
     }
 
-    return c.success();
+    // use markdown fetch instead of WebFetch
+    const resp = await fetch(c.input.tool_input.url);
+    const html = await resp.text();
+    if (!resp.ok) {
+      // if not 200, we don't process the HTML
+      return c.success();
+    }
+    if (
+      resp.headers.get("Content-Type")?.toLowerCase().includes("text/plain") ===
+      true
+    ) {
+      // if it's plain text, we don't process the HTML
+      return c.success();
+    }
+
+    const content = extract(html);
+    const markdown = toMarkdown(content.root);
+
+    return c.json({
+      event: "PreToolUse",
+      output: {
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "deny",
+          permissionDecisionReason: [
+            "You should not use web fetch for this URL.",
+            "Here is the markdown content I fetched from the page:",
+            "```markdown",
+            markdown,
+            "```",
+          ].join("\n"),
+        },
+        suppressOutput: true,
+      },
+    });
   },
 });
 
