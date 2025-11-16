@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@mizchi/readability": "0.7.7",
+    "arkregex": "^0.0.2",
     "cc-hooks-ts": "2.0.42",
+    "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
     "pathe": "2.0.3",
     "unist-util-visit": "5.0.0"

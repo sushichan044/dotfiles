@@ -7,7 +7,9 @@
  */
 
 import { extract, toMarkdown } from "@mizchi/readability";
+import { regex } from "arkregex";
 import { defineHook, runHook } from "cc-hooks-ts";
+import { check as isReservedNameByGitHub } from "github-reserved-names";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {
@@ -23,13 +25,37 @@ declare module "cc-hooks-ts" {
   }
 }
 
-const isGitHubIssueLike = (url: URL) => {
-  return /\/issues\/[0-9]+$/.test(url.pathname);
-};
+function extractGitHubRepo(
+  url: URL,
+): { name: string; owner: string; restPaths: string[] } | null {
+  const [owner, name, ...rest] = url.pathname
+    .split("/")
+    .map((part) => decodeURIComponent(part).trim())
+    .filter((part) => part.length > 0);
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (!owner || !name) return null;
+  if (isReservedNameByGitHub(owner)) {
+    return null;
+  }
 
-const isGitHubPRLike = (url: URL) => {
-  return /\/pull\/[0-9]+$/.test(url.pathname);
-};
+  return { name, owner, restPaths: rest };
+}
+
+const issueRegex = regex("/(?<type>issues|pull)/(?<number>\\d+)$");
+function extractGitHubIssueOrPRNumber(url: URL): {
+  number: number;
+  type: "issue" | "pr";
+} | null {
+  const match = issueRegex.exec(url.pathname);
+  if (!match?.groups) {
+    return null;
+  }
+
+  return {
+    number: parseInt(match.groups.number, 10),
+    type: match.groups.type === "issues" ? "issue" : "pr",
+  };
+}
 
 const hook = defineHook({
   trigger: {
@@ -57,15 +83,50 @@ const hook = defineHook({
     }
 
     if (urlObj.hostname === "github.com") {
-      if (isGitHubIssueLike(urlObj) || isGitHubPRLike(urlObj)) {
+      const repo = extractGitHubRepo(urlObj);
+      if (!repo) {
+        return c.success();
+      }
+      if (repo.restPaths.length === 0) {
+        // it's a repository root URL
         return c.json({
           event: "PreToolUse",
           output: {
             hookSpecificOutput: {
               hookEventName: "PreToolUse",
               permissionDecision: "deny",
-              permissionDecisionReason:
-                "Use GitHub CLI for issues and pull requests. Always set --repo explicitly to avoid confusion with forked repositories.",
+              permissionDecisionReason: [
+                `Use the GitHub CLI instead.`,
+                "Suggested command:",
+                "```bash",
+                `gh repo view ${repo.owner}/${repo.name}`,
+                "```",
+              ].join("\n"),
+            },
+          },
+        });
+      }
+
+      const issueOrPR = extractGitHubIssueOrPRNumber(urlObj);
+      if (issueOrPR) {
+        const ghCmd =
+          issueOrPR.type === "issue"
+            ? `gh issue view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`
+            : `gh pr view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
+
+        return c.json({
+          event: "PreToolUse",
+          output: {
+            hookSpecificOutput: {
+              hookEventName: "PreToolUse",
+              permissionDecision: "deny",
+              permissionDecisionReason: [
+                `Use the GitHub CLI instead.`,
+                "Suggested command:",
+                "```bash",
+                ghCmd,
+                "```",
+              ].join("\n"),
             },
           },
         });
