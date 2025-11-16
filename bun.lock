@@ -6,7 +6,7 @@
       "name": "chezmoi",
       "dependencies": {
         "@mizchi/readability": "0.7.7",
-        "cc-hooks-ts": "0.1.2",
+        "cc-hooks-ts": "2.0.42",
         "mdast-util-from-markdown": "2.0.2",
         "pathe": "2.0.3",
         "unist-util-visit": "5.0.0",
@@ -25,7 +25,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@anthropic-ai/claude-code": ["@anthropic-ai/claude-code@2.0.0", "", { "optionalDependencies": { "@img/sharp-darwin-arm64": "^0.33.5", "@img/sharp-darwin-x64": "^0.33.5", "@img/sharp-linux-arm": "^0.33.5", "@img/sharp-linux-arm64": "^0.33.5", "@img/sharp-linux-x64": "^0.33.5", "@img/sharp-win32-x64": "^0.33.5" }, "bin": { "claude": "cli.js" } }, "sha512-qUaM1d2NeOshOZfHyh54gaFRwTE4+peNhHARYxUz3QPG5vbm2jp70tFING79laoCEK/LEOxeE5zwJpxVep856w=="],
+    "@anthropic-ai/claude-agent-sdk": ["@anthropic-ai/claude-agent-sdk@0.1.42", "", { "optionalDependencies": { "@img/sharp-darwin-arm64": "^0.33.5", "@img/sharp-darwin-x64": "^0.33.5", "@img/sharp-linux-arm": "^0.33.5", "@img/sharp-linux-arm64": "^0.33.5", "@img/sharp-linux-x64": "^0.33.5", "@img/sharp-win32-x64": "^0.33.5" }, "peerDependencies": { "zod": "^3.24.1" } }, "sha512-snz2CTHKxkk4rqgvi2D4oMgITXpgmghWC4XvFXcuYjSxgLCBmvDW9TjBk6MTv0apC5fwW4kLE4ydamkBs+BdPg=="],
 
     "@astrojs/compiler": ["@astrojs/compiler@2.12.2", "", {}, "sha512-w2zfvhjNCkNMmMMOn5b0J8+OmUaBL1o40ipMvqcG6NRpdC+lKxmTi48DT8Xw0SzJ3AfmeFLB45zXZXtmbsjcgw=="],
 
@@ -237,7 +237,7 @@
 
     "camelcase-css": ["camelcase-css@2.0.1", "", {}, "sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA=="],
 
-    "cc-hooks-ts": ["cc-hooks-ts@0.1.2", "", { "dependencies": { "@anthropic-ai/claude-code": "2.0.0", "valibot": "^1.1.0" } }, "sha512-QjvQRLPj122Spa/aXNc84ZcoLZI8uOEz+3HfepeiSBujRspsqU6ETPRX3GsDyKo53A8THOGX+Ju7nRw5hil8SQ=="],
+    "cc-hooks-ts": ["cc-hooks-ts@2.0.42", "", { "dependencies": { "@anthropic-ai/claude-agent-sdk": "0.1.42", "valibot": "^1.1.0" } }, "sha512-NL1ZSjgF+wbQSGWxRHToIi2RTN2t+GxukaeQ/Em9uL8Zc52xaIhwDt8+0wZA766ZPKO07it3lm0hgUumPURyeg=="],
 
     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
 

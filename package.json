@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@mizchi/readability": "0.7.7",
-    "cc-hooks-ts": "0.1.2",
+    "cc-hooks-ts": "2.0.42",
     "mdast-util-from-markdown": "2.0.2",
     "pathe": "2.0.3",
     "unist-util-visit": "5.0.0"
