@@ -49,7 +49,10 @@ cmd_event() {
         echo "Error: Trace file not found: $trace_path" >&2
         exit 1
     fi
-    exec bun run -i --silent "$TOOL_ROOT/main/trace-to-event-format.mjs" "$trace_path" "$out_path" "$config_path"
+    bun run -i --silent "$TOOL_ROOT/main/trace-to-event-format.mjs" "$trace_path" "$out_path" "$config_path"
+
+    echo "✅ Converted trace to event format."
+    echo "You can visualize your trace at https://ui.perfetto.dev"
 }
 
 case "${1:-}" in
