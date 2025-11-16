@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/renovate.json",
   "extends": ["config:best-practices"],
-  "schedule": ["before 4:00am on Sunday"],
   "reviewersFromCodeOwners": true,
   "timezone": "Asia/Tokyo",
   "prHourlyLimit": 0,
@@ -9,6 +8,7 @@
   "rangeStrategy": "bump",
   "branchConcurrentLimit": 0,
   "enabledManagers": ["mise"],
+  "minimumReleaseAge": "3 days",
   "labels": ["dependencies"],
   "packageRules": [
     {
