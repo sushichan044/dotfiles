@@ -64,11 +64,7 @@ watchexec = "latest"
 "pipx:yq" = "latest"
 "pipx:git+https://github.com/github/spec-kit.git" = "latest"
 "pipx:docling" = "latest"
-
-{{ if eq .chezmoi.os "darwin" -}}
-# Only in macOS
-"pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13" }
-{{- end }}
+"pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"]}
 
 [alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
