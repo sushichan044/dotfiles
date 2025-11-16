@@ -2,7 +2,6 @@
 AGENTS.md
 CLAUDE.md
 README.md
-renovate.json
 node_modules/
 tsconfig.json
 eslint.config.js
