@@ -197,3 +197,5 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+
+!dot_sushichan044/scripts/nextjs-build-trace/packages/next/dist/

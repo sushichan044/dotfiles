@@ -1,0 +1,73 @@
+#!/bin/bash
+set -euo pipefail
+
+TOOL_ROOT="$HOME/.sushichan044/tools/nextjs-build-trace-util"
+
+BIN_NAME="next-trace-inspector"
+
+usage() {
+    cat <<EOF
+Usage: $BIN_NAME <command> [arguments...]
+
+Commands:
+  tree   Visualize Next.js build trace as a tree
+  event  Convert trace to Chrome DevTools event format
+
+Arguments:
+  tree <trace_path>
+    trace_path    Path to trace file (default: .next/trace)
+
+  event <trace_path> [out_path] [config_path]
+    trace_path    Path to trace file (default: .next/trace)
+    out_path      Output file path (default: <trace_path>.event)
+    config_path   Path to next.config.js for metadata (optional)
+
+Examples:
+  $BIN_NAME tree
+  $BIN_NAME tree .next/trace
+  $BIN_NAME event
+  $BIN_NAME event .next/trace
+  $BIN_NAME event .next/trace output.json
+  $BIN_NAME event .next/trace output.json ./next.config.js
+EOF
+}
+
+cmd_tree() {
+    trace_path="${1:-.next/trace}"
+    if [ ! -f "$trace_path" ]; then
+        echo "Error: Trace file not found: $trace_path" >&2
+        exit 1
+    fi
+    exec bun run -i --silent "$TOOL_ROOT/main/trace-to-tree.mjs" "$trace_path"
+}
+
+cmd_event() {
+    trace_path="${1:-.next/trace}"
+    out_path="${2:-}"
+    config_path="${3:-}"
+    if [ ! -f "$trace_path" ]; then
+        echo "Error: Trace file not found: $trace_path" >&2
+        exit 1
+    fi
+    exec bun run -i --silent "$TOOL_ROOT/main/trace-to-event-format.mjs" "$trace_path" "$out_path" "$config_path"
+}
+
+case "${1:-}" in
+tree)
+    shift
+    cmd_tree "$@"
+    ;;
+event)
+    shift
+    cmd_event "$@"
+    ;;
+help | --help | -h | "")
+    usage
+    exit 0
+    ;;
+*)
+    echo "Error: Unknown command '$1'." >&2
+    usage >&2
+    exit 1
+    ;;
+esac

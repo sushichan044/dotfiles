@@ -1,0 +1,9 @@
+[".sushichan044/tools/nextjs-build-trace-util/main/trace-to-tree.mjs"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-tree.mjs"
+    refreshPeriod = "168h"
+
+[".sushichan044/tools/nextjs-build-trace-util/main/trace-to-event-format.mjs"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-event-format.mjs"
+    refreshPeriod = "168h"
