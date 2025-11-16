@@ -7,7 +7,6 @@
   "automerge": false,
   "rangeStrategy": "bump",
   "branchConcurrentLimit": 0,
-  "enabledManagers": ["mise"],
   "minimumReleaseAge": "3 days",
   "labels": ["dependencies"],
   "packageRules": [
