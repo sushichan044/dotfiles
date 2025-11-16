@@ -2,6 +2,9 @@
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "[json5]": {
+    "editor.defaultFormatter": "BlueGlassBlock.better-json5"
+  },
   "[json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
