@@ -44,6 +44,10 @@ if dir_exists "$HOME/.chezmoi-bin"; then
     add_to_path_if_not_exists "$HOME/.chezmoi-bin"
 fi
 
+if dir_exists "$HOME/.sushichan044/bin"; then
+    add_to_path_if_not_exists "$HOME/.sushichan044/bin"
+fi
+
 # Jetbrains Scripts
 if is_mac; then
     add_to_path_if_not_exists "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
