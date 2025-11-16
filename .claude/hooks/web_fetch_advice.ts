@@ -57,6 +57,18 @@ function extractGitHubIssueOrPRNumber(url: URL): {
   };
 }
 
+function isRawContentURL(url: URL): boolean {
+  if (
+    // GitHub raw content URLs
+    url.hostname === "raw.githubusercontent.com" ||
+    url.hostname === "gist.githubusercontent.com"
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 const hook = defineHook({
   trigger: {
     PreToolUse: {
@@ -67,6 +79,9 @@ const hook = defineHook({
 
   run: async (c) => {
     const urlObj = new URL(c.input.tool_input.url);
+    if (isRawContentURL(urlObj)) {
+      return c.success();
+    }
 
     if (urlObj.hostname.includes("notion.so")) {
       return c.json({
