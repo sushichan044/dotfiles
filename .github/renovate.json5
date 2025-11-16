@@ -13,9 +13,14 @@
   "packageRules": [
     {
       "groupName": "mise",
-      "additionalBranchPrefix": "mise-",
-      "commitMessageSuffix": "(mise)",
       "matchManagers": ["mise"]
+    },
+    {
+      "groupName": "mise-nodejs",
+      "matchManagers": ["mise"],
+      "matchPackageNames": ["node"],
+      // https://github.com/ryoppippi/dotfiles/commit/795790423ccc766fcdbaa981299c517565f7b4ad
+      "allowedVersions": "/^([2-9]\\d*[02468])(\\.\\d+)*$/"
     }
   ]
 }
