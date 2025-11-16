@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/renovate.json",
-  "extends": ["config:best-practices"],
+  "extends": [
+    "config:best-practices"
+  ],
   "reviewersFromCodeOwners": true,
   "timezone": "Asia/Tokyo",
   "prHourlyLimit": 0,
@@ -8,18 +10,46 @@
   "rangeStrategy": "bump",
   "branchConcurrentLimit": 0,
   "minimumReleaseAge": "3 days",
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "packageRules": [
     {
       "groupName": "mise",
-      "matchManagers": ["mise"]
+      "matchManagers": [
+        "mise"
+      ]
     },
     {
       "groupName": "mise-nodejs",
-      "matchManagers": ["mise"],
-      "matchPackageNames": ["node"],
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
       // https://github.com/ryoppippi/dotfiles/commit/795790423ccc766fcdbaa981299c517565f7b4ad
       "allowedVersions": "/^([2-9]\\d*[02468])(\\.\\d+)*$/"
+    },
+    {
+      "groupName": "local-devDeps",
+      "matchManagers": [
+        "bun"
+      ],
+      "matchDepTypes": [
+        "devDependencies"
+      ]
+    },
+    {
+      "groupName": "local-bun",
+      matchManagers: [
+        "bun",
+        "bun-version"
+      ],
+      matchPackageNames: [
+        "bun",
+        "@types/bun"
+      ]
     }
   ]
 }
