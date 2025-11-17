@@ -1,4 +1,5 @@
 import { defineHook, runHook } from "cc-hooks-ts";
+import * as prettier from "prettier";
 
 type DumpResult = {
   isError: boolean;
@@ -32,10 +33,21 @@ async function dumpPlanToNote(plan: string): Promise<DumpResult> {
   };
 }
 
+async function formatPlan(plan: string): Promise<string> {
+  try {
+    return await prettier.format(plan, {
+      parser: "markdown",
+    });
+  } catch {
+    return plan;
+  }
+}
+
 const hook = defineHook({
   run: async (c) => {
     const plan = c.input.tool_input.plan;
-    const result = await dumpPlanToNote(plan);
+    const formattedPlan = await formatPlan(plan);
+    const result = await dumpPlanToNote(formattedPlan);
 
     return c.success({
       messageForUser: result.message,
