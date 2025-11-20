@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@mizchi/readability": "0.7.7",
-    "arkregex": "^0.0.2",
+    "arkregex": "^0.0.3",
     "cc-hooks-ts": "2.0.45",
     "event-stream": "^4.0.1",
     "github-reserved-names": "^2.1.1",
