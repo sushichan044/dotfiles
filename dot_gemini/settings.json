@@ -5,7 +5,8 @@
   "general": {
     "checkpointing": {
       "enabled": true
-    }
+    },
+    "previewFeatures": true
   },
   "ide": {
     "enabled": true,
@@ -94,5 +95,10 @@
   },
   "ui": {
     "theme": "Atom One"
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
   }
 }
