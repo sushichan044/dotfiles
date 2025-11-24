@@ -1,5 +1,5 @@
 import { $ } from "bun";
-import { defineHook, runHook } from "cc-hooks-ts";
+import { defineHook } from "cc-hooks-ts";
 import { realpath, stat } from "node:fs/promises";
 
 import { headingTreeOfMarkdownFile } from "../../ai/scripts/extract-md-heading";
@@ -63,4 +63,7 @@ const hook = defineHook({
   },
 });
 
-await runHook(hook);
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}

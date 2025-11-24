@@ -7,12 +7,10 @@
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 
+import type { ExtractAllHookInputsForEvent } from "cc-hooks-ts";
+
 import { $ } from "bun";
-import {
-  defineHook,
-  type ExtractAllHookInputsForEvent,
-  runHook,
-} from "cc-hooks-ts";
+import { defineHook } from "cc-hooks-ts";
 import { existsSync, readFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -127,4 +125,7 @@ const hook = defineHook({
   shouldRun: () => process.platform === "darwin",
 });
 
-await runHook(hook);
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}

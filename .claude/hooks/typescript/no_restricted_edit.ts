@@ -1,4 +1,4 @@
-import { defineHook, runHook } from "cc-hooks-ts";
+import { defineHook } from "cc-hooks-ts";
 import { extname } from "pathe";
 
 type Edit = {
@@ -27,7 +27,6 @@ const hook = defineHook({
   trigger: {
     PreToolUse: {
       Edit: true,
-      MultiEdit: true,
     },
   },
 
@@ -48,16 +47,13 @@ const hook = defineHook({
       return c.success();
     }
 
-    const edits =
-      "edits" in toolInput
-        ? toolInput.edits
-        : [
-            {
-              new_string: toolInput.new_string,
-              old_string: toolInput.old_string,
-              replace_all: toolInput.replace_all,
-            },
-          ];
+    const edits = [
+      {
+        new_string: toolInput.new_string,
+        old_string: toolInput.old_string,
+        replace_all: toolInput.replace_all,
+      },
+    ];
 
     if (
       includesRestrictedEdit(edits, {
@@ -88,4 +84,7 @@ const hook = defineHook({
   },
 });
 
-await runHook(hook);
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}

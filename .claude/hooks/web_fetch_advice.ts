@@ -8,7 +8,7 @@
 
 import { extract, toMarkdown } from "@mizchi/readability";
 import { regex } from "arkregex";
-import { defineHook, runHook } from "cc-hooks-ts";
+import { defineHook } from "cc-hooks-ts";
 import { check as isReservedNameByGitHub } from "github-reserved-names";
 
 declare module "cc-hooks-ts" {
@@ -194,4 +194,7 @@ const hook = defineHook({
   },
 });
 
-await runHook(hook);
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}

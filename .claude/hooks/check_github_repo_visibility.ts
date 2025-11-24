@@ -1,4 +1,4 @@
-import { defineHook, runHook } from "cc-hooks-ts";
+import { defineHook } from "cc-hooks-ts";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {
@@ -80,4 +80,7 @@ const hook = defineHook({
   },
 });
 
-await runHook(hook);
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}
