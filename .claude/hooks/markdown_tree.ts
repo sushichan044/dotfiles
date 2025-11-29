@@ -2,7 +2,7 @@ import { $ } from "bun";
 import { defineHook } from "cc-hooks-ts";
 import { realpath, stat } from "node:fs/promises";
 
-import { headingTreeOfMarkdownFile } from "../../ai/scripts/extract-md-heading";
+import { headingTreeOfMarkdownFile } from "../../home/ai/scripts/extract-md-heading";
 
 const getLineCount = async (path: string): Promise<number | null> => {
   const realPath = await realpath(path);

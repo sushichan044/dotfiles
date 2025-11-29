@@ -16,7 +16,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-import { isNonEmptyString } from "../../ai/scripts/utils/string";
+import { isNonEmptyString } from "../../home/ai/scripts/utils/string";
 
 function resolvePath(pathString: string): string {
   let resolvedPath = pathString;
