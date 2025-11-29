@@ -200,7 +200,7 @@
       "notify": [
         "/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"
       ],
-      "sandbox_mode": "workspace-write",
+      "sandbox_mode": "danger-full-access",
       "sandbox_workspace_write": {
         "network_access": true
       }
