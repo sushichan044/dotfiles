@@ -15,7 +15,7 @@ tenv = "latest"
 ruby = ["3.4", "3.3"]
 
 # tools
-awscli = "2.32.5"
+awscli = "2.32.6"
 watchexec = "latest"
 
 # tools with Backends
