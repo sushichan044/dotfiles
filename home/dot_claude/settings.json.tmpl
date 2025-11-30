@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/notify.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/notify.ts"
           }
         ]
       }
@@ -59,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/notify.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/notify.ts"
           }
         ]
       }
@@ -70,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/block_web_search.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/block_web_search.ts"
           }
         ]
       },
@@ -79,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/dump_plan.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/dump_plan.ts"
           }
         ]
       },
@@ -88,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/web_fetch_advice.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/web_fetch_advice.ts"
           }
         ]
       },
@@ -97,7 +97,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/markdown_tree.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/markdown_tree.ts"
           }
         ]
       },
@@ -106,7 +106,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/typescript/no_restricted_edit.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/typescript/no_restricted_edit.ts"
           }
         ]
       },
@@ -115,7 +115,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.sourceDir }}/.claude/hooks/check_github_repo_visibility.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_github_repo_visibility.ts"
           }
         ]
       }

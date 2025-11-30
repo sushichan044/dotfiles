@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "{{ .chezmoi.sourceDir }}" || exit 1
+cd "{{ .chezmoi.workingTree }}" || exit 1
 
 if ! type bun >/dev/null 2>&1; then
     echo "⚠️ Bun is not installed. Please install Bun first."
