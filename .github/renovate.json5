@@ -56,6 +56,7 @@
       "matchPackageNames": [
         "@typescript/native-preview"
       ],
+      // https://docs.renovatebot.com/key-concepts/minimum-release-age/#how-do-i-opt-out-dependencies-from-minimum-release-age-checks
       "minimumReleaseAge": null,
     }
   ]
