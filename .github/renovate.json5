@@ -1,7 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/renovate.json",
   "extends": [
-    "config:best-practices"
+    "config:best-practices",
+    ":preserveSemverRanges"
   ],
   "reviewersFromCodeOwners": true,
   "timezone": "Asia/Tokyo",
