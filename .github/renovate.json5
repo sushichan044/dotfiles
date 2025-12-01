@@ -50,6 +50,13 @@
         "bun",
         "@types/bun"
       ]
+    },
+    {
+      "groupName": "typescript-go",
+      "matchPackageNames": [
+        "@typescript/native-preview"
+      ],
+      "minimumReleaseAge": null,
     }
   ]
 }
