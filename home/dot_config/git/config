@@ -94,7 +94,12 @@ smudge = git-lfs smudge -- %f
 
 [alias]
 alias = "!f() { git config --get-regexp '^alias' | sed 's/^alias\\.//g'; }; f"
-swc = "!f() { suffix=\"${1:+-$1}\"; git switch -c \"$USER-$(TZ=UTC-9 date +'%Y%m%d%H%M')$suffix\"; }; f"
+swc = "!f() { \
+    suffix=\"${1:+-$1}\"; \
+    owner=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+)/[^/]+(\\.git)?$#\\1#'); \
+    prefix=$([ \"$owner\" = \"$USER\" ] && echo \"\" || echo \"$USER-\"); \
+    git switch -c \"${prefix}$(TZ=UTC-9 date +'%Y%m%d%H%M')$suffix\"; \
+}; f"
 cz = "!f() { git-cz }; f"
 clear-cache = "rm -r --cached ."
 com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
