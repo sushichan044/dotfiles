@@ -41,9 +41,12 @@ function extractGitHubRepo(
   return { name, owner, restPaths: rest };
 }
 
-const issueRegex = regex("/(?<type>issues|pull)/(?<number>\\d+)$");
+const issueRegex = regex(
+  "/(?<type>issues|pull)/(?<number>\\d+)(?<subpath>/.*)?$",
+);
 function extractGitHubIssueOrPRNumber(url: URL): {
   number: number;
+  subpath?: string;
   type: "issue" | "pr";
 } | null {
   const match = issueRegex.exec(url.pathname);
@@ -53,6 +56,7 @@ function extractGitHubIssueOrPRNumber(url: URL): {
 
   return {
     number: parseInt(match.groups.number, 10),
+    subpath: match.groups.subpath,
     type: match.groups.type === "issues" ? "issue" : "pr",
   };
 }
@@ -124,10 +128,18 @@ const hook = defineHook({
 
       const issueOrPR = extractGitHubIssueOrPRNumber(urlObj);
       if (issueOrPR) {
-        const ghCmd =
-          issueOrPR.type === "issue"
-            ? `gh issue view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`
-            : `gh pr view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
+        let ghCmd: string;
+
+        if (issueOrPR.type === "pr") {
+          if (issueOrPR.subpath === "/files") {
+            // この画面を AI に読ませるなら diff が欲しいということなので diff コマンドを suggest する
+            ghCmd = `gh pr diff ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
+          } else {
+            ghCmd = `gh pr view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
+          }
+        } else {
+          ghCmd = `gh issue view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
+        }
 
         return c.json({
           event: "PreToolUse",
