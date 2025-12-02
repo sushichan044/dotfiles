@@ -1,0 +1,8 @@
+{{- if eq .chezmoi.username "sushi" "sushichan044" -}}
+[user]
+{{- if .for_personal }}
+signingkey = {{ onepasswordRead "op://dotfiles/Codeberg/private_key" }}
+{{- else }}
+signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
+{{- end }}
+{{- end }}
