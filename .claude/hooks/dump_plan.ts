@@ -45,7 +45,7 @@ async function formatPlan(plan: string): Promise<string> {
 
 const hook = defineHook({
   run: async (c) => {
-    const plan = c.input.tool_input.plan;
+    const plan = c.input.tool_input["plan"] as string;
     const formattedPlan = await formatPlan(plan);
     const result = await dumpPlanToNote(formattedPlan);
 
