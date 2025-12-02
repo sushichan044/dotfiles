@@ -9,6 +9,14 @@ Host github github.com
     User git
     IdentitiesOnly yes
     IdentityFile ~/.ssh/github
+
+# https://docs.codeberg.org/security/ssh-key/#test-the-ssh-connection
+Host codeberg codeberg.org
+    HostName codeberg.org
+    User git
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/codeberg
+
 {{ if eq .chezmoi.os "darwin" }}
 Host *
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

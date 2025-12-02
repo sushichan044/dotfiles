@@ -1,0 +1,7 @@
+{{- if eq .chezmoi.username "sushi" "sushichan044" -}}
+{{- if .for_personal -}}
+{{- onepasswordRead "op://dotfiles/Codeberg/private_key?ssh-format=openssh" -}}
+{{- else -}}
+{{- onepasswordRead "op://Employee/GitHub/private_key?ssh-format=openssh" -}}
+{{- end -}}
+{{- end }}
