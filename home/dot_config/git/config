@@ -1,12 +1,9 @@
 [include]
 path = ~/.config/git/config.d/one-password.conf
-path = ~/.config/git/config.d/user.github.conf
-path = ~/.config/git/config.d/signing-key.github.conf
+path = ~/.config/git/config.d/github.conf
 
 [includeIf "gitdir:~/workspace/codeberg.org/"]
-path = ~/.config/git/config.d/user.codeberg.conf
-[includeIf "gitdir:~/workspace/codeberg.org/"]
-path = ~/.config/git/config.d/signing-key.codeberg.conf
+path = ~/.config/git/config.d/codeberg.conf
 
 [branch]
 sort = -committerdate
