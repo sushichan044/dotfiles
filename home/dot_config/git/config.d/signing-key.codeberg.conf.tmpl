@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.username "sushi" "sushichan044" -}}
+{{- if eq .chezmoi.username "sushichan044" -}}
 [user]
 {{- if .for_personal }}
 signingkey = {{ onepasswordRead "op://dotfiles/Codeberg/private_key" }}
