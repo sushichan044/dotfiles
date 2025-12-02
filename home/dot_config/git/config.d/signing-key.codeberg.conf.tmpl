@@ -3,6 +3,6 @@
 {{- if .for_personal }}
 signingkey = {{ onepasswordRead "op://dotfiles/Codeberg/public key" }}
 {{- else }}
-signingkey = {{ onepasswordRead "op://Employee/Github-Commit-Sign/public key" }}
+signingkey = {{ onepasswordRead "op://Employee/Codeberg/public key" }}
 {{- end }}
 {{- end }}
