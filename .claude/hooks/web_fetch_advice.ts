@@ -7,9 +7,9 @@
  */
 
 import { extract, toMarkdown } from "@mizchi/readability";
-import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
-import { check as isReservedNameByGitHub } from "github-reserved-names";
+
+import { isRawContentURL, parseGitHubUrlToGhCommand } from "../../tools/github";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {
@@ -23,54 +23,6 @@ declare module "cc-hooks-ts" {
       }>;
     };
   }
-}
-
-function extractGitHubRepo(
-  url: URL,
-): { name: string; owner: string; restPaths: string[] } | null {
-  const [owner, name, ...rest] = url.pathname
-    .split("/")
-    .map((part) => decodeURIComponent(part).trim())
-    .filter((part) => part.length > 0);
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  if (!owner || !name) return null;
-  if (isReservedNameByGitHub(owner)) {
-    return null;
-  }
-
-  return { name, owner, restPaths: rest };
-}
-
-const issueRegex = regex(
-  "/(?<type>issues|pull)/(?<number>\\d+)(?<subpath>/.*)?$",
-);
-function extractGitHubIssueOrPRNumber(url: URL): {
-  number: number;
-  subpath?: string;
-  type: "issue" | "pr";
-} | null {
-  const match = issueRegex.exec(url.pathname);
-  if (!match?.groups) {
-    return null;
-  }
-
-  return {
-    number: parseInt(match.groups.number, 10),
-    subpath: match.groups.subpath,
-    type: match.groups.type === "issues" ? "issue" : "pr",
-  };
-}
-
-function isRawContentURL(url: URL): boolean {
-  if (
-    // GitHub raw content URLs
-    url.hostname === "raw.githubusercontent.com" ||
-    url.hostname === "gist.githubusercontent.com"
-  ) {
-    return true;
-  }
-
-  return false;
 }
 
 const hook = defineHook({
@@ -101,65 +53,24 @@ const hook = defineHook({
       });
     }
 
-    if (urlObj.hostname === "github.com") {
-      const repo = extractGitHubRepo(urlObj);
-      if (!repo) {
-        return c.success();
-      }
-      if (repo.restPaths.length === 0) {
-        // it's a repository root URL
-        return c.json({
-          event: "PreToolUse",
-          output: {
-            hookSpecificOutput: {
-              hookEventName: "PreToolUse",
-              permissionDecision: "deny",
-              permissionDecisionReason: [
-                `Use the GitHub CLI instead.`,
-                "Suggested command:",
-                "```bash",
-                `gh repo view ${repo.owner}/${repo.name}`,
-                "```",
-              ].join("\n"),
-            },
+    const ghResult = parseGitHubUrlToGhCommand(urlObj);
+    if (ghResult) {
+      return c.json({
+        event: "PreToolUse",
+        output: {
+          hookSpecificOutput: {
+            hookEventName: "PreToolUse",
+            permissionDecision: "deny",
+            permissionDecisionReason: [
+              "Use the GitHub CLI instead.",
+              "Suggested command:",
+              "```bash",
+              ghResult.command,
+              "```",
+            ].join("\n"),
           },
-        });
-      }
-
-      const issueOrPR = extractGitHubIssueOrPRNumber(urlObj);
-      if (issueOrPR) {
-        let ghCmd: string;
-
-        if (issueOrPR.type === "pr") {
-          if (issueOrPR.subpath === "/files") {
-            // この画面を AI に読ませるなら diff が欲しいということなので diff コマンドを suggest する
-            ghCmd = `gh pr diff ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
-          } else {
-            ghCmd = `gh pr view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
-          }
-        } else {
-          ghCmd = `gh issue view ${issueOrPR.number} --repo ${repo.owner}/${repo.name}`;
-        }
-
-        return c.json({
-          event: "PreToolUse",
-          output: {
-            hookSpecificOutput: {
-              hookEventName: "PreToolUse",
-              permissionDecision: "deny",
-              permissionDecisionReason: [
-                `Use the GitHub CLI instead.`,
-                "Suggested command:",
-                "```bash",
-                ghCmd,
-                "```",
-              ].join("\n"),
-            },
-          },
-        });
-      }
-
-      return c.success();
+        },
+      });
     }
 
     if (
