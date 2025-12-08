@@ -9,7 +9,8 @@
 import { extract, toMarkdown } from "@mizchi/readability";
 import { defineHook } from "cc-hooks-ts";
 
-import { isRawContentURL, parseGitHubUrlToGhCommand } from "../../tools/github";
+import { parseGitHubUrlToGhCommand } from "../../tools/github";
+import { isRawContentURL } from "../../tools/url";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {
