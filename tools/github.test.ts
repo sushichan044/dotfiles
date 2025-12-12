@@ -1,12 +1,11 @@
 import { describe, expect, it } from "bun:test";
 
+import type { GitHubPathType } from "./github";
+
 import {
   extractGistInfo,
-  extractGitHubIssueOrPRNumber,
   extractGitHubRepo,
   generateGhCommand,
-  type GitHubPathType,
-  isRawContentURL,
   matchGitHubPath,
 } from "./github";
 
@@ -45,46 +44,6 @@ describe("extractGitHubRepo", () => {
       owner: "my owner",
       restPaths: [],
     });
-  });
-});
-
-describe("extractGitHubIssueOrPRNumber", () => {
-  it("should extract issue information", () => {
-    const url = new URL("https://github.com/owner/repo/issues/123");
-    const result = extractGitHubIssueOrPRNumber(url);
-
-    expect(result).toEqual({
-      number: 123,
-      type: "issue",
-    });
-  });
-
-  it("should extract PR information", () => {
-    const url = new URL("https://github.com/owner/repo/pull/456");
-    const result = extractGitHubIssueOrPRNumber(url);
-
-    expect(result).toEqual({
-      number: 456,
-      type: "pr",
-    });
-  });
-
-  it("should extract PR with files subpath", () => {
-    const url = new URL("https://github.com/owner/repo/pull/456/files");
-    const result = extractGitHubIssueOrPRNumber(url);
-
-    expect(result).toEqual({
-      number: 456,
-      subpath: "/files",
-      type: "pr",
-    });
-  });
-
-  it("should return null if no match", () => {
-    const url = new URL("https://github.com/owner/repo");
-    const result = extractGitHubIssueOrPRNumber(url);
-
-    expect(result).toBeNull();
   });
 });
 
@@ -227,37 +186,5 @@ describe("extractGistInfo", () => {
     const result = extractGistInfo(url);
 
     expect(result).toBeNull();
-  });
-});
-
-describe("isRawContentURL", () => {
-  it("should return true for raw.githubusercontent.com", () => {
-    const url = new URL(
-      "https://raw.githubusercontent.com/owner/repo/main/file.txt",
-    );
-    const result = isRawContentURL(url);
-
-    expect(result).toBe(true);
-  });
-
-  it("should return true for gist.githubusercontent.com", () => {
-    const url = new URL("https://gist.githubusercontent.com/user/abc123/raw");
-    const result = isRawContentURL(url);
-
-    expect(result).toBe(true);
-  });
-
-  it("should return false for github.com", () => {
-    const url = new URL("https://github.com/owner/repo");
-    const result = isRawContentURL(url);
-
-    expect(result).toBe(false);
-  });
-
-  it("should return false for other domains", () => {
-    const url = new URL("https://example.com/file.txt");
-    const result = isRawContentURL(url);
-
-    expect(result).toBe(false);
   });
 });
