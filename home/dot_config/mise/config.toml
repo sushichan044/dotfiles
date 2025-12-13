@@ -98,6 +98,5 @@ trusted_config_paths = [
 uvx = true
 
 [settings.python]
-default_packages_file = "~/.config/mise/.default-python-packages"
 venv_stdlib = true
 uv_venv_auto = true
