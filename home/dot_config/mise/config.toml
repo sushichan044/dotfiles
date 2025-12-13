@@ -5,17 +5,17 @@
 
 # Languages
 python = ["3.14.2", "3.12.10", "3.11.12"]
-java = "21"
+java = "25"
 uv = "latest"
 go = "1.25.5"
-node = "24.12.0"
+node = "25.2.1"
 bun = "latest"
-deno = "2.5.6"
+deno = "2.6.0"
 tenv = "latest"
 ruby = ["3.4", "3.3"]
 
 # tools
-awscli = "2.32.13"
+awscli = "2.32.16"
 watchexec = "latest"
 
 # tools with Backends
