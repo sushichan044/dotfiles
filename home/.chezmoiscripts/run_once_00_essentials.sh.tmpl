@@ -19,7 +19,7 @@ fc-cache -fv
 sudo sh -c 'echo Asia/Tokyo > /etc/timezone' &&
   sudo dpkg-reconfigure --frontend noninteractive tzdata
 
-sudo update-alternatives --set editor /usr/bin/vim.basic
+sudo update-alternatives --set editor /usr/bin/vi
 {{ end -}}
 
 # Install Homebrew
