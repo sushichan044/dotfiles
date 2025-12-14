@@ -17,7 +17,11 @@ Host codeberg codeberg.org
     IdentitiesOnly yes
     IdentityFile ~/.ssh/codeberg
 
-{{ if eq .chezmoi.os "darwin" }}
+{{ if eq .ostype "darwin" }}
 Host *
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{ end }}
+{{ if eq .ostype "linux" }}
+Host *
+    IdentityAgent "~/.1password/agent.sock"
 {{ end }}
