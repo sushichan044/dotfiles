@@ -67,7 +67,6 @@ watchexec = "latest"
 "pipx:SuperClaude" = "latest"
 "pipx:markitdown" = { version = "latest", extras = "all" }
 "pipx:yq" = "latest"
-"pipx:git+https://github.com/github/spec-kit.git" = "latest"
 "pipx:docling" = "latest"
 "pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"]}
 
