@@ -65,7 +65,7 @@ watchexec = "latest"
 "npm:sfw" = "latest"
 "npm:tsx" = "latest"
 "pipx:SuperClaude" = "latest"
-"pipx:markitdown" = { version = "latest", extras = "all" }
+"pipx:markitdown" = { version = "latest", extras = "all", uvx_args = "-p 3.13" }
 "pipx:yq" = "latest"
 "pipx:docling" = "latest"
 "pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"]}
