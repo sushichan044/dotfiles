@@ -1,3 +1,4 @@
 [submodule "private"]
 	path = private
 	url = git@github.com:sushichan044/private-dotfiles.git
+	branch = main
