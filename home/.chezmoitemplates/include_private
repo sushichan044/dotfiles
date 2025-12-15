@@ -1,0 +1,5 @@
+{{- /* use this function like `{{template "include_private" .}}` */ -}}
+{{- if .private_available }}
+{{- $local_path := trimPrefix .chezmoi.sourceDir .chezmoi.sourceFile -}}
+{{- include (trimSuffix ".tmpl" (joinPath .chezmoi.workingTree "private" $local_path)) -}}
+{{- end -}}
