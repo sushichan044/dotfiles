@@ -69,7 +69,7 @@ watchexec = "latest"
 "pipx:docling" = "latest"
 "pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"]}
 
-[alias]
+[tool_alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [settings]
