@@ -92,6 +92,9 @@ trusted_config_paths = [
     "~/workspace/github.com/sushichan044"
 ]
 
+[settings.npm]
+package_manager = "bun"
+
 [settings.pipx]
 uvx = true
 
