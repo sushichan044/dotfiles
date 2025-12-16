@@ -49,7 +49,7 @@ watchexec = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:ccsay" = "latest"
 "npm:ccusage" = "latest"
-"npm:corepack" = "latest"
+"npm:corepack" = { version = "latest", postinstall = "corepack enable && corepack disable pnpm" }
 "npm:degit" = "latest"
 "npm:difit" = "latest"
 "npm:every-ts" = "latest"
