@@ -101,7 +101,8 @@ export function generateGhCommand(
       if (pathMatch.subpath === "/files") {
         return `gh pr diff ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
       }
-      return `gh pr view ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
+      // include PR comments
+      return `gh pr view -c ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
     }
 
     case "release": {
