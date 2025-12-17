@@ -38,24 +38,6 @@ Refactor: PREFER following 'Kent Beck' recommended practices
 
 ## 🔵 QUICK REFERENCE
 
-### Code Quality Tools
-
-```bash
-# Code similarity detection by AST analysis
-similarity-ts .        # TypeScript/JavaScript duplicates
-similarity-py .        # Python duplicates
-similarity-rs .        # Rust duplicates
-similarity-ts . --print --threshold 0.8 --cross-file  # detailed analysis
-```
-
-### Good Tools to Explore Codebases
-
-```bash
-# Get actual JS / TS module path on FS from specific path.
-# Useful for tracing library source code to inspect implementations.
-nrph eslint --from src/index.ts
-```
-
 ### Critical Constraints
 
 - **Comment Removal** → Recommended before final output
