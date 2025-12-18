@@ -33,6 +33,8 @@ type GhCommandResult = {
    * `gh pr view 123 --repo owner/repo`
    */
   command: string;
+
+  additionalInformation?: string;
 };
 
 export function extractGitHubRepo(url: URL): GitHubRepoInfo | null {
@@ -92,10 +94,12 @@ export function matchGitHubPath(pathSegments: string[]): GitHubPathType | null {
 export function generateGhCommand(
   pathMatch: GitHubPathType,
   repo: { name: string; owner: string },
-): string {
+): GhCommandResult {
   switch (pathMatch.type) {
     case "issue":
-      return `gh issue view ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
+      return {
+        command: `gh issue view ${pathMatch.number} --repo ${repo.owner}/${repo.name}`,
+      };
 
     case "pr": {
       if (
@@ -103,27 +107,44 @@ export function generateGhCommand(
         // new PR diff viewer
         pathMatch.subpath === "/changes"
       ) {
-        return `gh pr diff ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
+        return {
+          additionalInformation: [
+            "- Add `--patch` to get whole diff content",
+            "- Add `--name-only` to get changed file names only",
+          ].join("\n"),
+          command: `gh pr diff ${pathMatch.number} --repo ${repo.owner}/${repo.name}`,
+        };
       }
       // include PR comments
-      return `gh pr view -c ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
+      return {
+        command: `gh pr view -c ${pathMatch.number} --repo ${repo.owner}/${repo.name}`,
+      };
     }
 
     case "release": {
       if ("tag" in pathMatch) {
-        return `gh release view ${pathMatch.tag} --repo ${repo.owner}/${repo.name}`;
+        return {
+          command: `gh release view ${pathMatch.tag} --repo ${repo.owner}/${repo.name}`,
+        };
       }
       if ("isLatest" in pathMatch) {
-        return `gh release view --repo ${repo.owner}/${repo.name}`;
+        return {
+          command: `gh release view --repo ${repo.owner}/${repo.name}`,
+        };
       }
-      return `gh release list --repo ${repo.owner}/${repo.name}`;
+      return {
+        command: `gh release list --repo ${repo.owner}/${repo.name}`,
+      };
     }
 
     case "run":
-      return `gh run view ${pathMatch.runId} --repo ${repo.owner}/${repo.name}`;
-
+      return {
+        command: `gh run view ${pathMatch.runId} --repo ${repo.owner}/${repo.name}`,
+      };
     case "workflow":
-      return `gh workflow view ${pathMatch.filename} --repo ${repo.owner}/${repo.name}`;
+      return {
+        command: `gh workflow view ${pathMatch.filename} --repo ${repo.owner}/${repo.name}`,
+      };
   }
 }
 
@@ -191,9 +212,10 @@ export function parseGitHubUrlToGhCommand(url: URL): GhCommandResult | null {
 
     const pathMatch = matchGitHubPath(repo.restPaths);
     if (pathMatch) {
-      const command = generateGhCommand(pathMatch, repo);
+      const result = generateGhCommand(pathMatch, repo);
       return {
-        command,
+        additionalInformation: result.additionalInformation,
+        command: result.command,
       };
     }
   }

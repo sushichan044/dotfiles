@@ -9,6 +9,7 @@
 import { extract, toMarkdown } from "@mizchi/readability";
 import { defineHook } from "cc-hooks-ts";
 
+import { isNonEmptyString } from "../../home/ai/scripts/utils/string";
 import { parseGitHubUrlToGhCommand } from "../../tools/github";
 import { isRawContentURL } from "../../tools/url";
 
@@ -68,6 +69,9 @@ const hook = defineHook({
               "```bash",
               ghResult.command,
               "```",
+              ...(isNonEmptyString(ghResult.additionalInformation)
+                ? ["Additional information:", ghResult.additionalInformation]
+                : []),
             ].join("\n"),
           },
         },
