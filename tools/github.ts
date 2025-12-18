@@ -98,7 +98,11 @@ export function generateGhCommand(
       return `gh issue view ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
 
     case "pr": {
-      if (pathMatch.subpath === "/files") {
+      if (
+        pathMatch.subpath === "/files" ||
+        // new PR diff viewer
+        pathMatch.subpath === "/changes"
+      ) {
         return `gh pr diff ${pathMatch.number} --repo ${repo.owner}/${repo.name}`;
       }
       // include PR comments
