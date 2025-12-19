@@ -1,0 +1,4 @@
+[env]
+_.path = [
+    "{{config_root}}/chromium/tools/depot_tools",
+]
