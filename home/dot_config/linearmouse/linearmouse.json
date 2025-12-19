@@ -1,72 +1,53 @@
 {
-  "$schema" : "https:\/\/schema.linearmouse.app\/0.10.0",
-  "schemes" : [
+  "$schema": "https:\/\/schema.linearmouse.app\/0.10.0",
+  "schemes": [
     {
-      "scrolling" : {
-        "reverse" : {
-          "vertical" : true
+      "scrolling": {
+        "reverse": {
+          "vertical": true
         },
-        "acceleration" : {
-          "vertical" : 1
+        "acceleration": {
+          "vertical": 1
         }
       },
-      "if" : {
-        "device" : {
-          "category" : "mouse",
-          "productName" : "USB Receiver",
-          "vendorID" : "0x46d",
-          "productID" : "0xc547"
+      "if": {
+        "device": {
+          "category": "mouse",
+          "productName": "USB Receiver",
+          "vendorID": "0x46d",
+          "productID": "0xc547"
         }
       }
     },
     {
-      "pointer" : {
-        "speed" : 0.08
+      "pointer": {
+        "speed": 0.08
       },
-      "if" : {
-        "device" : {
-          "productID" : "0x0",
-          "vendorID" : "0x0",
-          "category" : "trackpad",
-          "productName" : "Apple Internal Keyboard \/ Trackpad"
+      "if": {
+        "device": {
+          "productID": "0x0",
+          "vendorID": "0x0",
+          "category": "trackpad",
+          "productName": "Apple Internal Keyboard \/ Trackpad"
         }
       }
     },
     {
-      "scrolling" : {
-        "acceleration" : {
-          "vertical" : 1
+      "scrolling": {
+        "reverse": {
+          "vertical": true
         },
-        "reverse" : {
-          "vertical" : true
+        "acceleration": {
+          "vertical": 1
         }
       },
-      "if" : {
-        "device" : {
-          "productName" : "PRO X Wireless",
-          "serialNumber" : "0BB5E886",
-          "productID" : "0xc094",
-          "category" : "mouse",
-          "vendorID" : "0x46d"
-        }
-      }
-    },
-    {
-      "scrolling" : {
-        "reverse" : {
-          "vertical" : true
-        },
-        "acceleration" : {
-          "vertical" : 1
-        }
-      },
-      "if" : {
-        "device" : {
-          "category" : "mouse",
-          "productID" : "0x8008",
-          "vendorID" : "0x4a5",
-          "serialNumber" : "FA2635ACDA60",
-          "productName" : "BenQ ZOWIE Gaming Mouse"
+      "if": {
+        "device": {
+          "category": "mouse",
+          "productID": "0x8008",
+          "vendorID": "0x4a5",
+          "serialNumber": "FA2635ACDA60",
+          "productName": "BenQ ZOWIE Gaming Mouse"
         }
       }
     }
