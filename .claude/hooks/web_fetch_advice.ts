@@ -109,7 +109,7 @@ const hook = defineHook({
           hookEventName: "PreToolUse",
           permissionDecision: "deny",
           permissionDecisionReason: [
-            "You should not use web fetch for this URL.",
+            `You should not use web fetch for ${c.input.tool_input.url}.`,
             "Here is the markdown content I fetched from the page:",
             "```markdown",
             markdown,
