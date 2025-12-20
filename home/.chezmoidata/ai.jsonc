@@ -12,18 +12,6 @@
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
         },
-        "chrome-devtools": {
-          "args": [
-            "-y",
-            "chrome-devtools-mcp@latest",
-            "--categoryEmulation=false"
-          ],
-          "command": "npx"
-        },
-        "cloudflare-docs": {
-          "type": "http",
-          "url": "https://docs.mcp.cloudflare.com/mcp"
-        },
         "context7": {
           "type": "http",
           "url": "https://mcp.context7.com/mcp"
@@ -74,15 +62,6 @@
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
-        "chrome-devtools": {
-          "args": [
-            "-y",
-            "chrome-devtools-mcp@latest",
-            "--categoryEmulation=false"
-          ],
-          "command": "npx",
-          "type": "stdio"
-        },
         "readability": {
           "args": [
             "x",
@@ -128,14 +107,6 @@
       "mcp_servers": {
         "bundlephobia": {
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-        },
-        "chrome-devtools": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "chrome-devtools-mcp@latest",
-            "--categoryEmulation=false"
-          ]
         },
         "context7": {
           "url": "https://mcp.context7.com/mcp"
@@ -192,19 +163,6 @@
         "bundlephobia": {
           "type": "http",
           "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp"
-        },
-        "chrome-devtools": {
-          "args": [
-            "-y",
-            "chrome-devtools-mcp@latest",
-            "--categoryEmulation=false"
-          ],
-          "command": "npx",
-          "type": "stdio"
-        },
-        "cloudflare-docs": {
-          "type": "http",
-          "url": "https://docs.mcp.cloudflare.com/mcp"
         },
         "context7": {
           "type": "http",
