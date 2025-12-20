@@ -18,14 +18,29 @@ ruby = ["3.4", "3.3"]
 awscli = "2.32.17"
 watchexec = "latest"
 
+# LSP
+"github:withered-magic/starpls" = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"npm:typescript-language-server" = "latest"
+"npm:typescript" = "latest"
+"npm:pyright" = "latest"
+
+# AI tools
+"github:openai/codex" = { version = "latest", bin = "codex" }
+"npm:@ccusage/codex" = "latest"
+"npm:@github/copilot" = "latest"
+"npm:@google/gemini-cli" = "latest"
+"npm:@modelcontextprotocol/inspector" = "latest"
+"npm:ccusage" = "latest"
+"npm:repomix" = "latest"
+
+
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:similarity-py" = "latest"
 "cargo:similarity-rs" = "latest"
 "cargo:similarity-ts" = "latest"
-"github:withered-magic/starpls" = "latest"
-"github:openai/codex" = {version = "latest", bin = "codex"}
 "go:github.com/bazelbuild/buildtools/buildifier" = "latest"
 "go:github.com/bazelbuild/buildtools/buildozer" = "latest"
 "go:github.com/bazelbuild/buildtools/unused_deps" = "latest"
@@ -35,20 +50,14 @@ watchexec = "latest"
 "go:github.com/sushichan044/memo-cli/cmd/memo" = "latest"
 "go:github.com/x-motemen/gore/cmd/gore" = "latest"
 "go:github.com/ycd/dstp/cmd/dstp" = "latest"
-"go:golang.org/x/tools/gopls" = "latest"
 "npm:@aku11i/phantom" = "latest"
 "npm:@antfu/ni" = "latest"
-"npm:@ccusage/codex" = "latest"
 "npm:@eslint/config-inspector" = "latest"
 "npm:@getgrit/cli" = "latest"
 "npm:@hono/cli" = "latest"
-"npm:@github/copilot" = "latest"
-"npm:@google/gemini-cli" = "latest"
-"npm:@modelcontextprotocol/inspector" = "latest"
 "npm:@napi-rs/cli" = "latest"
 "npm:@typespec/compiler" = "latest"
 "npm:ccsay" = "latest"
-"npm:ccusage" = "latest"
 "npm:corepack" = { version = "latest", postinstall = "corepack enable && corepack disable pnpm" }
 "npm:degit" = "latest"
 "npm:difit" = "latest"
@@ -60,10 +69,8 @@ watchexec = "latest"
 "npm:pnpm" = "latest"
 "npm:pr-auto-ready" = "latest"
 "npm:release-please" = "latest"
-"npm:repomix" = "latest"
 "npm:sfw" = "latest"
 "npm:tsx" = "latest"
-"pipx:SuperClaude" = "latest"
 "pipx:markitdown" = { version = "latest", extras = "all", uvx_args = "-p 3.13" }
 "pipx:yq" = "latest"
 "pipx:docling" = "latest"
