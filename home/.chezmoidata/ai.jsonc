@@ -36,18 +36,6 @@
           "type": "http",
           "url": "https://mcp.grep.app"
         },
-        "mcpdoc": {
-          "command": "uvx",
-          "args": [
-            "--from",
-            "mcpdoc",
-            "mcpdoc",
-            "--json",
-            "${HOME}/ai/config/mcpdoc.json",
-            "--transport",
-            "stdio"
-          ]
-        },
         "notion": {
           "type": "http",
           "url": "https://mcp.notion.com/mcp"
@@ -161,18 +149,6 @@
         "notion": {
           "url": "https://mcp.notion.com/mcp"
         },
-        "mcpdoc": {
-          "command": "uvx",
-          "args": [
-            "--from",
-            "mcpdoc",
-            "mcpdoc",
-            "--json",
-            "${HOME}/ai/config/mcpdoc.json",
-            "--transport",
-            "stdio"
-          ]
-        },
         "readability": {
           "args": [
             "run",
@@ -241,18 +217,6 @@
         "grep": {
           "type": "http",
           "url": "https://mcp.grep.app"
-        },
-        "mcpdoc": {
-          "command": "uvx",
-          "args": [
-            "--from",
-            "mcpdoc",
-            "mcpdoc",
-            "--json",
-            "${HOME}/ai/config/mcpdoc.json",
-            "--transport",
-            "stdio"
-          ]
         },
         "notion": {
           "type": "http",
