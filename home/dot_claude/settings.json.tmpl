@@ -21,10 +21,16 @@
     "security-pro@claude-code-templates": true,
     "documentation-generator@claude-code-templates": true,
     "example-skills@anthropic-agent-skills": true,
-    "pr-review-toolkit@claude-code-plugins": true,
-    "code-review@claude-code-plugins": true
+    "pr-review-toolkit@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
     "claude-code-templates": {
       "source": {
         "source": "github",
@@ -35,12 +41,6 @@
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
-      }
-    },
-    "claude-code-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-code"
       }
     }
   },
