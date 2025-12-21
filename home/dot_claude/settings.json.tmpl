@@ -33,12 +33,6 @@
     "clangd-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    },
     "claude-code-templates": {
       "source": {
         "source": "github",
@@ -53,6 +47,16 @@
     }
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/auto_update_plugin_marketplace.ts"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "hooks": [
