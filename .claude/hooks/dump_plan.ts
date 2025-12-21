@@ -1,5 +1,5 @@
 import { defineHook } from "cc-hooks-ts";
-import * as prettier from "prettier";
+import { format } from "oxfmt";
 
 type DumpResult = {
   isError: boolean;
@@ -35,9 +35,8 @@ async function dumpPlanToNote(plan: string): Promise<DumpResult> {
 
 async function formatPlan(plan: string): Promise<string> {
   try {
-    return await prettier.format(plan, {
-      parser: "markdown",
-    });
+    const pretty = await format("dummy.md", plan);
+    return pretty.code;
   } catch {
     return plan;
   }
