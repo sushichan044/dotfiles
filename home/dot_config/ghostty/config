@@ -6,8 +6,8 @@ confirm-close-surface = false
 
 # Appearance
 theme = Catppuccin Macchiato
-background-opacity = 0.8
-background-blur-radius = 30
+background-opacity = 0.6
+background-blur-radius = 20
 mouse-hide-while-typing = true
 resize-overlay = never
 macos-icon = xray
