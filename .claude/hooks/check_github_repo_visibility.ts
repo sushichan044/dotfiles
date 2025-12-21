@@ -49,9 +49,7 @@ const hook = defineHook({
 
     const repoName = c.input.tool_input.repoName;
     const repoVisibility =
-      await Bun.$`gh repo view ${repoName} --json visibility --jq '.visibility'`
-        .nothrow()
-        .quiet(); // stdout will break claude code
+      await Bun.$`gh repo view ${repoName} --json visibility --jq '.visibility'`.nothrow().quiet(); // stdout will break claude code
 
     // "PUBLIC\n" -> "public"
     const isPublic = repoVisibility.text().trim().toLowerCase() === "public";

@@ -1,64 +1,41 @@
 {
-  "$schema": "https://json.schemastore.org/renovate.json",
-  "extends": [
-    "config:best-practices",
-    ":preserveSemverRanges"
-  ],
-  "reviewersFromCodeOwners": true,
-  "timezone": "Asia/Tokyo",
-  "prHourlyLimit": 0,
-  "automerge": false,
-  "rangeStrategy": "bump",
-  "branchConcurrentLimit": 0,
-  "minimumReleaseAge": "3 days",
-  "labels": [
-    "dependencies"
-  ],
-  "packageRules": [
+  $schema: "https://json.schemastore.org/renovate.json",
+  extends: ["config:best-practices", ":preserveSemverRanges"],
+  reviewersFromCodeOwners: true,
+  timezone: "Asia/Tokyo",
+  prHourlyLimit: 0,
+  automerge: false,
+  rangeStrategy: "bump",
+  branchConcurrentLimit: 0,
+  minimumReleaseAge: "3 days",
+  labels: ["dependencies"],
+  packageRules: [
     {
-      "groupName": "mise",
-      "matchManagers": [
-        "mise"
-      ]
+      groupName: "mise",
+      matchManagers: ["mise"],
     },
     {
-      "groupName": "mise-nodejs",
-      "matchManagers": [
-        "mise"
-      ],
-      "matchPackageNames": [
-        "node"
-      ],
+      groupName: "mise-nodejs",
+      matchManagers: ["mise"],
+      matchPackageNames: ["node"],
       // https://github.com/ryoppippi/dotfiles/commit/795790423ccc766fcdbaa981299c517565f7b4ad
-      "allowedVersions": "/^([2-9]\\d*[02468])(\\.\\d+)*$/"
+      allowedVersions: "/^([2-9]\\d*[02468])(\\.\\d+)*$/",
     },
     {
-      "groupName": "local-devDeps",
-      "matchManagers": [
-        "bun"
-      ],
-      "matchDepTypes": [
-        "devDependencies"
-      ]
+      groupName: "local-devDeps",
+      matchManagers: ["bun"],
+      matchDepTypes: ["devDependencies"],
     },
     {
-      "groupName": "local-bun",
-      matchManagers: [
-        "bun",
-        "bun-version"
-      ],
-      matchPackageNames: [
-        "bun",
-        "@types/bun"
-      ]
+      groupName: "local-bun",
+      matchManagers: ["bun", "bun-version"],
+      matchPackageNames: ["bun", "@types/bun"],
     },
     {
-      "groupName": "typescript-go",
-      "matchPackageNames": [
-        "@typescript/native-preview"
-      ],
+      groupName: "typescript-go",
+      matchPackageNames: ["@typescript/native-preview"],
       // https://docs.renovatebot.com/key-concepts/minimum-release-age/#how-do-i-opt-out-dependencies-from-minimum-release-age-checks
-      "minimumReleaseAge": null,
-    }
-  ]
+      minimumReleaseAge: null,
+    },
+  ],
 }

@@ -78,9 +78,7 @@ const hook = defineHook({
       });
     }
 
-    if (
-      c.input.tool_name === "mcp__readability__read_url_content_as_markdown"
-    ) {
+    if (c.input.tool_name === "mcp__readability__read_url_content_as_markdown") {
       return c.success();
     }
 
@@ -91,10 +89,7 @@ const hook = defineHook({
       // if not 200, we don't process the HTML
       return c.success();
     }
-    if (
-      resp.headers.get("Content-Type")?.toLowerCase().includes("text/plain") ===
-      true
-    ) {
+    if (resp.headers.get("Content-Type")?.toLowerCase().includes("text/plain") === true) {
       // if it's plain text, we don't process the HTML
       return c.success();
     }

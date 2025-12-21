@@ -72,20 +72,12 @@ function buildNotificationFromStopHook(
     const transcript = JSON.parse(lastLine);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const lastMessageContent = transcript?.message?.content?.[0]?.text as
-      | string
-      | undefined;
+    const lastMessageContent = transcript?.message?.content?.[0]?.text as string | undefined;
 
     // Get the first 100 characters in first line of the last message
-    const truncatedMessage = lastMessageContent
-      ?.split("\n")
-      .at(0)
-      ?.trim()
-      .substring(0, 100);
+    const truncatedMessage = lastMessageContent?.split("\n").at(0)?.trim().substring(0, 100);
 
-    const message = isNonEmptyString(truncatedMessage)
-      ? `${truncatedMessage}...`
-      : fallbackMessage;
+    const message = isNonEmptyString(truncatedMessage) ? `${truncatedMessage}...` : fallbackMessage;
 
     return {
       message,
@@ -107,10 +99,7 @@ const hook = defineHook({
   },
 
   run: async (c) => {
-    if (
-      c.input.hook_event_name === "Stop" &&
-      c.input.stop_hook_active === true
-    ) {
+    if (c.input.hook_event_name === "Stop" && c.input.stop_hook_active === true) {
       return c.success();
     }
 

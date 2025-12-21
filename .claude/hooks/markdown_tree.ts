@@ -42,9 +42,7 @@ const hook = defineHook({
       return c.success();
     }
 
-    const headingTree = await headingTreeOfMarkdownFile(
-      c.input.tool_input.file_path,
-    );
+    const headingTree = await headingTreeOfMarkdownFile(c.input.tool_input.file_path);
     return c.json({
       event: "PreToolUse",
       output: {

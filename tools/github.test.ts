@@ -2,12 +2,7 @@ import { describe, expect, it } from "bun:test";
 
 import type { GitHubPathType } from "./github";
 
-import {
-  extractGistInfo,
-  extractGitHubRepo,
-  generateGhCommand,
-  matchGitHubPath,
-} from "./github";
+import { extractGistInfo, extractGitHubRepo, generateGhCommand, matchGitHubPath } from "./github";
 
 describe("extractGitHubRepo", () => {
   it("should extract repo info from GitHub URL", () => {

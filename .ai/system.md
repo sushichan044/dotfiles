@@ -45,4 +45,5 @@ Refactor: PREFER following 'Kent Beck' recommended practices
 - **File Deletion** → Prohibited. Must explicitly ask user if deletion is required
 
 ---
-*Predictability beats cleverness. Clarity enables performance. Simple made easy.*
+
+_Predictability beats cleverness. Clarity enables performance. Simple made easy._

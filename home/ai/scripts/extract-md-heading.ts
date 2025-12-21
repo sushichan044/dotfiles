@@ -24,10 +24,7 @@ type HeadingTree = {
   root: HeadingTreeNode;
 };
 
-const buildHeadingTree = (
-  tree: Root,
-  metadata: HeadingTree["metadata"],
-): HeadingTree => {
+const buildHeadingTree = (tree: Root, metadata: HeadingTree["metadata"]): HeadingTree => {
   /**
    * sorted by appearance in the document
    */
@@ -41,9 +38,7 @@ const buildHeadingTree = (
     extractedHeadings.push({
       level: node.depth,
       value: text,
-      ...(node.position?.start.line !== undefined
-        ? { line: node.position.start.line }
-        : {}),
+      ...(node.position?.start.line !== undefined ? { line: node.position.start.line } : {}),
     });
 
     return CONTINUE;
@@ -66,10 +61,7 @@ const buildHeadingTree = (
 
     // Get parent node based on heading level
     // Pop nodes from the stack until we find the right parent
-    while (
-      stack.length > 0 &&
-      (stack.at(-1)?.data.level ?? -1) >= heading.level
-    ) {
+    while (stack.length > 0 && (stack.at(-1)?.data.level ?? -1) >= heading.level) {
       stack.pop();
     }
 
@@ -88,9 +80,7 @@ const buildHeadingTree = (
   return { metadata, root };
 };
 
-export const headingTreeOfMarkdownFile = async (
-  markdownPath: string,
-): Promise<HeadingTree> => {
+export const headingTreeOfMarkdownFile = async (markdownPath: string): Promise<HeadingTree> => {
   const resolvedPath = await realpath(markdownPath);
 
   if (!(await stat(resolvedPath)).isFile()) {

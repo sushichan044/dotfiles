@@ -1,4 +1,3 @@
-
 # sushichan044/dotfiles
 
 ## Setup

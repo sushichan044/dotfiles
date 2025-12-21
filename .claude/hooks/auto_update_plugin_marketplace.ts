@@ -16,12 +16,9 @@ const hook = defineHook({
 
   run: async (c) => {
     // stdout will break claude code
-    const result = await Bun.$`claude plugin marketplace update`
-      .nothrow()
-      .quiet();
+    const result = await Bun.$`claude plugin marketplace update`.nothrow().quiet();
 
-    const amount =
-      extractMarketplaceAmount.exec(result.text())?.groups?.amount ?? "-1";
+    const amount = extractMarketplaceAmount.exec(result.text())?.groups?.amount ?? "-1";
 
     return c.json({
       event: "SessionStart",

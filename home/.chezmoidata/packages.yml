@@ -13,7 +13,7 @@ packages:
       - wget
   tools:
     gh:
-      - 'github/gh-copilot'
-      - 'yusukebe/gh-markdown-preview'
-      - 'davidraviv/gh-clean-branches'
-      - 'ryoppippi/gh-nippou'
+      - "github/gh-copilot"
+      - "yusukebe/gh-markdown-preview"
+      - "davidraviv/gh-clean-branches"
+      - "ryoppippi/gh-nippou"

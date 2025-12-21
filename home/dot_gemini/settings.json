@@ -76,11 +76,7 @@
       "command": "deno"
     },
     "sequential-thinking": {
-      "args": [
-        "run",
-        "--allow-env",
-        "npm:@modelcontextprotocol/server-sequential-thinking@latest"
-      ],
+      "args": ["run", "--allow-env", "npm:@modelcontextprotocol/server-sequential-thinking@latest"],
       "command": "deno"
     }
   },

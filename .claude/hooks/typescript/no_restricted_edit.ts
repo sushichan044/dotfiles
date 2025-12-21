@@ -13,9 +13,7 @@ type Rule = {
 
 const includesRestrictedEdit = (edits: Edit[], rule: Rule) => {
   return edits.some((edit) =>
-    rule.restrictedSyntax.some((restrictedEdit) =>
-      edit.new_string.includes(restrictedEdit),
-    ),
+    rule.restrictedSyntax.some((restrictedEdit) => edit.new_string.includes(restrictedEdit)),
   );
 };
 

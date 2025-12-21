@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "lint": "eslint --max-warnings 0 --fix",
-    "format": "biome format --write",
-    "format:check": "biome format --reporter=github",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "event-stream": "^4.0.1",
     "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
+    "oxfmt": "0.19.0",
     "pathe": "2.0.3",
     "picocolors": "^1.1.1",
     "prettier": "^3.7.1",

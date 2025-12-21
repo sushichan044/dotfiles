@@ -1,32 +1,17 @@
 {
-  "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[json5]": {
-    "editor.defaultFormatter": "BlueGlassBlock.better-json5"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
   "[ruby]": {
     "editor.defaultFormatter": "Shopify.ruby-lsp"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
   },
   "[yaml]": {
     "editor.formatOnSave": false
   },
   "biome.enabled": true,
-  "cSpell.words": ["chezmoi", "coursier", "linuxbrew"],
+  "cSpell.words": ["chefzmoi", "coursier", "linuxbrew"],
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
+    "source.fixAll.oxc": "explicit",
     "source.fixAll.eslint": "explicit"
   },
-  "editor.defaultFormatter": "biomejs.biome",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "eslint.workingDirectories": [
     {
@@ -46,10 +31,8 @@
     "dot_z*.tmpl": "shellscript",
     "dot_zsh.d/completions/*.tmpl": "shellscript"
   },
-  "prettier.enable": false,
   "rubyLsp.formatter": "standard",
   "rubyLsp.linters": ["standard"],
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.experimental.useTsgo": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.experimental.useTsgo": true
 }

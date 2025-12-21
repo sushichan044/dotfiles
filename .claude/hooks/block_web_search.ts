@@ -8,8 +8,7 @@ const hook = defineHook({
         hookSpecificOutput: {
           hookEventName: "PreToolUse",
           permissionDecision: "deny",
-          permissionDecisionReason:
-            'Use Bash(gemini "WebSearch: <query>") instead.',
+          permissionDecisionReason: 'Use Bash(gemini "WebSearch: <query>") instead.',
         },
       },
     });
