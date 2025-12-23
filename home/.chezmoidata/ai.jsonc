@@ -54,6 +54,7 @@
         },
       },
       "preferredNotifChannel": "terminal_bell",
+      "verbose": true,
       "shiftEnterKeyBindingInstalled": true,
       "theme": "dark",
     },
