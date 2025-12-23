@@ -78,7 +78,8 @@ mkdir_for_file() {
     fi
 }
 
-copy_to_clipboard() {
+# This function requires bash or zsh
+copy-to-clipboard() {
     if test "$#" = 0; then
         payload=$(cat -)
     else
