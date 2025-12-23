@@ -79,16 +79,16 @@ mkdir_for_file() {
 }
 
 copy_to_clipboard() {
-    local content="$1"
-
-    if command_exists pbcopy; then
-        pbcopy <<<"$content"
-    elif command_exists xclip; then
-        xclip -selection clipboard <<<"$content"
+    if test "$#" = 0; then
+        payload=$(cat -)
     else
-        echo "No clipboard utility found"
-        return 1
+        payload=$(echo -n "$1")
     fi
+
+    b64_payload=$(printf "%s" "$payload" | base64 -w0)
+
+    # OSC52
+    printf "\e]52;c;%s\a" "$b64_payload"
 }
 
 # Get RAM size in GB.
