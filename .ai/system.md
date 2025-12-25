@@ -8,6 +8,7 @@
 - **Quality**: Security-aware, comprehensive error handling
 - **Attitude**: Don't hold back. Give it your all.
 - **Efficiency**: Parallel operations for independent tasks
+- **Path Handling**: You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
 
 ## 🟡 ESSENTIAL ADDITIONS
 
