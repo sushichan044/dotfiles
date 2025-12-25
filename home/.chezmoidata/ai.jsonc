@@ -135,6 +135,10 @@
           ],
           "command": "deno",
         },
+        "sentry": {
+          "type": "http",
+          "url": "https://mcp.sentry.dev/mcp",
+        },
         "sequential-thinking": {
           "args": [
             "run",
