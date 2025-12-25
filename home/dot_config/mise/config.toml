@@ -41,6 +41,7 @@ watchexec = "latest"
 "cargo:similarity-py" = "latest"
 "cargo:similarity-rs" = "latest"
 "cargo:similarity-ts" = "latest"
+"github:gitui-org/gitui" = "latest"
 "go:github.com/bazelbuild/buildtools/buildifier" = "latest"
 "go:github.com/bazelbuild/buildtools/buildozer" = "latest"
 "go:github.com/bazelbuild/buildtools/unused_deps" = "latest"
@@ -108,3 +109,6 @@ uvx = true
 [settings.python]
 venv_stdlib = true
 uv_venv_auto = true
+
+[settings.ruby]
+compile = true
