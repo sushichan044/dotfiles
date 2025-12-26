@@ -79,15 +79,6 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "WebSearch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/block_web_search.ts"
-          }
-        ]
-      },
-      {
         "matcher": "ExitPlanMode",
         "hooks": [
           {
