@@ -10,12 +10,12 @@ uv = "latest"
 go = "1.25.5"
 node = "25.2.1"
 bun = "latest"
-deno = "2.6.2"
+deno = "2.6.3"
 tenv = "latest"
 ruby = ["3.4.8", "3.3.10"]
 
 # tools
-awscli = "2.32.21"
+awscli = "2.32.22"
 watchexec = "latest"
 
 # LSP
