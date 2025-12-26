@@ -24,14 +24,17 @@ declare module "cc-hooks-ts" {
   }
 }
 
-async function ghExists(): Promise<boolean> {
-  const result = await Bun.$`command -v gh`.nothrow().quiet(); // stdout will break claude code
-  return result.exitCode === 0;
-}
-
 const hook = defineHook({
+  trigger: {
+    PreToolUse: {
+      mcp__deepwiki__ask_question: true,
+      mcp__deepwiki__read_wiki_contents: true,
+      mcp__deepwiki__read_wiki_structure: true,
+    },
+  },
+
   run: async (c) => {
-    if (!(await ghExists())) {
+    if (Bun.which("gh") == null) {
       return c.json({
         event: "PreToolUse",
         output: {
@@ -39,7 +42,7 @@ const hook = defineHook({
             hookEventName: "PreToolUse",
             permissionDecision: "deny",
             permissionDecisionReason:
-              "Cannot check repository visibility since user not installed GitHub CLI (gh).",
+              "Cannot check repository visibility since user has not installed GitHub CLI (gh).",
           },
           stopReason:
             "GitHub CLI (gh) is not installed. Please install it to check repository visibility on Claude Code Hooks.",
@@ -67,14 +70,6 @@ const hook = defineHook({
         },
       },
     });
-  },
-  shouldRun: () => process.platform !== "win32", // command -v does not work on Windows
-  trigger: {
-    PreToolUse: {
-      mcp__deepwiki__ask_question: true,
-      mcp__deepwiki__read_wiki_contents: true,
-      mcp__deepwiki__read_wiki_structure: true,
-    },
   },
 });
 
