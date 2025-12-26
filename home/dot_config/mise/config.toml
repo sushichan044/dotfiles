@@ -75,7 +75,7 @@ watchexec = "latest"
 "pipx:markitdown" = { version = "latest", extras = "all", uvx_args = "-p 3.13" }
 "pipx:yq" = "latest"
 "pipx:docling" = "latest"
-"pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"]}
+"pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"] }
 
 [tool_alias]
 tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
@@ -83,22 +83,20 @@ tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 [settings]
 experimental = true
 idiomatic_version_file_enable_tools = [
-    # see: https://github.com/jdx/mise/tree/866ae1ba0c9483357072541dd575203d5034c231/src/plugins/core and search for `idiomatic_file`
-    "bun",
-    "deno",
-    "go",
-    "java",
-    "node",
-    "python",
-    "ruby",
-    "rust",
-    "swift",
-    "terraform",
-    "zig",
+  # see: https://github.com/jdx/mise/tree/866ae1ba0c9483357072541dd575203d5034c231/src/plugins/core and search for `idiomatic_file`
+  "bun",
+  "deno",
+  "go",
+  "java",
+  "node",
+  "python",
+  "ruby",
+  "rust",
+  "swift",
+  "terraform",
+  "zig",
 ]
-trusted_config_paths = [
-    "~/workspace/github.com/sushichan044"
-]
+trusted_config_paths = ["~/workspace/github.com/sushichan044"]
 
 [settings.npm]
 package_manager = "bun"

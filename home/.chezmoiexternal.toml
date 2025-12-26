@@ -1,15 +1,15 @@
 [".sushichan044/tools/nextjs-build-trace-util/main/trace-to-tree.mjs"]
-    type = "file"
-    url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-tree.mjs"
-    refreshPeriod = "168h"
+type = "file"
+url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-tree.mjs"
+refreshPeriod = "168h"
 
 [".sushichan044/tools/nextjs-build-trace-util/main/trace-to-event-format.mjs"]
-    type = "file"
-    url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-event-format.mjs"
-    refreshPeriod = "168h"
+type = "file"
+url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-event-format.mjs"
+refreshPeriod = "168h"
 [".claude/skills/ast-grep"]
-    type = "archive"
-    url = "https://api.github.com/repos/ast-grep/claude-skill/tarball/main"
-    stripComponents = 3
-    include = ["ast-grep/skills/ast-grep/**"]
-    refreshPeriod = "168h"
+type = "archive"
+url = "https://api.github.com/repos/ast-grep/claude-skill/tarball/main"
+stripComponents = 3
+include = ["ast-grep/skills/ast-grep/**"]
+refreshPeriod = "168h"
