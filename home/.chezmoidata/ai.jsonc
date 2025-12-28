@@ -149,7 +149,6 @@
           "command": "deno",
         },
       },
-      "mode": "gpt-5-codex",
       "model_reasoning_effort": "medium",
       "notify": ["/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"],
       "sandbox_mode": "danger-full-access",
