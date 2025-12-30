@@ -10,7 +10,7 @@ uv = "latest"
 go = "1.25.5"
 node = "25.2.1"
 bun = "latest"
-deno = "2.6.3"
+deno = "latest"
 tenv = "latest"
 ruby = ["4.0.0", "3.4.8", "3.3.10"]
 
