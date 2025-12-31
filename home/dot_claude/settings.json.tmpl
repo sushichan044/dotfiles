@@ -10,7 +10,8 @@
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_MICROCOMPACT": "1",
     "DISABLE_TELEMETRY": "1",
-    "ENABLE_BACKGROUND_TASKS": "1"
+    "ENABLE_BACKGROUND_TASKS": "1",
+    "ENABLE_TOOL_SEARCH": "1"
   },
   "cleanupPeriodDays": 99999,
   "statusLine": {
@@ -124,7 +125,7 @@
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/dump_plan.ts"
           }
         ]
-      },
+      }
     ]
   },
   "permissions": {
