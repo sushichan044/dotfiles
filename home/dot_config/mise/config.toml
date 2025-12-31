@@ -19,6 +19,7 @@ awscli = "latest"
 watchexec = "latest"
 
 # LSP
+"github:atusy/treesitter-ls" = "latest"
 "github:withered-magic/starpls" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
 "npm:typescript-language-server" = "latest"
