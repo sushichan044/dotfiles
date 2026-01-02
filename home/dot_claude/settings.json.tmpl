@@ -81,6 +81,15 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/dump_plan.ts"
+          }
+        ]
+      },
+      {
         "matcher": "WebFetch|mcp__readability__read_url_content_as_markdown",
         "hooks": [
           {
@@ -113,17 +122,6 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_github_repo_visibility.ts"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/dump_plan.ts"
           }
         ]
       }

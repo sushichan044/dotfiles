@@ -30,29 +30,17 @@ async function formatPlan(plan: string): Promise<string> {
 
 const hook = defineHook({
   trigger: {
-    PostToolUse: {
+    PreToolUse: {
       ExitPlanMode: true,
     },
   },
 
   run: async (c) => {
     const plan = c.input.tool_input["plan"] as string;
-    const approved = (c.input.tool_response as Record<string, unknown>)["approved"] as
-      | boolean
-      | undefined;
-    if (approved === false) {
-      return c.success();
-    }
-
     const prettyPlan = await formatPlan(plan);
     const message = await dumpPlanToNote(prettyPlan);
 
-    return c.success({
-      messageForUser: [
-        message,
-        ...(approved == null ? ["Plan approval status is undefined"] : []),
-      ].join("\n"),
-    });
+    return c.success({ messageForUser: message });
   },
 });
 
