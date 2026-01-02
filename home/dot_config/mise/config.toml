@@ -38,6 +38,7 @@ watchexec = "latest"
 
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
+"cargo:rust-script" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:similarity-py" = "latest"
 "cargo:similarity-rs" = "latest"
