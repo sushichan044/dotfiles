@@ -13,3 +13,7 @@ update() {
 
     op run "${args[@]}" -- chezmoi update
 }
+
+maintain-storage() {
+    brew cleanup --prune=all
+}
