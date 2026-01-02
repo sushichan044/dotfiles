@@ -102,7 +102,7 @@ idiomatic_version_file_enable_tools = [
 trusted_config_paths = ["~/workspace/github.com/sushichan044"]
 
 [settings.npm]
-package_manager = "bun"
+package_manager = "pnpm"
 
 [settings.pipx]
 uvx = true
