@@ -15,7 +15,6 @@ tenv = "latest"
 ruby = ["4.0.0", "3.4.8", "3.3.10"]
 
 # tools
-awscli = "latest"
 watchexec = "latest"
 
 # LSP
