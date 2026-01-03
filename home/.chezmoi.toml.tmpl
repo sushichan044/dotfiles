@@ -23,4 +23,4 @@ command = "code"
 args = [ "-n" ]
 
 [hooks.read-source-state.pre]
-script = "{{ .chezmoi.workingTree }}/.hooks/read-source-state/executable_.pre.sh"
+script = "{{ .chezmoi.sourceDir }}/.hooks/read-source-state/executable_.pre.sh"
