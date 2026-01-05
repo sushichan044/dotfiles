@@ -47,6 +47,10 @@ if command_exists ni; then
   export NI_USE_SFW="true"
 fi
 
+if command_exists git-wt; then
+  eval "$(git-wt --init zsh --nocd)"
+fi
+
 {{ if eq .chezmoi.os "linux" "darwin" -}}
 {{ if eq .chezmoi.os "linux" -}}
 # TBD pnpm
