@@ -120,7 +120,3 @@ get-ancestor-commit= "!f() { DEFAULT_BRANCH=$(git remote show origin | grep 'HEA
     git merge-base HEAD $DEFAULT_BRANCH; }; f"
 diff-ancestor-commit = "!f() { ANCESTOR_COMMIT=$(git merge-base HEAD $(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')); \
     git diff $ANCESTOR_COMMIT; }; f"
-
-# Worktree aliases
-wt = worktree
-wtl = "worktree list"
