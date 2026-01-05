@@ -9,9 +9,9 @@
 import { extract, toMarkdown } from "@mizchi/readability";
 import { defineHook } from "cc-hooks-ts";
 
-import { isNonEmptyString } from "../../home/ai/scripts/utils/string";
 import { parseGitHubUrlToGhCommand } from "../../tools/github";
 import { isRawContentURL } from "../../tools/url";
+import { isNonEmptyString } from "../../tools/utils/string";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {

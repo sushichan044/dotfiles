@@ -114,35 +114,35 @@ describe("generateGhCommand", () => {
     const pathMatch: GitHubPathType = { tag: "v1.0.0", type: "release" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toBe("gh release view v1.0.0 --repo owner/repo");
+    expect(result).toEqual({ command: "gh release view v1.0.0 --repo owner/repo" });
   });
 
   it("should generate release view command for latest", () => {
     const pathMatch: GitHubPathType = { isLatest: true, type: "release" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toBe("gh release view --repo owner/repo");
+    expect(result).toEqual({ command: "gh release view --repo owner/repo" });
   });
 
   it("should generate release list command", () => {
     const pathMatch: GitHubPathType = { isList: true, type: "release" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toBe("gh release list --repo owner/repo");
+    expect(result).toEqual({ command: "gh release list --repo owner/repo" });
   });
 
   it("should generate workflow view command", () => {
     const pathMatch: GitHubPathType = { filename: "ci.yml", type: "workflow" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toBe("gh workflow view ci.yml --repo owner/repo");
+    expect(result).toEqual({ command: "gh workflow view ci.yml --repo owner/repo" });
   });
 
   it("should generate run view command", () => {
     const pathMatch: GitHubPathType = { runId: "123456", type: "run" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toBe("gh run view 123456 --repo owner/repo");
+    expect(result).toEqual({ command: "gh run view 123456 --repo owner/repo" });
   });
 });
 
