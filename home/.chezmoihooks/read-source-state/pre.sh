@@ -29,7 +29,7 @@ mkdir -p "$CHEZMOI_BIN_DIR"
 if is_macos; then
     # commands to install password-manager-binary on Darwin
     mkdir -p ~/.dotfiles/.tmp
-    curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.0/op_darwin_arm64_v2.30.0.zip -o ~/.dotfiles/.tmp/op.zip
+    curl -L https://cache.agilebits.com/dist/1P/op2/pkg/v2.32.0/op_darwin_arm64_v2.32.0.zip -o ~/.dotfiles/.tmp/op.zip
     unzip ~/.dotfiles/.tmp/op.zip -d ~/.dotfiles/.tmp
     mv ~/.dotfiles/.tmp/op "$CHEZMOI_BIN_DIR"
     # shellcheck disable=SC1091
