@@ -12,10 +12,6 @@ COMPLETION_HOME="$HOME/.zsh.d/completions"
 fpath=("$COMPLETION_HOME" "$(brew --prefix)/share/zsh/site-functions" "${fpath[@]}")
 
 if command_exists sheldon; then
-  if ! is_shell_for_ai_agent; then
-    export SHELDON_PROFILE="human"
-  fi
-
   eval "$(sheldon source)"
 fi
 
