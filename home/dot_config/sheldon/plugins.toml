@@ -2,17 +2,17 @@ shell = "zsh"
 
 [plugins]
 
+# Requires eager loading to work properly
 [plugins.zsh-defer]
 github = 'romkatv/zsh-defer'
-apply = ["source"]
 
 [plugins.fast-syntax-highlighting]
 github = 'zdharma-continuum/fast-syntax-highlighting'
 apply = ["defer"]
 
+# Requires eager loading to work properly
 [plugins.zsh-completions]
 github = 'zsh-users/zsh-completions'
-# do not apply defer or completions will not work
 
 [plugins.zsh-autosuggestions]
 github = 'zsh-users/zsh-autosuggestions'
