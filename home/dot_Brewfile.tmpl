@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # tap
+tap "artginzburg/tap"
 tap "buo/cask-upgrade"
 tap "caarlos0/tap"
 tap "cloudflare/cloudflare"
@@ -126,6 +127,9 @@ if OS.mac?
   brew "terminal-notifier"
 
   # brew
+  brew "artginzburg/tap/sudo-touchid",
+    postinstall:
+      "echo '⏩ Configuring sudo-touchid... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start artginzburg/tap/sudo-touchid"
   brew "batt",
     postinstall:
       "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80 && sudo ${HOMEBREW_PREFIX}/bin/batt magsafe-led enable"

@@ -87,11 +87,6 @@ for app in "${AFFETED_APPS[@]}"; do
     killall "${app}" &>/dev/null
 done
 
-if [ ! -f /etc/pam.d/sudo_local ]; then
-    echo "🤖 Creating /etc/pam.d/sudo_local to enable Touch ID for sudo..."
-    sed -e 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local
-fi
-
 # 1Password SSH LaunchAgent setup (run once)
 # sizeof SSH_AUTH_SOCK.plist (sentinel to trigger on_change hook if needed)
 {{- $s := stat (joinPath .chezmoi.homeDir "Library" "LaunchAgents" "com.1password.SSH_AUTH_SOCK.plist") }}
