@@ -49,19 +49,6 @@
         "stdio"
       ]
     },
-    "readability": {
-      "args": [
-        "run",
-        "--allow-env",
-        "--allow-net",
-        "--allow-read",
-        "--allow-run",
-        "npm:@mizchi/readability@0.6.8",
-        "--",
-        "--mcp"
-      ],
-      "command": "deno"
-    },
     "repomix": {
       "args": [
         "run",

@@ -9,7 +9,6 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@mizchi/readability": "0.7.7",
     "arkregex": "^0.0.5",
     "cc-hooks-ts": "2.1.1",
     "github-reserved-names": "^2.1.1",

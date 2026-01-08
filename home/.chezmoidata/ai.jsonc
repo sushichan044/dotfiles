@@ -28,18 +28,6 @@
           "type": "http",
           "url": "https://mcp.notion.com/mcp",
         },
-        "readability": {
-          "args": [
-            "run",
-            "--allow-env",
-            "--allow-net",
-            "--allow-read",
-            "--allow-run",
-            "npm:@mizchi/readability@0.6.8",
-            "--mcp",
-          ],
-          "command": "deno",
-        },
         "sentry": {
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
@@ -62,24 +50,6 @@
     "settings": {
       "globalShortcut": "",
       "mcpServers": {
-        "readability": {
-          "args": [
-            "x",
-            "deno",
-            "--",
-            "deno",
-            "run",
-            "--allow-env",
-            "--allow-net",
-            "--allow-read",
-            "--allow-run",
-            "npm:@mizchi/readability@0.6.8",
-            "--",
-            "--mcp",
-          ],
-          "command": "mise",
-          "type": "stdio",
-        },
         "sequential-thinking": {
           "args": [
             "x",
@@ -121,19 +91,6 @@
         },
         "notion": {
           "url": "https://mcp.notion.com/mcp",
-        },
-        "readability": {
-          "args": [
-            "run",
-            "--allow-env",
-            "--allow-net",
-            "--allow-read",
-            "--allow-run",
-            "npm:@mizchi/readability@0.6.8",
-            "--",
-            "--mcp",
-          ],
-          "command": "deno",
         },
         "sentry": {
           "type": "http",
@@ -182,19 +139,6 @@
         "notion": {
           "type": "http",
           "url": "https://mcp.notion.com/mcp",
-        },
-        "readability": {
-          "args": [
-            "run",
-            "--allow-env",
-            "--allow-net",
-            "--allow-read",
-            "--allow-run",
-            "npm:@mizchi/readability@0.6.8",
-            "--",
-            "--mcp",
-          ],
-          "command": "deno",
         },
         "sentry": {
           "type": "http",
