@@ -118,6 +118,15 @@
         ]
       },
       {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/prohibit_edit_default_branch.ts"
+          }
+        ]
+      },
+      {
         "matcher": "mcp__deepwiki__.*",
         "hooks": [
           {
