@@ -1,0 +1,89 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
+  "terminal": {
+    "font_family": "MesloLGS NF",
+    "cursor_shape": "bar"
+  },
+  "project_panel": {
+    "auto_fold_dirs": false
+  },
+  "agent": {
+    "enabled": true,
+    "button": true,
+    "model_parameters": []
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "current_line_highlight": "all",
+  "cursor_blink": true,
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "buffer_font_fallbacks": ["Fira Code", "Consolas", "Courier New", "monospace"],
+  "buffer_font_family": "Firple",
+  "file_types": {
+    "dotenv": [".env*"],
+    "perl": ["*.latexmkrc"],
+    "ruby": ["**/*.axlsx", "*.json.jb", "*.rb.golden", "dot_Brewfile.tmpl"],
+    "vue": ["*.vue"],
+    "toml": ["*.toml.tmpl"],
+    "jsonc": [
+      "*.jsonc",
+      "*.jsonc.tmpl",
+      "_config.json",
+      "command-line.json",
+      "common-versions.json",
+      "pnpm-config.json",
+      "rush.json",
+      "version-policies.json"
+    ],
+    "github-actions-workflow": ["**/.github/actions/*/action.yml"],
+    "json": ["*.json", "*.json.tmpl"],
+    "markdown": ["*.md ", "*.rmd", "*.snap", "*.snap.new"],
+    "xml": ["*.plist"],
+    "shellscript": [
+      "*.sh.tmpl",
+      "*.tmpl",
+      "*.zsh.tmpl",
+      "dot_z*.tmpl",
+      "dot_zsh.d/completions/*.tmpl"
+    ],
+    "tailwindcss": ["*.css"],
+    "env": ["*.env", "*.env.development", "*.env.production", "*.env.sample", ".env.example"],
+    "json5": ["*.json5"],
+    "yaml": ["*.yaml.tmpl", "*.yml.tmpl"]
+  },
+  "colorize_brackets": true,
+  "linked_edits": true,
+  "show_edit_predictions": true,
+  "ensure_final_newline_on_save": true,
+  "base_keymap": "VSCode",
+  "icon_theme": "Material Icon Theme",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "One Dark Pro"
+  },
+  "lsp": {
+    "biome": {
+      "settings": {
+        "require_config_file": true
+      }
+    }
+  }
+}
