@@ -103,14 +103,17 @@ After completing the Issue/PR description and title generation:
 # PR Generation Complete
 
 ## PR Title Candidates
+
 1. [Option 1]
 2. [Option 2]
 3. [Option 3]
 
 ## Final PR Description
+
 [Complete PR description with all template sections filled]
 
 ## Analysis Summary
+
 - Primary changes: [brief summary]
 - Files modified: [count and key files]
 - Impact area: [affected components/features]
@@ -122,14 +125,17 @@ After completing the Issue/PR description and title generation:
 # Issue Generation Complete
 
 ## Issue Title Candidates
+
 1. [Option 1]
 2. [Option 2]
 3. [Option 3]
 
 ## Final Issue Description
+
 [Complete Issue description with all template sections filled]
 
 ## Problem Summary
+
 - Problem statement: [brief summary]
 - Motivation: [why this matters]
 - Expected impact: [who benefits and how]

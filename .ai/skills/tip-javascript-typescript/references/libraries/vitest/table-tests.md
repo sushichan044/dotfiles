@@ -14,7 +14,7 @@ Vitestを使用したtable test（パラメータライズドテスト）の型�
 
 ```typescript
 describe("add function", () => {
-  const testCases: Array<{name: string; a: number; b: number; expected: number}> = [
+  const testCases: Array<{ name: string; a: number; b: number; expected: number }> = [
     {
       name: "should return the sum of two positive numbers",
       a: 2,
@@ -41,13 +41,10 @@ describe("add function", () => {
     },
   ];
 
-  it.each(testCases)(
-    "$name",
-    ({ a, b, expected }) => {
-      const result = add(a, b);
-      expect(result).toBe(expected);
-    }
-  );
+  it.each(testCases)("$name", ({ a, b, expected }) => {
+    const result = add(a, b);
+    expect(result).toBe(expected);
+  });
 });
 ```
 
@@ -68,20 +65,17 @@ describe("add function", () => {
 const testCases = [
   { name: "test 1", a: 1, b: 2, expected: 3 },
   { name: "test 2", a: 4, b: 5, expected: 9 },
-] satisfies Array<{name: string; a: number; b: number; expected: number}>;
+] satisfies Array<{ name: string; a: number; b: number; expected: number }>;
 
-it.each(testCases)(
-  "$name",
-  ({ a, b, expected }) => {
-    // a, b, expected の型が意図しないUNION型になる可能性がある
-  }
-);
+it.each(testCases)("$name", ({ a, b, expected }) => {
+  // a, b, expected の型が意図しないUNION型になる可能性がある
+});
 ```
 
 **Solution**: `Array<T>` で明示的に型を指定する
 
 ```typescript
-const testCases: Array<{name: string; a: number; b: number; expected: number}> = [
+const testCases: Array<{ name: string; a: number; b: number; expected: number }> = [
   {
     name: "should return the sum of two positive numbers",
     a: 2,
@@ -90,12 +84,9 @@ const testCases: Array<{name: string; a: number; b: number; expected: number}> =
   },
 ];
 
-it.each(testCases)(
-  "$name",
-  ({ a, b, expected }) => {
-    // a: number, b: number, expected: number として正しく推論される
-  }
-);
+it.each(testCases)("$name", ({ a, b, expected }) => {
+  // a: number, b: number, expected: number として正しく推論される
+});
 ```
 
 ## Performance Optimization
