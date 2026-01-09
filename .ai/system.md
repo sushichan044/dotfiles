@@ -45,6 +45,12 @@ Refactor: PREFER following 'Kent Beck' recommended practices
 - **Temporary Files** → Must cleanup after use
 - **File Deletion** → Prohibited. Must explicitly ask user if deletion is required
 
+## Tool-Specific Guidelines
+
+### Claude Code
+
+- Using `code-simplifier:code-simplifier` sub agent after writing complex code is highly recommended.
+
 ---
 
 _Predictability beats cleverness. Clarity enables performance. Simple made easy._
