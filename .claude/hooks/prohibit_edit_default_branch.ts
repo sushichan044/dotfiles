@@ -25,9 +25,9 @@ async function getDefaultGitBranch(cwd: string): Promise<string | null> {
   return null;
 }
 
-function createIsGitIgnored(cwd: string): (filePath: string) => Promise<boolean> {
-  return async (filePath: string): Promise<boolean> => {
-    const result = await Bun.$`git -C ${cwd} check-ignore ${filePath}`.nothrow().quiet();
+function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Promise<boolean> {
+  return async (...filePaths) => {
+    const result = await Bun.$`git -C ${cwd} check-ignore ${filePaths.join(" ")}`.nothrow().quiet();
     return result.exitCode === 0;
   };
 }
