@@ -1,0 +1,6 @@
+{
+  "$schema": "node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "home/dot_config/zed/private_settings.json", // Zed handle this as jsonc, so not compatible with oxfmt
+  ],
+}
