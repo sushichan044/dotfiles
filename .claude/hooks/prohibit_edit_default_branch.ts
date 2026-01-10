@@ -1,5 +1,6 @@
 import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
+import path from "node:path";
 
 import { isNonEmptyString } from "../../tools/utils/string";
 
@@ -24,6 +25,13 @@ async function getDefaultGitBranch(cwd: string): Promise<string | null> {
   return null;
 }
 
+function createIsGitIgnored(cwd: string): (filePath: string) => Promise<boolean> {
+  return async (filePath: string): Promise<boolean> => {
+    const result = await Bun.$`git -C ${cwd} check-ignore ${filePath}`.nothrow().quiet();
+    return result.exitCode === 0;
+  };
+}
+
 const hook = defineHook({
   trigger: {
     PreToolUse: {
@@ -34,6 +42,11 @@ const hook = defineHook({
 
   run: async (c) => {
     const cwd = c.input.cwd;
+
+    const isGitIgnored = createIsGitIgnored(cwd);
+    if (await isGitIgnored(c.input.tool_input.file_path)) {
+      return c.success();
+    }
 
     const defaultBranch = await getDefaultGitBranch(cwd);
     const currentBranch = await getCurrentGitBranch(cwd);
