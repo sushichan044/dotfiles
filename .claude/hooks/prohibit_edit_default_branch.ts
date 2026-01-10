@@ -42,6 +42,13 @@ const hook = defineHook({
 
   run: async (c) => {
     const cwd = c.input.cwd;
+    const dest = c.input.tool_input.file_path;
+
+    // If dest is not under cwd, skip
+    const isDestOutside = !path.resolve(dest).startsWith(path.resolve(cwd));
+    if (isDestOutside) {
+      return c.success();
+    }
 
     const isGitIgnored = createIsGitIgnored(cwd);
     if (await isGitIgnored(c.input.tool_input.file_path)) {
