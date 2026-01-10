@@ -1,6 +1,6 @@
 import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
-import path from "node:path";
+import path from "pathe";
 
 import { isNonEmptyString } from "../../tools/utils/string";
 
