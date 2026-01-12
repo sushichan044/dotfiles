@@ -28,6 +28,29 @@ if file_exists "$BREW_BIN"; then
     eval "$($BREW_BIN shellenv)"
 fi
 
+# Use GNU utils as default on macOS
+if is_mac; then
+    GNU_CORE_UTILS_BIN="$(brew --prefix coreutils)/libexec/gnubin"
+    if dir_exists "$GNU_CORE_UTILS_BIN"; then
+        add_to_path_if_not_exists "$GNU_CORE_UTILS_BIN"
+    fi
+
+    GNU_GREP_BIN="$(brew --prefix grep)/libexec/gnubin"
+    if dir_exists "$GNU_GREP_BIN"; then
+        add_to_path_if_not_exists "$GNU_GREP_BIN"
+    fi
+
+    GNU_SED_BIN="$(brew --prefix gnu-sed)/libexec/gnubin"
+    if dir_exists "$GNU_SED_BIN"; then
+        add_to_path_if_not_exists "$GNU_SED_BIN"
+    fi
+
+    GNU_FIND_UTILS_BIN="$(brew --prefix findutils)/libexec/gnubin"
+    if dir_exists "$GNU_FIND_UTILS_BIN"; then
+        add_to_path_if_not_exists "$GNU_FIND_UTILS_BIN"
+    fi
+fi
+
 # Load Scala coursier
 if dir_exists "$COURSIER_BIN_DIR"; then
     add_to_path_if_not_exists "$COURSIER_BIN_DIR"
