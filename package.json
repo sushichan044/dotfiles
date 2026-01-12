@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "arkregex": "^0.0.5",
-    "cc-hooks-ts": "2.1.1",
+    "cc-hooks-ts": "2.1.2",
     "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
     "oxfmt": "0.22.0",
