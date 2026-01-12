@@ -32,3 +32,9 @@ commands:
     description: "Open project note file"
     env:
       MEMO_ROOT_DIR: "{{.CommandDir}}"
+
+  dir:
+    command: "{{.ConfigDir}}/tmpdir.sh"
+    description: "Create a temporary directory in the project-local area"
+    env:
+      BASE_DIR: "{{.CommandDir}}"
