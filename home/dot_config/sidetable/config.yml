@@ -1,0 +1,34 @@
+# Required. Sets the project-local private area name.
+# If sets to ".sidetable", the private area path is "./.sidetable"
+directory: ".sushichan044"
+
+commands:
+  ghq:
+    # Required. Command name to execute.
+    command: "ghq"
+    # Optional. Arguments to pass to the command.
+    # If omitted, sidetable just runs `<command>` with user-provided args.
+    args:
+      # Arguments added before user-provided args.
+      prepend:
+        - "get"
+        - "-u"
+    env:
+      # You can use `{{.CommandDir}}` to get the command-local directory path.
+      # In this example, GHQ_ROOT is set to "./.sidetable/ghq"
+      GHQ_ROOT: "{{.CommandDir}}"
+    # Optional. Description shown in `sidetable list`.
+    description: "ghq get wrapper with project-local root"
+    # Optional. Short alias for the command.
+    alias: "gg"
+
+  memo:
+    # You can use `{{.ConfigDir}}` to get the configuration directory path.
+    # You can set your own shell scripts as command.
+    command: "memo"
+    args:
+      prepend:
+        - new
+    description: "Open project note file"
+    env:
+      MEMO_ROOT_DIR: "{{.CommandDir}}"

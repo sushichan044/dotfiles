@@ -87,6 +87,10 @@ if command_exists phantom; then
   eval "$(phantom completion zsh)"
 fi
 
+if command_exists sidetable; then
+  eval "$(sidetable completion zsh)"
+fi
+
 GCLOUD_BASE="$BREW_BASE/share/google-cloud-sdk"
 if dir_exists "$GCLOUD_BASE"; then
   if file_exists "$GCLOUD_BASE/path.zsh.inc"; then
