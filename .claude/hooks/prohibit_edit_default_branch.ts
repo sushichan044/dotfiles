@@ -32,6 +32,11 @@ function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Promise<bo
   };
 }
 
+async function isRepositoryPublished(cwd: string): Promise<boolean> {
+  const result = await Bun.$`git -C ${cwd} remote`.nothrow().quiet();
+  return result.exitCode === 0 && result.text().trim().length > 0;
+}
+
 const hook = defineHook({
   trigger: {
     PreToolUse: {
@@ -52,6 +57,11 @@ const hook = defineHook({
 
     const isGitIgnored = createIsGitIgnored(cwd);
     if (await isGitIgnored(c.input.tool_input.file_path)) {
+      return c.success();
+    }
+
+    // Allow if the repository is not published yet
+    if (!(await isRepositoryPublished(cwd))) {
       return c.success();
     }
 
