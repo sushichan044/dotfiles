@@ -37,6 +37,25 @@ async function isRepositoryPublished(cwd: string): Promise<boolean> {
   return result.exitCode === 0 && result.text().trim().length > 0;
 }
 
+type GitRepoInfo = {
+  currentBranch: string | null;
+  defaultBranch: string | null;
+  isPublished: boolean;
+};
+
+async function getGitRepoInfo(cwd: string): Promise<GitRepoInfo> {
+  const [currentBranch, defaultBranch, isPublished] = await Promise.all([
+    getCurrentGitBranch(cwd),
+    getDefaultGitBranch(cwd),
+    isRepositoryPublished(cwd),
+  ]);
+  return {
+    currentBranch,
+    defaultBranch,
+    isPublished,
+  };
+}
+
 const hook = defineHook({
   trigger: {
     PreToolUse: {
@@ -60,13 +79,10 @@ const hook = defineHook({
       return c.success();
     }
 
-    // Allow if the repository is not published yet
-    if (!(await isRepositoryPublished(cwd))) {
+    const { currentBranch, defaultBranch, isPublished } = await getGitRepoInfo(cwd);
+    if (!isPublished) {
       return c.success();
     }
-
-    const defaultBranch = await getDefaultGitBranch(cwd);
-    const currentBranch = await getCurrentGitBranch(cwd);
     if (!isNonEmptyString(defaultBranch) || !isNonEmptyString(currentBranch)) {
       return c.success();
     }
