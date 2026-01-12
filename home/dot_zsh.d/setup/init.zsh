@@ -43,6 +43,15 @@ add_to_path_if_not_exists() {
     esac
 }
 
+add_to_manpath_if_not_exists() {
+    local dir="$1"
+
+    case ":$MANPATH:" in
+    *":$dir:"*) ;;
+    *) export MANPATH="$dir:$MANPATH" ;;
+    esac
+}
+
 source_if_exists() {
     file_exists "$1" && source "$1"
 }
