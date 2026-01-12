@@ -30,41 +30,17 @@ fi
 
 # Use GNU utils as default on macOS
 if is_mac; then
-    GNU_CORE_UTILS_BIN="$(brew --prefix coreutils)/libexec/gnubin"
-    if dir_exists "$GNU_CORE_UTILS_BIN"; then
-        add_to_path_if_not_exists "$GNU_CORE_UTILS_BIN"
-    fi
-    GNU_CORE_UTILS_MAN="$(brew --prefix coreutils)/libexec/gnuman"
-    if dir_exists "$GNU_CORE_UTILS_MAN"; then
-        add_to_manpath_if_not_exists "$GNU_CORE_UTILS_MAN"
-    fi
+    add_to_path_if_not_exists "$(brew --prefix coreutils)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix coreutils)/libexec/gnuman"
 
-    GNU_GREP_BIN="$(brew --prefix grep)/libexec/gnubin"
-    if dir_exists "$GNU_GREP_BIN"; then
-        add_to_path_if_not_exists "$GNU_GREP_BIN"
-    fi
-    GNU_GREP_MAN="$(brew --prefix grep)/libexec/gnuman"
-    if dir_exists "$GNU_GREP_MAN"; then
-        add_to_manpath_if_not_exists "$GNU_GREP_MAN"
-    fi
+    add_to_path_if_not_exists "$(brew --prefix grep)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix grep)/libexec/gnuman"
 
-    GNU_SED_BIN="$(brew --prefix gnu-sed)/libexec/gnubin"
-    if dir_exists "$GNU_SED_BIN"; then
-        add_to_path_if_not_exists "$GNU_SED_BIN"
-    fi
-    GNU_SED_MAN="$(brew --prefix gnu-sed)/libexec/gnuman"
-    if dir_exists "$GNU_SED_MAN"; then
-        add_to_manpath_if_not_exists "$GNU_SED_MAN"
-    fi
+    add_to_path_if_not_exists "$(brew --prefix gnu-sed)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix gnu-sed)/libexec/gnuman"
 
-    GNU_FIND_UTILS_BIN="$(brew --prefix findutils)/libexec/gnubin"
-    if dir_exists "$GNU_FIND_UTILS_BIN"; then
-        add_to_path_if_not_exists "$GNU_FIND_UTILS_BIN"
-    fi
-    GNU_FIND_UTILS_MAN="$(brew --prefix findutils)/libexec/gnuman"
-    if dir_exists "$GNU_FIND_UTILS_MAN"; then
-        add_to_manpath_if_not_exists "$GNU_FIND_UTILS_MAN"
-    fi
+    add_to_path_if_not_exists "$(brew --prefix findutils)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix findutils)/libexec/gnuman"
 fi
 
 # Load Scala coursier
