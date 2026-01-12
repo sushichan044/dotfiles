@@ -124,8 +124,6 @@ if OS.mac?
   brew "findutils"
   brew "gnu-sed"
   brew "grep"
-  brew "mas"
-  brew "terminal-notifier"
 
   # brew
   brew "artginzburg/tap/sudo-touchid",
@@ -135,6 +133,8 @@ if OS.mac?
     postinstall:
       "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80 && sudo ${HOMEBREW_PREFIX}/bin/batt magsafe-led enable"
   brew "libiconv"
+  brew "mas"
+  brew "terminal-notifier"
 
   # cask
   cask "1password"
