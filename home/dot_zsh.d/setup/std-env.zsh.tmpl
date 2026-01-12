@@ -33,14 +33,17 @@ if is_mac; then
     add_to_path_if_not_exists "$(brew --prefix coreutils)/libexec/gnubin"
     add_to_manpath_if_not_exists "$(brew --prefix coreutils)/libexec/gnuman"
 
-    add_to_path_if_not_exists "$(brew --prefix grep)/libexec/gnubin"
-    add_to_manpath_if_not_exists "$(brew --prefix grep)/libexec/gnuman"
+    add_to_path_if_not_exists "$(brew --prefix findutils)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix findutils)/libexec/gnuman"
+
+    add_to_path_if_not_exists "$(brew --prefix gawk)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix gawk)/libexec/gnuman"
 
     add_to_path_if_not_exists "$(brew --prefix gnu-sed)/libexec/gnubin"
     add_to_manpath_if_not_exists "$(brew --prefix gnu-sed)/libexec/gnuman"
 
-    add_to_path_if_not_exists "$(brew --prefix findutils)/libexec/gnubin"
-    add_to_manpath_if_not_exists "$(brew --prefix findutils)/libexec/gnuman"
+    add_to_path_if_not_exists "$(brew --prefix grep)/libexec/gnubin"
+    add_to_manpath_if_not_exists "$(brew --prefix grep)/libexec/gnuman"
 fi
 
 # Load Scala coursier
