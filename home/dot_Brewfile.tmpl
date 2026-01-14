@@ -99,8 +99,6 @@ brew "perl"
 brew "pkgconf"
 brew "pnpm"
 brew "poppler"
-brew "postgresql@14"
-brew "postgresql@16"
 brew "resvg"
 brew "ripgrep"
 brew "sevenzip"
@@ -146,6 +144,9 @@ if OS.mac?
       "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services start batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80 && sudo ${HOMEBREW_PREFIX}/bin/batt magsafe-led enable"
   brew "libiconv"
   brew "mas"
+  # postgres errors on linux
+  brew "postgresql@14"
+  brew "postgresql@16"
   brew "terminal-notifier"
 
   # cask
