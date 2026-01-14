@@ -11,7 +11,7 @@
 [data]
 for_personal = {{ $for_personal }}
 ostype = {{ $ostype | quote }}
-private_available = {{ if stat (joinPath .chezmoi.workingTree "private", ".gitkeep") }}true{{ else }}false{{ end }}
+private_available = {{ if stat (joinPath .chezmoi.workingTree "private" ".gitkeep") }}true{{ else }}false{{ end }}
 
 [diff]
 command = "delta"
