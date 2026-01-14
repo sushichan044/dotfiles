@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 YYYYMMDD=$(date +"%Y%m%d")
 HHMMSS=$(date +"%H%M%S")
