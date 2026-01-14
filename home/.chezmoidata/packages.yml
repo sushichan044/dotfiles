@@ -13,6 +13,7 @@ packages:
       - wget
   tools:
     gh:
+      - "dlvhdr/gh-dash"
       - "github/gh-copilot"
       - "yusukebe/gh-markdown-preview"
       - "davidraviv/gh-clean-branches"
