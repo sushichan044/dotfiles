@@ -6,7 +6,6 @@ tap "buo/cask-upgrade"
 tap "caarlos0/tap"
 tap "cloudflare/cloudflare"
 tap "goreleaser/tap"
-tap "homebrew/cask"
 tap "homebrew/core"
 tap "homeport/tap"
 tap "kayac/tap"
@@ -14,6 +13,10 @@ tap "songmu/tap"
 tap "sushichan044/tap"
 tap "suzuki-shunsuke/ghalint"
 tap "suzuki-shunsuke/pinact"
+
+if OS.linux?
+  tap "homebrew/cask"
+end
 
 # from custom tap
 brew "homeport/tap/termshot"
