@@ -95,28 +95,52 @@ clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 
 [alias]
+# shorthand
+f = "fetch"
+s = "status"
 alias = "!f() { git config --get-regexp '^alias' | sed 's/^alias\\.//g'; }; f"
+fixit = "commit --amend --no-edit"
+cz = "!f() { git-cz }; f"
+
+# primitive
+default-branch-origin = "symbolic-ref --quiet --short refs/remotes/origin/HEAD"
+default-branch = "!f() { git default-branch-origin | sed 's@^origin/@@'; }; f"
+current-branch = "branch --show-current"
+
 swc = "!f() { \
     suffix=\"${1:+-$1}\"; \
     owner=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+)/[^/]+(\\.git)?$#\\1#'); \
     prefix=$([ \"$owner\" = \"$USER\" ] && echo \"\" || echo \"$USER-\"); \
     git switch -c \"${prefix}$(TZ=UTC-9 date +'%Y%m%d%H%M')$suffix\"; \
 }; f"
-cz = "!f() { git-cz }; f"
 clear-cache = "rm -r --cached ."
-com = "!f() { remote_head=$(git symbolic-ref --quiet refs/remotes/origin/HEAD); remote_head=${remote_head#refs/remotes/origin/}; git checkout ${remote_head:-$(git rev-parse --symbolic --verify --quiet main || git rev-parse --symbolic --verify --quiet master)}; }; f"
-fixit = "commit --amend --no-edit"
-bk = "!f() { git switch -c $(git branch --show-current)-$(TZ=UTC-9 date +'%Y%m%d%H%M'); }; f"
-f = "fetch"
-s = "status"
+com = "!f() { \
+    DEFAULT_BRANCH=$(git default-branch); \
+    git switch \"$DEFAULT_BRANCH\"; \
+}; f"
+bk = "!f() { \
+    CURRENT_BRANCH=$(git branch --show-current); \
+    BACKUP_BRANCH_NAME=\"${CURRENT_BRANCH}-$(TZ=UTC-9 date +'%Y%m%d%H%M')\"; \
+    git switch -c \"$BACKUP_BRANCH_NAME\"; \
+}; f"
+
 # rebase current branch with origin/HEAD
 rbm = "!f() { \
     CURRENT_BRANCH=$(git branch --show-current); \
     git stash push --include-untracked -m \"Auto stash before rebase of $CURRENT_BRANCH\"; \
     git fetch origin && git rebase origin/HEAD && git stash pop || { echo 'Conflict occurred during rebase. Please run $(git rebase --continue) and then $(git stash pop) after resolving conflicts.'; return 1; }; \
 }; f"
-show-default-branch = "!f() { git remote show origin | grep 'HEAD branch' | awk '{print $NF}'; }; f"
-get-ancestor-commit= "!f() { DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}'); \
-    git merge-base HEAD $DEFAULT_BRANCH; }; f"
-diff-ancestor-commit = "!f() { ANCESTOR_COMMIT=$(git merge-base HEAD $(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')); \
-    git diff $ANCESTOR_COMMIT; }; f"
+
+get-ancestor-commit= "!f() { \
+    DEFAULT_BRANCH=$(git default-branch); \
+    git merge-base HEAD $DEFAULT_BRANCH; \
+}; f"
+diff-ancestor-commit = "!f() { \
+    ANCESTOR_COMMIT=$(git merge-base HEAD $(git default-branch)); \
+    git diff $ANCESTOR_COMMIT; \
+}; f"
+dd = "!f() { \
+    CURRENT_BRANCH=$(git branch --show-current); \
+    DEFAULT_BRANCH=$(git default-branch); \
+    git diff --stat $DEFAULT_BRANCH..$CURRENT_BRANCH; \
+}; f"
