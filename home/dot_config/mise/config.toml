@@ -33,7 +33,7 @@ watchexec = "latest"
 "npm:@modelcontextprotocol/inspector" = "latest"
 "npm:ccusage" = "latest"
 "npm:repomix" = "latest"
-
+"claude" = "latest"
 
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
