@@ -2,7 +2,7 @@ import { defineHook } from "cc-hooks-ts";
 import { format } from "oxfmt";
 
 async function dumpPlanToNote(plan: string): Promise<string> {
-  const result = await Bun.$`memo new claude-plan`.nothrow().quiet(); // stdout will break claude code
+  const result = await Bun.$`sidetable memo claude-plan`.nothrow().quiet(); // stdout will break claude code
   if (result.exitCode !== 0) {
     const stderrText = result.stderr.toString("utf-8");
 
