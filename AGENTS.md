@@ -1,8 +1,8 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI Agents when working with code in this repository.
 
-YOU MUST respect @.ai/system.md as system prompt and follow the instructions there for context and behavior.
+YOU MUST respect @.agent/system.md as system prompt and follow the instructions there for context and behavior.
 
 ## Project Type
 
@@ -51,7 +51,7 @@ chezmoi add ~/.newconfig
 - **Shell**: zsh with powerlevel10k, sheldon plugin manager
 - **Git**: Modular config in `dot_config/git/config.d/`
 - **Development Tools**: mise for runtime management, lazygit for git UI
-- **Claude Integration**: Custom system prompts in `.ai/system.md`
+- **Claude Integration**: Custom system prompts in `.agent/system.md`
 
 ### Key Integrations
 

@@ -5,11 +5,7 @@
 # personal
 ,/
 .sushichan044/
-
-.ai/sushichan044/
-.claude/sushichan044/
 .claude/settings.local.json
-.gemini/sushichan044/
 .vscode/**/*.local.json
 
 .mise.local.toml
