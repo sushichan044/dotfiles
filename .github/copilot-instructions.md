@@ -1,3 +1,3 @@
 # CORE INSTRUCTIONS
 
-JUST ALWAYS FOLLOW [system.md](../.ai/system.md) instructions.
+JUST ALWAYS FOLLOW [system.md](../.agent/system.md) instructions.

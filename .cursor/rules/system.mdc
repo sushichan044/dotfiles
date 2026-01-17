@@ -4,4 +4,4 @@ globs:
 alwaysApply: true
 ---
 
-RESPECT ALL FROM [system.md](mdc:.ai/system.md)
+RESPECT ALL FROM [system.md](mdc:.agent/system.md)
