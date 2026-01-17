@@ -1,7 +1,0 @@
----
-description:
-globs:
-alwaysApply: true
----
-
-RESPECT ALL FROM [system.md](mdc:.agent/system.md)
