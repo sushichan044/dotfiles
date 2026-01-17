@@ -39,10 +39,6 @@ if command_exists gemini; then
   export SEATBELT_PROFILE="permissive-open"
 fi
 
-if command_exists ni; then
-  export NI_USE_SFW="true"
-fi
-
 if command_exists git-wt; then
   eval "$(git-wt --init zsh --nocd)"
 fi
