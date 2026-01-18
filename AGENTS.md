@@ -4,79 +4,22 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 YOU MUST respect @.agent/AGENTS.md as system prompt and follow the instructions there for context and behavior.
 
-## Project Type
+## Project Structure
 
-This is a dotfiles repository managed by chezmoi, containing personal configuration files and setup scripts for development environments across macOS, Linux, and WSL.
-YOU MUST: use context7 and deepwiki to retrieve latest chezmoi references. DO NOT TRUST your current knowledge.
+This is a dotfiles repository managed by chezmoi.
+chezmoi docs available at context7.
 
-## Key Commands
+- `home/`: chezmoi-managed files.
+  - `.chezmoidata/`: chezmoi data templates.
+    - <https://www.chezmoi.io/reference/special-directories/chezmoidata/>
+  - `.chezmoi.toml.tmpl`: Main configuration for chezmoi.
+    - <https://www.chezmoi.io/reference/special-files/chezmoi-format-tmpl/>
+  - `.chezmoiexternal.toml`: External source configuration.
+    - <https://www.chezmoi.io/reference/special-files/chezmoiexternal-format/>
+- `private/`: git submodule for sensitive data.
 
-### Chezmoi Operations
+### Tooling Files
 
-```bash
-# Apply changes to system
-chezmoi apply
-
-# Preview changes before applying
-chezmoi diff
-
-# Edit templates (don't edit files in home directory directly)
-chezmoi edit ~/.config/git/config
-
-# Update from repository
-chezmoi update
-
-# Add new files to management
-chezmoi add ~/.newconfig
-```
-
-### Template System
-
-- Files with `.tmpl` extension are Go templates processed by chezmoi
-- Use `{{ .variable }}` syntax for template variables
-- Conditional blocks use `{{ if .condition }}...{{ end }}`
-- The `.for_personal` variable distinguishes personal vs work setups
-
-## Architecture Overview
-
-### Core Structure
-
-- `dot_*` files become `.filename` in home directory
-- `private_*` files get restrictive permissions (600/700)
-- Template files (`.tmpl`) are processed with user data
-- Scripts (`run_*`) execute during chezmoi apply
-
-### Configuration Management
-
-- **Shell**: zsh with powerlevel10k, sheldon plugin manager
-- **Git**: Modular config in `dot_config/git/config.d/`
-- **Development Tools**: mise for runtime management, lazygit for git UI
-- **Claude Integration**: Custom system prompts in `.agent/system.md`
-
-### Key Integrations
-
-- **1Password**: SSH agent and secret management
-- **GitHub**: CLI and authentication setup
-- **MCP Tools**: Various productivity commands
-- **Homebrew**: Package management with Brewfile template
-
-### Template Variables
-
-- `.for_personal`: Boolean for personal vs work machine setup
-- `.chezmoi.os`: Operating system detection
-- OnePassword integration for secure data retrieval
-
-## Development Workflow
-
-When modifying dotfiles:
-
-1. Edit source files in chezmoi directory (not target files)
-2. Use `chezmoi diff` to preview changes
-3. Apply with `chezmoi apply`
-4. Test configuration changes before committing
-
-## Security Notes
-
-- Private files use `private_` prefix for restricted permissions
-- OnePassword integration handles sensitive data
-- SSH keys and tokens managed through secure templates
+- `.agent/`: AI agent system prompts and configurations.
+- `.claude/hooks`: Hooks for Claude Code. Using sushichan044/cc-hooks-ts and typescript and Bun.
+- `tools/`: Custom scripts for automation. Commonly for `.claude/hooks` usage.
