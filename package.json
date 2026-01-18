@@ -13,7 +13,7 @@
     "cc-hooks-ts": "2.1.11",
     "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
-    "oxfmt": "0.23.0",
+    "oxfmt": "0.24.0",
     "pathe": "2.0.3",
     "picocolors": "^1.1.1",
     "unist-util-visit": "5.0.0"
