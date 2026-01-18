@@ -38,4 +38,7 @@
       minimumReleaseAge: null,
     },
   ],
+  ignorePaths: [
+    "**/.agent/**"
+  ]
 }
