@@ -2,7 +2,7 @@
 
 This file provides guidance to AI Agents when working with code in this repository.
 
-YOU MUST respect @.agent/system.md as system prompt and follow the instructions there for context and behavior.
+YOU MUST respect @.agent/AGENTS.md as system prompt and follow the instructions there for context and behavior.
 
 ## Project Type
 
