@@ -8,11 +8,11 @@ python = ["3.14.2", "3.12.10", "3.11.12"]
 java = "25"
 uv = "latest"
 go = "1.25.5"
-node = "25.2.1"
+node = "25.3.0"
 bun = "latest"
 deno = "latest"
 tenv = "latest"
-ruby = ["4.0.0", "3.4.8", "3.3.10"]
+ruby = ["4.0.1", "3.4.8", "3.3.10"]
 
 # tools
 watchexec = "latest"
