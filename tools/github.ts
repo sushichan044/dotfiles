@@ -262,7 +262,6 @@ export function parseGhApiCommand(command: string): GhApiResult | null {
         type: "string",
       },
       method: {
-        default: "GET",
         short: "X",
         type: "string",
       },
@@ -284,11 +283,18 @@ export function parseGhApiCommand(command: string): GhApiResult | null {
     isNonEmptyString(parsed.values["raw-field"]) ||
     isNonEmptyString(parsed.values.field) ||
     isNonEmptyString(parsed.values.input);
-  // https://cli.github.com/manual/gh_api
-  const method = requestParamsExists ? "POST" : parsed.values.method;
+
+  const resolveMethod = () => {
+    if (isNonEmptyString(parsed.values.method)) {
+      return parsed.values.method;
+    }
+
+    // gh determines default method based on presence of request body
+    return requestParamsExists ? "POST" : "GET";
+  };
 
   return {
-    method: method.toUpperCase(),
+    method: resolveMethod().toUpperCase(),
     pathComponents: endpoint.split("/").filter((part) => part.length > 0),
     type: "rest",
   };
