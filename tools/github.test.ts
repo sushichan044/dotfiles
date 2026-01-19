@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import type { GitHubPathType } from "./github";
-
+import { type GitHubPathType, parseGhApiCommand } from "./github";
 import { extractGistInfo, extractGitHubRepo, generateGhCommand, matchGitHubPath } from "./github";
 
 describe("extractGitHubRepo", () => {
@@ -181,5 +180,67 @@ describe("extractGistInfo", () => {
     const result = extractGistInfo(url);
 
     expect(result).toBeNull();
+  });
+});
+
+describe("parseGhApiCommand", () => {
+  it("should parse gh api rest command", () => {
+    const command = "gh api repos/owner/repo/issues/123 -X GET --cache=3600";
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      method: "GET",
+      pathComponents: ["repos", "owner", "repo", "issues", "123"],
+      type: "rest",
+    });
+  });
+
+  it("should parse gh api graphql command", () => {
+    const command = 'gh api graphql -f query="query { viewer { login } }"';
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      type: "graphql",
+    });
+  });
+
+  it("should detect file input and set method to POST", () => {
+    const command = "gh api repos/owner/repo/issues --input file.json";
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      method: "POST",
+      pathComponents: ["repos", "owner", "repo", "issues"],
+      type: "rest",
+    });
+  });
+
+  it("should detect typed parameters and set method to POST", () => {
+    const command = 'gh api repos/owner/repo/issues -F title="New Issue" -F body="Issue body"';
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      method: "POST",
+      pathComponents: ["repos", "owner", "repo", "issues"],
+      type: "rest",
+    });
+  });
+
+  it("should detect raw-field parameter and set method to POST", () => {
+    const command = "gh api repos/owner/repo/issues/123/comments -f body='Hi from CLI'";
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      method: "POST",
+      pathComponents: ["repos", "owner", "repo", "issues", "123", "comments"],
+      type: "rest",
+    });
+  });
+
+  it("should return null for non-gh api commands", () => {
+    const command = "gh issue view 123 --repo owner/repo";
+    const args = parseGhApiCommand(command);
+
+    expect(args).toBeNull();
   });
 });

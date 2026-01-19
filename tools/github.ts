@@ -4,9 +4,14 @@
  *   Utility functions for GitHub URL parsing and gh CLI command generation.
  */
 
+import { parse } from "args-tokens";
 import { check as isReservedNameByGitHub } from "github-reserved-names";
+import { parse as parseIntoArray } from "shell-quote";
+
+import type { MaybeLiteral } from "./utils/types";
 
 import { isRawContentURL } from "./url";
+import { isNonEmptyString } from "./utils/string";
 
 export type GitHubPathType =
   | { filename: string; type: "workflow" }
@@ -221,4 +226,70 @@ export function parseGitHubUrlToGhCommand(url: URL): GhCommandResult | null {
   }
 
   return null;
+}
+
+type GhApiResult = GhApiGraphQL | GhApiREST;
+
+type GhApiREST = {
+  method: MaybeLiteral<"GET" | "POST">;
+  pathComponents: string[];
+  type: "rest";
+};
+
+type GhApiGraphQL = {
+  type: "graphql";
+};
+
+export function parseGhApiCommand(command: string): GhApiResult | null {
+  if (!command.startsWith("gh api ")) {
+    return null;
+  }
+
+  const rest = command.slice("gh api ".length).trim();
+  const args = parseIntoArray(rest).filter((arg) => typeof arg === "string");
+
+  const parsed = parse(args, {
+    args: {
+      endpoint: {
+        type: "positional",
+      },
+      field: {
+        short: "F",
+        type: "string",
+      },
+      // Inject file as request body. Auto-switches method to POST
+      input: {
+        type: "string",
+      },
+      method: {
+        default: "GET",
+        short: "X",
+        type: "string",
+      },
+      "raw-field": {
+        short: "f",
+        type: "string",
+      },
+    },
+  });
+
+  const endpoint = parsed.values.endpoint;
+  if (endpoint === "graphql") {
+    return {
+      type: "graphql",
+    };
+  }
+
+  const requestParamsExists =
+    isNonEmptyString(parsed.values["raw-field"]) ||
+    isNonEmptyString(parsed.values.field) ||
+    isNonEmptyString(parsed.values.input);
+  // https://cli.github.com/manual/gh_api
+  const method = requestParamsExists ? "POST" : parsed.values.method;
+
+  return {
+    method: method.toUpperCase(),
+    pathComponents: endpoint.split("/").filter((part) => part.length > 0),
+    type: "rest",
+  };
 }

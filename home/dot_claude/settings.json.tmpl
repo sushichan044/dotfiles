@@ -112,6 +112,15 @@
         ]
       },
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BUN_BE_BUN=1 claude run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_gh_api.ts"
+          }
+        ]
+      },
+      {
         "matcher": "Edit|Write",
         "hooks": [
           {
