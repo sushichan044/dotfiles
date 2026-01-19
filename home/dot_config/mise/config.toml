@@ -40,6 +40,7 @@ watchexec = "latest"
 "cargo:rust-script" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:kdlfmt" = "latest"
+"cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
 "cargo:similarity-py" = "latest"
 "cargo:similarity-rs" = "latest"
 "cargo:similarity-ts" = "latest"
