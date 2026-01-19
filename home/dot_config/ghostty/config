@@ -10,7 +10,7 @@ window-padding-x = 4
 window-padding-y = 4
 
 # Theme
-theme = Catppuccin Macchiato
+theme = light:Catppuccin Frappe,dark:Catppuccin Macchiato
 background-opacity = 0.75
 unfocused-split-opacity = 0.7
 background-blur-radius = 20
@@ -43,3 +43,10 @@ keybind = super+shift+backslash=next_tab
 keybind = super+bracket_left=unbind
 keybind = super+bracket_right=goto_split:previous
 keybind = super+backslash=goto_split:next
+
+# Quick Terminal
+keybind = global:ctrl+j=toggle_quick_terminal
+quick-terminal-position = right
+quick-terminal-size = 40%
+quick-terminal-animation-duration = 0.1
+quick-terminal-autohide = true
