@@ -109,11 +109,17 @@ function prettyPrint(status: StatusShape): string {
 
   const delimiter = pc.dim("|");
 
-  const remaining = isNonEmptyString(status.remainingContextPercentage)
-    ? pc.dim(`${status.remainingContextPercentage}% ctx left`)
-    : "";
+  const context = () => {
+    const remaining = status.remainingContextPercentage;
+    if (!isNonEmptyString(remaining)) {
+      return "";
+    }
+    const left = pc.dim(`${remaining}% ctx left`);
+    const aboutToAutoCompact = remaining < 30;
+    return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
+  };
 
-  const parts = [user, path, remaining].filter(isNonEmptyString);
+  const parts = [user, path, context()].filter(isNonEmptyString);
 
   return parts.join(` ${delimiter} `);
 }
