@@ -64,4 +64,7 @@ const hook = defineHook({
   },
 });
 
-export default hook;
+if (import.meta.main) {
+  const { runHook } = await import("cc-hooks-ts");
+  await runHook(hook);
+}
