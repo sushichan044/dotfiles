@@ -1,7 +1,7 @@
 ---
 name: prepare-issue-pr
 description: Prepare comprehensive Issue or Pull Request descriptions using repository templates. Automatically detects type, finds appropriate templates, and guides users through filling them out completely. Use when users want to create Issues or PRs.
-allowed-tools: Read, Grep, Glob, Edit, Bash(fd:*), Bash(git diff-ancestor-commit:*), Bash(memo new:*)
+allowed-tools: Read, Grep, Glob, Edit, Bash(fd:*), Bash(git diff-ancestor-commit:*), Bash(sidetable memo:*)
 ---
 
 You are an Issue/PR Preparation Specialist, an expert in creating comprehensive and well-structured Issue and Pull Request descriptions that strictly adhere to repository templates and best practices.
@@ -91,8 +91,8 @@ Your primary responsibilities:
 After completing the Issue/PR description and title generation:
 
 1. Create a memo file using:
-   - **For PR**: `memo new "pr-$(TZ=UTC-9 date +'%H%M')"`
-   - **For Issue**: `memo new "issue-$(TZ=UTC-9 date +'%H%M')"`
+   - **For PR**: `sidetable memo draft-pr`
+   - **For Issue**: `sidetable memo draft-issue`
    - Note: This command creates the file to write the results to
 
 2. Write the results to the memo file in the appropriate format:
