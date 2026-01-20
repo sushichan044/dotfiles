@@ -61,13 +61,18 @@ type StatusShape = {
   remainingContextPercentage: string | undefined;
 };
 
+function osc8Hyperlink(url: string, text: string): string {
+  const OSC = "\u001B]";
+  const ST = "\u001B\\";
+  return `${OSC}8;;${url}${ST}${text}${OSC}8;;${ST}`;
+}
+
 function buildStatus(input: InputShape): StatusShape {
   const userInfo = os.userInfo();
-  const cwdFromHome = input.cwd.replace(userInfo.homedir, "");
   const hostname = os.hostname();
 
   return {
-    cwd: cwdFromHome,
+    cwd: input.workspace.current_dir,
     hostname,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
@@ -86,7 +91,7 @@ function formatCwd(cwd: string, maxLength: number): string {
   }
 
   const parts: string[] = [];
-  let budget = maxLength - first.length - 7; // 7 for "~/" and "/.../"
+  let budget = maxLength - first.length - 5; // 5 for "/.../"
 
   const fragments = rest.toReversed();
   while (budget > 0) {
@@ -98,14 +103,17 @@ function formatCwd(cwd: string, maxLength: number): string {
     }
   }
 
-  return `~/${first}/.../${parts.toReversed().join("/")}`;
+  return `${first}/.../${parts.toReversed().join("/")}`;
 }
 
 function prettyPrint(status: StatusShape): string {
-  const formattedCwd = formatCwd(status.cwd, 35);
+  const cwdFromHome = status.cwd.replace(os.homedir(), "~");
+
+  const formattedCwd = formatCwd(cwdFromHome, 35);
+  const cwdWithLink = osc8Hyperlink(status.cwd, formattedCwd);
 
   const user = pc.dim(`${status.username}@${status.hostname}`);
-  const path = pc.dim(formattedCwd);
+  const path = pc.dim(cwdWithLink);
 
   const delimiter = pc.dim("|");
 
@@ -114,8 +122,9 @@ function prettyPrint(status: StatusShape): string {
     if (!isNonEmptyString(remaining)) {
       return "";
     }
+
     const left = pc.dim(`${remaining}% ctx left`);
-    const aboutToAutoCompact = remaining < 30;
+    const aboutToAutoCompact = Number(remaining) < 30;
     return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
   };
 
