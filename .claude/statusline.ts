@@ -55,6 +55,7 @@ type InputShape = {
 
 type StatusShape = {
   cwd: string;
+  gitBranch: string | null;
   hostname: string;
   model: string;
   username: string;
@@ -68,12 +69,22 @@ function osc8Hyperlink(url: string, text: string): string {
   return `${OSC}8;;${url}${ST}${text}${OSC}8;;${ST}`;
 }
 
-function buildStatus(input: InputShape): StatusShape {
+async function getCurrentGitBranch(cwd: string): Promise<string | null> {
+  const result = await Bun.$`git -C ${cwd} symbolic-ref --short HEAD`.nothrow().quiet();
+  if (result.exitCode === 0) {
+    return result.text().trim();
+  }
+  return null;
+}
+
+async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
+  const gitBranch = await getCurrentGitBranch(input.workspace.current_dir);
 
   return {
     cwd: input.workspace.current_dir,
+    gitBranch,
     hostname,
     model: input.model.display_name,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
@@ -109,6 +120,13 @@ function formatCwd(cwd: string, maxLength: number): string {
 }
 
 function prettyPrint(status: StatusShape): string {
+  // https://www.nerdfonts.com/cheat-sheet
+  const branchIcon = pc.bold(pc.dim("\uf418"));
+
+  const branch = isNonEmptyString(status.gitBranch)
+    ? `${branchIcon} ${status.gitBranch}`
+    : `${branchIcon} no git repo`;
+
   const model = pc.dim(`🤖 ${status.model}`);
 
   const cwdFromHome = status.cwd.replace(os.homedir(), "~");
@@ -134,14 +152,14 @@ function prettyPrint(status: StatusShape): string {
     return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
   };
 
-  const parts = [model, context()].filter(isNonEmptyString);
+  const parts = [branch, model, context()].filter(isNonEmptyString);
 
   return parts.join(` ${delimiter} `);
 }
 
 if (import.meta.main) {
   const input = JSON.parse(await getStdin()) as InputShape;
-  const status = buildStatus(input);
+  const status = await buildStatus(input);
 
   console.log("\n");
   console.log(prettyPrint(status));
