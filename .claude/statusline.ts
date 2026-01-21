@@ -56,6 +56,7 @@ type InputShape = {
 type StatusShape = {
   cwd: string;
   hostname: string;
+  model: string;
   username: string;
 
   remainingContextPercentage: string | undefined;
@@ -74,6 +75,7 @@ function buildStatus(input: InputShape): StatusShape {
   return {
     cwd: input.workspace.current_dir,
     hostname,
+    model: input.model.display_name,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
   };
@@ -107,12 +109,16 @@ function formatCwd(cwd: string, maxLength: number): string {
 }
 
 function prettyPrint(status: StatusShape): string {
+  const model = pc.dim(`🤖 ${status.model}`);
+
   const cwdFromHome = status.cwd.replace(os.homedir(), "~");
 
   const formattedCwd = formatCwd(cwdFromHome, 35);
   const cwdWithLink = osc8Hyperlink(status.cwd, formattedCwd);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const user = pc.dim(`${status.username}@${status.hostname}`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const path = pc.dim(cwdWithLink);
 
   const delimiter = pc.dim("|");
@@ -128,7 +134,7 @@ function prettyPrint(status: StatusShape): string {
     return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
   };
 
-  const parts = [user, path, context()].filter(isNonEmptyString);
+  const parts = [model, context()].filter(isNonEmptyString);
 
   return parts.join(` ${delimiter} `);
 }
