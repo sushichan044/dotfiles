@@ -70,7 +70,7 @@ function osc8Hyperlink(url: string, text: string): string {
 }
 
 async function getCurrentGitBranch(cwd: string): Promise<string | null> {
-  const result = await Bun.$`git -C ${cwd} symbolic-ref --short HEAD`.nothrow().quiet();
+  const result = await Bun.$`git -C ${cwd} branch --show-current`.nothrow().quiet();
   if (result.exitCode === 0) {
     return result.text().trim();
   }
@@ -92,54 +92,24 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
   };
 }
 
-function formatCwd(cwd: string, maxLength: number): string {
-  if (cwd.length <= maxLength) {
-    return cwd;
-  }
-
-  const trimmedCwd = cwd.startsWith("/") ? cwd.slice(1) : cwd;
-  const [first, ...rest] = trimmedCwd.split("/");
-  if (!isNonEmptyString(first)) {
-    return cwd;
-  }
-
-  const parts: string[] = [];
-  let budget = maxLength - first.length - 5; // 5 for "/.../"
-
-  const fragments = rest.toReversed();
-  while (budget > 0) {
-    const next = fragments.shift();
-
-    if (isNonEmptyString(next)) {
-      parts.push(next);
-      budget -= next.length + 1; // 1 for "/"
-    }
-  }
-
-  return `${first}/.../${parts.toReversed().join("/")}`;
-}
-
 function prettyPrint(status: StatusShape): string {
-  // https://www.nerdfonts.com/cheat-sheet
-  const branchIcon = pc.bold(pc.dim("\uf418"));
-
-  const branch = isNonEmptyString(status.gitBranch)
-    ? `${branchIcon} ${status.gitBranch}`
-    : `${branchIcon} no git repo`;
-
-  const model = pc.dim(`🤖 ${status.model}`);
-
-  const cwdFromHome = status.cwd.replace(os.homedir(), "~");
-
-  const formattedCwd = formatCwd(cwdFromHome, 35);
-  const cwdWithLink = osc8Hyperlink(status.cwd, formattedCwd);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const user = pc.dim(`${status.username}@${status.hostname}`);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const path = pc.dim(cwdWithLink);
-
   const delimiter = pc.dim("|");
+  const model = pc.dim(status.model);
+
+  const branch = () => {
+    // https://www.nerdfonts.com/cheat-sheet
+    const branchIcon = pc.bold(pc.dim("\uf418"));
+    return pc.dim(
+      isNonEmptyString(status.gitBranch)
+        ? `${branchIcon} ${status.gitBranch}`
+        : `${branchIcon} no git`,
+    );
+  };
+
+  const pathname = () => {
+    const lastPath = status.cwd.split("/").at(-1) ?? "";
+    return osc8Hyperlink(status.cwd, lastPath);
+  };
 
   const context = () => {
     const remaining = status.remainingContextPercentage;
@@ -152,9 +122,10 @@ function prettyPrint(status: StatusShape): string {
     return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
   };
 
-  const parts = [branch, model, context()].filter(isNonEmptyString);
+  const parts = [model, context()].filter(isNonEmptyString);
+  const secondLine = [pathname(), branch()];
 
-  return parts.join(` ${delimiter} `);
+  return [parts.join(` ${delimiter} `), secondLine.join(` ${delimiter} `)].join("\n");
 }
 
 if (import.meta.main) {

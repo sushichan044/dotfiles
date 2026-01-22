@@ -17,7 +17,7 @@
   "cleanupPeriodDays": 99999,
   "statusLine": {
     "type": "command",
-    "command": "bunx ccstatusline@latest"
+    "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/statusline.ts"
   },
   "model": "opusplan",
   "language": "Japanese",
