@@ -75,6 +75,7 @@
         "experimental_sandbox_command_assessment": true,
         "shell_snapshot": true,
         "skills": true,
+        "collab": true,
       },
       "mcp_servers": {
         "bundlephobia": {
