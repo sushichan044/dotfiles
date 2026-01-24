@@ -22,7 +22,6 @@
   "model": "opusplan",
   "language": "Japanese",
   "enabledPlugins": {
-    "security-pro@claude-code-templates": true,
     "pr-review-toolkit@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
@@ -34,14 +33,6 @@
     "clangd-lsp@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-code-templates": {
-      "source": {
-        "source": "github",
-        "repo": "davila7/claude-code-templates"
-      }
-    }
   },
   "hooks": {
     "SessionStart": [
@@ -121,15 +112,6 @@
         ]
       },
       {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "BUN_BE_BUN=1 claude run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/prohibit_edit_default_branch.ts"
-          }
-        ]
-      },
-      {
         "matcher": "mcp__deepwiki__.*",
         "hooks": [
           {
@@ -146,7 +128,6 @@
       "Edit",
       "Write",
       "NotebookEdit",
-      "SlashCommand",
       "WebSearch",
 
       "Bash(git:*)",
