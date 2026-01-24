@@ -65,6 +65,9 @@ alias rv='rubymine .'
 alias zv='zed .'
 alias cz='chezmoi'
 
+alias c='claude'
+alias oc='opencode'
+
 if command_exists eza; then
     alias ls='eza --group-directories-first'
     alias ll='eza -abghHliS --git --time-style=iso --group-directories-first'
@@ -83,10 +86,6 @@ if is_linux && command_exists apt; then
     alias agu='sudo apt update && sudo apt upgrade'
     alias agc='sudo apt autoremove -y && sudo apt autoclean -y'
     alias agr='sudo apt remove'
-fi
-
-if command_exists claude; then
-    alias c='claude'
 fi
 
 if command_exists difit; then

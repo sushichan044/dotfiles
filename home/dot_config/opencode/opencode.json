@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "one-dark",
+  "default_agent": "plan",
+  "mcp": {
+    "aws-knowledge": {
+      "url": "https://knowledge-mcp.global.api.aws",
+      "type": "remote"
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "deepwiki": {
+      "type": "remote",
+      "url": "https://mcp.deepwiki.com/mcp"
+    },
+    "grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app"
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": [
+        "deno",
+        "run",
+        "--allow-env",
+        "npm:@modelcontextprotocol/server-sequential-thinking@latest"
+      ]
+    }
+  }
+}

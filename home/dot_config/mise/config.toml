@@ -34,6 +34,7 @@ watchexec = "latest"
 "npm:ccusage" = "latest"
 "npm:repomix" = "latest"
 "claude" = "latest"
+"opencode" = "latest"
 
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
