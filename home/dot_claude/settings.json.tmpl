@@ -35,16 +35,6 @@
     "code-simplifier@claude-plugins-official": true
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "BUN_BE_BUN=1 claude run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/auto_update_plugin_marketplace.ts"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
