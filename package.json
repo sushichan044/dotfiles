@@ -11,7 +11,7 @@
   "dependencies": {
     "args-tokens": "^0.23.0",
     "arkregex": "^0.0.5",
-    "cc-hooks-ts": "2.1.11",
+    "cc-hooks-ts": "2.1.19",
     "get-stdin": "^9.0.0",
     "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
