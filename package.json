@@ -19,7 +19,7 @@
     "pathe": "2.0.3",
     "picocolors": "^1.1.1",
     "shell-quote": "^1.8.3",
-    "unist-util-visit": "5.0.0"
+    "unist-util-visit": "5.1.0"
   },
   "devDependencies": {
     "@opencode-ai/plugin": "^1.1.34",
