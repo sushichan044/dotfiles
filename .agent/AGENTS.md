@@ -19,6 +19,10 @@ GitHub Wiki: mcp**deepwiki (ask_question/read_wiki_contents/read_wiki_structure)
 GitHub Code Search: mcp**grep\_\_searchGitHub (greps across public repos)
 Thinking: sequential-thinking for complex tasks
 
+### Core Skills
+
+- Use `playwright-cli` for browser automation
+
 ### Development Styles (Recommended)
 
 - TDD: MUST follow 't-wada' recommended practices
