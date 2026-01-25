@@ -15,7 +15,7 @@
     "get-stdin": "^9.0.0",
     "github-reserved-names": "^2.1.1",
     "mdast-util-from-markdown": "2.0.2",
-    "oxfmt": "0.24.0",
+    "oxfmt": "0.26.0",
     "pathe": "2.0.3",
     "picocolors": "^1.1.1",
     "shell-quote": "^1.8.3",
