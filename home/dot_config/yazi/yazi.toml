@@ -1,14 +1,3 @@
 # A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
-
-[[plugin.prepend_previewers]]
-mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}"
-run = "ouch"
-
-
-[opener]
-extract = [
-  { run = 'ouch d -y %*', desc = "Extract here with ouch", for = "windows" },
-  { run = 'ouch d -y "$@"', desc = "Extract here with ouch", for = "unix" },
-]

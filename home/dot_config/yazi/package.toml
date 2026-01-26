@@ -1,7 +1,0 @@
-[[plugin.deps]]
-use = "ndtoan96/ouch"
-rev = "594b8a2"
-hash = "c9e628fc0312d198db22ae2fa74883b"
-
-[flavor]
-deps = []
