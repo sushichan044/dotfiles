@@ -1,0 +1,91 @@
+#!/bin/bash
+
+clean_cargo_cache() {
+    if ! type "cargo" >/dev/null 2>&1; then
+        echo "⚠️ Command 'cargo' not found. Skipping Cargo cache cleanup..."
+        return 1
+    fi
+
+    if ! type "cargo-clean-all" >/dev/null 2>&1; then
+        echo "⚠️ Command 'cargo-clean-all' not found. Please install it to clean Cargo cache."
+        return 1
+    fi
+
+    if ! type "ghq" >/dev/null 2>&1; then
+        echo "⚠️ Command 'ghq' not found. We cannot determine entrypoint for cargo-clean-all. Skipping..."
+        return 1
+    fi
+
+    local entrypoint
+    entrypoint="$(ghq root)"
+
+    cargo-clean-all --keep-days 7 "$entrypoint"
+
+    echo "✅ Cargo cache cleaned."
+}
+
+clean_go_cache() {
+    if ! type "go" >/dev/null 2>&1; then
+        echo "⚠️ Command 'go' not found. Skipping Go cache cleanup..."
+        return 1
+    fi
+
+    go clean -cache -modcache
+
+    echo "✅ Go cache cleaned."
+}
+
+LAST_RUN_FILE="$HOME/.cache/sushichan044/dotfiles/maintain_storage_last_run"
+
+get_last_run() {
+    if [[ -f "$LAST_RUN_FILE" ]]; then
+        cat "$LAST_RUN_FILE"
+    else
+        echo "0" # 1970-01-01 00:00:00 UTC
+    fi
+}
+
+write_last_run() {
+    mkdir -p "$(dirname "$LAST_RUN_FILE")"
+    date +%s >"$LAST_RUN_FILE"
+}
+
+should_run() {
+    local last_run_epoch
+    last_run_epoch="$(get_last_run)"
+    local current_epoch
+    current_epoch=$(date +%s)
+    local diff=$((current_epoch - last_run_epoch))
+    local interval=$((7 * 24 * 60 * 60)) # 7 days in seconds
+
+    if ((diff >= interval)); then
+        return 0
+    else
+        return 1
+    fi
+}
+
+run_maintenance() {
+    echo "🧹 Starting storage maintenance tasks..."
+
+    local all_success=true
+
+    if ! clean_cargo_cache; then
+        all_success=false
+    fi
+    if ! clean_go_cache; then
+        all_success=false
+    fi
+
+    if $all_success; then
+        write_last_run
+    fi
+
+    echo "✅ Storage maintenance tasks completed."
+}
+
+if should_run; then
+    run_maintenance
+else
+    echo "⏭️ Storage maintenance tasks were run recently. Skipping..."
+fi

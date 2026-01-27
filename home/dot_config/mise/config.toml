@@ -39,6 +39,7 @@ watchexec = "latest"
 
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
+"cargo:cargo-clean-all" = "latest"
 "cargo:rust-script" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:kdlfmt" = "latest"
