@@ -35,6 +35,18 @@ clean_go_cache() {
     echo "✅ Go cache cleaned."
 }
 
+clear_brew_cache() {
+    if ! type "brew" >/dev/null 2>&1; then
+        echo "⚠️ Command 'brew' not found. Skipping Homebrew cache cleanup..."
+        return 1
+    fi
+
+    # Some brews required sudo permissions, but we cannot run brew with sudo.
+    brew cleanup --prune=all || true
+
+    echo "✅ Homebrew cache cleaned."
+}
+
 LAST_RUN_FILE="$HOME/.cache/sushichan044/dotfiles/maintain_storage_last_run"
 
 get_last_run() {
@@ -74,6 +86,9 @@ run_maintenance() {
         all_success=false
     fi
     if ! clean_go_cache; then
+        all_success=false
+    fi
+    if ! clear_brew_cache; then
         all_success=false
     fi
 
