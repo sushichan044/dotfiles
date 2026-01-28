@@ -10,6 +10,5 @@
 
 .mise.local.toml
 CLAUDE.local.md
-GEMINI.local.md
 # OpenAI Codex
 AGENTS.override.md

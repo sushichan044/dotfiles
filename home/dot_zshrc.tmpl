@@ -35,10 +35,6 @@ if command_exists rg; then
   export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/.ripgreprc"
 fi
 
-if command_exists gemini; then
-  export SEATBELT_PROFILE="permissive-open"
-fi
-
 if command_exists git-wt; then
   eval "$(git-wt --init zsh --nocd)"
 fi
