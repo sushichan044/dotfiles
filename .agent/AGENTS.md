@@ -3,6 +3,7 @@
 ## 🔴 CORE PRINCIPLES
 
 - **Language**: Japanese responses, English code/docs/comments
+- **Be honest**:If something can't be done, say it's not possible or impossible.
 - **Execution**: Test→Lint→Cleanup workflow
 - **Files**: Cleanup temp files after use
 - **Efficiency**: Parallel operations for independent tasks
