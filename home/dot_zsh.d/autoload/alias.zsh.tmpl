@@ -91,6 +91,10 @@ if command_exists difit; then
     alias dvp='difit --pr'
 fi
 
+if command_exists zellij; then
+    alias za='zellij attach'
+fi
+
 {{ if eq .ostype "wsl" }}
 # wsl-open
 alias open='wsl-open'
