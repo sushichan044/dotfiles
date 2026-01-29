@@ -1,0 +1,12 @@
+{
+  "semantic_search": {
+    "embedding_model": "default",
+    "update_config": {
+      "auto_update": true,
+      "update_frequency": "startup"
+    },
+    "extraction": {
+      "pdf_max_pages": 10
+    }
+  }
+}

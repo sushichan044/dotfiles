@@ -33,6 +33,7 @@ watchexec = "latest"
 "npm:@playwright/mcp" = "latest"
 "npm:ccusage" = "latest"
 "npm:repomix" = "latest"
+"pipx:git+https://github.com/54yyyu/zotero-mcp.git" = "latest"
 "claude" = "latest"
 "opencode" = "latest"
 
