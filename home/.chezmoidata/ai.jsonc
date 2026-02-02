@@ -70,7 +70,6 @@
     "config": {
       "approval_policy": "on-request",
       "features": {
-        "apps": true,
         "collaboration_modes": true,
         "experimental_sandbox_command_assessment": true,
         "rmcp_client": true,
