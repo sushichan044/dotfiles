@@ -5,8 +5,8 @@
       "installMethod": "unknown",
       "mcpServers": {
         "aws-knowledge": {
-          "url": "https://knowledge-mcp.global.api.aws",
           "type": "http",
+          "url": "https://knowledge-mcp.global.api.aws",
         },
         "bundlephobia": {
           "type": "http",
@@ -70,11 +70,14 @@
     "config": {
       "approval_policy": "on-request",
       "features": {
-        "rmcp_client": true,
+        "apps": true,
+        "collaboration_modes": true,
         "experimental_sandbox_command_assessment": true,
+        "rmcp_client": true,
         "shell_snapshot": true,
         "skills": true,
-        "collaboration_modes": true,
+        "steer": true,
+        "unified_exec": true,
       },
       "mcp_servers": {
         "bundlephobia": {
@@ -118,8 +121,8 @@
     "mcp": {
       "mcpServers": {
         "aws-knowledge": {
-          "url": "https://knowledge-mcp.global.api.aws",
           "type": "http",
+          "url": "https://knowledge-mcp.global.api.aws",
         },
         "bundlephobia": {
           "type": "http",
