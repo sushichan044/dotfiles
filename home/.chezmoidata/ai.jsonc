@@ -71,7 +71,6 @@
       "approval_policy": "on-request",
       "features": {
         "rmcp_client": true,
-        "web_search_request": true,
         "experimental_sandbox_command_assessment": true,
         "shell_snapshot": true,
         "skills": true,
@@ -112,6 +111,7 @@
       "sandbox_workspace_write": {
         "network_access": true,
       },
+      "web_search": "cached",
     },
   },
   "cursor": {
