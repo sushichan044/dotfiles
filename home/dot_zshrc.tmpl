@@ -28,6 +28,9 @@ load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
+  if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+    export MISE_GITHUB_TOKEN="$(gh auth token)"
+  fi
   eval "$(mise activate zsh)"
 fi
 

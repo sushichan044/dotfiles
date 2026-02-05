@@ -3,7 +3,6 @@
 update() {
     local env_files=(
         "$HOME/.sushichan044/op/chezmoi.env"
-        "$HOME/.sushichan044/op/mise.env"
     )
 
     local args=()
