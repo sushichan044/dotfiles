@@ -8,6 +8,7 @@
 - **Files**: Cleanup temp files after use
 - **Efficiency**: Parallel operations for independent tasks
 - **Path Handling**: You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
+- **Clarification**: If there are any ambiguities during planning, actively make a tool call to ask the user, as ambiguous plans lead to significant rework.
 
 ## 🟡 ESSENTIAL ADDITIONS
 
@@ -46,6 +47,7 @@ Thinking: sequential-thinking for complex tasks
 ### Claude Code
 
 - Using `code-simplifier` sub agent after writing complex code is highly recommended.
+- ALWAYS use `AskUserQuestion` tool to ask to the user.
 
 ---
 
