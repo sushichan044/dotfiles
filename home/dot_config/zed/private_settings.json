@@ -7,8 +7,8 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "features": {
-    "edit_prediction_provider": "copilot",
+  "edit_predictions": {
+    "provider": "copilot",
   },
   "terminal": {
     "font_family": "MesloLGS NF",
@@ -99,6 +99,18 @@
     "biome": {
       "settings": {
         "require_config_file": true,
+      },
+    },
+  },
+  "languages": {
+    "JavaScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true,
+      },
+    },
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true,
       },
     },
   },
