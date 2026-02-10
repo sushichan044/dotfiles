@@ -169,13 +169,6 @@ if OS.mac?
   cask "inkscape"
   cask "jetbrains-toolbox"
 
-  if OS::Mac.version >= :tahoe
-    cask "jordanbaird-ice@beta"
-  else
-    # beta build seems not working on macOS Ventura and earlier
-    cask "jordanbaird-ice"
-  end
-
   cask "karabiner-elements"
   cask "linearmouse"
   cask "mactex-no-gui"
@@ -190,6 +183,7 @@ if OS.mac?
   cask "session-manager-plugin"
   cask "slack-cli"
   cask "spotify"
+  cask "thaw"
   cask "thebrowsercompany-dia"
   cask "visual-studio-code"
   cask "voiceink"
