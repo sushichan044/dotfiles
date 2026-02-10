@@ -26,6 +26,7 @@ watchexec = "latest"
 "npm:pyright" = "latest"
 
 # AI tools
+"cargo:octorus" = "latest"
 "github:openai/codex" = { version = "latest", bin = "codex" }
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"
