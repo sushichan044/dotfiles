@@ -106,6 +106,7 @@ cz = "!f() { git-cz }; f"
 default-branch-origin = "symbolic-ref --quiet --short refs/remotes/origin/HEAD"
 default-branch = "!f() { git default-branch-origin | sed 's@^origin/@@'; }; f"
 current-branch = "branch --show-current"
+repo-root = "rev-parse --show-toplevel"
 
 swc = "!f() { \
     suffix=\"${1:+-$1}\"; \

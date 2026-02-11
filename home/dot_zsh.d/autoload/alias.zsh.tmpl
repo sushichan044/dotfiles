@@ -1,4 +1,3 @@
-alias clr='clear'
 alias mkdir='mkdir -p'
 
 alias reitou='tar -zcvf'
@@ -12,24 +11,21 @@ alias gp='git push'
 alias gpf='git push --force-with-lease'
 alias gpl='git pull'
 alias grm='git rm'
-alias grt='cd "$(git rev-parse --show-toplevel)"'
+alias grt='cd "$(git repo-root)"'
 alias lg='lazygit'
 alias gg='ghq get'
 
 alias br='brew'
 alias bru='brew update && brew bundle install --file="$HOME/.Brewfile"'
 alias bri='brew install'
-alias brr='brew remove'
 
 alias d='docker'
 alias dc='docker compose'
 alias dcb='docker compose build'
 alias dcu='docker compose up -d'
 alias dcd='docker compose down'
-alias lzd='lazydocker'
 
 # mise
-alias m='mise'
 alias mi='mise install'
 alias mr='mise run'
 alias mw='mise watch'
