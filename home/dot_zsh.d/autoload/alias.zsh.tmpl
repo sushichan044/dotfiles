@@ -57,10 +57,25 @@ crw() {
 }
 alias rv='rubymine .'
 alias zv='zed .'
-alias cz='chezmoi'
+xv() {
+    if ! is_mac; then
+        echo "alias xv is only available on macOS."
+        return 1
+    fi
+
+    local ws=(*.xcodeproj)
+    if ((${#ws[@]} == 1)); then
+        open "$ws"
+    else
+        echo "Multiple or no .xcodeproj files found."
+        return 1
+    fi
+}
 
 alias c='claude'
 alias oc='opencode'
+
+alias cz='chezmoi'
 
 if command_exists eza; then
     alias ls='eza --group-directories-first'
