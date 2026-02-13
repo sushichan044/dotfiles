@@ -73,7 +73,6 @@
         "collaboration_modes": true,
         "experimental_sandbox_command_assessment": true,
         "rmcp_client": true,
-        "shell_snapshot": true,
         "skills": true,
         "steer": true,
         "unified_exec": true,
