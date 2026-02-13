@@ -1,6 +1,7 @@
 ---
 name: codex-review
 description: Codex CLI を使って、noninteractive に code review を依頼することができます。
+allowed-tools: Bash(codex review:*)
 ---
 
 # Run a code review non-interactively
