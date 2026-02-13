@@ -9,6 +9,7 @@
 - **Efficiency**: Parallel operations for independent tasks
 - **Path Handling**: You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
 - **Clarification**: If there are any ambiguities during planning, actively make a tool call to ask the user, as ambiguous plans lead to significant rework.
+- **Automatic Code Review**: If you've performed a non-trivial task, it is highly recommended to request a review using the `codex-review` skill.
 
 ## 🟡 ESSENTIAL ADDITIONS
 
