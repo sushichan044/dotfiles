@@ -37,7 +37,7 @@ if command_exists rg; then
 fi
 
 if command_exists git-wt; then
-  eval "$(git-wt --init zsh --nocd)"
+  eval "$(git-wt --init zsh)"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
