@@ -75,7 +75,6 @@
         "rmcp_client": true,
         "skills": true,
         "steer": true,
-        "unified_exec": true,
       },
       "mcp_servers": {
         "bundlephobia": {
