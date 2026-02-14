@@ -98,8 +98,8 @@ if is_linux && command_exists apt; then
 fi
 
 if command_exists difit; then
-    alias dv='difit'
-    alias dvp='difit --pr'
+    alias dft='difit --include-untracked'
+    alias dfp='difit --pr'
 fi
 
 if command_exists zellij; then
