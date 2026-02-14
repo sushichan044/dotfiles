@@ -71,10 +71,7 @@
       "approval_policy": "on-request",
       "features": {
         "collaboration_modes": true,
-        "experimental_sandbox_command_assessment": true,
-        "rmcp_client": true,
-        "skills": true,
-        "steer": true,
+        "steer": true
       },
       "mcp_servers": {
         "bundlephobia": {
