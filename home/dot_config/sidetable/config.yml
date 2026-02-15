@@ -1,40 +1,31 @@
-# Required. Sets the project-local private area name.
-# If sets to ".sidetable", the private area path is "./.sidetable"
 directory: ".sushichan044"
 
-commands:
+tools:
   ghq:
-    # Required. Command name to execute.
-    command: "ghq"
-    # Optional. Arguments to pass to the command.
-    # If omitted, sidetable just runs `<command>` with user-provided args.
-    args:
-      # Arguments added before user-provided args.
-      prepend:
-        - "get"
-        - "-u"
+    run: "ghq"
     env:
-      # You can use `{{.CommandDir}}` to get the command-local directory path.
-      # In this example, GHQ_ROOT is set to "./.sidetable/ghq"
-      GHQ_ROOT: "{{.CommandDir}}"
-    # Optional. Description shown in `sidetable list`.
-    description: "ghq get wrapper with project-local root"
-    # Optional. Short alias for the command.
-    alias: "gg"
+      GHQ_ROOT: "{{.ToolDir}}"
+    description: "ghq wrapper with project-local configuration"
 
   memo:
-    # You can use `{{.ConfigDir}}` to get the configuration directory path.
-    # You can set your own shell scripts as command.
-    command: "memo"
+    run: "memo"
     args:
       prepend:
         - new
-    description: "Open project note file"
+    description: "Create project note file"
     env:
-      MEMO_ROOT_DIR: "{{.CommandDir}}"
+      MEMO_ROOT_DIR: "{{.ToolDir}}"
 
   dir:
-    command: "{{.ConfigDir}}/tmpdir.sh"
+    run: "{{.ConfigDir}}/tmpdir.sh"
     description: "Create a temporary directory in the project-local area"
     env:
-      BASE_DIR: "{{.CommandDir}}"
+      BASE_DIR: "{{.ToolDir}}"
+
+aliases:
+  gg:
+    tool: ghq
+    args:
+      prepend:
+        - get
+        - -u
