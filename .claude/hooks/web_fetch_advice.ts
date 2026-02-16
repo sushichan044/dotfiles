@@ -33,7 +33,7 @@ const hook = defineHook({
             hookEventName: "PreToolUse",
             permissionDecision: "deny",
             permissionDecisionReason:
-              "Use mcp__notion__fetch instead of web fetch for Notion URLs.",
+              "Use mcp__notion__notion-fetch instead of web fetch for Notion URLs.",
           },
         },
       });
