@@ -33,6 +33,7 @@ watchexec = "latest"
 "npm:@modelcontextprotocol/inspector" = "latest"
 "npm:@playwright/cli" = "latest"
 "npm:@playwright/mcp" = "latest"
+"npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
 "npm:ccusage" = "latest"
 "claude" = "latest"
 "opencode" = "latest"
