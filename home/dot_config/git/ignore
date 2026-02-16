@@ -12,3 +12,6 @@
 CLAUDE.local.md
 # OpenAI Codex
 AGENTS.override.md
+
+# AI
+.playwright-cli/
