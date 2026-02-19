@@ -70,7 +70,7 @@ add_to_path_if_not_exists() {
     fi
 
     case ":$PATH:" in
-    *":$dir:"*) ;;
+    *":?$dir:"*) ;; # 先頭に追加された場合 <dir>: となるため、最初の : はない場合がある
     *) export PATH="$dir:$PATH" ;;
     esac
 }
