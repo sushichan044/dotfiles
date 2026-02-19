@@ -82,7 +82,7 @@ add_to_manpath_if_not_exists() {
     fi
 
     case ":$MANPATH:" in
-    *":$dir:"*) ;;
+    *":?$dir:"*) ;; # 先頭に追加された場合 <dir>: となるため、最初の : はない場合がある
     *) export MANPATH="$dir:$MANPATH" ;;
     esac
 }
