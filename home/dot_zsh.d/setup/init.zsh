@@ -1,4 +1,4 @@
-typeset -gU path
+typeset -gU path PATH
 
 autoload -Uz colors
 colors
