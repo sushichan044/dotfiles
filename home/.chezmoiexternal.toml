@@ -7,9 +7,3 @@ refreshPeriod = "168h"
 type = "file"
 url = "https://raw.githubusercontent.com/vercel/next.js/refs/heads/canary/scripts/trace-to-event-format.mjs"
 refreshPeriod = "168h"
-[".claude/skills/ast-grep"]
-type = "archive"
-url = "https://api.github.com/repos/ast-grep/claude-skill/tarball/main"
-stripComponents = 3
-include = ["ast-grep/skills/ast-grep/**"]
-refreshPeriod = "168h"
