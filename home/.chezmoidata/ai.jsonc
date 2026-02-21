@@ -71,7 +71,7 @@
       "approval_policy": "on-request",
       "features": {
         "collaboration_modes": true,
-        "steer": true
+        "steer": true,
       },
       "mcp_servers": {
         "bundlephobia": {
