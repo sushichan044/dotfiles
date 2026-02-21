@@ -33,7 +33,7 @@ const hook = defineHook({
 function getLastLine(text: string): string {
   const lines = text.trim().split(/\r?\n/);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return lines[lines.length - 1]!;
+  return lines.at(-1)!;
 }
 
 if (import.meta.main) {
