@@ -14,7 +14,7 @@ const hook = defineHook({
         // Preparing worktree (new branch 'this-is-a-test')
         // HEAD is now at d2b2210 2.1.50
         // /{workspaceRoot}/.wt/this-is-a-test
-        const out = await Bun.$`git wt ${wtName} --no-cd`.nothrow().quiet();
+        const out = await Bun.$`git wt ${wtName} --nocd`.nothrow().quiet();
 
         const wtAbsPath = getLastLine(out.text()).trim();
         console.log(wtAbsPath);
