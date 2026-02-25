@@ -8,7 +8,10 @@
 - **Files**: Cleanup temp files after use
 - **Efficiency**: Parallel operations for independent tasks
 - **Path Handling**: You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
+- **Execution Style**: Do NOT over-explore or over-plan. When the task is straightforward, make the edit directly. Limit codebase exploration to what's strictly necessary. If you already have enough context, start writing code immediately. Never spend more than 2-3 tool calls exploring before making your first edit.
+- **Planning Style**: Only enter planning mode if the task genuinely requires multi-step coordination across 3+ files. For simple edits, bug fixes, or when the user has already described the fix, skip planning entirely and execute directly. If you do plan, keep it to <30 lines and exit plan mode within 1-10 tool calls.
 - **Clarification**: If there are any ambiguities during planning, actively make a tool call to ask the user, as ambiguous plans lead to significant rework.
+- **Scope of Changes**: Only change the files and code paths explicitly requested. Do NOT expand scope to related files, barrel exports, or adjacent refactors unless explicitly asked. If you think broader changes are needed, ask first.
 - **Automatic Code Review**: If you've performed a non-trivial task, it is highly recommended to request a review using the `codex-review` skill.
 
 ## 🟡 ESSENTIAL ADDITIONS
@@ -17,10 +20,8 @@
 
 1. Prefer use context7 first (resolve-library-id → get-library-docs)
 2. For architecture/interactive questions: use GitHub Wiki tools from deepwiki
-
-GitHub Wiki: mcp**deepwiki (ask_question/read_wiki_contents/read_wiki_structure)
-GitHub Code Search: mcp**grep\_\_searchGitHub (greps across public repos)
-Thinking: sequential-thinking for complex tasks
+    - GitHub Wiki: mcp**deepwiki (ask_question/read_wiki_contents/read_wiki_structure)
+    - GitHub Code Search: mcp**grep\_\_searchGitHub (greps across public repos)
 
 ### Core Skills
 

@@ -32,14 +32,6 @@
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
         },
-        "sequential-thinking": {
-          "args": [
-            "run",
-            "--allow-env",
-            "npm:@modelcontextprotocol/server-sequential-thinking@latest",
-          ],
-          "command": "deno",
-        },
       },
       "preferredNotifChannel": "terminal_bell",
       "shiftEnterKeyBindingInstalled": true,
@@ -49,21 +41,7 @@
   "claude_desktop": {
     "settings": {
       "globalShortcut": "",
-      "mcpServers": {
-        "sequential-thinking": {
-          "args": [
-            "x",
-            "deno",
-            "--",
-            "deno",
-            "run",
-            "--allow-env",
-            "npm:@modelcontextprotocol/server-sequential-thinking@latest",
-          ],
-          "command": "mise",
-          "type": "stdio",
-        },
-      },
+      "mcpServers": {},
     },
   },
   "codex": {
@@ -92,14 +70,6 @@
         "sentry": {
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
-        },
-        "sequential-thinking": {
-          "args": [
-            "run",
-            "--allow-env",
-            "npm:@modelcontextprotocol/server-sequential-thinking@latest",
-          ],
-          "command": "deno",
         },
       },
       "model_reasoning_effort": "medium",
@@ -141,14 +111,6 @@
         "sentry": {
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
-        },
-        "sequential-thinking": {
-          "args": [
-            "run",
-            "--allow-env",
-            "npm:@modelcontextprotocol/server-sequential-thinking@latest",
-          ],
-          "command": "deno",
         },
       },
     },
