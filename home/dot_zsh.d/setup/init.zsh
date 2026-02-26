@@ -104,6 +104,15 @@ load_zsh_files_from_dir() {
     fi
 }
 
+cached_eval() {
+  mkdir -p "$XDG_CACHE_HOME/zsh"
+  local cache="$XDG_CACHE_HOME/zsh/$(echo $1 | tr ' ' '_').zsh"
+  if [[ ! -s "$cache" ]]; then
+    eval $1 > $cache
+  fi
+  source "$cache"
+}
+
 # This function requires bash or zsh
 copy-to-clipboard() {
     if test "$#" = 0; then

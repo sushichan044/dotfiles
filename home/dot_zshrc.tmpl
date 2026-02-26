@@ -68,7 +68,7 @@ fi
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform/plugin-cache"
 
 if command_exists git-wt; then
-  eval "$(git-wt --init zsh)"
+  cached_eval "git-wt --init zsh"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
@@ -100,20 +100,20 @@ if command_exists aws_completer; then
 fi
 
 if command_exists uv; then
-  eval "$(uv generate-shell-completion zsh)"
+  cached_eval "uv generate-shell-completion zsh"
 fi
 
 if command_exists uvx; then
-  eval "$(uvx --generate-shell-completion zsh)"
+  cached_eval "uvx --generate-shell-completion zsh"
 fi
 
 if command_exists sidetable; then
-  eval "$(sidetable completion zsh)"
+  cached_eval "sidetable completion zsh"
 fi
 
 if command_exists pitchfork; then
-  eval "$(pitchfork activate zsh)"
-  eval "$(pitchfork completion zsh)"
+  cached_eval "pitchfork activate zsh"
+  cached_eval "pitchfork completion zsh"
 fi
 
 GCLOUD_BASE="$BREW_BASE/share/google-cloud-sdk"
