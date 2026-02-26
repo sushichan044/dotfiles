@@ -49,14 +49,15 @@ autoload -Uz compinit && compinit
 # Only make targets appear in `make` completions
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 
-# To customize prompt, run `p10k configure` or edit dot_zsh.d/autoload/p10k.zsh.
-load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
+# To customize prompt, run `p10k configure` or edit dot_zsh.d/autoload/eager/p10k.zsh.
+load_zsh_files_from_dir "$HOME/.zsh.d/autoload/eager"
+zsh-defer load_zsh_files_from_dir "$HOME/.zsh.d/autoload/lazy"
 
 # Auto suggestion text color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
-  eval "$(mise activate zsh)"
+  cached_eval "mise activate zsh"
 fi
 
 if command_exists rg; then
@@ -68,7 +69,7 @@ fi
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform/plugin-cache"
 
 if command_exists git-wt; then
-  cached_eval "git-wt --init zsh"
+  zsh-defer cached_eval "git-wt --init zsh"
 fi
 
 {{ if eq .chezmoi.os "linux" "darwin" -}}
@@ -91,50 +92,54 @@ add_to_path_if_not_exists "$PNPM_HOME"
 
 # Dynamic Shell Completions
 if command_exists fzf; then
-  source <(fzf --zsh)
+  zsh-defer cached_eval "fzf --zsh"
 fi
 
 # AWS CLI
 if command_exists aws_completer; then
-  complete -C aws_completer aws
+  zsh-defer eval 'complete -C aws_completer aws'
 fi
 
 if command_exists uv; then
-  cached_eval "uv generate-shell-completion zsh"
+  zsh-defer cached_eval "uv generate-shell-completion zsh"
 fi
 
 if command_exists uvx; then
-  cached_eval "uvx --generate-shell-completion zsh"
+  zsh-defer cached_eval "uvx --generate-shell-completion zsh"
 fi
 
 if command_exists sidetable; then
-  cached_eval "sidetable completion zsh"
+  zsh-defer cached_eval "sidetable completion zsh"
 fi
 
 if command_exists pitchfork; then
-  cached_eval "pitchfork activate zsh"
-  cached_eval "pitchfork completion zsh"
+  zsh-defer cached_eval "pitchfork activate zsh"
+  zsh-defer cached_eval "pitchfork completion zsh"
 fi
 
 GCLOUD_BASE="$BREW_BASE/share/google-cloud-sdk"
 if dir_exists "$GCLOUD_BASE"; then
-  if file_exists "$GCLOUD_BASE/path.zsh.inc"; then
-    # The next line updates PATH for the Google Cloud SDK.
-    . "$GCLOUD_BASE/path.zsh.inc"
-  fi
-
-  if file_exists "$GCLOUD_BASE/completion.zsh.inc"; then
-    # The next line enables shell command completion for gcloud.
-    . "$GCLOUD_BASE/completion.zsh.inc"
-  fi
+  _setup_gcloud() {
+    if file_exists "$GCLOUD_BASE/path.zsh.inc"; then
+      source "$GCLOUD_BASE/path.zsh.inc"
+    fi
+    if file_exists "$GCLOUD_BASE/completion.zsh.inc"; then
+      source "$GCLOUD_BASE/completion.zsh.inc"
+    fi
+    unfunction _setup_gcloud
+  }
+  zsh-defer _setup_gcloud
 fi
 
-if command_exists gh && gh auth status &>/dev/null; then
-  GH_TOKEN="$(gh auth token)"
-
-  if command_exists mise; then
-    export MISE_GITHUB_TOKEN="$GH_TOKEN"
+_setup_gh_token() {
+  if command_exists gh && gh auth status &>/dev/null; then
+    GH_TOKEN="$(gh auth token)"
+    if command_exists mise; then
+      export MISE_GITHUB_TOKEN="$GH_TOKEN"
+    fi
   fi
-fi
+  unfunction _setup_gh_token
+}
+zsh-defer _setup_gh_token
 
 zsh-defer unfunction source
