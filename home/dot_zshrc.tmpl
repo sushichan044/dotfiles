@@ -11,9 +11,16 @@ fi
 COMPLETION_HOME="$HOME/.zsh.d/completions"
 fpath=("$COMPLETION_HOME" "$HOMEBREW_PREFIX/share/zsh/site-functions" "${fpath[@]}")
 
-if command_exists sheldon; then
-  eval "$(sheldon source)"
+# https://zenn.dev/fuzmare/articles/zsh-plugin-manager-cache
+# Cache sheldon script
+sheldon_config_dir="$XDG_CONFIG_HOME/sheldon"
+sheldon_cache="$sheldon_config_dir/cache.zsh"
+sheldon_toml="$sheldon_config_dir/plugins.toml"
+if [[ ! -r "$sheldon_cache" || "$sheldon_toml" -nt "$sheldon_cache" ]]; then
+  sheldon source > "$sheldon_cache"
 fi
+source "$sheldon_cache"
+unset sheldon_config_dir sheldon_cache sheldon_toml
 
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
@@ -28,7 +35,6 @@ load_zsh_files_from_dir "$HOME/.zsh.d/autoload"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
-
   eval "$(mise activate zsh)"
 fi
 
