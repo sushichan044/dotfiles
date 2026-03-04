@@ -47,6 +47,7 @@ watchexec = "latest"
 "cargo:difftastic" = "latest"
 "cargo:kdlfmt" = "latest"
 "cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
+"github:datadog-labs/pup" = "latest"
 "github:k1LoW/deck" = "latest"
 "github:k1LoW/git-wt" = "latest"
 "github:sushichan044/sidetable" = "latest"
