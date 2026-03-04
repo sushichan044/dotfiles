@@ -49,8 +49,8 @@ After receiving user answers, output:
 
 ## Decisions
 
-| Item | Choice | Reason | Notes |
-|------|--------|--------|-------|
+| Item         | Choice   | Reason            | Notes                       |
+| ------------ | -------- | ----------------- | --------------------------- |
 | Data storage | Database | Scalability needs | Consider migration strategy |
 
 ## Next Steps
@@ -59,7 +59,7 @@ After receiving user answers, output:
    - Details...
 2. **Second task**
    - Details...
-</output_format>
+     </output_format>
 
 ---
 

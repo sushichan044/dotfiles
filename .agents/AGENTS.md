@@ -20,8 +20,8 @@
 
 1. Prefer use context7 first (resolve-library-id → get-library-docs)
 2. For architecture/interactive questions: use GitHub Wiki tools from deepwiki
-    - GitHub Wiki: mcp**deepwiki (ask_question/read_wiki_contents/read_wiki_structure)
-    - GitHub Code Search: mcp**grep\_\_searchGitHub (greps across public repos)
+   - GitHub Wiki: mcp\*\*deepwiki (ask_question/read_wiki_contents/read_wiki_structure)
+   - GitHub Code Search: mcp\*\*grep\_\_searchGitHub (greps across public repos)
 
 ### Core Skills
 
