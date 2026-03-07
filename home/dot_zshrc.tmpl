@@ -43,8 +43,7 @@ fi
 source "$sheldon_cache"
 unset sheldon_config_dir sheldon_cache sheldon_toml
 
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit -C
 
 # Only make targets appear in `make` completions
 zstyle ':completion:*:*:make:*' tag-order 'targets'
@@ -57,7 +56,7 @@ zsh-defer load_zsh_files_from_dir "$HOME/.zsh.d/autoload/lazy"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
-  cached_eval "mise activate zsh"
+  zsh-defer cached_eval "mise activate zsh"
 fi
 
 if command_exists rg; then
@@ -83,11 +82,6 @@ if command_exists fzf; then
   zsh-defer cached_eval "fzf --zsh"
 fi
 
-# AWS CLI
-if command_exists aws_completer; then
-  zsh-defer eval 'complete -C aws_completer aws'
-fi
-
 if command_exists uv; then
   zsh-defer cached_eval "uv generate-shell-completion zsh"
 fi
@@ -101,7 +95,6 @@ if command_exists sidetable; then
 fi
 
 if command_exists pitchfork; then
-  zsh-defer cached_eval "pitchfork activate zsh"
   zsh-defer cached_eval "pitchfork completion zsh"
 fi
 
