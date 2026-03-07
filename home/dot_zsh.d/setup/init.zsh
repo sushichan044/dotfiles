@@ -56,11 +56,11 @@ is_empty_string() {
 }
 
 is_mac() {
-    [ "$(uname)" = 'Darwin' ]
+    [[ "$OSTYPE" == darwin* ]]
 }
 
 is_linux() {
-    [ "$(uname)" = 'Linux' ]
+    [[ "$OSTYPE" == linux* ]]
 }
 
 add_to_path_if_not_exists() {
