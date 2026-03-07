@@ -72,18 +72,6 @@ if command_exists git-wt; then
   zsh-defer cached_eval "git-wt --init zsh"
 fi
 
-{{ if eq .chezmoi.os "linux" "darwin" -}}
-{{ if eq .chezmoi.os "linux" -}}
-# TBD pnpm
-{{ else if eq .chezmoi.os "darwin" -}}
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-
-add_to_path_if_not_exists "$PNPM_HOME"
-# pnpm end
-{{ end -}}
-{{- end -}}
-
 {{ if not .for_personal }}
 {{/* Load Private zshrc */}}
 {{- (onepasswordDetailsFields "2pybemjhmpdlmbog3ssdgom5uq").notesPlain.value -}}
