@@ -65,9 +65,6 @@ is_linux() {
 
 add_to_path_if_not_exists() {
     local dir="$1"
-    if ! dir_exists "$dir"; then
-        return
-    fi
 
     case ":$PATH:" in
     *":$dir:"*) ;;
@@ -77,9 +74,6 @@ add_to_path_if_not_exists() {
 
 add_to_manpath_if_not_exists() {
     local dir="$1"
-    if ! dir_exists "$dir"; then
-        return
-    fi
 
     case ":$MANPATH:" in
     *":$dir:"*) ;;
@@ -95,7 +89,7 @@ source_if_exists() {
 load_zsh_files_from_dir() {
     local dir="$1"
 
-    if dir_exists "$dir" && is_readable "$dir" && is_executable "$dir"; then
+    if dir_exists "$dir"; then
         # Use find to recursively search for .zsh files
         while IFS= read -r -d '' file; do
             # shellcheck disable=SC1090
