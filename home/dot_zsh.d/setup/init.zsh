@@ -28,7 +28,7 @@ SAVEHIST=2000
 typeset -g WORDCHARS=${WORDCHARS:s@/@}
 
 command_exists() {
-    type "$1" >/dev/null 2>&1
+    (( $+commands[$1] ))
 }
 
 dir_exists() {
