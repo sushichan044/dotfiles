@@ -295,7 +295,11 @@ When the user tells you they're done, read `feedback.json`:
       "timestamp": "..."
     },
     { "run_id": "eval-1-with_skill", "feedback": "", "timestamp": "..." },
-    { "run_id": "eval-2-with_skill", "feedback": "perfect, love this", "timestamp": "..." }
+    {
+      "run_id": "eval-2-with_skill",
+      "feedback": "perfect, love this",
+      "timestamp": "..."
+    }
   ],
   "status": "complete"
 }

@@ -257,7 +257,12 @@ Output from Benchmark mode. Located at `benchmarks/<timestamp>/benchmark.json`.
   "run_summary": {
     "with_skill": {
       "pass_rate": { "mean": 0.85, "stddev": 0.05, "min": 0.8, "max": 0.9 },
-      "time_seconds": { "mean": 45.0, "stddev": 12.0, "min": 32.0, "max": 58.0 },
+      "time_seconds": {
+        "mean": 45.0,
+        "stddev": 12.0,
+        "min": 32.0,
+        "max": 58.0
+      },
       "tokens": { "mean": 3800, "stddev": 400, "min": 3200, "max": 4100 }
     },
     "without_skill": {

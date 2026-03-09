@@ -113,7 +113,9 @@ describe("generateGhCommand", () => {
     const pathMatch: GitHubPathType = { tag: "v1.0.0", type: "release" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toEqual({ command: "gh release view v1.0.0 --repo owner/repo" });
+    expect(result).toEqual({
+      command: "gh release view v1.0.0 --repo owner/repo",
+    });
   });
 
   it("should generate release view command for latest", () => {
@@ -134,7 +136,9 @@ describe("generateGhCommand", () => {
     const pathMatch: GitHubPathType = { filename: "ci.yml", type: "workflow" };
     const result = generateGhCommand(pathMatch, repo);
 
-    expect(result).toEqual({ command: "gh workflow view ci.yml --repo owner/repo" });
+    expect(result).toEqual({
+      command: "gh workflow view ci.yml --repo owner/repo",
+    });
   });
 
   it("should generate run view command", () => {
