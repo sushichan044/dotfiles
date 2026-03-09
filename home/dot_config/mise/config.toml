@@ -37,7 +37,7 @@ watchexec = "latest"
 "npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
 "npm:ccusage" = "latest"
 "claude" = "latest"
-"opencode" = "latest"
+"opencode" = "1.2.24"
 
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
