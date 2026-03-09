@@ -31,7 +31,7 @@ ensure_zcompiled ~/.zshrc
 # prepare completions
 COMPLETION_HOME="$HOME/.zsh.d/completions"
 fpath=("$COMPLETION_HOME" "${fpath[@]}")
-autoload -Uz compinit && compinit -C
+autoload -Uz compinit && compinit
 
 # https://zenn.dev/fuzmare/articles/zsh-plugin-manager-cache
 # Cache sheldon script
@@ -132,3 +132,17 @@ _setup_gh_token() {
 zsh-defer _setup_gh_token
 
 zsh-defer unfunction source
+
+# Expand alias with space and enter
+_simple_abbreviation() {
+  zle _expand_alias
+  zle self-insert
+}
+_simple_abbreviation_accept_line() {
+  zle _expand_alias
+  zle accept-line
+}
+zle -N _simple_abbreviation
+bindkey ' ' _simple_abbreviation
+zle -N _simple_abbreviation_accept_line
+bindkey '^M' _simple_abbreviation_accept_line
