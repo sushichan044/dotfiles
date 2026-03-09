@@ -7,7 +7,8 @@
     "lint:fix": "bun run lint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsgo --noEmit",
+    "test": "bun test"
   },
   "dependencies": {
     "args-tokens": "0.24.2",
