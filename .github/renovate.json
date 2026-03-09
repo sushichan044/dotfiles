@@ -12,7 +12,7 @@
       "groupName": "mise-auto-merge",
       "matchManagers": ["mise"],
       "matchUpdateTypes": ["minor", "patch"],
-      "autoMerge": true
+      "automerge": true
     },
     {
       "groupName": "mise-major",
@@ -30,7 +30,7 @@
       "groupName": "local-deps-auto-merge",
       "matchManagers": ["bun"],
       "matchUpdateTypes": ["minor", "patch"],
-      "autoMerge": true
+      "automerge": true
     },
     {
       "groupName": "local-deps-major",
