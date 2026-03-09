@@ -5,28 +5,13 @@ import { isPackageExists } from "local-pkg";
 import { resolveCommand } from "package-manager-detector/commands";
 import { detect } from "package-manager-detector/detect";
 
+import { createNoopFormatter, createNoopLinter, type Formatter, type Project } from "./types";
+
 type Params = {
   cwd?: string;
 };
 
-export type JavaScriptProject = Formatter & {
-  installDeps: () => Promise<void>;
-};
-
-const NO_OP_JAVASCRIPT_PROJECT: JavaScriptProject = {
-  // eslint-disable-next-line @typescript-eslint/require-await
-  formatAll: async () => {
-    console.warn("No JavaScript project detected. Skipping formatting.");
-  },
-  // eslint-disable-next-line @typescript-eslint/require-await
-  formatFiles: async () => {
-    console.warn("No JavaScript project detected. Skipping formatting.");
-  },
-  // eslint-disable-next-line @typescript-eslint/require-await
-  installDeps: async () => {
-    console.warn("No JavaScript project detected. Skipping dependency installation.");
-  },
-};
+export type JavaScriptProject = Project<"javascript">;
 
 export async function openJavaScriptProject(root: string): Promise<JavaScriptProject | null> {
   const pm = await detectPackageManager({ cwd: root });
@@ -34,20 +19,33 @@ export async function openJavaScriptProject(root: string): Promise<JavaScriptPro
     return null;
   }
 
-  const pj = NO_OP_JAVASCRIPT_PROJECT;
-  if (pm.agent) {
-    pj.installDeps = async () => installDependencies(pm.agent, { cwd: root });
-  }
+  const pj: JavaScriptProject = {
+    ecoSystem: "javascript",
+    formatter: createNoopFormatter(),
+    linter: createNoopLinter(),
+    packageManager: createPackageManager(pm.agent, root),
+  };
+
   const formatter = detectFormatter();
   if (formatter) {
     const resolvedFormatter = resolveFormatter(pm.agent, formatter, { cwd: root });
     if (resolvedFormatter) {
-      pj.formatAll = resolvedFormatter.formatAll;
-      pj.formatFiles = resolvedFormatter.formatFiles;
+      pj.formatter = resolvedFormatter;
     }
   }
 
   return pj;
+}
+
+function createPackageManager(pm: Agent | null, root: string) {
+  return {
+    installDependencies: async () => {
+      if (!pm) {
+        return;
+      }
+      await installDependencies(pm, { cwd: root });
+    },
+  };
 }
 
 async function detectPackageManager(params: Params = {}) {
@@ -69,11 +67,6 @@ async function installDependencies(pm: Agent, params: Params = {}) {
     cwd: params.cwd,
   });
   await proc.exited;
-}
-
-interface Formatter {
-  formatAll: () => Promise<void>;
-  formatFiles: (files: string[]) => Promise<void>;
 }
 
 // type SupportedFormatter = "biome" | "oxfmt" | "prettier";

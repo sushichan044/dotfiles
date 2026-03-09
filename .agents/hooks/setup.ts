@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { openProject } from "../../tools/maintenance";
+import { openProject } from "../../tools/harness";
 
 const proj = await openProject(process.cwd());
 
@@ -9,7 +9,7 @@ const setupJS = async () => {
     return;
   }
   console.log("Running setup for JavaScript stack...");
-  await proj.javascript.installDeps();
+  await proj.javascript.packageManager.installDependencies();
   console.log("Setup completed.");
 };
 
@@ -18,7 +18,7 @@ const setupGo = async () => {
     return;
   }
   console.log("Running setup for Go stack...");
-  await proj.go.installDeps();
+  await proj.go.packageManager.installDependencies();
   console.log("Setup completed.");
 };
 
