@@ -38,41 +38,12 @@ alias tlu='sudo tlmgr update --self && sudo tlmgr update --all'
 
 # misc
 alias cv='code .'
-cw() {
-    local ws=(*.code-workspace)
-    if ((${#ws[@]} == 1)); then
-        code "$ws"
-    else
-        echo "Multiple or no .code-workspace files found."
-        return 1
-    fi
-}
+alias cw='code *.code-workspace(.N[1])'
 alias crv='cursor .'
-crw() {
-    local ws=(*.code-workspace)
-    if ((${#ws[@]} == 1)); then
-        cursor "$ws"
-    else
-        echo "Multiple or no .code-workspace files found."
-        return 1
-    fi
-}
+alias crw='cursor *.code-workspace(.N[1])'
 alias rv='rubymine .'
 alias zv='zed .'
-xv() {
-    if ! is_mac; then
-        echo "alias xv is only available on macOS."
-        return 1
-    fi
-
-    local ws=(*.xcodeproj)
-    if ((${#ws[@]} == 1)); then
-        open "$ws"
-    else
-        echo "Multiple or no .xcodeproj files found."
-        return 1
-    fi
-}
+alias xv='xed .'
 
 alias c='claude'
 alias oc='opencode'
