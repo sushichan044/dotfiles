@@ -15,6 +15,12 @@
       "automerge": true
     },
     {
+      "groupName": "opencode",
+      "matchPackageNames": ["@opencode-ai/plugin", "opencode"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
       "groupName": "mise-major",
       "matchManagers": ["mise"],
       "matchUpdateTypes": ["major"]
