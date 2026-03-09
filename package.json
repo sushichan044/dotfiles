@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "lint": "eslint --max-warnings 0 --fix",
+    "lint": "eslint --max-warnings 0",
+    "lint:fix": "bun run lint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "typecheck": "tsgo --noEmit"
