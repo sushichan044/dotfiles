@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/renovate.json",
+  "extends": ["config:best-practices", ":preserveSemverRanges"],
+  "timezone": "Asia/Tokyo",
+  "platformAutomerge": true,
+  "prHourlyLimit": 0,
+  "rangeStrategy": "bump",
+  "minimumReleaseAge": "1 day",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "groupName": "mise-auto-merge",
+      "matchManagers": ["mise"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "autoMerge": true
+    },
+    {
+      "groupName": "mise-major",
+      "matchManagers": ["mise"],
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "groupName": "mise-nodejs",
+      "matchManagers": ["mise"],
+      "matchPackageNames": ["node"],
+      // https://github.com/ryoppippi/dotfiles/commit/795790423ccc766fcdbaa981299c517565f7b4ad
+      "allowedVersions": "/^([2-9]\\d*[02468])(\\.\\d+)*$/"
+    },
+    {
+      "groupName": "local-deps-auto-merge",
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "autoMerge": true
+    },
+    {
+      "groupName": "local-deps-major",
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "groupName": "local-bun",
+      "matchManagers": ["bun", "bun-version"],
+      "matchPackageNames": ["bun", "@types/bun"]
+    },
+    {
+      "groupName": "typescript-go",
+      "matchPackageNames": ["@typescript/native-preview"],
+      // https://docs.renovatebot.com/key-concepts/minimum-release-age/#how-do-i-opt-out-dependencies-from-minimum-release-age-checks
+      "minimumReleaseAge": null
+    }
+  ],
+  "ignorePaths": ["**/.agent/**"]
+}
