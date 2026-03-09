@@ -1,6 +1,7 @@
 [include]
 path = ~/.config/git/config.d/one-password.conf
 path = ~/.config/git/config.d/github.conf
+path = ~/.config/git/config.d/git-wt.conf
 
 [includeIf "gitdir:~/workspace/codeberg.org/"]
 path = ~/.config/git/config.d/codeberg.conf

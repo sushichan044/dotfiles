@@ -4,5 +4,5 @@
     "module": "Preserve",
     "moduleResolution": "bundler"
   },
-  "include": ["**/*.ts", ".claude/**/*.ts"]
+  "include": ["**/*.ts", ".agents/**/*.ts", ".claude/**/*.ts"]
 }
