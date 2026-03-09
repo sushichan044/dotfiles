@@ -6,11 +6,11 @@
   "prHourlyLimit": 0,
   "rangeStrategy": "bump",
   "minimumReleaseAge": "1 day",
+  "enabledManagers": ["bun", "bun-version", "bundler", "github-actions", "mise", "ruby-version"],
   "labels": ["dependencies"],
   "packageRules": [
     {
-      "groupName": "mise-auto-merge",
-      "matchManagers": ["mise"],
+      "groupName": "auto-merge",
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
@@ -25,30 +25,6 @@
       "matchPackageNames": ["node"],
       // https://github.com/ryoppippi/dotfiles/commit/795790423ccc766fcdbaa981299c517565f7b4ad
       "allowedVersions": "/^([2-9]\\d*[02468])(\\.\\d+)*$/"
-    },
-    {
-      "groupName": "local-deps-auto-merge",
-      "matchManagers": ["bun"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
-    },
-    {
-      "groupName": "local-deps-major",
-      "matchManagers": ["bun"],
-      "matchUpdateTypes": ["major"]
-    },
-    {
-      "groupName": "local-bun-auto-merge",
-      "matchManagers": ["bun", "bun-version"],
-      "matchPackageNames": ["bun", "@types/bun"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
-    },
-    {
-      "groupName": "local-bun-major",
-      "matchManagers": ["bun", "bun-version"],
-      "matchPackageNames": ["bun", "@types/bun"],
-      "matchUpdateTypes": ["major"]
     },
     {
       "groupName": "typescript-go",
