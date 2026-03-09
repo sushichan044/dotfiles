@@ -38,9 +38,17 @@
       "matchUpdateTypes": ["major"]
     },
     {
-      "groupName": "local-bun",
+      "groupName": "local-bun-auto-merge",
       "matchManagers": ["bun", "bun-version"],
-      "matchPackageNames": ["bun", "@types/bun"]
+      "matchPackageNames": ["bun", "@types/bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "local-bun-major",
+      "matchManagers": ["bun", "bun-version"],
+      "matchPackageNames": ["bun", "@types/bun"],
+      "matchUpdateTypes": ["major"]
     },
     {
       "groupName": "typescript-go",
