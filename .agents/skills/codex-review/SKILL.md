@@ -1,9 +1,7 @@
 ---
 name: codex-review
-description: Codex CLI を使って、noninteractive に code review を依頼し、その結果をもとに next action を決定します。この skill は fork context で動作するため、コードに現れないコンテキストがある場合は明示的に渡すか、起動前にコードに反映させてください。
+description: Codex CLI を使って、noninteractive に code review を依頼し、その結果をもとに next action を考えましょう。
 allowed-tools: Bash(codex review:*)
-context: fork
-agent: Explore
 ---
 
 # Run a code review non-interactively and decide next steps based on the review results
@@ -15,7 +13,7 @@ This allows you to get feedback on your code changes without having to engage in
 
 Detailed Usage:
 
-```plaintext
+```bash
 Usage: codex review [OPTIONS] [PROMPT]
 
 Arguments:
