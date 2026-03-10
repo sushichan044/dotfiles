@@ -22,6 +22,15 @@ sudo sh -c 'echo Asia/Tokyo > /etc/timezone' &&
 # sudo update-alternatives --set editor /usr/bin/vi
 {{ end -}}
 
+# Install mise
+echo "🚀 Installing mise..."
+if ! type mise >/dev/null 2>&1; then
+  curl https://mise.run | sh
+fi
+export PATH="$HOME/.local/bin:$PATH"
+eval "$($HOME/.local/bin/mise activate zsh)"
+echo "✅ Finished installing mise!"
+
 # Install Homebrew
 echo "🚀 Installing Homebrew..."
 {{ if eq .chezmoi.os "darwin" -}}
