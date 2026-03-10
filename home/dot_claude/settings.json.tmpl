@@ -2,6 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "awsAuthRefresh": "aws sso login",
   "env": {
+    {{/* https://github.com/unjs/std-env/blob/2b364bdb44d7e56e0fe2070758dd42fec55c6144/src/agents.ts#L70-L90 */ -}}
+    "AI_AGENT": "claude",
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "1200000",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",

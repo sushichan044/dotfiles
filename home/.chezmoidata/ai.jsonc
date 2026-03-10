@@ -78,6 +78,10 @@
       "sandbox_mode": "danger-full-access",
       "shell_environment_policy": {
         "inherit": "core",
+        "set": {
+          // https://github.com/unjs/std-env/blob/2b364bdb44d7e56e0fe2070758dd42fec55c6144/src/agents.ts#L70-L90
+          "AI_AGENT": "codex",
+        },
       },
       "sandbox_workspace_write": {
         "network_access": true,
