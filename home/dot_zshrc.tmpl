@@ -57,6 +57,7 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
   zsh-defer cached_eval "mise activate zsh"
+  zsh-defer cached_eval "mise completion zsh"
 fi
 
 if command_exists rg; then
