@@ -76,6 +76,9 @@
       "plan_mode_reasoning_effort": "xhigh",
       "notify": ["/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"],
       "sandbox_mode": "danger-full-access",
+      "shell_environment_policy": {
+        "inherit": "core",
+      },
       "sandbox_workspace_write": {
         "network_access": true,
       },
