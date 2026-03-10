@@ -1,15 +1,21 @@
 ---
 name: codex-review
-description: Codex CLI を使って、noninteractive に code review を依頼することができます。
+description: Codex CLI を使って、noninteractive に code review を依頼し、その結果をもとに next action を決定します。この skill は fork context で動作するため、コードに現れないコンテキストがある場合は明示的に渡すか、起動前にコードに反映させてください。
 allowed-tools: Bash(codex review:*)
+context: fork
+agent: Explore
 ---
 
-# Run a code review non-interactively
+# Run a code review non-interactively and decide next steps based on the review results
 
-You can use `codex review` command to request a code review non-interactively using the Codex CLI.
+## 1. Execute code review
+
+You can use `codex review -c model_reasoning_effort="high" -c sandbox_mode="read-only"` command to request a code review non-interactively using the Codex CLI.
 This allows you to get feedback on your code changes without having to engage in an interactive session.
 
-```bash
+Detailed Usage:
+
+```plaintext
 Usage: codex review [OPTIONS] [PROMPT]
 
 Arguments:
@@ -17,6 +23,11 @@ Arguments:
           Custom review instructions. If `-` is used, read from stdin
 
 Options:
+  -c, --config <key=value>
+          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`. Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed as TOML. If it fails to parse as TOML, the raw string is used as a literal.
+
+          Examples: - `-c model="o3"` - `-c 'sandbox_permissions=["disk-full-read-access"]'` - `-c shell_environment_policy.inherit=all`
+
       --uncommitted
           Review staged, unstaged, and untracked changes
 
@@ -38,3 +49,8 @@ Options:
   -h, --help
           Print help (see a summary with '-h')
 ```
+
+## 2. Analyze review results
+
+After executing the code review command, you will receive feedback on your code changes.
+Analyze the review results to identify any issues or areas for improvement in your code.
