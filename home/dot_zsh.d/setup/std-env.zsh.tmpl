@@ -70,3 +70,8 @@ fi
 if is_mac; then
     add_to_path_if_not_exists "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fi
+
+# Load mise shims
+if command_exists mise; then
+    eval "$(mise activate zsh --shims)"
+fi

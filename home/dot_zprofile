@@ -4,11 +4,6 @@
 source "$HOME/.zsh.d/setup/init.zsh"
 source "$HOME/.zsh.d/setup/std-env.zsh"
 
-# Load mise shims
-if command_exists mise; then
-    eval "$(mise activate zsh --shims)"
-fi
-
 if file_exists "$HOME/.orbstack/shell/init.zsh"; then
     # shellcheck disable=SC1090
     source "$HOME/.orbstack/shell/init.zsh"
