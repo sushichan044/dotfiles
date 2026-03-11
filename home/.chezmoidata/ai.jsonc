@@ -86,7 +86,7 @@
       "sandbox_workspace_write": {
         "network_access": true,
       },
-      "web_search": "cached",
+      "web_search": "live",
     },
   },
   "cursor": {
