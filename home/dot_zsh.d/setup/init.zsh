@@ -134,3 +134,8 @@ get_ram_in_gb() {
         return 1
     fi
 }
+
+debug_path() {
+    echo "PATH:"
+    echo "$PATH" | tr ':' '\n'
+}
