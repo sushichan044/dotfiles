@@ -1,6 +1,6 @@
 ---
 name: fix-github-actions-ci
-description: GitHub Actions CI の失敗を修正するためのスキルです。CI のログを分析して、失敗の原因を特定し、修正を行いましょう。
+description: GitHub Actions CI の失敗を調査するためのスキルです。CI ログを分析して失敗箇所、原因、ローカルでの確認方法、修正方針を整理したいときに使ってください。実装やファイル修正はこの skill では行わず、調査結果を main agent に返して実際の修正を続けられる状態にします。
 allowed-tools: Bash(gh pr view:*) Bash(gh pr checks:*) Bash(gh run view:*) Bash(gh run list:*) Bash(gh run watch:*) Bash(gh workflow view:*) Bash(gh workflow list:*)
 context: fork
 ---
@@ -10,9 +10,10 @@ context: fork
 ## Tips
 
 - `gh pr checks --watch` や `gh run watch <run-id>` を使うと、CI の再実行後の状況をリアルタイムで確認できますが、
-結構時間がかかるので background に移譲して非同期実行してください。
+  結構時間がかかるので background に移譲して非同期実行してください。
 - すべての gh コマンドについて、`--repo` でリポジトリを明確にすることをおすすめします
   - 現在いるリポジトリの owner/repo 形式: !`gh repo view --json owner,name --jq '.owner.login+"/"+.name'`
+- この skill の責務は調査までです。コード変更、コミット、push、CI 再実行のための実装作業は main agent に戻して行ってください。
 
 ## Steps
 
@@ -45,13 +46,7 @@ run ID が不明な場合は `gh run list --branch <branch>` で探す。
 
 ログからファイル名・行番号・エラーメッセージを特定する。
 
-### Step 4: エラーの修正
-
-ログから特定した問題を修正する。
-
-CI は fail-fast で動作している可能性があるため、最初の失敗以降の step は実行されていないことを念頭に置く。
-
-### Step 5: CI workflow からローカル実行コマンドを特定する
+### Step 4: workflow からローカル確認コマンドを特定する
 
 Step 2 で取得した workflow name から workflow の YAML ファイルを取得する。
 なお、workflow name は space を含む可能性があるので quote すること。
@@ -65,8 +60,41 @@ gh workflow view "<workflow-name>" --yaml
 
 テストと判断する基準: step 名やコマンドに `test`, `spec`, `e2e`, `coverage`, `vrt` などのキーワードが含まれるもの。
 
-### Step 6: 静的解析をローカルで全実行
+### Step 5: main agent に返すための修正方針をまとめる
 
-Step 5 で特定したコマンドをすべてローカルで実行する。
+次の形式で簡潔に整理して返す。
+修正方針は「どのようなエラーが出ており、どのコードや設定を修正すべきか」までに留めること。具体的な修正内容の提案及び勝手に修正を実施することは避ける。
 
-全通過するまで Step 4→6 を繰り返す。
+```markdown
+## CI failure summary
+
+- PR context: <PR number/url/branch>
+- Failed check: <check name>
+- Workflow: <workflow name>
+- Run ID: <run id>
+
+## Error location
+
+- File: <path or unknown>
+- Line: <line or unknown>
+- Message: <error message>
+- Why it is failing: <root cause hypothesis based on log>
+
+## How to verify locally
+
+- <command 1>
+- <command 2>
+
+## Suggested fix location
+
+- <file or component to modify based on error location and workflow steps>
+- <additional risk or fail-fast note if relevant>
+
+## Done condition
+
+- <what output or command result should indicate the error is resolved>
+```
+
+### Step 6: main agent に制御を戻す
+
+調査結果を返したら、この skill での作業は終了する。実際のコード変更、ローカル修正、テスト実行、再度の CI 確認は main agent が続けて行う前提で止める。
