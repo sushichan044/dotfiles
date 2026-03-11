@@ -1,8 +1,7 @@
 ---
 name: fix-github-actions-ci
-description: GitHub Actions CI の失敗を調査するためのスキルです。CI ログを分析して失敗箇所、原因、ローカルでの確認方法、修正方針を整理したいときに使ってください。実装やファイル修正はこの skill では行わず、調査結果を main agent に返して実際の修正を続けられる状態にします。
+description: GitHub Actions CI の失敗を調査して修正するためのスキルです。CI ログを分析して失敗箇所・原因を特定し、そのまま修正作業まで行います。
 allowed-tools: Bash(gh pr view:*) Bash(gh pr checks:*) Bash(gh run view:*) Bash(gh run list:*) Bash(gh run watch:*) Bash(gh workflow view:*) Bash(gh workflow list:*)
-context: fork
 ---
 
 # fix-github-actions-ci
@@ -13,7 +12,7 @@ context: fork
   結構時間がかかるので background に移譲して非同期実行してください。
 - すべての gh コマンドについて、`--repo` でリポジトリを明確にすることをおすすめします
   - 現在いるリポジトリの owner/repo 形式: !`gh repo view --json owner,name --jq '.owner.login+"/"+.name'`
-- この skill の責務は調査までです。コード変更、コミット、push、CI 再実行のための実装作業は main agent に戻して行ってください。
+- 調査完了後は、そのまま修正作業まで続けて、完了条件を満たしたら push して PR に反映させるところまで行うことを目指してください。
 
 ## Steps
 
@@ -63,7 +62,7 @@ gh workflow view "<workflow-name>" --yaml
 ### Step 5: main agent に返すための修正方針をまとめる
 
 次の形式で簡潔に整理して返す。
-修正方針は「どのようなエラーが出ており、どのコードや設定を修正すべきか」までに留めること。具体的な修正内容の提案及び勝手に修正を実施することは避ける。
+修正方針は「どのようなエラーが出ており、どのコードや設定を修正すべきか」を明記すること。
 
 ```markdown
 ## CI failure summary
@@ -95,6 +94,6 @@ gh workflow view "<workflow-name>" --yaml
 - <what output or command result should indicate the error is resolved>
 ```
 
-### Step 6: main agent に制御を戻す
+### Step 6: 修正を実施する
 
-調査結果を返したら、この skill での作業は終了する。実際のコード変更、ローカル修正、テスト実行、再度の CI 確認は main agent が続けて行う前提で止める。
+Step 5 のサマリをもとに、実際にコードを修正する。修正後は Done condition に記載したコマンドでローカル確認を行い、エラーが解消されたことを確認し、修正内容を commit して PR に push する。
