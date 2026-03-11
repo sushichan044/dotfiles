@@ -2,7 +2,6 @@
 
 # shellcheck disable=SC1091
 source "$HOME/.zsh.d/setup/init.zsh"
-source "$HOME/.zsh.d/setup/std-env.zsh"
 
 if file_exists "$HOME/.orbstack/shell/init.zsh"; then
     # shellcheck disable=SC1090
