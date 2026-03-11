@@ -6,5 +6,5 @@ if ! type mise >/dev/null 2>&1; then
     exit 1
 fi
 
-mise self-update
+mise self-update -y
 mise up
