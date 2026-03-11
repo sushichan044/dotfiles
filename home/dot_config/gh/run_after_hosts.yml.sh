@@ -5,7 +5,7 @@ ensure_login_with_hostname() {
 
     if ! gh auth status --hostname "$hostname" >/dev/null 2>&1; then
         echo "⏩ running gh auth login for $hostname..."
-        gh auth login --hostname "$hostname" -c -p ssh --skip-ssh-key --web
+        gh auth login --hostname "$hostname" -c -p ssh --skip-ssh-key --web --scopes "gist,read:org,read:project,repo,notifications,read:packages"
     fi
 }
 
