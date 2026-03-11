@@ -11,6 +11,9 @@ allowed-tools: Bash(codex review:*)
 You can use `codex review -c model_reasoning_effort="high" -c sandbox_mode="read-only" <...additional args like options or prompt to request review, follow usage below>` command to request a code review non-interactively using the Codex CLI.
 This allows you to get feedback on your code changes without having to engage in an interactive session.
 
+This review may takes a bit longer time, but it is good
+So just wait for the review results to come back, do not set timeout.
+
 Detailed Usage:
 
 ```bash
