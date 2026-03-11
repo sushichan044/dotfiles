@@ -132,8 +132,8 @@ if OS.mac?
   brew "grep"
 
   # brew
-  brew "artginzburg/tap/sudo-touchid", restart_service: :changed
-  brew "batt", restart_service: :changed
+  brew "artginzburg/tap/sudo-touchid", restart_service: :always
+  brew "batt", restart_service: :always
   brew "libiconv"
   brew "mas"
   # postgres errors on linux
