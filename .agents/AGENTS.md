@@ -8,6 +8,7 @@
 - **Clarification**: If there are any ambiguities during planning, actively make a tool call to ask the user, as ambiguous plans lead to significant rework.
 - **Scope of Changes**: Only change the files and code paths explicitly requested. Do NOT expand scope to related files, barrel exports, or adjacent refactors unless explicitly asked. If you think broader changes are needed, ask first.
 - **Automatic Code Review**: If you've performed a non-trivial task, you should request a review using the `codex-review` skill.
+- DO NOT ADD SLOP COMMENTS IN THE CODE.
 
 ## 🟡 ESSENTIAL ADDITIONS
 
