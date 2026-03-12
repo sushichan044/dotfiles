@@ -29,7 +29,6 @@ watchexec = "latest"
 
 # AI tools
 "cargo:octorus" = "latest"
-"gem:ruby-lsp" = "latest"
 "github:openai/codex" = { version = "latest", bin = "codex" }
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"

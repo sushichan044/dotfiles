@@ -73,5 +73,6 @@ fi
 
 # Load mise shims
 if command_exists mise; then
+    export MISE_RUBY_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/.default-gems"
     eval "$(mise activate zsh --shims)"
 fi
