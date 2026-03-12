@@ -50,6 +50,7 @@
       "features": {
         "collaboration_modes": true,
         "steer": true,
+        "codex_hooks": true,
       },
       "mcp_servers": {
         "bundlephobia": {
