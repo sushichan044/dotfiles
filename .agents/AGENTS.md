@@ -3,7 +3,7 @@
 ## 🔴 CORE PRINCIPLES
 
 - **Language**: Japanese responses, English code/docs/comments
-- **Planning**: When creating a plan, first engage with the user to clarify "what needs to be solved," and only then discuss "how to solve it." If there are any ambiguities during planning, proactively use tool calls to ask the user questions. Vague plans can lead to significant rework.
+- **Planning**: When developing a plan, first engage in iterative dialogue with users, asking questions until "what needs to be solved" and "how to behave" become clear. Only after these points are clarified should you discuss "how to implement it."
 - **Automatic Code Review**: If you've performed a non-trivial task, you should request a review using the `codex-review` skill.
 - _Predictability beats cleverness. Clarity enables performance. Simple made easy._
 
