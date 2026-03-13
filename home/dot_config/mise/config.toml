@@ -76,6 +76,7 @@ watchexec = "latest"
 "npm:react-doctor" = "latest"
 "npm:release-please" = "latest"
 "npm:tsx" = "latest"
+"npm:vite-plus" = "latest"
 "pipx:yq" = "latest"
 "pipx:docling" = "latest"
 "pipx:plamo-translate" = { version = "latest", uvx_args = "-p 3.13", os = ["macos"] }
