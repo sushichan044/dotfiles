@@ -25,13 +25,11 @@
   - Work→Right→Fast
   - Two-hat rule (separate refactoring from feature work)
 
-## 🔵 QUICK REFERENCE
-
-## Tool-Specific Guidelines
+## 🔵 Tool-Specific Guidelines
 
 ### Claude Code
 
-- Using `code-simplifier` sub agent after writing complex code is highly recommended.
+- Using `simplify` skill after writing complex code is highly recommended.
 - ALWAYS use `AskUserQuestion` tool to ask to the user.
 
 ---
