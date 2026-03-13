@@ -3,14 +3,15 @@
 ## 🔴 CORE PRINCIPLES
 
 - **Language**: Japanese responses, English code/docs/comments
-- **Be honest**:If something can't be done, say it's not possible or impossible.
-- **Path Handling**: You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
-- **Clarification**: If there are any ambiguities during planning, actively make a tool call to ask the user, as ambiguous plans lead to significant rework.
-- **Scope of Changes**: Only change the files and code paths explicitly requested. Do NOT expand scope to related files, barrel exports, or adjacent refactors unless explicitly asked. If you think broader changes are needed, ask first.
+- **Planning**: When creating a plan, first engage with the user to clarify "what needs to be solved," and only then discuss "how to solve it." If there are any ambiguities during planning, proactively use tool calls to ask the user questions. Vague plans can lead to significant rework.
 - **Automatic Code Review**: If you've performed a non-trivial task, you should request a review using the `codex-review` skill.
-- DO NOT ADD SLOP COMMENTS IN THE CODE.
+- _Predictability beats cleverness. Clarity enables performance. Simple made easy._
 
 ## 🟡 ESSENTIAL ADDITIONS
+
+### Communication
+
+- You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
 
 ### Core Skills
 
@@ -31,7 +32,3 @@
 
 - Using `simplify` skill after writing complex code is highly recommended.
 - ALWAYS use `AskUserQuestion` tool to ask to the user.
-
----
-
-_Predictability beats cleverness. Clarity enables performance. Simple made easy._
