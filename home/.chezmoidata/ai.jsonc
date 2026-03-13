@@ -88,6 +88,15 @@
         "network_access": true,
       },
       "web_search": "live",
+      "tui": {
+        "status_line": [
+          "model-with-reasoning",
+          "context-remaining",
+          "project-root",
+          "git-branch",
+          "five-hour-limit",
+        ],
+      },
     },
   },
   "cursor": {
