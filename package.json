@@ -11,14 +11,14 @@
     "test": "bun test"
   },
   "dependencies": {
-    "args-tokens": "0.24.2",
+    "args-tokens": "0.24.3",
     "arkregex": "0.0.5",
     "cc-hooks-ts": "2.1.76",
     "get-stdin": "10.0.0",
     "github-reserved-names": "2.1.3",
     "local-pkg": "1.1.2",
     "mdast-util-from-markdown": "2.0.3",
-    "oxfmt": "0.37.0",
+    "oxfmt": "0.38.0",
     "package-manager-detector": "1.6.0",
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
