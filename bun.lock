@@ -7,7 +7,7 @@
       "dependencies": {
         "args-tokens": "0.24.2",
         "arkregex": "0.0.5",
-        "cc-hooks-ts": "2.1.74",
+        "cc-hooks-ts": "2.1.76",
         "get-stdin": "10.0.0",
         "github-reserved-names": "2.1.3",
         "local-pkg": "1.1.2",
@@ -35,7 +35,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@anthropic-ai/claude-agent-sdk": ["@anthropic-ai/claude-agent-sdk@0.2.74", "", { "optionalDependencies": { "@img/sharp-darwin-arm64": "^0.34.2", "@img/sharp-darwin-x64": "^0.34.2", "@img/sharp-linux-arm": "^0.34.2", "@img/sharp-linux-arm64": "^0.34.2", "@img/sharp-linux-x64": "^0.34.2", "@img/sharp-linuxmusl-arm64": "^0.34.2", "@img/sharp-linuxmusl-x64": "^0.34.2", "@img/sharp-win32-arm64": "^0.34.2", "@img/sharp-win32-x64": "^0.34.2" }, "peerDependencies": { "zod": "^4.0.0" } }, "sha512-S/SFSSbZHPL1HiQxAqCCxU3iHuE5nM+ir0OK1n0bZ+9hlVUH7OOn88AsV9s54E0c1kvH9YF4/foWH8J9kICsBw=="],
+    "@anthropic-ai/claude-agent-sdk": ["@anthropic-ai/claude-agent-sdk@0.2.76", "", { "optionalDependencies": { "@img/sharp-darwin-arm64": "^0.34.2", "@img/sharp-darwin-x64": "^0.34.2", "@img/sharp-linux-arm": "^0.34.2", "@img/sharp-linux-arm64": "^0.34.2", "@img/sharp-linux-x64": "^0.34.2", "@img/sharp-linuxmusl-arm64": "^0.34.2", "@img/sharp-linuxmusl-x64": "^0.34.2", "@img/sharp-win32-arm64": "^0.34.2", "@img/sharp-win32-x64": "^0.34.2" }, "peerDependencies": { "zod": "^4.0.0" } }, "sha512-HZxvnT8ZWkzCnQygaYCA0dl8RSUzuVbxE1YG4ecy6vh4nQbTT36CxUxBy+QVdR12pPQluncC0mCOLhI2918Eaw=="],
 
     "@ark/util": ["@ark/util@0.56.0", "", {}, "sha512-BghfRC8b9pNs3vBoDJhcta0/c1J1rsoS1+HgVUreMFPdhz/CRAKReAu57YEllNaSy98rWAdY1gE+gFup7OXpgA=="],
 
@@ -349,7 +349,7 @@
 
     "caniuse-lite": ["caniuse-lite@1.0.30001755", "", {}, "sha512-44V+Jm6ctPj7R52Na4TLi3Zri4dWUljJd+RDm+j8LtNCc/ihLCT+X1TzoOAkRETEWqjuLnh9581Tl80FvK7jVA=="],
 
-    "cc-hooks-ts": ["cc-hooks-ts@2.1.74", "", { "dependencies": { "@anthropic-ai/claude-agent-sdk": "0.2.74", "get-stdin": "10.0.0", "valibot": "^1.1.0" } }, "sha512-zQHs5ZNDyei/pfpuvk5NOfVfNoLwHDPFSU2cz6t69mQrfZsBE/8zCZvIbL9tLh1eteWMreJL0PD96daKTmyf2A=="],
+    "cc-hooks-ts": ["cc-hooks-ts@2.1.76", "", { "dependencies": { "@anthropic-ai/claude-agent-sdk": "0.2.76", "get-stdin": "10.0.0", "valibot": "^1.1.0" } }, "sha512-AWeriI1DHkfIDW+jJ8uSvHUNODNXJt4FbOeJFKiHHfLSiXmzfCAeN0UljNEtZZm0mKdMO6HSKc9ICTCEXKyGbQ=="],
 
     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
 
