@@ -18,6 +18,7 @@ aliases:
     rv: repo view -w
     rf: repo fork
     rs: repo sync
+    ownername: repo view --json owner,name --jq '.owner.login+"/"+.name'
     # browse
     b: browse
     bs: browse --settings
