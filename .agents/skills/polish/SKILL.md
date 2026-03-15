@@ -10,7 +10,7 @@ After completing your work, polish it by conducting quality checks for each proj
 
 ## Automatic Code Review
 
-If you haven't received a code review from `codex-review` at any point during this task, please request one now.
+If there have been any logic changes since the last `codex-review`, please request another review from `codex-review`.
 
 ## Quality Checks
 
@@ -18,6 +18,7 @@ If you haven't received a code review from `codex-review` at any point during th
    - Collect from AI instructions like `AGENTS.md` or `CLAUDE.md`.
    - Collect from project-scope task runner configurations like `package.json` scripts, `Makefile`, `mise.toml`, or CI workflow YAML files.
 2. Run the collected checks and ensure they pass.
+   - In projects utilizing a task runner, execute validation commands via the task runner rather than directly.
    - If any check fails, investigate the failure, fix it, and rerun the checks until they all pass.
    - YOU MUST RUN TOOLS IN NON INTERACTIVE MODE.
    - Hint: In general, formatters should be run after linters since linters may make changes that require reformatting.

@@ -14,8 +14,10 @@ const hook = defineHook({
       event: "Stop",
       output: {
         decision: "block",
-        reason:
-          "Before finishing the task, YOU MUST polish the code by running `polish` skill to ensure the final deliverable is of high quality and meets project standards.",
+        reason: [
+          'Before completing the task, execute the "polish" skill to refine the code and ensure the final deliverable is of high quality and meets project standards.',
+          'If you receive these instructions again after executing the "polish" skill, you may disregard them.',
+        ].join("\n"),
       },
     });
   },
