@@ -9,6 +9,7 @@
 .vscode/**/*.local.json
 
 .mise.local.toml
+.mise/prepare-state.toml
 CLAUDE.local.md
 # OpenAI Codex
 AGENTS.override.md
