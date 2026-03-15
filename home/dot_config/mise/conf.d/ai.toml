@@ -1,0 +1,17 @@
+#:schema https://mise.jdx.dev/schema/mise.json
+
+[tools]
+"github:openai/codex" = { version = "latest", bin = "codex" }
+"npm:@ccusage/codex" = "latest"
+"npm:@github/copilot" = "latest"
+"npm:@modelcontextprotocol/inspector" = "latest"
+"npm:@playwright/cli" = "latest"
+"npm:@playwright/mcp" = "latest"
+"npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
+"npm:ccusage" = "latest"
+"npm:chrome-devtools-mcp" = "latest"
+"claude" = "latest"
+"opencode" = "1.2.24"
+
+[env]
+AGENT_BROWSER_AUTO_CONNECT = "1" # https://github.com/vercel-labs/agent-browser/pull/786

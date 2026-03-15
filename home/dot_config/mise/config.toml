@@ -27,23 +27,11 @@ watchexec = "latest"
 "npm:typescript" = "latest"
 "npm:pyright" = "latest"
 
-# AI tools
-"cargo:octorus" = "latest"
-"github:openai/codex" = { version = "latest", bin = "codex" }
-"npm:@ccusage/codex" = "latest"
-"npm:@github/copilot" = "latest"
-"npm:@modelcontextprotocol/inspector" = "latest"
-"npm:@playwright/cli" = "latest"
-"npm:@playwright/mcp" = "latest"
-"npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
-"npm:ccusage" = "latest"
-"claude" = "latest"
-"opencode" = "1.2.24"
-
 # tools with Backends
 "cargo:cargo-binstall" = "latest"
 "cargo:cargo-clean-all" = "latest"
 "cargo:cargo-features-manager" = "latest"
+"cargo:octorus" = "latest"
 "cargo:rust-script" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:kdlfmt" = "latest"
