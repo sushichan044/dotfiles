@@ -1,11 +1,16 @@
 ---
 name: polish
 description: Use this guide after completing work to polish code through project-specific quality checks, pass verifications, unnecessary comment removal, and redundant code reduction for consistent final deliverable quality.
+allowed-tools: Skill(codex-review)
 ---
 
 # Polish Skill
 
 After completing your work, polish it by conducting quality checks for each project, ensuring they pass, and removing unnecessary comments to guarantee a certain level of quality for the final deliverable.
+
+## Automatic Code Review
+
+If you haven't received a code review from `codex-review` at any point during this task, please request one now.
 
 ## Quality Checks
 
