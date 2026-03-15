@@ -12,6 +12,12 @@ After completing your work, polish it by conducting quality checks for each proj
 
 If there have been any logic changes since the last `codex-review`, please request another review from `codex-review`.
 
+## Unnecessary Comment Removal
+
+Comments explaining how code works are unnecessary, unless they are for users or required as standardized documentation, such as godoc or jsdoc.
+
+Only leave comments when there is an intent that cannot be discerned from the code alone, and the drawbacks of refactoring the code itself to clarify that intent are significant.
+
 ## Quality Checks
 
 1. Collect checks to run based on the project and the work done.
@@ -22,8 +28,3 @@ If there have been any logic changes since the last `codex-review`, please reque
    - If any check fails, investigate the failure, fix it, and rerun the checks until they all pass.
    - YOU MUST RUN TOOLS IN NON INTERACTIVE MODE.
    - Hint: In general, formatters should be run after linters since linters may make changes that require reformatting.
-
-## Unnecessary Comment Removal
-
-Comments that describe the behavior of the code are unnecessary unless they are user-facing or require documentation.
-Keep them only if there is an intent that cannot be read from the code and the disadvantages of refactoring the code itself to make the intent clearer are significant.
