@@ -51,6 +51,7 @@
         "collaboration_modes": true,
         "steer": true,
         "codex_hooks": true,
+        "multi_agent": true,
       },
       "mcp_servers": {
         "bundlephobia": {
