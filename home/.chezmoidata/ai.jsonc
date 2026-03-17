@@ -47,6 +47,7 @@
   "codex": {
     "config": {
       "approval_policy": "on-request",
+      "approvals_reviewer": "guardian_subagent",
       "features": {
         "collaboration_modes": true,
         "steer": true,
@@ -77,7 +78,7 @@
       "model_reasoning_effort": "medium",
       "plan_mode_reasoning_effort": "xhigh",
       "notify": ["/Users/sushichan044/.codex/sushichan044/scripts/notify_mac.sh"],
-      "sandbox_mode": "danger-full-access",
+      "sandbox_mode": "workspace-write",
       "shell_environment_policy": {
         "inherit": "all",
         "set": {
