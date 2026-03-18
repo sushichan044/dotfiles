@@ -33,3 +33,4 @@
 
 - Using `simplify` skill after writing complex code is highly recommended.
 - ALWAYS use `AskUserQuestion` tool to ask to the user.
+- To create a Git worktree, simply make a tool call. The hook will automatically assign the correct directory.
