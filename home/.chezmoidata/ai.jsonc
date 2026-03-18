@@ -1,8 +1,6 @@
 {
   "claude": {
     "settings": {
-      "checkpointingEnabled": true,
-      "installMethod": "unknown",
       "mcpServers": {
         "aws-knowledge": {
           "type": "http",
@@ -32,10 +30,7 @@
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
         },
-      },
-      "preferredNotifChannel": "terminal_bell",
-      "shiftEnterKeyBindingInstalled": true,
-      "theme": "dark",
+      }
     },
   },
   "claude_desktop": {
