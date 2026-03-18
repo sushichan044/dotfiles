@@ -56,8 +56,8 @@ const hook = defineHook({
       output: {
         hookSpecificOutput: {
           hookEventName: "PreToolUse",
-          permissionDecision: "deny",
-          permissionDecisionReason: `Blocked mutating ${gh.method} operation to "${pathname}"`,
+          permissionDecision: "ask",
+          permissionDecisionReason: `Mutating ${gh.method} operation to "${pathname}" requires user approval.`,
         },
       },
     });
