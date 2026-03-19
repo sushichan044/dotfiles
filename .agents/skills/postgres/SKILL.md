@@ -36,11 +36,12 @@ metadata:
 
 ## PlanetScale-Specific
 
-| Topic              | Reference                                                                                                                                                     | Use for                                               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Connection Pooling | [references/ps-connection-pooling.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-connection-pooling.md) | PgBouncer, pool sizing, pooled vs direct              |
-| Extensions         | [references/ps-extensions.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-extensions.md)                 | Supported extensions, compatibility                   |
-| Connections        | [references/ps-connections.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-connections.md)               | Connection troubleshooting, drivers, SSL              |
-| Insights           | [references/ps-insights.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-insights.md)                     | Slow queries, MCP server, pscale CLI                  |
-| CLI Commands       | [references/ps-cli-commands.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-cli-commands.md)             | pscale CLI reference, branches, deploy requests, auth |
-| CLI API Insights   | [references/ps-cli-api-insights.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-cli-api-insights.md)     | Query insights via `pscale api`, schema analysis      |
+| Topic              | Reference                                                                                                                                                         | Use for                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Connection Pooling | [references/ps-connection-pooling.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-connection-pooling.md)     | PgBouncer, pool sizing, pooled vs direct              |
+| PgBouncer Config   | [references/pgbouncer-configuration.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/pgbouncer-configuration.md) | default_pool_size, max_user_connections, pool limits  |
+| Extensions         | [references/ps-extensions.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-extensions.md)                     | Supported extensions, compatibility                   |
+| Connections        | [references/ps-connections.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-connections.md)                   | Connection troubleshooting, drivers, SSL              |
+| Insights           | [references/ps-insights.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-insights.md)                         | Slow queries, MCP server, pscale CLI                  |
+| CLI Commands       | [references/ps-cli-commands.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-cli-commands.md)                 | pscale CLI reference, branches, deploy requests, auth |
+| CLI API Insights   | [references/ps-cli-api-insights.md](https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/references/ps-cli-api-insights.md)         | Query insights via `pscale api`, schema analysis      |

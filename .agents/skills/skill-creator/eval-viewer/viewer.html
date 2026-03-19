@@ -621,8 +621,7 @@
           <!-- Prompt -->
           <div class="section">
             <div class="section-header">
-              Prompt
-              <span class="config-badge" id="config-badge" style="display: none"></span>
+              Prompt <span class="config-badge" id="config-badge" style="display: none"></span>
             </div>
             <div class="section-body">
               <div class="prompt-text" id="prompt-text"></div>
@@ -1085,11 +1084,7 @@
         const reviews = [];
         for (const [run_id, feedback] of Object.entries(feedbackMap)) {
           if (feedback.trim()) {
-            reviews.push({
-              run_id,
-              feedback,
-              timestamp: new Date().toISOString(),
-            });
+            reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
           }
         }
 
@@ -1124,11 +1119,7 @@
         const reviews = [];
         const ts = new Date().toISOString();
         for (const r of EMBEDDED_DATA.runs) {
-          reviews.push({
-            run_id: r.id,
-            feedback: feedbackMap[r.id] || "",
-            timestamp: ts,
-          });
+          reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
         }
         const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
         fetch("/api/feedback", {
