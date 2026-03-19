@@ -6,11 +6,6 @@
       "sourceType": "github",
       "computedHash": "2fdb896e8c902ef8ca5bb30afdf2b7e4ad63afab0213323484e3c03e9e73324a"
     },
-    "clarify": {
-      "source": "pbakaus/impeccable",
-      "sourceType": "github",
-      "computedHash": "e2267c06e1d4929a29eba19d3a52c7f8591688dedf3678aca753fc7c5bab76f9"
-    },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
       "sourceType": "github",
