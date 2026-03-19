@@ -55,7 +55,7 @@ zsh-defer load_zsh_files_from_dir "$HOME/.zsh.d/autoload/lazy"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
-  zsh-defer cached_eval "mise activate zsh"
+  cached_eval "mise activate zsh"
   zsh-defer cached_eval "mise completion zsh"
 fi
 
