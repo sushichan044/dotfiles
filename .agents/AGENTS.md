@@ -7,6 +7,7 @@
 - On before completing work, clarify with the user if they want you to polish the code by following the `polish` skill guidelines.
 - **Automatic Code Review**: After completing substantial work (new features, bug fixes, refactors spanning multiple files), request a review using the `codex-review` skill.
 - Predictability beats cleverness. Clarity enables performance. Simple made easy.
+- Use `contextual-commit` format when writing commit messages.
 
 ## BEHAVIORAL GUIDELINES
 
