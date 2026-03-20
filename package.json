@@ -13,7 +13,7 @@
   "dependencies": {
     "args-tokens": "0.24.3",
     "arkregex": "0.0.5",
-    "cc-hooks-ts": "2.1.76",
+    "cc-hooks-ts": "2.1.79",
     "get-stdin": "10.0.0",
     "github-reserved-names": "2.1.3",
     "local-pkg": "1.1.2",
