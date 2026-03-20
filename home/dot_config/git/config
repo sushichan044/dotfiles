@@ -25,6 +25,7 @@ verbose = true
 [core]
 autocrlf = input
 fsmonitor = true
+hooksPath = ~/.config/git/hooks
 ignorecase = false
 pager = delta
 untrackedCache = true
