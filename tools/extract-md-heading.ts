@@ -84,6 +84,7 @@ export const headingTreeOfMarkdownFile = async (markdownPath: string): Promise<H
   const resolvedPath = await realpath(markdownPath);
 
   if (!(await stat(resolvedPath)).isFile()) {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error
     throw new Error(`Error: ${markdownPath} is not a valid file.`);
   }
 
