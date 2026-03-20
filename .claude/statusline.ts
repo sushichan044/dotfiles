@@ -1,6 +1,7 @@
 import getStdin from "get-stdin";
 import os from "node:os";
 import pc from "picocolors";
+import "temporal-polyfill-lite/global";
 
 import { isNonEmptyString } from "../tools/utils/string";
 
@@ -28,12 +29,35 @@ type InputShape = {
     total_lines_removed: number;
   };
   cwd: string;
+  exceeds_200k_tokens: boolean;
   model: {
     display_name: string;
     id: string;
   };
   output_style: {
     name: string;
+  };
+  rate_limits?: {
+    five_hour: {
+      /**
+       * @example 1774029600
+       */
+      resets_at: number;
+      /**
+       * @example 42.3
+       */
+      used_percentage: number;
+    };
+    seven_day: {
+      /**
+       * @example 1774029600
+       */
+      resets_at: number;
+      /**
+       * @example 42.3
+       */
+      used_percentage: number;
+    };
   };
   session_id: string;
   /**
@@ -42,6 +66,7 @@ type InputShape = {
   transcript_path: string;
   version: string;
   workspace: {
+    added_dirs: string[];
     /**
      * Absolute path to the current working directory where Claude is running.
      */
@@ -60,6 +85,14 @@ type StatusShape = {
   model: string;
   username: string;
 
+  rateLimit:
+    | {
+        fiveHour: {
+          remainingPercentage: number;
+          resetsAt: Temporal.ZonedDateTime;
+        };
+      }
+    | undefined;
   remainingContextPercentage: string | undefined;
 };
 
@@ -77,6 +110,10 @@ async function getCurrentGitBranch(cwd: string): Promise<string | null> {
   return null;
 }
 
+function getTokyoTimeFromUnixEpochSec(epochSec: number): Temporal.ZonedDateTime {
+  return Temporal.Instant.fromEpochMilliseconds(epochSec * 1000).toZonedDateTimeISO("Asia/Tokyo");
+}
+
 async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
@@ -87,6 +124,14 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     gitBranch,
     hostname,
     model: input.model.display_name,
+    rateLimit: input.rate_limits
+      ? {
+          fiveHour: {
+            remainingPercentage: 100 - input.rate_limits.five_hour.used_percentage,
+            resetsAt: getTokyoTimeFromUnixEpochSec(input.rate_limits.five_hour.resets_at),
+          },
+        }
+      : undefined,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
   };
@@ -122,7 +167,27 @@ function prettyPrint(status: StatusShape): string {
     return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
   };
 
-  const parts = [model, context()].filter(isNonEmptyString);
+  const remainingBudget = () => {
+    if (!status.rateLimit) {
+      return "";
+    }
+
+    const remaining = status.rateLimit.fiveHour.remainingPercentage.toLocaleString("ja-JP");
+    const resetsAt = status.rateLimit.fiveHour.resetsAt.toLocaleString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const text = `${remaining}% 5h budget left (resets at ${resetsAt} JST)`;
+    if (status.rateLimit.fiveHour.remainingPercentage < 20) {
+      return pc.red(text);
+    }
+    if (status.rateLimit.fiveHour.remainingPercentage < 50) {
+      return pc.yellow(text);
+    }
+    return pc.dim(text);
+  };
+
+  const parts = [model, context(), remainingBudget()].filter(isNonEmptyString);
   const secondLine = [pathname(), branch()];
 
   return [parts.join(` ${delimiter} `), secondLine.join(` ${delimiter} `)].join("\n");

@@ -2,7 +2,8 @@
   "extends": ["@virtual-live-lab/tsconfig/base"],
   "compilerOptions": {
     "module": "Preserve",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "lib": ["ESNext"]
   },
   "include": ["**/*.ts", ".agents/**/*.ts", ".claude/**/*.ts", ".codex/**/*.ts"]
 }
