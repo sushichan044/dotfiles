@@ -7,18 +7,15 @@ tools:
       GHQ_ROOT: "{{.ToolDir}}"
     description: "ghq wrapper with project-local configuration"
 
-  memo:
-    run: "memo"
-    args:
-      prepend:
-        - new
-    description: "Create project note file"
-    env:
-      MEMO_ROOT_DIR: "{{.ToolDir}}"
-
   dir:
     run: "{{.ConfigDir}}/tmpdir.sh"
     description: "Create a temporary directory in the project-local area"
+    env:
+      BASE_DIR: "{{.ToolDir}}"
+
+  touch:
+    run: "{{.ConfigDir}}/touch.sh"
+    description: "Create an empty file in the project-local area"
     env:
       BASE_DIR: "{{.ToolDir}}"
 
@@ -29,3 +26,9 @@ aliases:
       prepend:
         - get
         - -u
+  memo:
+    tool: touch
+    args:
+      prepend:
+        - "-e"
+        - "md"
