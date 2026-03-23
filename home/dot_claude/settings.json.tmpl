@@ -18,7 +18,7 @@
     "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
     "ENABLE_LSP_TOOLS": "1",
     "ENABLE_TOOL_SEARCH": "1",
-    "FORCE_AUTOUPDATE_PLUGINS": "1",
+    "FORCE_AUTOUPDATE_PLUGINS": "1"
   },
   "showThinkingSummaries":true,
   "cleanupPeriodDays": 99999,
@@ -142,7 +142,7 @@
     ]
   },
   "permissions": {
-    "defaultMode": "auto",
+    "defaultMode": "acceptEdits",
     "allow": [
       "Edit",
       "Write",
@@ -232,9 +232,11 @@
 
       "Bash(bundle:*)",
 
+      "Bash(go build:*)",
       "Bash(go doc:*)",
       "Bash(go mod:*)",
       "Bash(go get:*)",
+      "Bash(go list:*)",
       "Bash(go test:*)",
       "Bash(go tool pprof:*)",
       "Bash(go vet:*)",
