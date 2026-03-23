@@ -35,13 +35,19 @@ const hook = defineHook({
     },
   },
 
-  run: async (c) => {
-    const plan = c.input.tool_input["plan"] as string;
-    const prettyPlan = await formatPlan(plan);
-    const message = await dumpPlanToNote(prettyPlan);
+  run: (c) =>
+    c.defer(async () => {
+      const plan = c.input.tool_input["plan"] as string;
+      const prettyPlan = await formatPlan(plan);
+      const message = await dumpPlanToNote(prettyPlan);
 
-    return c.success({ messageForUser: message });
-  },
+      return {
+        event: "PreToolUse",
+        output: {
+          systemMessage: message,
+        },
+      };
+    }),
 });
 
 if (import.meta.main) {
