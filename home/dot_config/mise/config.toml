@@ -11,7 +11,6 @@ go = "1.26.1"
 node = "25.6.0"
 bun = "latest"
 deno = "latest"
-tenv = "latest"
 ruby = ["4.0.2", "3.4.8", "3.3.10"]
 
 # tools
@@ -62,9 +61,6 @@ watchexec = "latest"
 "npm:tsx" = "latest"
 "pipx:yq" = "latest"
 "pipx:docling" = "latest"
-
-[tool_alias]
-tenv = "asdf:https://github.com/tofuutils/asdf-tenv"
 
 [env]
 SHARP_IGNORE_GLOBAL_LIBVIPS = "1" # we installed vips via brew, but use pre-compiled sharp by default when `npm install sharp`
