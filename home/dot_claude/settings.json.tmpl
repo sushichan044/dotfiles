@@ -58,6 +58,15 @@
             "command": "jq -r '.tool_input.file_path' | xargs -I {} seil post-edit {} --reporter claude"
           }
         ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/superpowers/worktree.ts"
+          }
+        ]
       }
     ],
     "PreToolUse": [
