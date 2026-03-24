@@ -58,7 +58,6 @@ async function detectPackageManager(params: Params = {}) {
 async function installDependencies(pm: Agent, params: Params = {}) {
   const resolved = resolveCommand(pm, "install", []);
   if (!resolved) {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error
     throw new Error(`Unsupported package manager: ${pm}`);
   }
 
