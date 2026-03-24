@@ -65,6 +65,7 @@ fi
 
 # Terraform plugin cache
 # https://developer.hashicorp.com/terraform/cli/config/config-file#provider-plugin-cache
+mkdir -p "$XDG_CACHE_HOME/terraform/plugin-cache"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform/plugin-cache"
 
 if command_exists git-wt; then
