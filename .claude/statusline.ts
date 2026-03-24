@@ -1,9 +1,13 @@
+import { Ansis } from "ansis";
+import colorNames from "css-color-names";
+import "temporal-polyfill-lite/global";
 import getStdin from "get-stdin";
 import os from "node:os";
-import pc from "picocolors";
-import "temporal-polyfill-lite/global";
 
 import { isNonEmptyString } from "../tools/utils/string";
+
+// 256 colors
+const color = new Ansis(2).extend(colorNames);
 
 type InputShape = {
   context_window: {
@@ -94,11 +98,27 @@ type StatusShape = {
   rateLimit:
     | {
         fiveHour: {
-          remainingPercentage: number;
+          /**
+           * @example 42.3
+           */
+          remainingTimePercentage: number;
+          /**
+           * @example 42.3
+           */
+          remainingTokenPercentage: number;
           resetsAt: Temporal.ZonedDateTime;
         };
         weekly: {
-          remainingPercentage: number;
+          /**
+           * Percentage of the current rate limit window that has elapsed. Calculated based on the resetsAt time and the current time.
+           *
+           * @example 42.3
+           */
+          remainingTimePercentage: number;
+          /**
+           * @example 42.3
+           */
+          remainingTokenPercentage: number;
           resetsAt: Temporal.ZonedDateTime;
         };
       }
@@ -174,6 +194,42 @@ function getTokyoTimeFromUnixEpochSec(epochSec: number): Temporal.ZonedDateTime 
   return Temporal.Instant.fromEpochMilliseconds(epochSec * 1000).toZonedDateTimeISO("Asia/Tokyo");
 }
 
+function calculateRemainingTimePercentage(
+  resetsAt: Temporal.ZonedDateTime,
+  windowDuration: Temporal.DurationLike,
+  now = Temporal.Now.zonedDateTimeISO("Asia/Tokyo"),
+): number {
+  const windowStart = resetsAt.subtract(windowDuration);
+  const windowMs = resetsAt.epochMilliseconds - windowStart.epochMilliseconds;
+  const elapsedMs = now.epochMilliseconds - windowStart.epochMilliseconds;
+
+  return Math.max(0, Math.min(100, ((windowMs - elapsedMs) / windowMs) * 100));
+}
+
+function buildRateLimitStatus(rateLimits: InputShape["rate_limits"]): StatusShape["rateLimit"] {
+  if (!rateLimits) {
+    return undefined;
+  }
+
+  const fiveHourResetsAt = getTokyoTimeFromUnixEpochSec(rateLimits.five_hour.resets_at);
+  const weeklyResetsAt = getTokyoTimeFromUnixEpochSec(rateLimits.seven_day.resets_at);
+
+  return {
+    fiveHour: {
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration#iso_8601_duration_format
+      remainingTimePercentage: calculateRemainingTimePercentage(fiveHourResetsAt, "PT5H"),
+      remainingTokenPercentage: 100 - rateLimits.five_hour.used_percentage,
+      resetsAt: fiveHourResetsAt,
+    },
+    weekly: {
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration#iso_8601_duration_format
+      remainingTimePercentage: calculateRemainingTimePercentage(weeklyResetsAt, "P7D"),
+      remainingTokenPercentage: 100 - rateLimits.seven_day.used_percentage,
+      resetsAt: weeklyResetsAt,
+    },
+  };
+}
+
 async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
@@ -193,29 +249,22 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     },
     hostname,
     model: input.model.display_name,
-    rateLimit: input.rate_limits
-      ? {
-          fiveHour: {
-            remainingPercentage: 100 - input.rate_limits.five_hour.used_percentage,
-            resetsAt: getTokyoTimeFromUnixEpochSec(input.rate_limits.five_hour.resets_at),
-          },
-          weekly: {
-            remainingPercentage: 100 - input.rate_limits.seven_day.used_percentage,
-            resetsAt: getTokyoTimeFromUnixEpochSec(input.rate_limits.seven_day.resets_at),
-          },
-        }
-      : undefined,
+    rateLimit: input.rate_limits ? buildRateLimitStatus(input.rate_limits) : undefined,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
   };
 }
 
 function prettyPrint(status: StatusShape): string {
-  const delimiter = pc.dim("|");
-  const model = pc.dim(status.model);
+  const makeLineFromParts = (...parts: Array<string | null | undefined>) => {
+    if (parts.every((part) => !isNonEmptyString(part))) {
+      return null;
+    }
+
+    return color.grey(parts.filter(isNonEmptyString).join(" | "));
+  };
 
   const repository = () => {
-    const repoIcon = pc.bold(pc.dim(NERD_ICONS.GIT_REPO));
     const repoName = status.git.worktree.insideLinkedWorktree
       ? status.git.worktree.inferredRepoName
       : status.git.repository;
@@ -224,54 +273,57 @@ function prettyPrint(status: StatusShape): string {
       return null;
     }
 
-    return pc.dim(`${repoIcon} ${repoName}`);
+    return `${color.bold(NERD_ICONS.GIT_REPO)} ${repoName}`;
   };
 
   const branch = () => {
-    const branchIcon = pc.bold(pc.dim(NERD_ICONS.GIT_BRANCH));
     if (!isNonEmptyString(status.git.branch)) {
       return null;
     }
-    return pc.dim(`${branchIcon} ${status.git.branch}`);
+
+    return `${color.bold(NERD_ICONS.GIT_BRANCH)} ${status.git.branch}`;
   };
 
   const worktree = () => {
     if (!status.git.worktree.insideLinkedWorktree) {
       return null;
     }
-    const treeIcon = pc.bold(pc.dim(NERD_ICONS.TREE));
-    return pc.dim(`${treeIcon} worktree detected`);
+
+    return `${color.bold(NERD_ICONS.TREE)} worktree detected`;
   };
 
   const context = () => {
     const remaining = status.remainingContextPercentage;
     if (!isNonEmptyString(remaining)) {
-      return "";
+      return null;
     }
 
-    const left = pc.dim(`ctx ${remaining}% left`);
+    const left = color.grey(`ctx ${remaining}% left`);
     const aboutToAutoCompact = Number(remaining) < 30;
-    return aboutToAutoCompact ? `${left} ${pc.yellow(`auto-compact soon`)}` : left;
+    return aboutToAutoCompact ? `${left} ${color.darkkhaki(`auto-compact soon`)}` : left;
   };
 
   const fiveHourLimit = () => {
     if (!status.rateLimit) {
-      return "";
+      return null;
     }
 
-    const remaining = status.rateLimit.fiveHour.remainingPercentage.toLocaleString("ja-JP");
+    const remaining = (status.rateLimit.fiveHour.remainingTokenPercentage / 100).toLocaleString(
+      "ja-JP",
+      {
+        style: "percent",
+      },
+    );
+    const burningToken =
+      status.rateLimit.fiveHour.remainingTokenPercentage <
+      status.rateLimit.fiveHour.remainingTimePercentage;
+
     const resetsAt = status.rateLimit.fiveHour.resetsAt.toLocaleString("ja-JP", {
       hour: "2-digit",
       minute: "2-digit",
     });
-    const text = `5h ${remaining}% left (${NERD_ICONS.REFRESH} ${resetsAt} JST)`;
-    if (status.rateLimit.fiveHour.remainingPercentage < 20) {
-      return pc.red(text);
-    }
-    if (status.rateLimit.fiveHour.remainingPercentage < 50) {
-      return pc.yellow(text);
-    }
-    return pc.dim(text);
+
+    return `5h ${burningToken ? color.darkkhaki(remaining) : remaining} left (${NERD_ICONS.REFRESH} ${resetsAt} JST)`;
   };
 
   const weeklyLimit = () => {
@@ -279,31 +331,29 @@ function prettyPrint(status: StatusShape): string {
       return "";
     }
 
-    const remaining = status.rateLimit.weekly.remainingPercentage.toLocaleString("ja-JP");
+    const remaining = (status.rateLimit.weekly.remainingTokenPercentage / 100).toLocaleString(
+      "ja-JP",
+      {
+        style: "percent",
+      },
+    );
+    const burningToken =
+      status.rateLimit.weekly.remainingTokenPercentage <
+      status.rateLimit.weekly.remainingTimePercentage;
+
     const resetsAt = status.rateLimit.weekly.resetsAt.toLocaleString("ja-JP", {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
       month: "2-digit",
     });
-    const text = `7d ${remaining}% left (${NERD_ICONS.REFRESH} ${resetsAt} JST)`;
-    if (status.rateLimit.weekly.remainingPercentage < 20) {
-      return pc.red(text);
-    }
-    if (status.rateLimit.weekly.remainingPercentage < 50) {
-      return pc.yellow(text);
-    }
-    return pc.dim(text);
+    return `7d ${burningToken ? color.darkkhaki(remaining) : remaining} left (${NERD_ICONS.REFRESH} ${resetsAt} JST)`;
   };
 
-  const parts = [model, context()].filter(isNonEmptyString);
-  const limitParts = [fiveHourLimit(), weeklyLimit()].filter(isNonEmptyString);
-  const fsAndGitStatus = [repository(), branch(), worktree()].filter(isNonEmptyString);
-
   return [
-    parts.join(` ${delimiter} `),
-    limitParts.length > 0 ? limitParts.join(` ${delimiter} `) : null,
-    fsAndGitStatus.join(` ${delimiter} `),
+    makeLineFromParts(status.model, context()),
+    makeLineFromParts(fiveHourLimit(), weeklyLimit()),
+    makeLineFromParts(repository(), branch(), worktree()),
   ].join("\n");
 }
 
