@@ -135,9 +135,6 @@ if OS.mac?
   brew "artginzburg/tap/sudo-touchid",
     postinstall:
       "echo '⏩ Configuring sudo-touchid... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services restart artginzburg/tap/sudo-touchid"
-  brew "batt",
-    postinstall:
-      "echo '⏩ Installing Background Service of Batt... This requires sudo permission.' && sudo ${HOMEBREW_PREFIX}/bin/brew services restart batt && sudo ${HOMEBREW_PREFIX}/bin/batt status && sudo ${HOMEBREW_PREFIX}/bin/batt limit 80 && sudo ${HOMEBREW_PREFIX}/bin/batt magsafe-led enable"
   brew "libiconv"
   brew "mas"
   # postgres errors on linux
