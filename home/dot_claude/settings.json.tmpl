@@ -131,6 +131,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_gh_api.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/post_commit.ts"
           }
         ]
       },
