@@ -5,5 +5,6 @@
     "moduleResolution": "bundler",
     "lib": ["ESNext"]
   },
-  "include": ["**/*.ts", ".agents/**/*.ts", ".claude/**/*.ts", ".codex/**/*.ts"]
+  "include": ["**/*.ts", ".agents/**/*.ts", ".claude/**/*.ts", ".codex/**/*.ts"],
+  "exclude": ["node_modules", ".agents/skills"]
 }
