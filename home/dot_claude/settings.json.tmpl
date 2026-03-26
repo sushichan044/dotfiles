@@ -77,6 +77,15 @@
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/superpowers/worktree.ts"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/post_create_pr.ts"
+          }
+        ]
       }
     ],
     "PreToolUse": [
