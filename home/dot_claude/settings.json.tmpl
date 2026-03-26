@@ -39,6 +39,16 @@
     "clangd-lsp@claude-plugins-official": true
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -121,6 +131,15 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_github_repo_visibility.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|Read|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
           }
         ]
       }
