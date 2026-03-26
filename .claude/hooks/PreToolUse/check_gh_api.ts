@@ -5,7 +5,7 @@
 
 import { defineHook } from "cc-hooks-ts";
 
-import { parseGhApiCommand } from "../../tools/github";
+import { parseGhApiCommand } from "../../../tools/github";
 
 const hook = defineHook({
   trigger: {

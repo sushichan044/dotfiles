@@ -54,7 +54,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/polish.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/Stop/polish.ts"
           }
         ]
       }
@@ -74,7 +74,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/superpowers/worktree.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/superpowers/worktree.ts"
           }
         ]
       },
@@ -83,7 +83,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/post_create_pr.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_create_pr.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_commit.ts"
           }
         ]
       }
@@ -94,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/dump_plan.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/dump_plan.ts"
           }
         ]
       },
@@ -103,7 +107,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/web_fetch_advice.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/web_fetch_advice.ts"
           }
         ]
       },
@@ -112,7 +116,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/markdown_tree.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/markdown_tree.ts"
           }
         ]
       },
@@ -121,7 +125,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/typescript/no_restricted_edit.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/typescript/no_restricted_edit.ts"
           }
         ]
       },
@@ -130,11 +134,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_gh_api.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/post_commit.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/check_gh_api.ts"
           }
         ]
       },
@@ -143,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/check_github_repo_visibility.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/check_github_repo_visibility.ts"
           }
         ]
       },

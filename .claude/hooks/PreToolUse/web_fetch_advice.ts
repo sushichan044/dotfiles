@@ -8,9 +8,9 @@
 
 import { defineHook } from "cc-hooks-ts";
 
-import { parseGitHubUrlToGhCommand } from "../../tools/github";
-import { isRawContentURL } from "../../tools/url";
-import { isNonEmptyString } from "../../tools/utils/string";
+import { parseGitHubUrlToGhCommand } from "../../../tools/github";
+import { isRawContentURL } from "../../../tools/url";
+import { isNonEmptyString } from "../../../tools/utils/string";
 
 const hook = defineHook({
   trigger: {
