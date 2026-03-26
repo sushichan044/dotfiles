@@ -4,6 +4,11 @@ import "temporal-polyfill-lite/global";
 import getStdin from "get-stdin";
 import os from "node:os";
 
+import {
+  detectIfInsideWorktree,
+  getCurrentGitBranch,
+  getCurrentRepositoryName,
+} from "../tools/git";
 import { isNonEmptyString } from "../tools/utils/string";
 
 // 256 colors
@@ -149,47 +154,6 @@ const NERD_ICONS = {
   TREE: "\uf1bb",
 } as const;
 
-// wrap Bun shell to always return result object and never prints to stdout/stderr directly
-const sh = async (strings: TemplateStringsArray, ...expressions: Bun.ShellExpression[]) =>
-  Bun.$(strings, ...expressions)
-    .nothrow()
-    .quiet();
-
-async function getCurrentGitBranch(cwd: string): Promise<string | null> {
-  const result = await sh`git -C ${cwd} branch --show-current`;
-  if (result.exitCode === 0) {
-    return result.text().trim();
-  }
-  return null;
-}
-
-async function getCurrentRepositoryName(cwd: string): Promise<string | null> {
-  const result = await sh`git -C ${cwd} rev-parse --show-toplevel`;
-  if (result.exitCode === 0) {
-    const repoPath = result.text().trim();
-    return repoPath.split("/").at(-1) ?? null;
-  }
-  return null;
-}
-
-async function detectWorktree(cwd: string): Promise<WorktreeStatus> {
-  const [gitDir, commonGitDir] = await Promise.all([
-    sh`git -C ${cwd} rev-parse --git-dir`,
-    sh`git -C ${cwd} rev-parse --git-common-dir`,
-  ]);
-
-  if (gitDir.exitCode === 0 && commonGitDir.exitCode === 0) {
-    const gitDirText = gitDir.text().trim();
-    const commonGitDirText = commonGitDir.text().trim();
-    // get `repo` from /path/to/repo/.git
-    const inferredRepoName = commonGitDirText.split("/").at(-2) ?? null;
-
-    return { inferredRepoName, insideLinkedWorktree: gitDirText !== commonGitDirText };
-  }
-
-  return { insideLinkedWorktree: false };
-}
-
 function getTokyoTimeFromUnixEpochSec(epochSec: number): Temporal.ZonedDateTime {
   return Temporal.Instant.fromEpochMilliseconds(epochSec * 1000).toZonedDateTimeISO("Asia/Tokyo");
 }
@@ -236,7 +200,7 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
   const [gitBranch, repositoryName, worktree] = await Promise.all([
     getCurrentGitBranch(input.workspace.current_dir),
     getCurrentRepositoryName(input.workspace.current_dir),
-    detectWorktree(input.workspace.current_dir),
+    detectIfInsideWorktree(input.workspace.current_dir),
   ]);
 
   return {
