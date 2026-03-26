@@ -14,14 +14,28 @@ const hook = defineHook({
         // git wt --nocd prints the absolute path of the worktree
         const out = await Bun.$`git wt ${wtName} --nocd`.nothrow().quiet();
         const wtAbsPath = out.text().trim();
-        console.log(wtAbsPath);
-        return c.success();
+
+        return c.json({
+          event: "WorktreeCreate",
+          output: {
+            hookSpecificOutput: {
+              hookEventName: "WorktreeCreate",
+              worktreePath: wtAbsPath,
+            },
+          },
+        });
       }
       case "WorktreeRemove": {
         const wtPath = c.input.worktree_path;
 
         // force delete
-        await Bun.$`git wt -D ${wtPath}`.nothrow().quiet();
+        const out = await Bun.$`git wt -D ${wtPath}`.nothrow().quiet();
+        if (out.exitCode !== 0) {
+          return c.nonBlockingError(
+            `Failed to remove worktree at ${wtPath}: ${out.stderr.toString()}`,
+          );
+        }
+
         return c.success();
       }
     }
