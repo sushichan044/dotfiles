@@ -26,7 +26,14 @@ type WorktreeInfo =
        */
       inferredRepoName: string | null;
       insideLinkedWorktree: true;
-      root: string;
+      /**
+       * The root of the main worktree, which is where the .git directory lives. This is used for tools that need to access git metadata, like the Git tool or the ProhibitEditDefaultBranch hook.
+       */
+      mainRepoRoot: string;
+      /**
+       * The root of the linked worktree, which is where the worktree-specific files live. This is used for tools that need to access files within the worktree.
+       */
+      worktreeRoot: string;
     }
   | { insideLinkedWorktree: false };
 
@@ -41,7 +48,8 @@ export async function detectIfInsideWorktree(cwd: string): Promise<WorktreeInfo>
     const gitDirText = gitDir.text().trim();
     const commonGitDirText = commonGitDir.text().trim();
     // get `repo` from /path/to/repo/.git
-    const inferredRepoName = commonGitDirText.split("/").at(-2) ?? null;
+    const mainRepoRoot = commonGitDirText.split("/").slice(0, -1).join("/");
+    const inferredRepoName = mainRepoRoot.split("/").at(-1) ?? null;
 
     const worktreeRoot = await getWorktreeRootFromName(cwd, currentBranch ?? "");
     if (!isNonEmptyString(worktreeRoot)) {
@@ -51,7 +59,8 @@ export async function detectIfInsideWorktree(cwd: string): Promise<WorktreeInfo>
     return {
       inferredRepoName,
       insideLinkedWorktree: gitDirText !== commonGitDirText,
-      root: worktreeRoot,
+      mainRepoRoot,
+      worktreeRoot,
     };
   }
 
