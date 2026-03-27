@@ -1,4 +1,11 @@
+import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
+
+// detect git commit, git <options> commit.
+function isGitCommitCommand(cmd: string): boolean {
+  const pattern = regex(`^git(\\s+\\S+)*\\s+commit(\\s+\\S+)*$`);
+  return pattern.test(cmd);
+}
 
 const hook = defineHook({
   trigger: {
@@ -9,7 +16,7 @@ const hook = defineHook({
 
   run: (c) => {
     const cmd = c.input.tool_input.command;
-    if (!cmd.includes("git commit")) {
+    if (!isGitCommitCommand(cmd)) {
       return c.success();
     }
 
