@@ -121,17 +121,6 @@ if dir_exists "$GCLOUD_BASE"; then
   zsh-defer _setup_gcloud
 fi
 
-_setup_gh_token() {
-  if command_exists gh && gh auth status &>/dev/null; then
-    GH_TOKEN="$(gh auth token)"
-    if command_exists mise; then
-      export MISE_GITHUB_TOKEN="$GH_TOKEN"
-    fi
-  fi
-  unfunction _setup_gh_token
-}
-zsh-defer _setup_gh_token
-
 zsh-defer unfunction source
 
 # Expand alias with space and enter
