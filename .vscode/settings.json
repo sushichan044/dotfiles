@@ -33,6 +33,5 @@
   },
   "rubyLsp.formatter": "standard",
   "rubyLsp.linters": ["standard"],
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.experimental.useTsgo": true
+  "js/ts.experimental.useTsgo": true
 }
