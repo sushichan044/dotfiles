@@ -89,6 +89,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_commit.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/inject_timestamp.ts"
           }
         ]
       }
@@ -136,6 +140,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/check_gh_api.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/inject_timestamp.ts"
           }
         ]
       },
