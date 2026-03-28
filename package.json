@@ -36,7 +36,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260328.1",
     "@virtual-live-lab/eslint-config": "2.3.1",
     "@virtual-live-lab/tsconfig": "2.1.21",
-    "eslint": "9.39.4",
+    "eslint": "10.1.0",
     "typescript": "6.0.2"
   },
   "packageManager": "bun@1.3.11"
