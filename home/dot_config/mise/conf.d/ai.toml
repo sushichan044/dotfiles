@@ -1,6 +1,7 @@
 #:schema https://mise.jdx.dev/schema/mise.json
 
 [tools]
+"github:anomalyco/opencode" = "1.2.24"
 "github:openai/codex" = { version = "rust-v0.116.0", bin = "codex" }
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"
@@ -12,7 +13,6 @@
 "npm:ccusage" = "latest"
 "npm:chrome-devtools-mcp" = "latest"
 "claude" = "latest"
-"opencode" = "1.2.24"
 
 [env]
 AGENT_BROWSER_AUTO_CONNECT = "1" # https://github.com/vercel-labs/agent-browser/pull/786
