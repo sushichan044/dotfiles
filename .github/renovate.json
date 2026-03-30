@@ -8,6 +8,19 @@
   "minimumReleaseAge": "1 day",
   "enabledManagers": ["bun", "bun-version", "bundler", "github-actions", "mise", "ruby-version"],
   "labels": ["dependencies"],
+  "mise": {
+    "managerFilePatterns": [
+      "**/{,.}mise{,.*}.toml",
+      "**/{,.}mise/config{,.*}.toml",
+      "**/.config/mise{,.*}.toml",
+      "**/.config/mise/{mise,config}{,.*}.toml",
+      "**/.config/mise/conf.d/*.toml",
+      "**/dot_config/mise{,.*}.toml",
+      "**/dot_config/mise/{mise,config}{,.*}.toml",
+      "**/dot_config/mise/conf.d/*.toml",
+      "**/.rtx{,.*}.toml"
+    ]
+  },
   "packageRules": [
     {
       "groupName": "auto-merge",
