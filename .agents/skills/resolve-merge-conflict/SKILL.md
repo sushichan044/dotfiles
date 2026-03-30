@@ -2,7 +2,6 @@
 name: resolve-merge-conflict
 description: 現在の branch を分岐元の最新に追随させるために rebase conflict を解消するときに使う。branch の意図を壊さず進めたい、曖昧な判断だけユーザー確認したい、必要なら PR 文脈も補助的に使いたい場面で参照する。
 allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git rebase:*) Bash(git add:*) Bash(git diff:*) Bash(git show:*) Bash(git merge-base:*) Bash(git push * --force-with-lease *) Bash(gh pr view:*) Bash(gh pr diff:*)
-context: fork
 ---
 
 # resolve-merge-conflict
