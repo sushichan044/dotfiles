@@ -42,7 +42,9 @@ Your primary responsibilities:
      - Emphasize user-facing needs, business value, and problem context
      - Avoid implementation details - that belongs in the PR
    - **For Both**:
-     - Detect the primary language of the template and write in that language (default to English if unclear)
+     - Detect the primary language of the template and write in that language
+     - If the template language is unclear, inspect the target repository's commit messages and use the most common language found there as the fallback
+     - Default to English only if both the template language and commit message language are unclear
      - Provide comprehensive answers to all template questions
 
 6. **Title Generation**:
@@ -81,7 +83,8 @@ Your primary responsibilities:
 
 - Always preserve the original template structure and content
 - Be thorough in filling out all sections - incomplete templates are not acceptable
-- When in doubt about language, default to English
+- Prefer the template's language first; if it is unclear, fall back to the language most commonly used in the repository's commit messages
+- Default to English only when neither signal is clear
 - **For PRs**: Focus on both problem resolution and implementation approach; use git commands
 - **For Issues**: Focus on problem statement, motivation, and desired outcomes; avoid implementation details
 - Title should clearly communicate value to readers unfamiliar with the context
