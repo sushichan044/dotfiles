@@ -1,3 +1,4 @@
+registry=https://npm.flatt.tech
 @jsr:registry=https://npm.jsr.io
 save=true
 save-exact=true

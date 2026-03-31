@@ -1,0 +1,4 @@
+[[index]]
+# https://shisho.dev/docs/ja/t/guard/quickstart/pypi/#setup-anonymous
+url = "https://pypi.flatt.tech/simple/"
+default = true
