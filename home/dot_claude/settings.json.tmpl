@@ -22,7 +22,6 @@
     "type": "command",
     "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/statusline.ts"
   },
-  "skipAutoPermissionPrompt": true,
   "language": "Japanese",
   "enabledPlugins": {
     "pr-review-toolkit@claude-plugins-official": true,
@@ -37,7 +36,16 @@
     "gopls-lsp@claude-plugins-official": true,
     "ruby-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true
+    "clangd-lsp@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
   },
   "hooks": {
     "SessionStart": [
