@@ -18,9 +18,8 @@ const hook = defineHook({
       output: {
         hookSpecificOutput: {
           additionalContext: [
-            "It looks like you just create a pull request.",
-            "If you didn't use `prepare-issue-pr` skill, load it and check your pull request format, and refine the pull request if needed.",
-            "This will help reviewers understand the context and purpose of the pull request, and facilitate a smoother review process.",
+            "You just create a pull request.",
+            "You MUST execute the `prepare-issue-pr` skill before completing the task to tidy up PR.",
           ].join("\n"),
           hookEventName: "PostToolUse",
         },

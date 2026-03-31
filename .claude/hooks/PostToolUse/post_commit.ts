@@ -25,9 +25,8 @@ const hook = defineHook({
       output: {
         hookSpecificOutput: {
           additionalContext: [
-            "It looks like you just committed some changes.",
-            "If you didn't use `contextual-commit` skill, load it and check your commit message format, and refine the commit message with `amend` if needed.",
-            "This will help reviewers understand the context and purpose of the commit, and facilitate a smoother review process.",
+            "You just committed some changes.",
+            "You MUST execute the `contextual-commit` skill before completing the task to tidy up your commit message.",
           ].join("\n"),
           hookEventName: "PostToolUse",
         },
