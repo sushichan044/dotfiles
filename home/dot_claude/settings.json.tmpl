@@ -130,6 +130,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/markdown_tree.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
           }
         ]
       },
@@ -139,6 +143,19 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/typescript/no_restricted_edit.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
           }
         ]
       },
@@ -165,7 +182,7 @@
         ]
       },
       {
-        "matcher": "Edit|Write|Read|Grep",
+        "matcher": "Grep",
         "hooks": [
           {
             "type": "command",
