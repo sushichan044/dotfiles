@@ -6,3 +6,4 @@ progress=true
 init-license=MIT
 init-type=module
 engine-strict=true
+min-release-age=7
