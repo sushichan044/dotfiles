@@ -19,6 +19,7 @@
     "FORCE_AUTO_BACKGROUND_TASKS": "1"
   },
   "showThinkingSummaries":true,
+  "model": {{ if eq .for_personal false }}"opusplan"{{ else }}"sonnet"{{ end }},
   "cleanupPeriodDays": 99999,
   "statusLine": {
     "type": "command",
