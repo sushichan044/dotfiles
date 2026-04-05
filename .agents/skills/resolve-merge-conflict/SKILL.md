@@ -16,22 +16,22 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 1. 状態確認
 
-    ```bash
-    git status --short --branch
-    ```
+   ```bash
+   git status --short --branch
+   ```
 
 2. base を更新して rebase 開始
 
-    ```bash
-    git fetch origin <base>
-    git rebase origin/<base>
-    ```
+   ```bash
+   git fetch origin <base>
+   git rebase origin/<base>
+   ```
 
 3. 止まったら conflict file を確認
 
-    ```bash
-    git diff --name-only --diff-filter=U
-    ```
+   ```bash
+   git diff --name-only --diff-filter=U
+   ```
 
 4. 簡単な file から解消
 
@@ -42,11 +42,11 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 1. 迷う file だけ 3-way を見る
 
-    ```bash
-    git show :1:path/to/file
-    git show :2:path/to/file
-    git show :3:path/to/file
-    ```
+   ```bash
+   git show :1:path/to/file
+   git show :2:path/to/file
+   git show :3:path/to/file
+   ```
 
 - `:1:` base
 - `:2:` applying commit
@@ -54,10 +54,10 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 1. 解消したら追加して続行
 
-    ```bash
-    git add <files>
-    git rebase --continue
-    ```
+   ```bash
+   git add <files>
+   git rebase --continue
+   ```
 
 2. 次の conflict が出たら繰り返す
 
