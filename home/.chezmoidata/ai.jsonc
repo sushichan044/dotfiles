@@ -48,6 +48,7 @@
         "steer": true,
         "codex_hooks": true,
         "multi_agent": true,
+        "guardian_approval": true,
       },
       "mcp_servers": {
         "bundlephobia": {
