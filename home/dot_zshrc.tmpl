@@ -107,6 +107,17 @@ if command_exists pnpm; then
   zsh-defer cached_eval "pnpm completion zsh"
 fi
 
+if command_exists zmx; then
+  zsh-defer cached_eval "zmx completions zsh"
+fi
+function prompt_my_zmx_session() {
+  if [[ -n $ZMX_SESSION ]]; then
+    p10k segment -b '%k' -f '%f' -t "[$ZMX_SESSION]"
+  fi
+}
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=my_zmx_session
+
+
 GCLOUD_BASE="$BREW_BASE/share/google-cloud-sdk"
 if dir_exists "$GCLOUD_BASE"; then
   _setup_gcloud() {
