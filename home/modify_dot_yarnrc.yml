@@ -3,11 +3,11 @@
 set -eu
 
 if ! command -v yq &> /dev/null; then
-  cat
-  exit 0
+cat
+exit 0
 fi
 
 yq eval '
-  .npmRegistryServer = "https://npm.flatt.tech/" |
-  .npmMinimalAgeGate = "7d"
+.npmRegistryServer = "https://npm.flatt.tech/" |
+.npmMinimalAgeGate = "7d"
 ' -
