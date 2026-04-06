@@ -2,7 +2,6 @@
 
 [tools]
 "github:anomalyco/opencode" = "1.3.15"
-"github:openai/codex" = { version = "rust-v0.116.0", bin = "codex" }
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"
 "npm:@modelcontextprotocol/inspector" = "latest"
@@ -13,6 +12,14 @@
 "npm:ccusage" = "latest"
 "npm:chrome-devtools-mcp" = "latest"
 "claude" = "latest"
+
+# Codex repository has too many assets, so we specify the asset pattern to avoid downloading unnecessary assets.
+[tools."github:openai/codex"]
+version = "latest"
+bin = "codex"
+[tools."github:openai/codex".platforms]
+linux-x64 = { asset_pattern = "codex-x86*.tar.gz" }
+macos-arm64 = { asset_pattern = "codex-aarch64*.tar.gz" }
 
 [env]
 AGENT_BROWSER_AUTO_CONNECT = "1" # https://github.com/vercel-labs/agent-browser/pull/786
