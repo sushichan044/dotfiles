@@ -1,57 +1,62 @@
 ---
 name: codex-review
-description: Codex CLI を使って、noninteractive に code review を依頼し、その結果をもとに next action を考えましょう。
+description: Run a code review using Codex CLI. Use when the user wants a code review of uncommitted changes, a specific commit, or changes against a base branch.
 allowed-tools: Bash(codex review:*)
 ---
 
-# Run a code review non-interactively and decide next steps based on the review results
+<!--
+Example prompts:
+  /codex-review Review my uncommitted changes
+  /codex-review Review changes against main
+  /codex-review Review the last commit
+-->
 
-## 1. Execute code review
+You are a code review coordinator. When invoked, run a code review using the bundled Codex CLI binary.
 
-You can use `codex review -c model_reasoning_effort="high" -c sandbox_mode="read-only" <...additional args like options or prompt to request review, follow usage below>` command to request a code review non-interactively using the Codex CLI.
-This allows you to get feedback on your code changes without having to engage in an interactive session.
+## How to Review
 
-This review may takes a bit longer time, but it is good
-So just wait for the review results to come back, do not set timeout.
+Use `codex review` with the appropriate flags:
 
-Detailed Usage:
+### Review uncommitted changes (staged, unstaged, and untracked)
 
 ```bash
-Usage: codex review [OPTIONS] [PROMPT]
-
-Arguments:
-  [PROMPT]
-          Custom review instructions. If `-` is used, read from stdin
-
-Options:
-  -c, --config <key=value>
-          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`. Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed as TOML. If it fails to parse as TOML, the raw string is used as a literal.
-
-          Examples: - `-c model="o3"` - `-c 'sandbox_permissions=["disk-full-read-access"]'` - `-c shell_environment_policy.inherit=all`
-
-      --uncommitted
-          Review staged, unstaged, and untracked changes
-
-      --base <BRANCH>
-          Review changes against the given base branch
-
-      --enable <FEATURE>
-          Enable a feature (repeatable). Equivalent to `-c features.<name>=true`
-
-      --commit <SHA>
-          Review the changes introduced by a commit
-
-      --disable <FEATURE>
-          Disable a feature (repeatable). Equivalent to `-c features.<name>=false`
-
-      --title <TITLE>
-          Optional commit title to display in the review summary
-
-  -h, --help
-          Print help (see a summary with '-h')
+codex review --uncommitted
 ```
 
-## 2. Analyze review results
+### Review changes against a base branch
 
-After executing the code review command, you will receive feedback on your code changes.
-Analyze the review results to identify any issues or areas for improvement in your code.
+```bash
+codex review --base main
+```
+
+### Review a specific commit
+
+```bash
+codex review --commit <SHA>
+```
+
+### Review with custom instructions
+
+`[PROMPT]` is a positional argument that **cannot** be combined with `--uncommitted`, `--base`, or `--commit`. Use it alone for a free-form review prompt:
+
+```bash
+codex review "Focus on error handling and edge cases"
+```
+
+## Workflow
+
+1. **Determine scope**: Ask the user what they want reviewed if not clear — uncommitted changes, a branch diff, or a specific commit.
+2. **Run the review**: Execute `codex review` with the appropriate flags.
+3. **Present findings**: Share the review output with the user. Highlight critical issues separately from suggestions.
+4. **Discuss**: If the user wants to act on specific feedback, help them implement the changes.
+
+## Important Guidelines
+
+- Default to `--uncommitted` when the user says "review my changes" without further detail
+- Use `--base main` when reviewing a feature branch's full diff
+- The review runs non-interactively and returns structured feedback
+- Treat the review as advisory — not all suggestions need to be applied
+
+## Help
+
+!`codex review --help`
