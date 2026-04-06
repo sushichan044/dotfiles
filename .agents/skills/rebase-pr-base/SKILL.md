@@ -1,99 +1,125 @@
 ---
 name: rebase-pr-base
-description: Re-check whether a pull request's base branch should change after a rebase. Use this whenever the user mentions rebasing a branch that may already have an open PR, stacked PRs, parent-branch PR chains, changing a PR base branch, or wants to verify whether `gh pr edit --base ...` is needed after `git rebase`.
-allowed-tools: Bash(git branch:*) Bash(git status:*) Bash(git reflog:*) Bash(git merge-base:*) Bash(git show-branch:*) Bash(gh pr view:*) Bash(gh pr list:*) Bash(gh repo view:*)
+description: Use when a pull request base might be wrong after `git rebase`, `gh pr create`, or stacked PR work and the agent needs a fixed procedure to inspect the current PR and correct its base branch.
+allowed-tools: Bash(git branch:*) Bash(git merge-base:*) Bash(git rev-list:*) Bash(git rev-parse:*) Bash(git cat-file:*) Bash(git fetch:*) Bash(gh pr view:*) Bash(gh pr list:*) Bash(gh repo view:*) Bash(gh pr edit:*)
 ---
 
 # rebase-pr-base
 
-## 目的
+## Goal
 
-- rebase 後に PR の向き先がずれたまま残るのを防ぐ
-- 親子関係のある複数 PR で、レビュー順と差分の見やすさを保つ
-- 親 branch に既存 PR があるなら、子 PR を正しい親へ付け直す
-- 判定できるならその場で直し、曖昧なときだけ確認する
+This skill is a fixed procedure:
 
-## 手順
+1. Find the open PR for the current branch.
+2. Find the repository default branch.
+3. Find the nearest open parent PR by git ancestry.
+4. Set the PR base to that parent branch if one exists.
+5. Otherwise set or keep the PR base as the default branch.
 
-1. 状態確認
+Do not add extra policy or heuristics.
+
+## When To Use
+
+- After `git rebase`
+- After `gh pr create`
+- When working with stacked PRs
+- When checking whether `gh pr edit --base ...` is needed
+
+## Rules
+
+Follow these rules in order:
+
+1. Only inspect the PR for the current branch.
+2. Only consider open PRs as parent candidates.
+3. A parent candidate must be an ancestor of `HEAD`.
+4. If multiple parent candidates exist, choose the one with the smallest `git rev-list <candidate>..HEAD --count`.
+5. If no parent candidate exists, use the default branch.
+6. If the current base already matches the target base, do nothing.
+7. If the current branch has no open PR, stop and report that nothing was changed.
+
+## Procedure
+
+### 1. Read current branch and PR
 
 ```bash
 git branch --show-current
-git status --short --branch
 gh pr view --json number,title,url,baseRefName,headRefName,state 2>/dev/null
 ```
 
-- `gh pr view` で current branch の PR が取れなければ `gh pr list --head <branch>` で補う
-- open PR がなければ終わる
+If `gh pr view` fails, retry with:
 
-1. default branch を確認
+```bash
+branch=$(git branch --show-current)
+gh pr list --head "$branch" --state open --json number,title,url,baseRefName,headRefName,state
+```
+
+If there is no open PR for the current branch, stop.
+
+### 2. Read default branch
 
 ```bash
 gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 ```
 
-1. 親候補を拾う
+### 3. Find the nearest open parent PR
+
+Use git ancestry only. Ignore reflog and subjective reasoning.
 
 ```bash
-git reflog -n 20
-gh pr list --state open --limit 30 --json number,title,url,baseRefName,headRefName
+head_oid=$(git rev-parse HEAD)
+gh pr list --author "@me" --state open --limit 30 \
+  --json number,headRefName,headRefOid,url \
+  | jq -r '.[] | "\(.number) \(.headRefName) \(.headRefOid) \(.url)"' \
+  | while read num name oid url; do
+      [ "$oid" = "$head_oid" ] && continue
+      if ! git cat-file -e "$oid" 2>/dev/null; then
+        git fetch --quiet origin "$name" 2>/dev/null || continue
+      fi
+      if git merge-base --is-ancestor "$oid" HEAD 2>/dev/null; then
+        dist=$(git rev-list "${oid}..HEAD" --count)
+        echo "$dist $num $name $url"
+      fi
+    done | sort -n | head -n 1
 ```
 
-- reflog に rebase 先が見えれば最優先候補にする
-- open PR の `headRefName` から親になりそうな branch を拾う
-- 候補が出たら `git merge-base HEAD origin/<candidate>` で関係を見る
+Interpretation:
 
-1. 変えるか決める
+- If this command returns one line, the third column is the target base branch.
+- If this command returns nothing, the target base branch is the default branch.
 
-- 次の順で見る
-
-1. rebase 先として明示的に分かる branch に open PR がある
-2. current PR が default branch を向いており、より近い親 branch の open PR がある
-3. current PR はすでに non-default base を向いており、その base が親 branch 候補として自然
-
-- 次を満たしたら base を変える
-
-- current branch に open PR がある
-- 親候補 branch にも open PR がある
-- current PR の現 base と親候補 branch が異なる
-- stacked PR として読むほうが自然な根拠を 1 つ以上示せる
-
-1. 変えるならその場で実行
+### 4. Update the PR base if needed
 
 ```bash
-gh pr edit <number> --base <branch>
+gh pr edit <number> --base <target-branch>
 ```
 
-1. 変えないなら理由を返す
+Run this only when the current base and target base differ.
 
-- current base のままでよい理由を 1-2 行で返す
-- `main` のままにした理由か、すでに stacked になっている理由を明記する
+### 5. Report the result
 
-## ユーザー確認が必要なケース
-
-- 親候補が 2 つ以上あり、merge-base でも差がつかない
-- reflog に rebase 先が残っていない
-- どの open PR を親と見るべきか決めきれない
-
-確認は短く聞く。interactive に質問できる tool がある環境では、それを優先して使う。
-
-- 選択肢には default branch も含める
-- 各選択肢に branch 名と PR URL の両方を入れる
-- それぞれ 1 行で理由も添える
-
-```plaintext
-PR base の候補が 2 つあります。
-`feature/a` <url> は <reason>、
-`feature/b` <url> は <reason>、
-`main` <default-or-current-pr-url> は <reason> です。
-推奨は <branch> です。これで進めてよいですか？
-```
-
-## 完了後
-
-報告すること:
+Always report:
 
 - current branch
-- current PR
-- base を変えたかどうか
-- 根拠
+- current PR URL
+- previous base
+- target base
+- whether `gh pr edit --base` was run
+
+## Output Template
+
+```text
+Current branch: <branch>
+Current PR: <url>
+Previous base: <old-base>
+Target base: <target-base>
+Action: changed | unchanged | no-open-pr
+Reason: nearest open ancestor PR | no open ancestor PR, so default branch
+```
+
+## Don'ts
+
+- Do not ask the user to choose between multiple bases.
+- Do not inspect closed PRs.
+- Do not use reflog as a source of truth.
+- Do not keep extra fallback branches in the procedure.
+- Do not leave the target base ambiguous.
