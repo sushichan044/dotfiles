@@ -95,6 +95,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_rebase_pr_base.ts"
+          },
+          {
+            "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_write_pr.ts"
           },
           {
