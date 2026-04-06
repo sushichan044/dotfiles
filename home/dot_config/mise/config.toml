@@ -16,6 +16,7 @@ ruby = ["4.0.2", "3.4.8", "3.3.10"]
 # tools
 usage = "latest"
 watchexec = "latest"
+yq = "latest"
 
 # LSP
 "github:withered-magic/starpls" = "latest"
@@ -59,7 +60,6 @@ watchexec = "latest"
 "npm:open-cli" = "latest"
 "npm:pr-auto-ready" = "latest"
 "npm:tsx" = "latest"
-"pipx:yq" = "latest"
 "pipx:docling" = "latest"
 
 [env]
