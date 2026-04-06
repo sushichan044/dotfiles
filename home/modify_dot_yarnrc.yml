@@ -7,7 +7,10 @@ cat
 exit 0
 fi
 
+input=$(cat)
+[ -z "$input" ] && input="{}"
+
 yq eval '
 .npmRegistryServer = "https://npm.flatt.tech/" |
 .npmMinimalAgeGate = "7d"
-' -
+' - <<< "$input"
