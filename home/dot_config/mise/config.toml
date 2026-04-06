@@ -16,7 +16,10 @@ ruby = ["4.0.2", "3.4.8", "3.3.10"]
 # tools
 usage = "latest"
 watchexec = "latest"
+# Prefer go yq than pipx yq.
 yq = "latest"
+"pipx:yq" = "latest"
+
 
 # LSP
 "github:withered-magic/starpls" = "latest"
@@ -30,10 +33,10 @@ yq = "latest"
 "cargo:cargo-binstall" = "latest"
 "cargo:cargo-clean-all" = "latest"
 "cargo:cargo-features-manager" = "latest"
-"cargo:octorus" = "latest"
-"cargo:rust-script" = "latest"
 "cargo:difftastic" = "latest"
 "cargo:kdlfmt" = "latest"
+"cargo:octorus" = "latest"
+"cargo:rust-script" = "latest"
 "cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
 "github:datadog-labs/pup" = "latest"
 "github:k1LoW/deck" = "latest"
