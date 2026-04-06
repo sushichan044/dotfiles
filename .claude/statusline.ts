@@ -262,9 +262,12 @@ function prettyPrint(status: StatusShape): string {
       return null;
     }
 
-    const left = color.grey(`ctx ${remaining}% left`);
     const aboutToAutoCompact = Number(remaining) < 30;
-    return aboutToAutoCompact ? `${left} ${color.darkkhaki(`auto-compact soon`)}` : left;
+    const highlightedRemaining = aboutToAutoCompact
+      ? color.darkkhaki(`${remaining}%`)
+      : `${remaining}%`;
+
+    return color.grey(`ctx `) + highlightedRemaining + color.grey(` left`);
   };
 
   const fiveHourLimit = () => {
