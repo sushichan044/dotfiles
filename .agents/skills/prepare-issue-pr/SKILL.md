@@ -52,20 +52,13 @@ You are an Issue/PR Preparation Specialist. Prepare clear Issue and Pull Request
 
 When preparing a PR draft, infer the base branch before you present the final output.
 
-1. Establish the current branch and the repository default branch.
-2. Check whether the current branch already has an existing PR.
-   - If it does, treat that PR's base branch as the strongest fact.
-3. If no PR exists yet, inspect likely parent branches.
-   - Use local git ancestry and merge-base information to identify branches the current branch appears to have been cut from.
-   - Use GitHub PR data to see whether one of those candidate branches already has an open PR.
-4. Prefer the most specific valid base.
-   - Example: if `branch1 -> main` already exists and the current branch appears to be `branch2` cut from `branch1`, prefer `branch2 -> branch1`.
-   - Do not collapse stacked work back to `main` just because `main` is the default branch.
-5. If confidence is low, stop short of finalizing the base and ask the user to choose.
+The canonical procedure for finding the nearest open parent PR lives in the `adjust-pr-base` skill. Follow its ancestry-based algorithm (Steps 1–3) to identify the target base branch. This keeps the logic consistent whether you're drafting a new PR or correcting an existing one.
+
+If the current branch already has an existing PR, treat that PR's base branch as the strongest signal — only suggest changing it when the ancestry check clearly disagrees.
 
 ### Ambiguous Base Branch Handling
 
-When you cannot confidently determine the parent branch:
+When the `adjust-pr-base` procedure returns a clear result, use it. When multiple candidates are equally plausible or confidence is low:
 
 - Prefer an interactive question tool when available.
 - Present 1-2 likely parent choices plus the default branch as a fallback choice.

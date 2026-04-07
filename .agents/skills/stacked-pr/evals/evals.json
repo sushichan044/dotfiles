@@ -1,0 +1,67 @@
+{
+  "skill_name": "stacked-pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "feat/auth ブランチを main に rebase したんだけど、この下に feat/auth-ui と feat/auth-api の2つの子PRがぶら下がってる。スタック全体を sync してほしい。feat/auth-ui は #42、feat/auth-api は #44。あと auth-ui の下に auth-ui-tests (#43) もある。",
+      "expected_output": "Should discover 3 downstream branches, build the correct topological order (auth-ui → auth-ui-tests → auth-api), show a plan, cascade rebase each one, push, adjust PR bases, and launch CI watches in background. The report should show all 3 branches with their status.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "correct-topological-order",
+          "check": "Rebase order is topologically correct: auth-ui before auth-ui-tests"
+        },
+        { "name": "discovery-all-three", "check": "All three downstream branches are identified" },
+        { "name": "show-plan-before-rebase", "check": "Shows plan and asks for user confirmation" },
+        { "name": "force-push-with-lease", "check": "Uses --force-with-lease for all pushes" },
+        { "name": "pr-base-adjustment", "check": "Checks/adjusts PR base after each rebase" },
+        { "name": "ci-watch-background", "check": "CI watches launched in background" },
+        { "name": "structured-report", "check": "Produces structured summary report at end" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "stacked PR のメンテしたい。今 feat/payment にいるんだけど、親の feat/checkout が force-push されたっぽい。まず自分を rebase してから、下流の feat/payment-tests (#51) も更新して。CI 落ちたら直して。",
+      "expected_output": "Should first rebase the current branch (feat/payment) onto its parent (feat/checkout), then discover and rebase the downstream branch (feat/payment-tests). Should handle CI failures top-down.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "self-rebase-first",
+          "check": "Rebases feat/payment onto feat/checkout BEFORE cascading downstream"
+        },
+        {
+          "name": "cascade-downstream",
+          "check": "Rebases feat/payment-tests onto updated feat/payment"
+        },
+        { "name": "ci-top-down-priority", "check": "CI failures fixed upstream first" },
+        {
+          "name": "no-upstream-recheck",
+          "check": "Passed upstream CI not re-checked during downstream fixes"
+        },
+        {
+          "name": "ci-fix-approach",
+          "check": "Structured approach to diagnose and fix CI failures"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "3段のスタックで cascade rebase してほしい。main ← refactor/core (#10) ← refactor/api (#11) ← refactor/cli (#12)。refactor/core にいて、さっき main から rebase した。api と cli を順番に sync して、全部の CI が通るか確認して。conflict あったら自動で解決してくれていいよ。",
+      "expected_output": "Should discover refactor/api and refactor/cli as downstream. Rebase api onto core first, then cli onto api. Auto-resolve conflicts where possible. Push both, adjust PR bases, watch CI for both.",
+      "files": [],
+      "assertions": [
+        { "name": "correct-linear-order", "check": "Rebases api before cli" },
+        {
+          "name": "auto-conflict-resolution",
+          "check": "Addresses auto-resolving conflicts per user request"
+        },
+        {
+          "name": "rebase-onto-correct-parent",
+          "check": "Each branch rebased onto direct parent, not skip-level"
+        },
+        { "name": "ci-watch-all", "check": "CI watched for both rebased branches" },
+        { "name": "pr-base-verification", "check": "PR bases verified after rebase" }
+      ]
+    }
+  ]
+}

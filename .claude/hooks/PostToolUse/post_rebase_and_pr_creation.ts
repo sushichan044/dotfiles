@@ -12,7 +12,7 @@ function getTriggerContext(cmd: string): string[] | null {
   if (rebasePattern.test(cmd) && !shouldSkip(cmd)) {
     return [
       "You just ran `git rebase`.",
-      "If this branch may already have an open PR, or may now be part of a stacked PR chain, execute the `adjust-pr-base` skill before completing the task.",
+      "If you are not already executing a multi-step workflow that covers PR base verification, execute the `adjust-pr-base` skill before completing the task.",
       "Use that skill to inspect the current branch PR, possible parent PRs, and whether the PR base branch should change.",
     ];
   }
@@ -20,7 +20,7 @@ function getTriggerContext(cmd: string): string[] | null {
   if (cmd.includes("gh pr create")) {
     return [
       "You just ran `gh pr create`.",
-      "Execute the `adjust-pr-base` skill before completing the task to verify that the new PR targets the correct base branch.",
+      "If you are not already executing a multi-step workflow that covers PR base verification, execute the `adjust-pr-base` skill before completing the task.",
       "Use that skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
     ];
   }

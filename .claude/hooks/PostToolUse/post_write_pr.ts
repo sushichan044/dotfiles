@@ -19,7 +19,7 @@ const hook = defineHook({
         hookSpecificOutput: {
           additionalContext: [
             "You just created or edited a pull request.",
-            "You MUST execute the `prepare-issue-pr` skill before completing the task to tidy up the PR title, body, and metadata.",
+            "If you are not already executing a multi-step workflow that covers PR metadata, execute the `prepare-issue-pr` skill before completing the task to tidy up the PR title, body, and metadata.",
           ].join("\n"),
           hookEventName: "PostToolUse",
         },

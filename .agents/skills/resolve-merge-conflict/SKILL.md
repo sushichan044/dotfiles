@@ -107,6 +107,9 @@ branch 側は <change>、base 側は <change> です。
 git push --force-with-lease origin HEAD
 ```
 
+push 後、このブランチに open PR があれば `adjust-pr-base` skill を実行する。
+rebase 先が変わった場合、PR の base branch も古いまま残ることがあるため。
+
 報告すること:
 
 - どこに rebase したか
