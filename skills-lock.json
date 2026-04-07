@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "3ec7893fcabb2f1a3ab2e6cdf001354982aade9ed539047f44cb21858879eff0"
     },
+    "drawio": {
+      "source": "jgraph/drawio-mcp",
+      "sourceType": "github",
+      "computedHash": "c0cafc1ad6a5b474d2e5c7d92c07f69298a79eb4f9ae4bd31fde0bfe039aa3c5"
+    },
     "frontend-design": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
