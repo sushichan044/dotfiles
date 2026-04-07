@@ -33,7 +33,9 @@ const hook = defineHook({
       return c.success();
     }
 
-    const additionalContext = buildPushTriggerContext(await getPRNumberOfCurrentBranch(c.input.cwd));
+    const additionalContext = buildPushTriggerContext(
+      await getPRNumberOfCurrentBranch(c.input.cwd),
+    );
     if (additionalContext == null) {
       return c.success();
     }
