@@ -3,8 +3,7 @@
 pre-commit:
   parallel: true
   jobs:
-    - name: autofix TypeScript
-      group:
+    - group:
         parallel: false
         jobs:
           - run: bun run lint:fix {staged_files}
