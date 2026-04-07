@@ -121,6 +121,11 @@
       "sourceType": "github",
       "computedHash": "f506f95f84ff344a3e522f2e58069b632a5b3539d978f00c935ee8bab25b03f0"
     },
+    "semgrep": {
+      "source": "semgrep/skills",
+      "sourceType": "github",
+      "computedHash": "2ea1b9502a5cebbc74b5791dcabac00090bb00fc9a67d87a54bbd895c74a1cd6"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",

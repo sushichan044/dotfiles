@@ -1,7 +1,7 @@
 ---
 name: polish
 description: Use this guide after completing work to polish code through project-specific quality checks, pass verifications, unnecessary comment removal, and redundant code reduction for consistent final deliverable quality.
-allowed-tools: Skill(codex-review), Skill(simplify)
+allowed-tools: Skill(codex-review), Skill(simplify), Skill(semgrep)
 ---
 
 # Polish Skill
@@ -32,3 +32,7 @@ Only leave comments when there is an intent that cannot be discerned from the co
 ## Simplify Code
 
 After ensuring quality checks passing, use `simplify` skill.
+
+## Scan with semgrep
+
+Use `semgrep` skill to scan for any potential issues in the code. Address any findings as necessary to further polish the code.
