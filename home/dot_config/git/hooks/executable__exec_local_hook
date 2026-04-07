@@ -2,9 +2,24 @@
 
 GIT_ROOT=$(git rev-parse --show-superproject-working-tree --show-toplevel | head -1)
 HOOK_NAME=$(basename "$0")
-LOCAL_HOOK="${GIT_ROOT}/.git/hooks/${HOOK_NAME}"
 
-if [ -f "$LOCAL_HOOK" ]; then
+# --- lefthook integration ---
+if [ "${LEFTHOOK:-1}" != "0" ]; then
+    if [ -n "${LEFTHOOK_BIN:-}" ]; then
+        _lefthook_bin="$LEFTHOOK_BIN"
+    elif command -v lefthook >/dev/null 2>&1; then
+        _lefthook_bin="lefthook"
+    fi
+
+    if [ -n "${_lefthook_bin:-}" ] && { [ -f "${GIT_ROOT}/lefthook.yml" ] || [ -f "${GIT_ROOT}/.lefthook.yml" ]; }; then
+        "$_lefthook_bin" run --no-auto-install "$HOOK_NAME" "$@"
+    fi
+fi
+
+# --- local hook fallback ---
+# Run per-repo .git/hooks/<hook> if it exists and is not a lefthook shim
+LOCAL_HOOK="${GIT_ROOT}/.git/hooks/${HOOK_NAME}"
+if [ -f "$LOCAL_HOOK" ] && ! grep -q 'call_lefthook' "$LOCAL_HOOK" 2>/dev/null; then
     # shellcheck disable=SC1090
     source "$LOCAL_HOOK"
 fi
