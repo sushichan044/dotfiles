@@ -1,2 +1,7 @@
 [prepare.bun]
 auto = true
+
+[prepare.lefthook]
+# Global hook executes local hooks too
+# home/dot_config/git/hooks/README.md
+run = "lefthook install --force"
