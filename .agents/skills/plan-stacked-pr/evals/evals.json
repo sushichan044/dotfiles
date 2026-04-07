@@ -1,0 +1,89 @@
+{
+  "skill_name": "plan-stacked-pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "新しい決済機能を作ることになった。design doc はここ: https://docs.example.com/payment-v2。DB にテーブル追加、決済プロバイダ連携の SDK ラッパー、注文 API への組み込み、管理画面での決済履歴表示、あとウェブフックの受信処理が必要。stacked PR でやりたいから計画立てて。",
+      "expected_output": "Should create overview.md and individual plan files for 4-6 PRs. Each plan should have Scope, What solves Why, and Goal/Acceptance Criteria. The overview should link to the design doc and each plan. Each plan should contain explicit stacked-pr skill trigger instruction. Plans should NOT contain implementation details.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "overview-created",
+          "check": "Creates an overview.md with feature summary, references, and stack structure"
+        },
+        {
+          "name": "individual-plans-created",
+          "check": "Creates individual plan files for each PR in the stack"
+        },
+        {
+          "name": "delegates-to-split-big-pr",
+          "check": "Delegates split granularity to split-big-pr Phase 1"
+        },
+        {
+          "name": "scope-defined",
+          "check": "Each plan clearly defines what the PR covers and what it doesn't"
+        },
+        {
+          "name": "what-solves-why",
+          "check": "Each plan explains what problem the PR solves and why it's separate"
+        },
+        {
+          "name": "acceptance-criteria",
+          "check": "Each plan has concrete, verifiable acceptance criteria"
+        },
+        {
+          "name": "stacked-pr-instruction",
+          "check": "Each plan md contains explicit instruction to use stacked-pr skill"
+        },
+        {
+          "name": "cross-links",
+          "check": "Overview links to plans, each plan links back to overview"
+        },
+        {
+          "name": "design-doc-reference",
+          "check": "Overview includes the design doc URL in references"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "既存の認証をセッションベースから JWT に移行したい。ユーザーテーブルのスキーマ変更、トークン発行・検証ロジック、既存エンドポイントのミドルウェア差し替え、フロントの認証フロー変更、あと移行期間中の互換レイヤーも必要。plan 作ってくれない？",
+      "expected_output": "Should create a plan accounting for the migration complexity — compatibility layer is crucial. Should propose 4-6 PRs ordered with schema first, then token logic, then middleware, then frontend, with compatibility layer woven in appropriately. Each plan should have the required sections and stacked-pr instruction.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "migration-complexity",
+          "check": "Accounts for the need for a compatibility/transition layer"
+        },
+        {
+          "name": "safe-ordering",
+          "check": "Orders PRs so the system remains functional at each step"
+        },
+        {
+          "name": "template-compliance",
+          "check": "All plan files follow the specified template structure"
+        },
+        {
+          "name": "stacked-pr-trigger",
+          "check": "All plan files include stacked-pr skill trigger instruction"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "ボタンの色を変えるだけなんだけど、stacked PR の計画立てて。",
+      "expected_output": "Should recognize this is too small for stacked PR planning and suggest a single PR instead.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "no-unnecessary-plan",
+          "check": "Correctly identifies the change is too small for stacked PR planning"
+        },
+        {
+          "name": "alternative-suggested",
+          "check": "Suggests using a single PR instead of stacking"
+        }
+      ]
+    }
+  ]
+}

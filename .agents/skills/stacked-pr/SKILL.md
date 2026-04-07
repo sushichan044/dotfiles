@@ -205,6 +205,9 @@ A PR in the stack targets a branch that's been deleted or merged. Use `adjust-pr
 
 ## Boundaries
 
-- このスキルは依存関係のある PR の同期・メンテナンスを扱う。新規スタックの作成や大きな PR の分割は扱わないが、そのようなワークフローを行う際に cookbook として参照されることを想定している。
+- このスキルは依存関係のある PR の同期・メンテナンスを扱う。新規スタックの作成や大きな PR の分割は扱わない。
+  - 大きな PR/ブランチを stacked PR に分割するには `split-big-pr` スキルを使う。
+  - 大きな機能開発の stacked PR 計画を立てるには `plan-stacked-pr` スキルを使う。
+  - これらのスキルで作成されたスタックの継続的メンテナンス（cascade rebase、CI 監視・修正、スタック同期）は本スキルが担う。
 - When PostToolUse hooks for `adjust-pr-base`, `prepare-issue-pr`, or `contextual-commit` fire during the cascade, they are already covered by this workflow. Follow the cascade procedure rather than switching to those skills individually.
 - If the user asks to create a new branch in the stack while cascading, finish the cascade first, then address the new branch request separately.
