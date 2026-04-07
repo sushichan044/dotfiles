@@ -237,7 +237,7 @@
   },
   "skipAutoPermissionPrompt": true,
   "permissions": {
-    "defaultMode": "auto",
+    "defaultMode": {{ if eq .for_personal false }}"auto"{{ else }}"acceptEdits"{{ end }},
     "allow": [
       "Edit",
       "Write",
