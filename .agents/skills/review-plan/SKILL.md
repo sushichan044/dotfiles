@@ -1,6 +1,6 @@
 ---
 name: review-plan
-description: "Review a plan against the current codebase, focusing on problem framing, expected behavior, and architecture decisions"
+description: "Diagnostically review an implementation plan against the current codebase. Focuses on problem framing, expected behavior, and architecture decisions. This skill is read-only — it does not edit files or rewrite the plan."
 disable-model-invocation: true
 ---
 

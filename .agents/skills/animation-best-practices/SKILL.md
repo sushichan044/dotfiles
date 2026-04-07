@@ -1,6 +1,6 @@
 ---
 name: animation-best-practices
-description: CSS and UI animation patterns for responsive, polished interfaces. Use when implementing hover effects, tooltips, button feedback, transitions, or fixing animation issues like flicker and shakiness.
+description: CSS and UI animation patterns for responsive, polished interfaces. Practical implementation patterns and troubleshooting for common animation issues. Use when implementing hover effects, tooltips, button feedback, transitions, or fixing animation issues like flicker and shakiness.
 version: 1.0.0
 # source: https://github.com/millionco/react-doctor/blob/2b46f99b505b03c47d321a311db892e9438a80c1/.ami/skills/animation-best-practices/SKILL.md
 ---

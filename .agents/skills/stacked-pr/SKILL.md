@@ -31,7 +31,7 @@ git branch --show-current
 gh pr view --json number,title,url,baseRefName,headRefName,state 2>/dev/null
 ```
 
-If the current branch itself needs rebasing onto its parent first, do that before cascading. Use the `resolve-merge-conflict` skill's approach if conflicts arise.
+If the current branch itself needs rebasing onto its parent first, do that before cascading. Invoke the `resolve-merge-conflict` skill if conflicts arise.
 
 ### 2. Discover Downstream Branches
 
@@ -109,8 +109,7 @@ git rebase origin/<parent-branch>
 
 **If conflicts arise:**
 
-- Follow the `resolve-merge-conflict` skill's approach: resolve simple conflicts (formatting, imports, renames) automatically, ask the user about ambiguous ones
-- After resolving: `git add <files> && git rebase --continue`
+- Invoke the `resolve-merge-conflict` skill to handle the conflict resolution
 - If the conflict is too complex to auto-resolve, stop the cascade at this branch and report what's left
 
 **If a branch is already up-to-date:**
@@ -124,7 +123,7 @@ After each successful rebase:
 git push --force-with-lease origin HEAD
 ```
 
-Then run the `adjust-pr-base` skill's procedure to verify/correct the PR's base branch. This skill already covers base adjustment inline, so PostToolUse hooks that suggest running `adjust-pr-base` separately can be skipped.
+Then invoke the `adjust-pr-base` skill to verify/correct the PR's base branch.
 
 ### 6. Watch CI
 
@@ -146,7 +145,7 @@ When CI results come back, process failures starting from the most upstream bran
 
 **Fixing a failure:**
 
-1. Use the `fix-github-actions-ci` skill's approach: read failed logs, identify the root cause, implement the fix
+1. Invoke the `fix-github-actions-ci` skill to investigate and fix the failure
 2. Commit and push the fix to that branch
 3. Re-watch CI for that branch
 4. If the fix involved code changes, every downstream branch needs re-rebasing:
@@ -209,5 +208,5 @@ A PR in the stack targets a branch that's been deleted or merged. Use `adjust-pr
   - 大きな PR/ブランチを stacked PR に分割するには `split-big-pr` スキルを使う。
   - 大きな機能開発の stacked PR 計画を立てるには `plan-stacked-pr` スキルを使う。
   - これらのスキルで作成されたスタックの継続的メンテナンス（cascade rebase、CI 監視・修正、スタック同期）は本スキルが担う。
-- When PostToolUse hooks for `adjust-pr-base`, `prepare-issue-pr`, or `contextual-commit` fire during the cascade, they are already covered by this workflow. Follow the cascade procedure rather than switching to those skills individually.
+- This skill orchestrates the cascade by invoking specialized skills (`adjust-pr-base`, `resolve-merge-conflict`, `fix-github-actions-ci`) at the appropriate points. Each skill owns its own domain logic.
 - If the user asks to create a new branch in the stack while cascading, finish the cascade first, then address the new branch request separately.

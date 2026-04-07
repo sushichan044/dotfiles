@@ -1,6 +1,6 @@
 ---
 name: codex-review
-description: Run a code review using Codex CLI. Use when the user wants a code review of uncommitted changes, a specific commit, or changes against a base branch.
+description: Run automated code review using Codex CLI. Use when the user wants an automated code review of uncommitted changes, a specific commit, or changes against a base branch. This skill runs `codex review` non-interactively and returns structured feedback — it does not post comments on PRs or interact with GitHub.
 allowed-tools: Bash(codex review:*)
 ---
 
