@@ -1,3 +1,5 @@
+import { regex } from "arkregex";
+
 import { prepareShell } from "./utils/bun-sh";
 import { isNonEmptyString } from "./utils/string";
 
@@ -11,6 +13,19 @@ export async function getCurrentGitBranch(cwd: string): Promise<string | null> {
   return null;
 }
 
+const headBranchRegex = regex("HEAD branch: (.+)");
+export async function getDefaultGitBranch(cwd: string): Promise<string | null> {
+  const result = await sh`git -C ${cwd} remote show origin`;
+  if (result.exitCode === 0) {
+    const output = result.text();
+    const match = headBranchRegex.exec(output);
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  return null;
+}
+
 export async function getCurrentRepositoryName(cwd: string): Promise<string | null> {
   const result = await sh`git -C ${cwd} rev-parse --show-toplevel`;
   if (result.exitCode === 0) {
@@ -18,6 +33,18 @@ export async function getCurrentRepositoryName(cwd: string): Promise<string | nu
     return repoPath.split("/").at(-1) ?? null;
   }
   return null;
+}
+
+export async function isRepositoryPublished(cwd: string): Promise<boolean> {
+  const result = await sh`git -C ${cwd} remote`;
+  return result.exitCode === 0 && result.text().trim().length > 0;
+}
+
+export function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Promise<boolean> {
+  return async (...filePaths) => {
+    const result = await sh`git -C ${cwd} check-ignore ${filePaths.join(" ")}`;
+    return result.exitCode === 0;
+  };
 }
 
 type WorktreeInfo =

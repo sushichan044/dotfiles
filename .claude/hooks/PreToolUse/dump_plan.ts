@@ -1,8 +1,12 @@
 import { defineHook } from "cc-hooks-ts";
 import { format } from "oxfmt";
 
-async function dumpPlanToNote(plan: string): Promise<string> {
-  const result = await Bun.$`sidetable memo claude-plan`.nothrow().quiet(); // stdout will break claude code
+import type { Shell } from "../../../tools/utils/bun-sh";
+
+import { prepareShell } from "../../../tools/utils/bun-sh";
+
+async function dumpPlanToNote(sh: Shell, plan: string): Promise<string> {
+  const result = await sh`sidetable memo claude-plan`;
   if (result.exitCode !== 0) {
     const stderrText = result.stderr.toString("utf-8");
 
@@ -38,8 +42,10 @@ const hook = defineHook({
   run: (c) =>
     c.defer(async () => {
       const plan = c.input.tool_input["plan"] as string;
+      const sh = prepareShell({ cwd: c.input.cwd });
+
       const prettyPlan = await formatPlan(plan);
-      const message = await dumpPlanToNote(prettyPlan);
+      const message = await dumpPlanToNote(sh, prettyPlan);
 
       return {
         event: "PreToolUse",

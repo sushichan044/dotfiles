@@ -1,41 +1,13 @@
-import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
 import path from "pathe";
 
+import {
+  createIsGitIgnored,
+  getCurrentGitBranch,
+  getDefaultGitBranch,
+  isRepositoryPublished,
+} from "../../tools/git";
 import { isNonEmptyString } from "../../tools/utils/string";
-
-async function getCurrentGitBranch(cwd: string): Promise<string | null> {
-  const result = await Bun.$`git -C ${cwd} symbolic-ref --short HEAD`.nothrow().quiet();
-  if (result.exitCode === 0) {
-    return result.text().trim();
-  }
-  return null;
-}
-
-const headBranchRegex = regex("HEAD branch: (.+)");
-async function getDefaultGitBranch(cwd: string): Promise<string | null> {
-  const result = await Bun.$`git -C ${cwd} remote show origin`.nothrow().quiet();
-  if (result.exitCode === 0) {
-    const output = result.text();
-    const match = headBranchRegex.exec(output);
-    if (match) {
-      return match[1].trim();
-    }
-  }
-  return null;
-}
-
-function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Promise<boolean> {
-  return async (...filePaths) => {
-    const result = await Bun.$`git -C ${cwd} check-ignore ${filePaths.join(" ")}`.nothrow().quiet();
-    return result.exitCode === 0;
-  };
-}
-
-async function isRepositoryPublished(cwd: string): Promise<boolean> {
-  const result = await Bun.$`git -C ${cwd} remote`.nothrow().quiet();
-  return result.exitCode === 0 && result.text().trim().length > 0;
-}
 
 type GitRepoInfo = {
   currentBranch: string | null;

@@ -1,5 +1,7 @@
 import { defineHook } from "cc-hooks-ts";
 
+import { prepareShell } from "../../tools/utils/bun-sh";
+
 const hook = defineHook({
   trigger: {
     WorktreeCreate: true,
@@ -7,12 +9,14 @@ const hook = defineHook({
   },
 
   run: async (c) => {
+    const sh = prepareShell({ cwd: c.input.cwd });
+
     switch (c.input.hook_event_name) {
       case "WorktreeCreate": {
         const wtName = c.input.name;
 
         // git wt --nocd prints the absolute path of the worktree
-        const out = await Bun.$`git wt ${wtName} --nocd`.nothrow().quiet();
+        const out = await sh`git wt ${wtName} --nocd`;
         const wtAbsPath = out.text().trim();
 
         return c.json({
@@ -29,7 +33,7 @@ const hook = defineHook({
         const wtPath = c.input.worktree_path;
 
         // force delete
-        const out = await Bun.$`git wt -D ${wtPath}`.nothrow().quiet();
+        const out = await sh`git wt -D ${wtPath}`;
         if (out.exitCode !== 0) {
           return c.nonBlockingError(
             `Failed to remove worktree at ${wtPath}: ${out.stderr.toString()}`,

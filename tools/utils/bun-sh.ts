@@ -4,7 +4,12 @@ type ShellOptions = {
   cwd: string;
 };
 
-export function prepareShell(options?: Partial<ShellOptions>) {
+export type Shell = (
+  strings: TemplateStringsArray,
+  ...expressions: Bun.ShellExpression[]
+) => Promise<Bun.$.ShellOutput>;
+
+export function prepareShell(options?: Partial<ShellOptions>): Shell {
   let sh = Bun.$;
   if (isNonEmptyString(options?.cwd)) {
     sh = sh.cwd(options.cwd);

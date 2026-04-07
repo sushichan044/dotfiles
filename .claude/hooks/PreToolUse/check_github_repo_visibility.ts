@@ -1,5 +1,7 @@
 import { defineHook } from "cc-hooks-ts";
 
+import { prepareShell } from "../../../tools/utils/bun-sh";
+
 declare module "cc-hooks-ts" {
   interface ToolSchema {
     mcp__deepwiki__ask_question: {
@@ -34,6 +36,8 @@ const hook = defineHook({
   },
 
   run: async (c) => {
+    const sh = prepareShell({ cwd: c.input.cwd });
+
     if (Bun.which("gh") == null) {
       return c.json({
         event: "PreToolUse",
@@ -51,8 +55,7 @@ const hook = defineHook({
     }
 
     const repoName = c.input.tool_input.repoName;
-    const repoVisibility =
-      await Bun.$`gh repo view ${repoName} --json visibility --jq '.visibility'`.nothrow().quiet(); // stdout will break claude code
+    const repoVisibility = await sh`gh repo view ${repoName} --json visibility --jq '.visibility'`;
 
     // "PUBLIC\n" -> "public"
     const isPublic = repoVisibility.text().trim().toLowerCase() === "public";
