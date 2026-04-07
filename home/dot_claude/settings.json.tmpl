@@ -103,6 +103,10 @@
           },
           {
             "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_push_pr_maintenance.ts"
+          },
+          {
+            "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/post_commit.ts"
           },
           {
