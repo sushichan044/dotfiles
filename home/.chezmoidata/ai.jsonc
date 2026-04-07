@@ -99,38 +99,4 @@
       },
     },
   },
-  "cursor": {
-    "mcp": {
-      "mcpServers": {
-        "aws-knowledge": {
-          "type": "http",
-          "url": "https://knowledge-mcp.global.api.aws",
-        },
-        "bundlephobia": {
-          "type": "http",
-          "url": "https://bundlephobia-mcp.sushichan044.workers.dev/mcp",
-        },
-        "context7": {
-          "type": "http",
-          "url": "https://mcp.context7.com/mcp",
-        },
-        "deepwiki": {
-          "type": "http",
-          "url": "https://mcp.deepwiki.com/mcp",
-        },
-        "grep": {
-          "type": "http",
-          "url": "https://mcp.grep.app",
-        },
-        "notion": {
-          "type": "http",
-          "url": "https://mcp.notion.com/mcp",
-        },
-        "sentry": {
-          "type": "http",
-          "url": "https://mcp.sentry.dev/mcp",
-        },
-      },
-    },
-  },
 }
