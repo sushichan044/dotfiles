@@ -51,6 +51,16 @@
     }
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/UserPromptSubmit/question.ts"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
