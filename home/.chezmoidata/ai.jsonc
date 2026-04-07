@@ -50,6 +50,7 @@
         "codex_hooks": true,
         "multi_agent": true,
         "guardian_approval": true,
+        "js_repl": true,
       },
       "mcp_servers": {
         "bundlephobia": {
