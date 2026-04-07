@@ -1,7 +1,7 @@
 ---
 name: polish
 description: Use this guide after completing work to polish code through project-specific quality checks, pass verifications, unnecessary comment removal, and redundant code reduction for consistent final deliverable quality.
-allowed-tools: Skill(codex-review)
+allowed-tools: Skill(codex-review), Skill(simplify)
 ---
 
 # Polish Skill
@@ -28,3 +28,7 @@ Only leave comments when there is an intent that cannot be discerned from the co
    - If any check fails, investigate the failure, fix it, and rerun the checks until they all pass.
    - YOU MUST RUN TOOLS IN NON INTERACTIVE MODE.
    - Hint: In general, formatters should be run after linters since linters may make changes that require reformatting.
+
+## Simplify Code
+
+After ensuring quality checks passing, use `simplify` skill.
