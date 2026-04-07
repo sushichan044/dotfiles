@@ -17,8 +17,9 @@ const hook = defineHook({
         reason: [
           "Before completing the task, check whether the task involved writing or modifying code.",
           '- If it did, execute the "polish" skill to refine the code and ensure the final deliverable is of high quality and meets project standards.',
-          '- If it did NOT involve writing or modifying code (e.g., planning, analysis, research, discussion, or answering questions), you may skip the "polish" skill and complete the task as-is.',
-          'If you receive these instructions again after executing the "polish" skill, you may disregard them.',
+          '- After the "polish" skill completes, also execute the "simplify" skill to reduce unnecessary complexity.',
+          "- If it did NOT involve writing or modifying code (e.g., planning, analysis, research, discussion, or answering questions), you may skip these skills and complete the task as-is.",
+          "If you receive these instructions again after executing both skills, you may disregard them.",
         ].join("\n"),
       },
     });
