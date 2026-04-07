@@ -1,9 +1,9 @@
 import { regex } from "arkregex";
 
-import { prepareShell } from "./utils/bun-sh";
+import { createShell } from "./utils/bun-sh";
 import { isNonEmptyString } from "./utils/string";
 
-const sh = prepareShell();
+const sh = createShell();
 
 export async function getCurrentGitBranch(cwd: string): Promise<string | null> {
   const result = await sh`git -C ${cwd} branch --show-current`;

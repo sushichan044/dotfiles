@@ -9,7 +9,7 @@ export type Shell = (
   ...expressions: Bun.ShellExpression[]
 ) => Promise<Bun.$.ShellOutput>;
 
-export function prepareShell(options?: Partial<ShellOptions>): Shell {
+export function createShell(options?: Partial<ShellOptions>): Shell {
   let sh = Bun.$;
   if (isNonEmptyString(options?.cwd)) {
     sh = sh.cwd(options.cwd);

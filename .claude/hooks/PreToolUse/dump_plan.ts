@@ -3,7 +3,7 @@ import { format } from "oxfmt";
 
 import type { Shell } from "../../../tools/utils/bun-sh";
 
-import { prepareShell } from "../../../tools/utils/bun-sh";
+import { createShell } from "../../../tools/utils/bun-sh";
 
 async function dumpPlanToNote(sh: Shell, plan: string): Promise<string> {
   const result = await sh`sidetable memo claude-plan`;
@@ -42,7 +42,7 @@ const hook = defineHook({
   run: (c) =>
     c.defer(async () => {
       const plan = c.input.tool_input["plan"] as string;
-      const sh = prepareShell({ cwd: c.input.cwd });
+      const sh = createShell({ cwd: c.input.cwd });
 
       const prettyPlan = await formatPlan(plan);
       const message = await dumpPlanToNote(sh, prettyPlan);

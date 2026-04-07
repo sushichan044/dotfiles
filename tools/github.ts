@@ -11,7 +11,7 @@ import { parse as parseIntoArray } from "shell-quote";
 import type { MaybeLiteral } from "./utils/types";
 
 import { isRawContentURL } from "./url";
-import { prepareShell } from "./utils/bun-sh";
+import { createShell } from "./utils/bun-sh";
 import { isNonEmptyString } from "./utils/string";
 
 export type GitHubPathType =
@@ -302,7 +302,7 @@ export function parseGhApiCommand(command: string): GhApiResult | null {
 }
 
 export async function getPRNumberOfCurrentBranch(cwd: string): Promise<number | null> {
-  const sh = prepareShell({ cwd });
+  const sh = createShell({ cwd });
 
   const result = await sh`gh pr view --json number --template "{{.number}}"`;
   if (result.exitCode === 0) {

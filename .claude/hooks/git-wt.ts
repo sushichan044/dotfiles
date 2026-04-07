@@ -1,6 +1,6 @@
 import { defineHook } from "cc-hooks-ts";
 
-import { prepareShell } from "../../tools/utils/bun-sh";
+import { createShell } from "../../tools/utils/bun-sh";
 
 const hook = defineHook({
   trigger: {
@@ -9,7 +9,7 @@ const hook = defineHook({
   },
 
   run: async (c) => {
-    const sh = prepareShell({ cwd: c.input.cwd });
+    const sh = createShell({ cwd: c.input.cwd });
 
     switch (c.input.hook_event_name) {
       case "WorktreeCreate": {

@@ -1,6 +1,6 @@
 import { defineHook } from "cc-hooks-ts";
 
-import { prepareShell } from "../../../tools/utils/bun-sh";
+import { createShell } from "../../../tools/utils/bun-sh";
 
 declare module "cc-hooks-ts" {
   interface ToolSchema {
@@ -36,7 +36,7 @@ const hook = defineHook({
   },
 
   run: async (c) => {
-    const sh = prepareShell({ cwd: c.input.cwd });
+    const sh = createShell({ cwd: c.input.cwd });
 
     if (Bun.which("gh") == null) {
       return c.json({
