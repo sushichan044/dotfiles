@@ -6,6 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 source "$HOME/.zsh.d/setup/init.zsh"
+source "$HOME/.zsh.d/setup/interactive.zsh"
 
 # source command override technique
 # https://zenn.dev/fuzmare/articles/zsh-source-zcompile-all
@@ -42,7 +43,14 @@ unset sheldon_config_dir sheldon_cache sheldon_toml
 # prepare completions
 COMPLETION_HOME="$HOME/.zsh.d/completions"
 fpath=("$COMPLETION_HOME" "${fpath[@]}")
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+# Use cached .zcompdump if less than 24h old, otherwise do full scan
+# shellcheck disable=SC1009,SC1036,SC1072,SC1073
+if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 # Only make targets appear in `make` completions
 zstyle ':completion:*:*:make:*' tag-order 'targets'
@@ -108,7 +116,6 @@ function prompt_my_zmx_session() {
 }
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=my_zmx_session
 
-
 GCLOUD_BASE="$BREW_BASE/share/google-cloud-sdk"
 if dir_exists "$GCLOUD_BASE"; then
   _setup_gcloud() {
@@ -123,6 +130,7 @@ if dir_exists "$GCLOUD_BASE"; then
   zsh-defer _setup_gcloud
 fi
 
+zsh-defer mkdir -p "$TF_PLUGIN_CACHE_DIR"
 zsh-defer unfunction source
 
 # Expand alias with space and enter

@@ -23,9 +23,9 @@ COURSIER_BIN_DIR="$HOME/.local/share/coursier/bin"
 {{ end -}}
 export BREW_BIN="${BREW_BASE}/bin/brew"
 
-# Load homebrew
+# Load homebrew (cached to avoid fork on every shell startup)
 if file_exists "$BREW_BIN"; then
-    eval "$($BREW_BIN shellenv)"
+    cached_eval "$BREW_BIN shellenv"
 fi
 
 # Use GNU utils as default on macOS
@@ -52,7 +52,9 @@ if dir_exists "$COURSIER_BIN_DIR"; then
 fi
 
 # Load Rust
-source_if_exists "$HOME/.cargo/env"
+if dir_exists "$HOME/.cargo/bin"; then
+    add_to_path_if_not_exists "$HOME/.cargo/bin"
+fi
 
 # Set ghq root directory
 export GHQ_ROOT="$HOME/workspace"
@@ -85,7 +87,6 @@ fi
 
 # Terraform plugin cache
 # https://developer.hashicorp.com/terraform/cli/config/config-file#provider-plugin-cache
-mkdir -p "$XDG_CACHE_HOME/terraform/plugin-cache"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform/plugin-cache"
 
 # https://semgrep.dev/docs/metrics#automatic-collection-opt-in-and-opt-out
