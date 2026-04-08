@@ -3,6 +3,7 @@ import { defineHook } from "cc-hooks-ts";
 const hook = defineHook({
   trigger: {
     Stop: true,
+    SubagentStop: true,
   },
 
   run: (c) => {

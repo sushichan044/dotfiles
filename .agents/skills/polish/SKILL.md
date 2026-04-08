@@ -32,3 +32,7 @@ Only leave comments when there is an intent that cannot be discerned from the co
 ## Scan with semgrep
 
 Use `semgrep` skill to scan for any potential issues in the code. Address any findings as necessary to further polish the code.
+
+## Issue and Pull Request tidying
+
+Use `prepare-issue-pr` skill to adjust the content and metadata of related issue and PRs.

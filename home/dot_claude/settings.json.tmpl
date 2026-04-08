@@ -78,7 +78,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/Stop/polish.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/polish.ts"
+          }
+        ]
+      }
+    ],
+    "SubAgentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/polish.ts"
           }
         ]
       }
