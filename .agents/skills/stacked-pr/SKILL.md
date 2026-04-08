@@ -20,11 +20,28 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 
 Stacked PRs form a chain: each PR targets its parent branch rather than `main`. When an upstream branch changes, every downstream branch must rebase onto the updated parent in order, one level at a time. CI failures are fixed top-down because upstream CI is independent of downstream changes — once an upstream branch's CI passes, it stays passed regardless of what happens below.
 
+## Parallelism Strategy
+
+**Maximize concurrency at every opportunity.** The rebase itself must be sequential (topological order), but everything around it — fetches, CI watches, PR base adjustments, CI failure diagnostics — should run in parallel whenever possible.
+
+Key parallelism opportunities:
+
+| Phase            | What to parallelize                                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Discovery        | `git fetch` all candidate branches concurrently                                                                                                               |
+| Rebase loop      | After each push, immediately launch `adjust-pr-base` as a background sub-agent and a background CI watch before moving to the next branch                     |
+| CI watching      | All CI watches run concurrently                                                                                                                               |
+| CI fix diagnosis | Spawn `fix-github-actions-ci` sub-agents in parallel for independent failures; apply fixes top-down but don't wait for one diagnosis before starting the next |
+
+**Run Bash commands in the background wherever possible** — independent commands should never block each other.
+
+**Sub-agent pattern:** Use background sub-agents for tasks that involve multiple steps but don't need to block the main thread — e.g., `adjust-pr-base`, `fix-github-actions-ci`. Launch them immediately after the triggering action (push, CI failure detection) and collect results later.
+
 ## Procedure
 
 ### 1. Identify the Starting Point
 
-Determine the current branch — this is the "root of the cascade." Everything below it in the stack will be rebased.
+Issue both lookups concurrently in background (they're independent):
 
 ```bash
 git branch --show-current
@@ -35,25 +52,27 @@ If the current branch itself needs rebasing onto its parent first, do that befor
 
 ### 2. Discover Downstream Branches
 
-Find all open PRs whose branches are descendants of the current branch.
+**First**, issue a single API call to get all open PRs, and fetch the default branch name concurrently in background (independent):
+
+```bash
+gh pr list --author "@me" --state open --limit 50 \
+  --json number,headRefName,headRefOid,baseRefName,url
+gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+```
+
+**Then**, fetch all candidate remote branches — prefer a single `git fetch` with multiple refs to minimize round-trips:
+
+```bash
+git fetch origin <branch1> <branch2> <branch3> ...
+```
+
+**Then**, run all ancestry checks concurrently in background:
 
 ```bash
 current_head=$(git rev-parse HEAD)
-default_branch=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)
-
-gh pr list --author "@me" --state open --limit 50 \
-  --json number,headRefName,headRefOid,baseRefName,url \
-  | jq -c '.[]'
-```
-
-For each PR returned, check if the current branch's HEAD is an ancestor of that PR's head:
-
-```bash
-# Fetch the branch if not available locally
-git fetch --quiet origin <headRefName> 2>/dev/null
-
-# Check ancestry: is current HEAD an ancestor of this branch?
-git merge-base --is-ancestor "$current_head" <headRefOid>
+git merge-base --is-ancestor "$current_head" <oid1>
+git merge-base --is-ancestor "$current_head" <oid2>
+git merge-base --is-ancestor "$current_head" <oid3>
 ```
 
 If yes, this PR is a downstream descendant. Record it with its parent relationship.
@@ -78,6 +97,8 @@ main ← feat/auth (current, already rebased)
 
 Rebase order: `feat/auth-ui` → `feat/auth-ui-tests` → `feat/auth-api`
 
+Branches at the same depth level with no dependency between them (e.g., `feat/auth-ui` and `feat/auth-api` above) are **independent siblings** — note them for potential parallel handling after their shared parent is rebased.
+
 ### 4. Show Plan and Confirm
 
 Present the stack and planned actions:
@@ -86,7 +107,7 @@ Present the stack and planned actions:
 Stack from feat/auth:
   1. feat/auth-ui (PR #42) ← rebase onto feat/auth
   2. feat/auth-ui-tests (PR #43) ← rebase onto feat/auth-ui
-  3. feat/auth-api (PR #44) ← rebase onto feat/auth
+  3. feat/auth-api (PR #44) ← rebase onto feat/auth   [sibling of #1]
 
 Proceed with cascade rebase? (3 branches)
 ```
@@ -95,17 +116,26 @@ Wait for user confirmation before proceeding. Use an interactive question tool w
 
 ### 5. Cascade Rebase
 
-For each branch in topological order:
+Process branches in topological order. The rebase itself is sequential (each branch depends on its parent being done), but fire off parallel work immediately after each push.
+
+For each branch:
 
 ```bash
 git checkout <branch>
-git fetch origin <parent-branch>
 git rebase origin/<parent-branch>
 ```
 
-**If the rebase succeeds cleanly:**
+**If the rebase succeeds cleanly** — push, then immediately fire off the following concurrently before moving to the next branch:
 
-- Continue to the next step
+```bash
+git push --force-with-lease origin HEAD
+
+# Fire-and-forget — don't wait before moving to the next branch:
+# 1. Background sub-agent: invoke adjust-pr-base for this branch
+# 2. Background CI watch (see Step 6)
+```
+
+Proceed to the next branch in the topological order without waiting for these to finish.
 
 **If conflicts arise:**
 
@@ -117,25 +147,30 @@ git rebase origin/<parent-branch>
 - Check with `git merge-base --is-ancestor origin/<parent-branch> HEAD`
 - If already up-to-date, skip with a note
 
-After each successful rebase:
-
-```bash
-git push --force-with-lease origin HEAD
-```
-
-Then invoke the `adjust-pr-base` skill to verify/correct the PR's base branch.
+**Independent siblings:** When two branches at the same depth are both ready to rebase (their shared parent was just pushed), spawn each rebase as a separate background sub-agent so they proceed in parallel. Collect results before moving to their children.
 
 ### 6. Watch CI
 
-After all branches are pushed, start background CI watches for every branch that was rebased:
+Start a background CI watch immediately after each branch is pushed — don't wait for all rebases to finish first.
 
 ```bash
-# For each rebased branch, find the latest run and watch it
-gh run list --branch <branch> --limit 1 --json databaseId --jq '.[0].databaseId'
-gh run watch <run-id> --exit-status
+# Immediately after push for <branch>:
+run_id=$(gh run list --branch <branch> --limit 1 --json databaseId --jq '.[0].databaseId')
+gh run watch "$run_id" --exit-status   # run in background — does not block
 ```
 
-Run all watches in background simultaneously. There's no need to wait for them sequentially.
+By the time the full cascade is done, all CI watches are already running concurrently. Collect their exit codes at the end or as they complete.
+
+If a run ID isn't available yet (CI hasn't started), poll briefly:
+
+```bash
+for i in $(seq 1 10); do
+  run_id=$(gh run list --branch <branch> --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+  [ -n "$run_id" ] && break
+  sleep 5
+done
+gh run watch "$run_id" --exit-status   # run in background
+```
 
 ### 7. Fix CI Failures (Top-Down)
 
@@ -143,14 +178,21 @@ When CI results come back, process failures starting from the most upstream bran
 
 **Why top-down?** Each PR's CI tests its diff against its parent branch. Downstream changes never affect upstream CI. So once an upstream branch passes CI, it's stable — there's no need to re-check it regardless of what happens downstream.
 
-**Fixing a failure:**
+**Parallel diagnosis, top-down fixing:**
 
-1. Invoke the `fix-github-actions-ci` skill to investigate and fix the failure
-2. Commit and push the fix to that branch
-3. Re-watch CI for that branch
-4. If the fix involved code changes, every downstream branch needs re-rebasing:
-   - Re-run Steps 5–6 starting from that branch's children
-   - This is a mini-cascade within the larger one
+1. Spawn `fix-github-actions-ci` background sub-agents for all failing branches simultaneously to diagnose in parallel.
+2. When diagnosis results come back, apply fixes in top-down order — fix the most upstream failure first.
+3. After pushing a fix upstream, re-cascade downstream branches (mini-cascade). Launch the re-cascade before waiting for the upstream CI to complete — as soon as the push is done, the rebase can start.
+4. Re-watch CI for the fixed branch immediately in a background shell.
+
+```
+Example parallel diagnosis flow:
+  [background sub-agent] fix-github-actions-ci for feat/auth-ui   ← diagnosing
+  [background sub-agent] fix-github-actions-ci for feat/auth-api  ← diagnosing (simultaneously)
+
+  → auth-ui diagnosis done first: apply fix, push, start re-watch in background
+  → auth-api diagnosis done: check if it's still relevant (might be fixed by auth-ui fix)
+```
 
 **When to stop fixing:**
 
@@ -158,9 +200,15 @@ When CI results come back, process failures starting from the most upstream bran
 - A failure is outside the scope of the current changes (pre-existing flaky test, infrastructure issue) → report the failure and move on
 - The user says to stop
 
-### 8. Report
+### 8. Collect Background Results and Report
 
-Summarize the entire cascade:
+Before generating the final report, collect all outstanding background tasks:
+
+- Join all `gh run watch` background shell PIDs — or query final CI status with `gh run view`
+- Read results from all `adjust-pr-base` background sub-agents
+- Read results from any `fix-github-actions-ci` background sub-agents still running
+
+Then summarize the entire cascade:
 
 ```
 ## Cascade Rebase Report
