@@ -4,7 +4,7 @@
 # When specifying multiple versions, dependabot will only update the first version.
 
 # Languages
-python = ["3.14.3", "3.12.10", "3.11.12"]
+python = ["3.14.4", "3.12.10", "3.11.12"]
 java = "25"
 uv = "latest"
 go = "1.26.1"
