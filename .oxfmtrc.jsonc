@@ -2,7 +2,6 @@
   "$schema": "node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
     "home/dot_config/zed/private_settings.json", // Zed handle this as jsonc, so not compatible with oxfmt
-    ".agents/skills/vercel-react-best-practices/**",
     "bun.lock", // bun.lock is auto-generated, so we don't want to format it
   ],
 }
