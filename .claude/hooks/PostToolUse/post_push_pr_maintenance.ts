@@ -15,8 +15,9 @@ export function buildPushTriggerContext(prNumber: number | null): string | null 
 
   return [
     `Pull request #${prNumber} exists for the current branch you just pushed.`,
-    "Review whether the PR title, description, and metadata still match the latest branch state.",
-    "If updates are needed, edit the PR before completing the task.",
+    "If you are not already executing a multi-step workflow that covers post-push steps, do the following before completing the task:",
+    "1. Review whether the PR title, description, and metadata still match the latest branch state. If updates are needed, edit the PR.",
+    "2. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
   ].join("\n");
 }
 

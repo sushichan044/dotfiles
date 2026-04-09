@@ -20,8 +20,9 @@ function getTriggerContext(cmd: string): string[] | null {
   if (cmd.includes("gh pr create")) {
     return [
       "You just ran `gh pr create`.",
-      "If you are not already executing a multi-step workflow that covers PR base verification, execute the `adjust-pr-base` skill before completing the task.",
-      "Use that skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
+      "If you are not already executing a multi-step workflow that covers post-PR-creation steps, do the following before completing the task:",
+      "1. Execute the `adjust-pr-base` skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
+      "2. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
     ];
   }
 

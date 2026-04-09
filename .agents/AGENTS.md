@@ -3,6 +3,7 @@
 ## CORE PRINCIPLES
 
 - **Language**: Japanese responses, English code/docs/comments
+- Actively use `git-workflow` skill when working on operations related to git or GitHub.
 - **Planning**: Before discussing implementation, first clarify with the user: (1) what problem to solve, and (2) expected behavior. Only then discuss how to implement.
 - **Automatic Code Review**: After completing substantial work (new features, bug fixes, refactors spanning multiple files), request a review using the `codex-review` skill.
 - Predictability beats cleverness. Clarity enables performance. Simple made easy.
