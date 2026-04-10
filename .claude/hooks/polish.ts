@@ -1,5 +1,7 @@
 import { defineHook } from "cc-hooks-ts";
 
+const nonCodingAgents = ["Explore", "Plan"];
+
 const hook = defineHook({
   trigger: {
     Stop: true,
@@ -9,6 +11,11 @@ const hook = defineHook({
   run: (c) => {
     if (c.input.stop_hook_active) {
       return c.success();
+    }
+    if (c.input.hook_event_name === "SubagentStop") {
+      if (nonCodingAgents.includes(c.input.agent_type)) {
+        return c.success();
+      }
     }
 
     return c.json({
