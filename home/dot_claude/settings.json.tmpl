@@ -175,10 +175,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/typescript/no_restricted_edit.ts"
-          },
-          {
-            "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
           }
         ]
