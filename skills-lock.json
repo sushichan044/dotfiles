@@ -116,6 +116,11 @@
       "sourceType": "github",
       "computedHash": "c3d2542b3fb221f65d14cf81d64669880f949e18fbcc09d127e3c5c813e3318e"
     },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+    },
     "mysql": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
