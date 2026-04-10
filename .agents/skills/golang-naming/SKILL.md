@@ -1,7 +1,7 @@
 ---
 name: golang-naming
 description: "Go (Golang) naming conventions — covers packages, constructors, structs, interfaces, constants, enums, errors, booleans, receivers, getters/setters, functional options, acronyms, test functions, and subtest names. Use this skill when writing new Go code, reviewing or refactoring, choosing between naming alternatives (New vs NewTypeName, isConnected vs connected, ErrNotFound vs NotFoundError, StatusReady vs StatusUnknown at iota 0), debating Go package names (utils/helpers anti-patterns), or asking about Go naming best practices. Also trigger when the user mentions MixedCaps vs snake_case, ALL_CAPS constants, Get-prefix on getters, or error string casing. Do NOT use for general Go implementation questions that don't involve naming decisions."
-user-invocable: false
+user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
@@ -31,32 +31,32 @@ To ignore a rule, just add a comment to the code.
 
 ## Quick Reference
 
-| Element           | Convention                                          | Example                                   |
-| ----------------- | --------------------------------------------------- | ----------------------------------------- |
-| Package           | lowercase, single word                              | `json`, `http`, `tabwriter`               |
-| File              | lowercase, underscores OK                           | `user_handler.go`                         |
-| Exported name     | UpperCamelCase                                      | `ReadAll`, `HTTPClient`                   |
-| Unexported        | lowerCamelCase                                      | `parseToken`, `userCount`                 |
-| Interface         | method name + `-er`                                 | `Reader`, `Closer`, `Stringer`            |
-| Struct            | MixedCaps noun                                      | `Request`, `FileHeader`                   |
-| Constant          | MixedCaps (not ALL_CAPS)                            | `MaxRetries`, `defaultTimeout`            |
-| Receiver          | 1-2 letter abbreviation                             | `func (s *Server)`, `func (b *Buffer)`    |
-| Error variable    | `Err` prefix                                        | `ErrNotFound`, `ErrTimeout`               |
-| Error type        | `Error` suffix                                      | `PathError`, `SyntaxError`                |
-| Constructor       | `New` (single type) or `NewTypeName` (multi-type)   | `ring.New`, `http.NewRequest`             |
-| Boolean field     | `is`, `has`, `can` prefix on **fields** and methods | `isReady`, `IsConnected()`                |
-| Test function     | `Test` + function name                              | `TestParseToken`                          |
-| Acronym           | all caps or all lower                               | `URL`, `HTTPServer`, `xmlParser`          |
-| Variant: context  | `WithContext` suffix                                | `FetchWithContext`, `QueryContext`        |
-| Variant: in-place | `In` suffix                                         | `SortIn()`, `ReverseIn()`                 |
-| Variant: error    | `Must` prefix                                       | `MustParse()`, `MustLoadConfig()`         |
-| Option func       | `With` + field name                                 | `WithPort()`, `WithLogger()`              |
-| Enum (iota)       | type name prefix, zero-value = unknown              | `StatusUnknown` at 0, `StatusReady`       |
-| Named return      | descriptive, for docs only                          | `(n int, err error)`                      |
-| Error string      | lowercase (incl. acronyms), no punctuation          | `"image: unknown format"`, `"invalid id"` |
-| Import alias      | short, only on collision                            | `mrand "math/rand"`, `pb "app/proto"`     |
-| Format func       | `f` suffix                                          | `Errorf`, `Wrapf`, `Logf`                 |
-| Test table fields | `got`/`expected` prefixes                           | `input string`, `expected int`            |
+| Element           | Convention                                              | Example                                   |
+| ----------------- | ------------------------------------------------------- | ----------------------------------------- |
+| Package           | lowercase, single word, \_test suffix OK for test files | `json`, `http`, `tabwriter`, `http_test`  |
+| File              | lowercase, underscores OK                               | `user_handler.go`                         |
+| Exported name     | UpperCamelCase                                          | `ReadAll`, `HTTPClient`                   |
+| Unexported        | lowerCamelCase                                          | `parseToken`, `userCount`                 |
+| Interface         | method name + `-er`                                     | `Reader`, `Closer`, `Stringer`            |
+| Struct            | MixedCaps noun                                          | `Request`, `FileHeader`                   |
+| Constant          | MixedCaps (not ALL_CAPS)                                | `MaxRetries`, `defaultTimeout`            |
+| Receiver          | 1-2 letter abbreviation                                 | `func (s *Server)`, `func (b *Buffer)`    |
+| Error variable    | `Err` prefix                                            | `ErrNotFound`, `ErrTimeout`               |
+| Error type        | `Error` suffix                                          | `PathError`, `SyntaxError`                |
+| Constructor       | `New` (single type) or `NewTypeName` (multi-type)       | `ring.New`, `http.NewRequest`             |
+| Boolean field     | `is`, `has`, `can` prefix on **fields** and methods     | `isReady`, `IsConnected()`                |
+| Test function     | `Test` + function name                                  | `TestParseToken`                          |
+| Acronym           | all caps or all lower                                   | `URL`, `HTTPServer`, `xmlParser`          |
+| Variant: context  | `WithContext` suffix                                    | `FetchWithContext`, `QueryContext`        |
+| Variant: in-place | `In` suffix                                             | `SortIn()`, `ReverseIn()`                 |
+| Variant: error    | `Must` prefix                                           | `MustParse()`, `MustLoadConfig()`         |
+| Option func       | `With` + field name                                     | `WithPort()`, `WithLogger()`              |
+| Enum (iota)       | type name prefix, zero-value = unknown                  | `StatusUnknown` at 0, `StatusReady`       |
+| Named return      | descriptive, for docs only                              | `(n int, err error)`                      |
+| Error string      | lowercase (incl. acronyms), no punctuation              | `"image: unknown format"`, `"invalid id"` |
+| Import alias      | short, only on collision                                | `mrand "math/rand"`, `pb "app/proto"`     |
+| Format func       | `f` suffix                                              | `Errorf`, `Wrapf`, `Logf`                 |
+| Test table fields | `got`/`expected` prefixes                               | `input string`, `expected int`            |
 
 ## MixedCaps
 

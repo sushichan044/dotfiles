@@ -9,7 +9,7 @@
     "animate": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
-      "computedHash": "2fdb896e8c902ef8ca5bb30afdf2b7e4ad63afab0213323484e3c03e9e73324a"
+      "computedHash": "354414a934957f9d54a71468abe81888304d35b47a4fe8e27fff08f60b457d53"
     },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
@@ -34,87 +34,87 @@
     "golang-benchmark": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "21f434d8a0c6cbc92d2eb8a29cdc32770bc74343fc5d58e3310bf5dc5f2f453f"
+      "computedHash": "65dbd2584b8ccf738dd3c019bfc43d563927d222dba285e0648aec892599bed2"
     },
     "golang-code-style": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "571157bbfee113cbfd566f4b3e646b5f5e7706e139965682ed8a7b8aa1c3a897"
+      "computedHash": "e3341069649f8d2dad56efba400508e553061d9b3238336cdf89ad3f07ad42e1"
     },
     "golang-concurrency": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "dc3b43dbc57a0dee1e4a7963662f7a877b83fea10c5699f9f161a05f5af4156f"
+      "computedHash": "956e09e5533a5b2b33255ca1542fed48394b4b49d7a8c6bad28bd1ec4b930d25"
     },
     "golang-context": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "553385a9fee66993fc084bc9cb390a31dac3df00b92530cc3840c5dbd547cbed"
+      "computedHash": "143a4da3890e87168cae2a87dff1bf15402bbd0731156152a2d55f6a28f3e673"
     },
     "golang-data-structures": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "09253a7cba5a783d1858df97f4ce397875ffdeabf299c1f86bc452de480c5013"
+      "computedHash": "edbdbe2e6c52ea58494e082e8a1375195648ac144cc6888b99fc3859c65bd896"
     },
     "golang-design-patterns": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "3c19c33c38643731e767e3d7361c599b7c8113c7a831d053dcaf71fd2c7de5c7"
+      "computedHash": "40e05dfa2916cd801f894151d587a93a6969117bf44d8a767e48b2952380adf7"
     },
     "golang-documentation": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "ccf092eb11cfa0405dafa0cbf44f930b03fe42929bbae7bd6be2e5be0d3322ae"
+      "computedHash": "9dee712439bbf4a792483d25ae63f5c09d74faba333b86ebea224c86f7bbeebc"
     },
     "golang-error-handling": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "6e536ea61efc39c69202cbd6593eab01178bb1edbf544dbe24f924af168fb1d1"
+      "computedHash": "4c0d3f294044d3287ba183d2c06ac5381b99ef74d0b4c5485583c7e5505cdf5a"
     },
     "golang-naming": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "2f256a1f21186808e325b944a8a99976cea9bcb7753383732d09c21111596048"
+      "computedHash": "32a0968c778d3331ddea53d71179ad9c86240f310760a2e313a7e65d6b6c53c4"
     },
     "golang-performance": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "d871b13850672076fa0e045ef51aeaac6f8752370ed4f2495f32f5a91c3f0cc7"
+      "computedHash": "6b3747c11aeca15ac45ad4bf603ddab14f6ced040257b4ccb5cb181d7fbd8a69"
     },
     "golang-popular-libraries": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "a0d38fefe3721a0d61dc5932a1bec5a4545a24bf78aa3553a3340cac9f158aa3"
+      "computedHash": "597f416a045a5b7f5aaa51084c6318b63602844e5bced62f1743bab83e1a97a0"
     },
     "golang-project-layout": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "a0b2bd83bf36fd160998326f62978252647d27dca1bfefa2abbfb5d0a8e7a73f"
+      "computedHash": "1218489e839e459e2b316d0200fdba3e19c6cab5d3ab99a92f789c625671f1ba"
     },
     "golang-safety": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "bef236e61bc7eb1dbc9cd5405cb08b510eefd790589c8d956a85b6cb63573192"
+      "computedHash": "e5356f07568330b2816b2683f8d02d7efc89faafc9c4d047cdb7f0ef21fa07f4"
     },
     "golang-security": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "22aa949f766f9b687019a8b0cc4c0ccb969cef9b9809a2dff23526ce8c4aef0b"
+      "computedHash": "8703d4248b0ea1da7ccb959c789d2936b4c9b19c2abdaac45c349457c763595a"
     },
     "golang-stretchr-testify": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "435f42da9160e8b702fd02c1b205925263b6d36b5e90c993395705aefe615d64"
+      "computedHash": "4fc8ddbe9d903c61c83a02f9b70d1d9ac40a07337ba7376365b4893dab2d06ba"
     },
     "golang-structs-interfaces": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "db650e78b37f5f90c29f60f8c51353bf1f6b0631431b3988500945ea1002aea3"
+      "computedHash": "950077f895ef4c9df04460f26ec892696079fd31f9cb42cf2787c52f3722c3e9"
     },
     "golang-testing": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
-      "computedHash": "c3d2542b3fb221f65d14cf81d64669880f949e18fbcc09d127e3c5c813e3318e"
+      "computedHash": "1b1774d5a127d5851392b072147ced5129babf13bff75429819a5d10b696cca2"
     },
     "grill-me": {
       "source": "mattpocock/skills",
@@ -129,7 +129,7 @@
     "next-browser": {
       "source": "vercel-labs/next-browser",
       "sourceType": "github",
-      "computedHash": "cda8336c36f69c91a48778b1cb6b23cc13699f7e93880bdc031ee29fb80e9d1f"
+      "computedHash": "6b241387846c5056fd42da0a49100be58bef0410556bbdfe436e59f80c77794f"
     },
     "postgres": {
       "source": "planetscale/database-skills",
@@ -169,7 +169,7 @@
     "terraform-test": {
       "source": "hashicorp/agent-skills",
       "sourceType": "github",
-      "computedHash": "5a62d5e759b4720304127bd1e94d405e0f91a907965d87b1117d2b91d7eb2e18"
+      "computedHash": "c446a090ac98bea46704c16003761a030e6aa56a27b0e95d6914fbdb7c1d2a23"
     },
     "vitess": {
       "source": "planetscale/database-skills",

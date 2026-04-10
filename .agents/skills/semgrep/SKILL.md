@@ -30,6 +30,19 @@ When MCP tools aren't available, fall back to the CLI commands below.
 - Creating custom detection rules for your codebase
 - Data flow analysis with taint mode
 
+## Installation (CLI)
+
+```bash
+# pip (recommended)
+python3 -m pip install semgrep
+
+# Homebrew
+brew install semgrep
+
+# Docker
+docker run --rm -v "${PWD}:/src" semgrep/semgrep semgrep --config auto /src
+```
+
 ---
 
 # Part 1: Running Scans
@@ -305,13 +318,13 @@ jobs:
 
 **Rule Writing:**
 
-- Rule Syntax: <https://semgrep.dev/docs/writing-rules/rule-syntax>
-- Pattern Syntax: <https://semgrep.dev/docs/writing-rules/pattern-syntax>
-- Rule Schema: <https://github.com/semgrep/semgrep-interfaces/blob/main/rule_schema_v1.yaml>
+- Rule Syntax: https://semgrep.dev/docs/writing-rules/rule-syntax
+- Pattern Syntax: https://semgrep.dev/docs/writing-rules/pattern-syntax
+- Rule Schema: https://github.com/semgrep/semgrep-interfaces/blob/main/rule_schema_v1.yaml
 
 **General:**
 
-- Registry: <https://semgrep.dev/explore>
-- Playground: <https://semgrep.dev/playground>
-- Docs: <https://semgrep.dev/docs/>
-- Trail of Bits Rules: <https://github.com/trailofbits/semgrep-rules>
+- Registry: https://semgrep.dev/explore
+- Playground: https://semgrep.dev/playground
+- Docs: https://semgrep.dev/docs/
+- Trail of Bits Rules: https://github.com/trailofbits/semgrep-rules
