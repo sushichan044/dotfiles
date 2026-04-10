@@ -25,6 +25,7 @@ Only leave comments when there is an intent that cannot be discerned from the co
    - Collect from project-scope task runner configurations like `package.json` scripts, `Makefile`, `mise.toml`, or CI workflow YAML files.
 2. Run the collected checks and ensure they pass.
    - In projects utilizing a task runner, execute validation commands via the task runner rather than directly.
+   - In large projects, prefer running only the tests relevant to the changed area first, since running the full test suite can consume substantial time and machine resources.
    - If any check fails, investigate the failure, fix it, and rerun the checks until they all pass.
    - YOU MUST RUN TOOLS IN NON INTERACTIVE MODE.
    - Hint: In general, formatters should be run after linters since linters may make changes that require reformatting.
