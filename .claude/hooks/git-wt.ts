@@ -18,16 +18,8 @@ const hook = defineHook({
         // git wt --nocd prints the absolute path of the worktree
         const out = await sh`git wt ${wtName} --nocd`;
         const wtAbsPath = out.text().trim();
-
-        return c.json({
-          event: "WorktreeCreate",
-          output: {
-            hookSpecificOutput: {
-              hookEventName: "WorktreeCreate",
-              worktreePath: wtAbsPath,
-            },
-          },
-        });
+        console.log(wtAbsPath);
+        return c.success();
       }
       case "WorktreeRemove": {
         const wtPath = c.input.worktree_path;
