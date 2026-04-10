@@ -230,35 +230,26 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
 
 export function formatGitWorkingTreeChanges(
   changes: GitWorkingTreeChangeSummary | null,
-  options?: {
-    colored?: boolean;
-  },
 ): string | null {
   if (!changes) {
     return null;
   }
-
   if (changes.added === 0 && changes.removed === 0) {
     return null;
   }
 
-  if (options?.colored) {
-    return `${color.green(`+${changes.added}`)} / w${color.red(`-${changes.removed}`)}`;
-  }
-
-  return `+${changes.added}/-${changes.removed}`;
+  return `${color.green(`+${changes.added}`)} / ${color.red(`-${changes.removed}`)}`;
 }
 
 export function formatGitAheadBehind(aheadBehind: GitAheadBehind | null): string | null {
   if (!aheadBehind) {
     return null;
   }
-
   if (aheadBehind.ahead === 0 && aheadBehind.behind === 0) {
     return null;
   }
 
-  return `↑${aheadBehind.ahead}↓${aheadBehind.behind}`;
+  return `↑${aheadBehind.ahead} ↓${aheadBehind.behind}`;
 }
 
 function prettyPrint(status: StatusShape): string {
@@ -291,7 +282,7 @@ function prettyPrint(status: StatusShape): string {
   };
 
   const workingTreeChanges = () => {
-    return formatGitWorkingTreeChanges(status.git.workingTreeChanges, { colored: true });
+    return formatGitWorkingTreeChanges(status.git.workingTreeChanges);
   };
 
   const aheadBehind = () => {
