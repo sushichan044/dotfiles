@@ -19,8 +19,7 @@ aliases:
     rf: repo fork
     rs: repo sync
     ownername: repo view --json owner,name --jq '.owner.login+"/"+.name'
-    # { "owner": "sushichan044", "repo": "dotfiles", "url": "https://github.com/sushichan044/dotfiles/pull/1", "branch": "fix/aaa" , "number": 1 }
-    resolve-pr: "pr view --json number,url,headRefName,headRepositoryOwner,headRepository --jq '{owner: .headRepositoryOwner.login, repo: .headRepository.name, url: .url, branch: .headRefName, number: .number}'"
+    resolve-pr: "pr view --json number,url,headRefName,baseRefName,mergedAt,headRepositoryOwner,headRepository --jq '{owner: .headRepositoryOwner.login, repo: .headRepository.name, url: .url, headRef: .headRefName, baseRef: .baseRefName, number: .number, merged: (.mergedAt != null)}'"
     # browse
     b: browse
     bs: browse --settings
