@@ -94,6 +94,10 @@ if command_exists sidetable; then
   zsh-defer cached_eval "sidetable completion zsh"
 fi
 
+if command_exists ngrok; then
+  zsh-defer cached_eval "ngrok completion"
+fi
+
 if command_exists pitchfork; then
   zsh-defer cached_eval "pitchfork completion zsh"
 fi
