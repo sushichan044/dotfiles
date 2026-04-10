@@ -243,7 +243,7 @@ export function formatGitWorkingTreeChanges(
   }
 
   if (options?.colored) {
-    return `${color.green(`+${changes.added}`)}/${color.red(`-${changes.removed}`)}`;
+    return `${color.green(`+${changes.added}`)} / w${color.red(`-${changes.removed}`)}`;
   }
 
   return `+${changes.added}/-${changes.removed}`;
