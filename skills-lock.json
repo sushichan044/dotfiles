@@ -126,11 +126,6 @@
       "sourceType": "github",
       "computedHash": "6cb0725d61db4940f9eab79436753fe4ecb261f57ae8a08b2ac28676f82cbecc"
     },
-    "next-browser": {
-      "source": "vercel-labs/next-browser",
-      "sourceType": "github",
-      "computedHash": "6b241387846c5056fd42da0a49100be58bef0410556bbdfe436e59f80c77794f"
-    },
     "postgres": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
