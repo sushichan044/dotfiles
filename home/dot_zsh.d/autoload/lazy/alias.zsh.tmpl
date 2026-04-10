@@ -84,6 +84,18 @@ alias ssh-add='ssh-add.exe'
 {{ end }}
 
 codex-pr-review() {
+    if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+        cat <<'EOF'
+Usage: codex-pr-review <pr>
+
+Review a pull request locally with `codex review`.
+
+Arguments:
+  <pr>  Pull request number, URL, or blank for current branch's PR
+EOF
+        return 0
+    fi
+
     local pr="$(gh resolve-pr "$1")"
     if [[ -z "$pr" ]]; then
         echo "PR not found: $1"
