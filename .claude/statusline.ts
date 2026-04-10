@@ -4,10 +4,13 @@ import "temporal-polyfill-lite/global";
 import getStdin from "get-stdin";
 import os from "node:os";
 
+import type { GitAheadBehind, GitWorkingTreeChangeSummary } from "../tools/git";
 import {
   detectIfInsideWorktree,
+  getGitAheadBehind,
   getCurrentGitBranch,
   getCurrentRepositoryName,
+  getWorkingTreeChangeSummary,
 } from "../tools/git";
 import { isNonEmptyString } from "../tools/utils/string";
 
@@ -90,7 +93,9 @@ type InputShape = {
 type StatusShape = {
   cwd: string;
   git: {
+    aheadBehind: GitAheadBehind | null;
     branch: string | null;
+    workingTreeChanges: GitWorkingTreeChangeSummary | null;
     /**
      * @example "dotfiles"
      */
@@ -197,18 +202,22 @@ function buildRateLimitStatus(rateLimits: InputShape["rate_limits"]): StatusShap
 async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
-  const [gitBranch, repositoryName, worktree] = await Promise.all([
-    getCurrentGitBranch(input.workspace.current_dir),
-    getCurrentRepositoryName(input.workspace.current_dir),
-    detectIfInsideWorktree(input.workspace.current_dir),
-  ]);
+  const [gitAheadBehind, gitBranch, repositoryName, workingTreeChanges, worktree] =
+    await Promise.all([
+      getGitAheadBehind(input.workspace.current_dir),
+      getCurrentGitBranch(input.workspace.current_dir),
+      getCurrentRepositoryName(input.workspace.current_dir),
+      getWorkingTreeChangeSummary(input.workspace.current_dir),
+      detectIfInsideWorktree(input.workspace.current_dir),
+    ]);
 
   return {
     cwd: input.workspace.current_dir,
     git: {
+      aheadBehind: gitAheadBehind,
       branch: gitBranch,
-
       repository: repositoryName,
+      workingTreeChanges,
       worktree,
     },
     hostname,
@@ -217,6 +226,39 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
   };
+}
+
+export function formatGitWorkingTreeChanges(
+  changes: GitWorkingTreeChangeSummary | null,
+  options?: {
+    colored?: boolean;
+  },
+): string | null {
+  if (!changes) {
+    return null;
+  }
+
+  if (changes.added === 0 && changes.removed === 0) {
+    return null;
+  }
+
+  if (options?.colored) {
+    return `${color.green(`+${changes.added}`)}/${color.red(`-${changes.removed}`)}`;
+  }
+
+  return `+${changes.added}/-${changes.removed}`;
+}
+
+export function formatGitAheadBehind(aheadBehind: GitAheadBehind | null): string | null {
+  if (!aheadBehind) {
+    return null;
+  }
+
+  if (aheadBehind.ahead === 0 && aheadBehind.behind === 0) {
+    return null;
+  }
+
+  return `↑${aheadBehind.ahead}↓${aheadBehind.behind}`;
 }
 
 function prettyPrint(status: StatusShape): string {
@@ -246,6 +288,14 @@ function prettyPrint(status: StatusShape): string {
     }
 
     return `${color.bold(NERD_ICONS.GIT_BRANCH)} ${status.git.branch}`;
+  };
+
+  const workingTreeChanges = () => {
+    return formatGitWorkingTreeChanges(status.git.workingTreeChanges, { colored: true });
+  };
+
+  const aheadBehind = () => {
+    return formatGitAheadBehind(status.git.aheadBehind);
   };
 
   const worktree = () => {
@@ -320,7 +370,7 @@ function prettyPrint(status: StatusShape): string {
   return [
     makeLineFromParts(status.model, context()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
-    makeLineFromParts(repository(), branch(), worktree()),
+    makeLineFromParts(repository(), branch(), workingTreeChanges(), aheadBehind(), worktree()),
   ].join("\n");
 }
 

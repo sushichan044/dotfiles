@@ -40,6 +40,68 @@ export async function isRepositoryPublished(cwd: string): Promise<boolean> {
   return result.exitCode === 0 && result.text().trim().length > 0;
 }
 
+export type GitWorkingTreeChangeSummary = {
+  added: number;
+  removed: number;
+};
+
+export type GitAheadBehind = {
+  ahead: number;
+  behind: number;
+};
+
+export async function getWorkingTreeChangeSummary(
+  cwd: string,
+): Promise<GitWorkingTreeChangeSummary | null> {
+  const result = await sh`git -C ${cwd} diff --numstat HEAD`;
+  if (result.exitCode !== 0) {
+    return null;
+  }
+
+  return parseGitNumstatOutput(result.text());
+}
+
+export async function getGitAheadBehind(cwd: string): Promise<GitAheadBehind | null> {
+  const result = await sh`git -C ${cwd} rev-list --left-right --count @{upstream}...HEAD`;
+  if (result.exitCode !== 0) {
+    return null;
+  }
+
+  return parseGitAheadBehindOutput(result.text());
+}
+
+export function parseGitNumstatOutput(output: string): GitWorkingTreeChangeSummary {
+  let added = 0;
+  let removed = 0;
+
+  for (const line of output.split("\n")) {
+    const [addedText, removedText] = line.trim().split(/\s+/, 3);
+    const parsedAdded = Number.parseInt(addedText ?? "", 10);
+    const parsedRemoved = Number.parseInt(removedText ?? "", 10);
+
+    if (Number.isNaN(parsedAdded) || Number.isNaN(parsedRemoved)) {
+      continue;
+    }
+
+    added += parsedAdded;
+    removed += parsedRemoved;
+  }
+
+  return { added, removed };
+}
+
+export function parseGitAheadBehindOutput(output: string): GitAheadBehind | null {
+  const [behindText, aheadText] = output.trim().split(/\s+/, 2);
+  const behind = Number.parseInt(behindText ?? "", 10);
+  const ahead = Number.parseInt(aheadText ?? "", 10);
+
+  if (Number.isNaN(behind) || Number.isNaN(ahead)) {
+    return null;
+  }
+
+  return { ahead, behind };
+}
+
 export function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Promise<boolean> {
   return async (...filePaths) => {
     const result = await sh`git -C ${cwd} check-ignore ${filePaths.join(" ")}`;
