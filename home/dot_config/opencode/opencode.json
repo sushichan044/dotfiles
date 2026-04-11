@@ -14,19 +14,6 @@
     "deepwiki": {
       "type": "remote",
       "url": "https://mcp.deepwiki.com/mcp"
-    },
-    "grep": {
-      "type": "remote",
-      "url": "https://mcp.grep.app"
-    },
-    "sequential-thinking": {
-      "type": "local",
-      "command": [
-        "deno",
-        "run",
-        "--allow-env",
-        "npm:@modelcontextprotocol/server-sequential-thinking@latest"
-      ]
     }
   }
 }
