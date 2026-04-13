@@ -59,6 +59,10 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/UserPromptSubmit/question.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/UserPromptSubmit/datadog.ts"
           }
         ]
       }
