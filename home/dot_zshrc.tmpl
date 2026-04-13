@@ -110,6 +110,10 @@ if command_exists pnpm; then
   zsh-defer cached_eval "pnpm completion zsh"
 fi
 
+if command_exists cf; then
+  zsh-defer cached_eval "cf completion zsh"
+fi
+
 if command_exists zmx; then
   zsh-defer cached_eval "zmx completions zsh"
 fi

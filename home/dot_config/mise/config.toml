@@ -52,6 +52,7 @@ yq = "latest"
 "npm:@hono/cli" = "latest"
 "npm:@napi-rs/cli" = "latest"
 "npm:@typespec/compiler" = "latest"
+"npm:cf" = "latest"
 "npm:corepack" = { version = "latest", postinstall = "corepack enable && corepack disable pnpm" }
 "npm:degit" = "latest"
 "npm:difit" = "latest"
