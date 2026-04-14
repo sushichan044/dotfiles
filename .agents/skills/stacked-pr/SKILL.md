@@ -122,8 +122,17 @@ For each branch:
 
 ```bash
 git checkout <branch>
-git rebase origin/<parent-branch>
 ```
+
+**Before rebasing, detect if the parent PR was squash-merged:**
+
+```bash
+# If parent branch no longer exists on remote, it was likely squash-merged
+git ls-remote --heads origin <parent-branch>
+# Returns nothing → squash merge; pass this context to resolve-merge-conflict
+```
+
+Invoke `resolve-merge-conflict`, passing whether the parent was squash-merged. That skill owns the rebase procedure for both cases (regular and squash merge).
 
 **If the rebase succeeds cleanly** — push, then immediately fire off the following concurrently before moving to the next branch:
 
@@ -249,6 +258,12 @@ When fixing CI requires code changes and a new push, downstream branches become 
 ### Orphaned Stack Member
 
 A PR in the stack targets a branch that's been deleted or merged. Use `adjust-pr-base` to re-target it to the nearest valid ancestor or the default branch.
+
+### Parent PR Was Squash-Merged
+
+Symptom: rebase produces unexpected conflicts involving code from the parent PR.
+
+Invoke `resolve-merge-conflict` with context that the parent was squash-merged. That skill owns the `git rebase --onto` procedure for this case.
 
 ## Boundaries
 

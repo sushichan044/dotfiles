@@ -61,6 +61,35 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 2. 次の conflict が出たら繰り返す
 
+## squash merge された親ブランチへの rebase
+
+通常の `git rebase` では対処できないケースがある。
+
+**症状**: 親ブランチが squash merge されており、rebase すると親ブランチのコミットが原因のコンフリクトが大量発生する。
+
+**原因**: squash merge は親ブランチの全コミットを 1 つの新しいコミットに畳む。子ブランチの履歴には元の親コミットが残っているため、git は「まだ取り込まれていない」と判断して再適用しようとする。
+
+**対処**:
+
+```bash
+# 1. 親 PR の headRefOid（squash 前の先頭コミット）を取得
+old_parent_tip=$(gh pr view <親PRの番号> --json headRefOid --jq .headRefOid)
+
+# 2. ローカルに存在するか確認（なければ fetch）
+git cat-file -e "$old_parent_tip" 2>/dev/null || \
+  git fetch origin $(gh pr view <親PRの番号> --json headRefName --jq .headRefName)
+
+# 3. --onto で「親のコミット以降だけ」を新しい base に乗せ直す
+git rebase --onto origin/<新しいbase> "$old_parent_tip"
+```
+
+`--onto origin/main <old_parent_tip>` の意味:
+
+- `old_parent_tip..HEAD` の範囲のコミット（= 自分のコミットだけ）を
+- `origin/main` の上に乗せる
+
+これで親ブランチのコミットは再適用されない。
+
 ## generated file / lockfile
 
 - source file を先に直す
