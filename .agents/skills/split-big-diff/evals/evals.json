@@ -1,0 +1,101 @@
+{
+  "skill_name": "split-big-diff",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "PR #87 がでかすぎてレビュー通らない。feat/user-management ブランチで、DB マイグレーション、ユーザー CRUD API、管理画面 UI、テスト全部入りで 800 行超えてる。stacked PR に分けてほしい。",
+      "expected_output": "Should run Phase 1 first, split the diff per logical changes, recommend PR mode, and after approval run Phase 2 in pr mode. Should identify cohesive units such as migration -> shared contracts or API -> UI -> tests, then create stacked draft PRs and hand off to stacked-pr.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "phase1-diff-analysis",
+          "check": "Phase 1 analyzes the full diff before proposing a split"
+        },
+        {
+          "name": "logical-change-grouping",
+          "check": "Groups the diff into logical changes rather than arbitrary file buckets"
+        },
+        {
+          "name": "recommends-pr-mode",
+          "check": "Recommends PR mode when the user asks for reviewable stacked output"
+        },
+        {
+          "name": "pr-execution-after-approval",
+          "check": "Waits for approval before creating stacked branches and draft PRs"
+        },
+        {
+          "name": "handoff-to-stacked-pr",
+          "check": "Reports the created stack and mentions stacked-pr for follow-up maintenance"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "ローカルで PoC 書いてたら feat/new-search ブランチが膨らんじゃった。まだ PR にしてない。Elasticsearch 連携、検索 API、フロントの検索コンポーネント、既存 DB クエリからの移行ロジックが全部混ざってる。これは今は PR にせず、同じブランチの中で論理単位の commit 列に整理して。",
+      "expected_output": "Should analyze the diff against the default branch, split it per logical changes, recommend commit mode because the user explicitly wants commit cleanup, then stage and create an ordered series of commits that tells a coherent story.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "local-branch-handling",
+          "check": "Handles a local branch or working tree diff rather than requiring an existing PR"
+        },
+        {
+          "name": "recommends-commit-mode",
+          "check": "Selects commit mode when the user asks for a cleaned-up commit series"
+        },
+        {
+          "name": "uses-logical-commit-order",
+          "check": "Orders commits by dependency and logical story rather than by extraction mechanics"
+        },
+        {
+          "name": "isolates-migration-and-consumers",
+          "check": "Separates migration or shared foundation work from API/UI consumer work"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "この diff 分割する必要あるかな？feat/add-logging ブランチで、ロギングライブラリの追加と既存の3ファイルに log 文を追加しただけ。diff は 120 行くらい。",
+      "expected_output": "Should run Phase 1 only, validate the diff against diff-granularity.md, and conclude the diff is already at a reasonable granularity. Should explicitly say no split is needed.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "no-unnecessary-split",
+          "check": "Correctly identifies when the diff should stay as-is"
+        },
+        {
+          "name": "granularity-reference",
+          "check": "Uses diff-granularity.md heuristics to justify the decision"
+        },
+        {
+          "name": "analysis-only",
+          "check": "Stops after analysis when no split is needed"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "plan-stacked-pr から呼ばれてる。新しい通知機能の大枠はこう: メール/Slack/Webhook の3チャネル、通知テンプレート管理、ユーザーごとの通知設定、送信キュー。これらの分割粒度を per logical changes で決めてほしい。コードはまだない。",
+      "expected_output": "Should run Phase 1 only and return a structured logical split plan based on the feature description. Should not attempt PR or commit execution because there is no code to materialize.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "phase1-only",
+          "check": "Only the analysis phase runs when there is no code"
+        },
+        {
+          "name": "feature-description-based",
+          "check": "Derives logical changes from the feature description instead of requiring a diff"
+        },
+        {
+          "name": "structured-output",
+          "check": "Produces a structured split plan with scope, dependencies, and execution-shape notes"
+        },
+        {
+          "name": "dependency-awareness",
+          "check": "Identifies plausible dependencies between foundational and consumer units"
+        }
+      ]
+    }
+  ]
+}
