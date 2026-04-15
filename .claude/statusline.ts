@@ -370,10 +370,9 @@ function prettyPrint(status: StatusShape): string {
   };
 
   return [
-    makeLineFromParts(status.model, context()),
+    makeLineFromParts(version(), status.model, context()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
     makeLineFromParts(repository(), branch(), workingTreeChanges(), aheadBehind(), worktree()),
-    makeLineFromParts(version()),
   ].join("\n");
 }
 
