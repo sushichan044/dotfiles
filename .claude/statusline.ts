@@ -134,7 +134,11 @@ type StatusShape = {
       }
     | undefined;
   remainingContextPercentage: string | undefined;
+
   username: string;
+  version: {
+    current: string;
+  };
 };
 
 type WorktreeStatus =
@@ -225,6 +229,9 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     rateLimit: input.rate_limits ? buildRateLimitStatus(input.rate_limits) : undefined,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
+    version: {
+      current: input.version,
+    },
   };
 }
 
@@ -358,10 +365,15 @@ function prettyPrint(status: StatusShape): string {
     return `7d ${burningToken ? color.darkkhaki(remaining) : remaining} left (${NERD_ICONS.REFRESH} ${resetsAt} JST)`;
   };
 
+  const version = () => {
+    return `v${status.version.current}`;
+  };
+
   return [
     makeLineFromParts(status.model, context()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
     makeLineFromParts(repository(), branch(), workingTreeChanges(), aheadBehind(), worktree()),
+    makeLineFromParts(version()),
   ].join("\n");
 }
 
