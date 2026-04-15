@@ -7,6 +7,86 @@ description: GitHub Pull Request上でのレビュー操作を行うスキル。
 
 GitHub CLI (`gh`) を使ったPRレビュー操作。
 
+## Inline Comment First
+
+PR 上で code-specific な指摘や補足を残したい場合は、まずこの手順を見る。
+
+### 目的
+
+インラインコメントは、PR本文ではなく diff 上の正確な位置にレビュー意図を残すために使う。実装上の懸念、設計判断への確認、特定行への補足はここで扱う。
+
+### 最短手順
+
+1. 対象 PR を特定する。
+2. `gh pr diff` を行番号付きで見て、コメント対象の `path` と `line` を決める。
+3. `RIGHT` / `LEFT` を判定する。
+4. head commit SHA を取得する。
+5. `gh api repos/OWNER/REPO/pulls/NUMBER/comments --method POST ...` で投稿する。
+
+### 行番号の見つけ方
+
+まず diff を行番号付きで表示する。
+
+```bash
+gh pr diff NUMBER --repo OWNER/REPO | awk '
+/^@@/ {
+  match($0, /-([0-9]+)/, old)
+  match($0, /\+([0-9]+)/, new)
+  old_line = old[1]
+  new_line = new[1]
+  print $0
+  next
+}
+/^-/ { printf "L%-4d     | %s\n", old_line++, $0; next }
+/^\+/ { printf "     R%-4d| %s\n", new_line++, $0; next }
+/^ / { printf "L%-4d R%-4d| %s\n", old_line++, new_line++, $0; next }
+{ print }
+'
+```
+
+- `L数字`: base 側の削除行。インラインコメントでは `side=LEFT`
+- `R数字`: head 側の追加行。インラインコメントでは `side=RIGHT`
+
+### 単一行コメント
+
+まず head commit SHA を取る。
+
+```bash
+gh api repos/OWNER/REPO/pulls/NUMBER --jq '.head.sha'
+```
+
+その後、対象行にコメントする。
+
+```bash
+gh api repos/OWNER/REPO/pulls/NUMBER/comments \
+  --method POST \
+  -f body="コメント内容" \
+  -f commit_id="COMMIT_SHA" \
+  -f path="src/example.py" \
+  -F line=15 \
+  -f side=RIGHT
+```
+
+### 複数行コメント
+
+```bash
+gh api repos/OWNER/REPO/pulls/NUMBER/comments \
+  --method POST \
+  -f body="コメント内容" \
+  -f commit_id="COMMIT_SHA" \
+  -f path="src/example.py" \
+  -F line=15 \
+  -f side=RIGHT \
+  -F start_line=10 \
+  -f start_side=RIGHT
+```
+
+### 注意点
+
+- `-F` は数値パラメータ用。`line` と `start_line` は `-F` を使う
+- `side` は `RIGHT` または `LEFT`
+- diff で見えている行番号と `path` が一致していないと投稿に失敗する
+
 ## 前提条件
 
 - `gh` インストール済み
@@ -85,6 +165,8 @@ gh pr comment NUMBER --repo OWNER/REPO --body "コメント内容"
 ```
 
 ### 5. インラインコメント（コード行指定）
+
+手順の要約は上の `Inline Comment First` を優先して参照する。
 
 まずhead commit SHAを取得：
 
