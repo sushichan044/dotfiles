@@ -125,5 +125,5 @@ EOF
     cd "$repo_path" || return
     git wt "$branch"
 
-    codex review --base "$base_branch"
+    codex review --base "$base_branch" --config "model_reasoning_effort='high'"
 }
