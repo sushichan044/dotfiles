@@ -10,7 +10,6 @@ import {
   getGitAheadBehind,
   getCurrentGitBranch,
   getCurrentRepositoryName,
-  getWorkingTreeChangeSummary,
 } from "../tools/git";
 import { isNonEmptyString } from "../tools/utils/string";
 
@@ -95,7 +94,6 @@ type StatusShape = {
   git: {
     aheadBehind: GitAheadBehind | null;
     branch: string | null;
-    workingTreeChanges: GitWorkingTreeChangeSummary | null;
     /**
      * @example "dotfiles"
      */
@@ -206,14 +204,12 @@ function buildRateLimitStatus(rateLimits: InputShape["rate_limits"]): StatusShap
 async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
-  const [gitAheadBehind, gitBranch, repositoryName, workingTreeChanges, worktree] =
-    await Promise.all([
-      getGitAheadBehind(input.workspace.current_dir),
-      getCurrentGitBranch(input.workspace.current_dir),
-      getCurrentRepositoryName(input.workspace.current_dir),
-      getWorkingTreeChangeSummary(input.workspace.current_dir),
-      detectIfInsideWorktree(input.workspace.current_dir),
-    ]);
+  const [gitAheadBehind, gitBranch, repositoryName, worktree] = await Promise.all([
+    getGitAheadBehind(input.workspace.current_dir),
+    getCurrentGitBranch(input.workspace.current_dir),
+    getCurrentRepositoryName(input.workspace.current_dir),
+    detectIfInsideWorktree(input.workspace.current_dir),
+  ]);
 
   return {
     cwd: input.workspace.current_dir,
@@ -221,7 +217,6 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
       aheadBehind: gitAheadBehind,
       branch: gitBranch,
       repository: repositoryName,
-      workingTreeChanges,
       worktree,
     },
     hostname,
@@ -286,10 +281,6 @@ function prettyPrint(status: StatusShape): string {
     }
 
     return `${color.bold(NERD_ICONS.GIT_BRANCH)} ${status.git.branch}`;
-  };
-
-  const workingTreeChanges = () => {
-    return formatGitWorkingTreeChanges(status.git.workingTreeChanges);
   };
 
   const aheadBehind = () => {
@@ -372,7 +363,7 @@ function prettyPrint(status: StatusShape): string {
   return [
     makeLineFromParts(version(), status.model, context()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
-    makeLineFromParts(repository(), branch(), workingTreeChanges(), aheadBehind(), worktree()),
+    makeLineFromParts(repository(), branch(), aheadBehind(), worktree()),
   ].join("\n");
 }
 
