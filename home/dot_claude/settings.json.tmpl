@@ -21,8 +21,8 @@
     "FORCE_AUTOUPDATE_PLUGINS": "1",
     "FORCE_AUTO_BACKGROUND_TASKS": "1"
   },
-  "showThinkingSummaries":true,
-  "useAutoModeDuringPlan": {{ if eq .for_personal false }}true{{ else }}false{{ end }},
+  "showThinkingSummaries": true,
+  "useAutoModeDuringPlan": true,
   "model": {{ if eq .for_personal false }}"opusplan"{{ else }}"sonnet"{{ end }}{{ if eq .for_personal false }},
   "effortLevel": "high"{{ end }},
   "cleanupPeriodDays": 99999,
@@ -230,7 +230,7 @@
   },
   "skipAutoPermissionPrompt": true,
   "permissions": {
-    "defaultMode": {{ if eq .for_personal false }}"auto"{{ else }}"acceptEdits"{{ end }},
+    "defaultMode": "auto",
     "allow": [
       "Edit",
       "Write",
