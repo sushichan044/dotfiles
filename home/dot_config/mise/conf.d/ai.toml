@@ -1,7 +1,7 @@
 #:schema https://mise.jdx.dev/schema/mise.json
 
 [tools]
-"github:anomalyco/opencode" = "1.4.10"
+"github:anomalyco/opencode" = "1.4.11"
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"
 "npm:@modelcontextprotocol/inspector" = "latest"
