@@ -38,6 +38,7 @@ yq = "latest"
 "cargo:octorus" = "latest"
 "cargo:rust-script" = "latest"
 "cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
+"forgejo:mergiraf/mergiraf" = "latest"
 "github:datadog-labs/pup" = "latest"
 "github:k1LoW/deck" = "latest"
 "github:k1LoW/git-wt" = "latest"
