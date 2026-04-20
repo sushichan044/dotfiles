@@ -25,16 +25,17 @@ Do not add extra policy or heuristics.
 - After `gh pr create`
 - When working with stacked PRs
 - When checking whether `gh pr edit --base ...` is needed
+- After a parent PR has been merged or closed, to update this PR's base to the default branch
 
 ## Rules
 
 Follow these rules in order:
 
 1. Only inspect the PR for the current branch.
-2. Only consider open PRs as parent candidates.
+2. Only consider open PRs as parent candidates. Merged or closed PRs are never parent candidates — if the parent PR was merged, it is no longer a valid base and the default branch must be used instead.
 3. A parent candidate must be an ancestor of `HEAD`.
 4. If multiple parent candidates exist, choose the one with the smallest `git rev-list <candidate>..HEAD --count`.
-5. If no parent candidate exists, use the default branch.
+5. If no parent candidate exists (including when the only candidate was a now-merged/closed PR), use the default branch.
 6. If the current base already matches the target base, do nothing.
 7. Only update the PR description when the target base comes from an open parent PR and `gh pr edit --base` is run.
 8. If the current branch has no open PR, stop and report that nothing was changed.
@@ -138,7 +139,7 @@ Current PR: <url>
 Previous base: <old-base>
 Target base: <target-base>
 Action: changed | unchanged | no-open-pr
-Reason: nearest open ancestor PR | no open ancestor PR, so default branch
+Reason: nearest open ancestor PR | no open ancestor PR, so default branch | parent PR merged/closed, so default branch
 Description: updated-base-pr-link | unchanged
 ```
 
