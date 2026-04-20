@@ -162,64 +162,49 @@ Proceed to the next branch in the topological order without waiting for these to
 
 ### 6. Watch CI
 
-Start a background CI watch immediately after each branch is pushed — don't wait for all rebases to finish first.
+各ブランチの push 直後に **`watch-ci` スキルを background sub-agent として invoke** する — cascade 全体の完了を待たない。
 
-```bash
+```
 # Immediately after push for <branch>:
-run_id=$(gh run list --branch <branch> --limit 1 --json databaseId --jq '.[0].databaseId')
-gh run watch "$run_id" --exit-status   # run in background — does not block
+Invoke watch-ci as a background sub-agent for <branch>.
 ```
 
-By the time the full cascade is done, all CI watches are already running concurrently. Collect their exit codes at the end or as they complete.
+全ブランチの push が完了した時点で、全 `watch-ci` インスタンスが並列で稼働している。`watch-ci` は監視・再実行・flaky 判定・`fix-github-actions-ci` 委譲まで完走する。
 
-If a run ID isn't available yet (CI hasn't started), poll briefly:
+### 7. Coordinate CI and Re-cascade After Upstream Fixes
 
-```bash
-for i in $(seq 1 10); do
-  run_id=$(gh run list --branch <branch> --limit 1 --json databaseId --jq '.[0].databaseId // empty')
-  [ -n "$run_id" ] && break
-  sleep 5
-done
-gh run watch "$run_id" --exit-status   # run in background
-```
-
-### 7. Fix CI Failures (Top-Down)
-
-When CI results come back, process failures starting from the most upstream branch:
+Background `watch-ci` sub-agents からの結果を上流ブランチ順に収集する。
 
 **Why top-down?** Each PR's CI tests its diff against its parent branch. Downstream changes never affect upstream CI. So once an upstream branch passes CI, it's stable — there's no need to re-check it regardless of what happens downstream.
 
-**Parallel diagnosis, top-down fixing:**
+**Re-cascade trigger:** `watch-ci` が CI 失敗を修正して新しいコミットを push した場合、その downstream ブランチが古くなる。`watch-ci` sub-agent の完了後、元の push 時の HEAD と現在の `origin/<branch>` を比較して検出する:
 
-1. Spawn `fix-github-actions-ci` background sub-agents for all failing branches simultaneously to diagnose in parallel.
-2. When diagnosis results come back, apply fixes in top-down order — fix the most upstream failure first. If a downstream branch's diagnosis arrives before the upstream fix is complete, **hold the result** — do not apply it yet.
-3. After pushing a fix upstream, re-cascade downstream branches (mini-cascade). Launch the re-cascade before waiting for the upstream CI to complete — as soon as the push is done, the rebase can start.
-4. Re-watch CI for the fixed branch immediately in a background shell.
-5. After the upstream fix + mini-cascade lands: check downstream CI status with `gh run view`. If CI now passes → the upstream fix resolved it; discard the held diagnosis. If CI still fails → apply the queued downstream fix.
-
-```
-Example parallel diagnosis flow:
-  [background sub-agent] fix-github-actions-ci for feat/auth-ui   ← diagnosing
-  [background sub-agent] fix-github-actions-ci for feat/auth-api  ← diagnosing (simultaneously)
-
-  → auth-ui diagnosis done first: apply fix, push, start re-watch + mini-cascade in background
-  → auth-api diagnosis done while auth-ui fix is in progress: hold the result
-  → after auth-api's mini-cascade CI result comes back: if pass → done; if still failing → apply auth-api's held fix
+```bash
+git rev-parse origin/<branch>
 ```
 
-**When to stop fixing:**
+新しいコミットが検出されたら、downstream ブランチに mini-cascade を開始する:
 
-- All CI passes → report success
-- A failure is outside the scope of the current changes (pre-existing flaky test, infrastructure issue) → report the failure and move on
-- The user says to stop
+1. Downstream ブランチを topological order でリベース（各ブランチで `resolve-merge-conflict` を invoke）
+2. Push して新しい `watch-ci` を background sub-agent として起動する
+
+**Upstream の `watch-ci` が完了する前に downstream `watch-ci` が先に結果を返した場合:**
+
+- Downstream CI pass → 記録して待機を続ける
+- Downstream CI fail → 結果を保留する。Upstream の修正が mini-cascade されてから新しい CI 結果が届くまで適用しない。Mini-cascade 後も fail なら保留済みの `watch-ci` 修正内容を適用する
+
+**When to stop:**
+
+- 全 `watch-ci` sub-agent が pass で完了 → Step 8 へ
+- `watch-ci` が「upstream 変更と無関係な失敗（flaky、インフラ）」として報告 → 報告して次へ
+- ユーザーが停止を指示
 
 ### 8. Collect Background Results and Report
 
 Before generating the final report, collect all outstanding background tasks:
 
-- Join all `gh run watch` background shell PIDs — or query final CI status with `gh run view`
+- Read results from all `watch-ci` background sub-agents
 - Read results from all `adjust-pr-base` background sub-agents
-- Read results from any `fix-github-actions-ci` background sub-agents still running
 
 Then summarize the entire cascade:
 
