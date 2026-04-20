@@ -1,0 +1,2 @@
+npmRegistryServer: "https://npm.flatt.tech/"
+npmMinimalAgeGate: "7d"
