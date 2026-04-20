@@ -33,15 +33,21 @@ PR コンテキストとして受け付けられる形式: PR 番号、URL、ブ
 gh pr checks <PR> --json name,state,bucket,workflow --jq '[.[] | select(.bucket == "fail")]'
 ```
 
+複数の workflow が失敗している場合は、静的解析系（lint, type-check など）の workflow を優先して調査する。静的解析系 workflow の Step 3〜5 を完了後、その他の failing workflow（E2E など）についても同様に Step 3〜5 を実施する。
+
 ### Step 3: 失敗ログの取得
 
-失敗した run ID のログを確認する:
+`gh pr checks` の出力には run ID が含まれないため、まず run ID を取得する:
+
+```bash
+gh run list --branch <branch> --workflow "<workflow-name>"
+```
+
+取得した run ID でログを確認する:
 
 ```bash
 gh run view <run-id> --log-failed
 ```
-
-run ID が不明な場合は `gh run list --branch <branch>` で探す。
 
 ログからファイル名・行番号・エラーメッセージを特定する。
 
@@ -54,12 +60,13 @@ Step 2 で取得した workflow name から workflow の YAML ファイルを取
 gh workflow view "<workflow-name>" --yaml
 ```
 
-ログと照合しながら、fail-fast により実行されなかった可能性のある step を特定する。
-**自動テスト系の時間がかかるチェック以外**の静的解析 step をすべてリストアップする。
+ログと照合しながら、`needs:` による job 間依存により実行されなかった可能性のある job を特定する。
+**自動テスト系の時間がかかるチェック以外**の静的解析 step をすべてリストアップし、そのコマンドを Step 5 の "How to verify locally" に記載する。
 
 テストと判断する基準: step 名やコマンドに `test`, `spec`, `e2e`, `coverage`, `vrt` などのキーワードが含まれるもの。
+テスト系はローカル確認コマンドとして列挙しないが、Step 3 のログで確認したテスト系のエラーは Step 5 の Error location に記録する。
 
-### Step 5: main agent に返すための修正方針をまとめる
+### Step 5: 修正方針をまとめる
 
 次の形式で簡潔に整理して返す。
 修正方針は「どのようなエラーが出ており、どのコードや設定を修正すべきか」を明記すること。
@@ -73,6 +80,8 @@ gh workflow view "<workflow-name>" --yaml
 - Run ID: <run id>
 
 ## Error location
+
+<!-- 複数ある場合はこのブロックを繰り返す -->
 
 - File: <path or unknown>
 - Line: <line or unknown>
