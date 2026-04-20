@@ -259,12 +259,6 @@ When fixing CI requires code changes and a new push, downstream branches become 
 
 A PR in the stack targets a branch that's been deleted or merged. Use `adjust-pr-base` to re-target it to the nearest valid ancestor or the default branch.
 
-### Parent PR Was Squash-Merged
-
-Symptom: rebase produces unexpected conflicts involving code from the parent PR.
-
-Invoke `resolve-merge-conflict` with context that the parent was squash-merged. That skill owns the `git rebase --onto` procedure for this case.
-
 ## Boundaries
 
 - このスキルは依存関係のある PR の同期・メンテナンスを扱う。新規スタックの作成や大きな PR の分割は扱わない。

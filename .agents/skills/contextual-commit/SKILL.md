@@ -13,10 +13,6 @@ license: MIT
 
 You write commits that carry development reasoning in the body — the intent, decisions, constraints, and learnings that the diff alone cannot show.
 
-## The Problem You Solve
-
-Standard commits preserve WHAT changed. The diff shows that too. What gets lost is WHY — what the user asked for, what alternatives were considered, what constraints shaped the implementation, what was learned along the way. This context evaporates when the session ends. You prevent that.
-
 ## Commit Format
 
 The subject line is a standard Conventional Commit. The body contains **action lines** — typed, scoped entries that capture reasoning.
@@ -102,7 +98,8 @@ Determine the commit scope, then compose action lines:
 
 1. **Check for staged changes first** — run `git diff --cached --stat`.
    - **If staged changes exist:** these are the commit scope. Do not consider unstaged or untracked files — the user has already expressed what belongs in this commit by staging it.
-   - **If nothing is staged:** consider all unstaged modifications and untracked files as candidates. Use session context and the diff to decide what to stage and commit.
+   - **If nothing is staged and the working tree is clean** (i.e., this skill was invoked after a commit already ran): amend the previous commit to update its message. Run `git commit --amend` with the revised message. Do not create a new commit. Keep the subject line unless it is also wrong; the body is the primary update target.
+   - **If nothing is staged and there are unstaged changes:** consider all unstaged modifications and untracked files as candidates. Use session context and the diff to decide what to stage and commit.
 2. **Identify what you have session context for** — changes you produced, discussed, or observed reasoning for during this conversation.
 3. **Identify what you don't** — files or changes from a prior session, another agent, or manual edits outside this conversation.
 4. **Write action lines accordingly:**
@@ -178,14 +175,6 @@ What you CANNOT infer — do not fabricate:
 - `learned(scope)` — learnings come from the process, not the output.
 
 **A clean conventional commit subject with no action lines is always better than fabricated context.**
-
-## Git Workflows
-
-Contextual commits work with every standard git workflow. No special handling needed.
-
-- **Regular merges:** Commit bodies preserved intact.
-- **Squash merges:** All commit bodies concatenated into the squash commit body. The result is a chronological trail of typed, scoped action lines — agents parse, filter, and group these without issue.
-- **Rebase and cherry-pick:** Commit bodies preserved.
 
 ## Rules
 
