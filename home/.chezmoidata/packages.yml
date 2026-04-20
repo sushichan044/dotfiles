@@ -15,6 +15,7 @@ packages:
     gh:
       - "dlvhdr/gh-dash"
       - "github/gh-copilot"
+      - "k1LoW/gh-pr-reviews"
       - "yusukebe/gh-markdown-preview"
       - "seachicken/gh-poi"
       - "ryoppippi/gh-nippou"

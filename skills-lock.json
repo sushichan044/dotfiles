@@ -166,6 +166,11 @@
       "sourceType": "github",
       "computedHash": "c446a090ac98bea46704c16003761a030e6aa56a27b0e95d6914fbdb7c1d2a23"
     },
+    "triage-pr-reviews": {
+      "source": "k1LoW/gh-pr-reviews",
+      "sourceType": "github",
+      "computedHash": "624df0a7ffb7f5de0a327660ff96211d4e95a92c5f49413b902f8bae4c3546b8"
+    },
     "vitess": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
