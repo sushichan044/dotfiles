@@ -18,14 +18,40 @@ git branch --show-current
 gh pr view --json number,url,headRefName 2>/dev/null
 ```
 
-### 2. 最新の CI run を取得
+### 2. PR チェック一覧を取得して失敗を検出
+
+**PR が存在する場合**: `gh run list` ではなく `gh pr checks` を使うこと。
+`gh run list --limit 1` はブランチ上の最後に起動した run しか見ないため、
+複数 workflow が走るリポジトリでは失敗した run を見逃す原因になる。
 
 ```bash
-gh run list --branch "$(git branch --show-current)" --limit 1 \
-  --json databaseId,status,conclusion,url
+# PR に紐づく全チェックの状態を取得
+gh pr checks --json name,status,conclusion,link 2>/dev/null
 ```
 
-run がまだ存在しない場合（push 直後）は 5 秒待って最大 6 回再試行する。6 回試しても run が現れなければユーザーに報告して終了する。
+判定:
+
+- `conclusion=failure` のチェックが 1 件でもある → 失敗。リンクから run ID を取得して Step 3 へ。
+- 全件が `success` / `skipped` / `neutral` → 成功。完了レポートを出して終了。
+- `status=in_progress` / `queued` が残っている → 待機してリトライ。
+
+**PR が存在しない場合**: 直近 5 件の run を確認する。
+
+```bash
+gh run list --branch "$(git branch --show-current)" --limit 5 \
+  --json databaseId,status,conclusion,url,workflowName
+```
+
+いずれも run が存在しない場合（push 直後）は 5 秒待って最大 6 回再試行する。
+6 回試しても run が現れなければユーザーに報告して終了する。
+
+失敗 run の ID は `gh pr checks` のリンク URL から取得する:
+
+```bash
+# リンク例: https://github.com/owner/repo/actions/runs/12345678/job/...
+# run ID は runs/ と /job の間の数値
+gh pr checks --json link --jq '[.[] | select(.conclusion=="failure") | .link | capture("runs/(?P<id>[0-9]+)") | .id] | unique'
+```
 
 ### 3. CI run を監視
 
