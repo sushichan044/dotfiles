@@ -80,26 +80,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/polish.ts"
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/polish.ts"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
