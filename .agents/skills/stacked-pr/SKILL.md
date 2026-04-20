@@ -132,7 +132,7 @@ git ls-remote --heads origin <parent-branch>
 # Returns nothing → squash merge; pass this context to resolve-merge-conflict
 ```
 
-Invoke `resolve-merge-conflict`, passing whether the parent was squash-merged. That skill owns the rebase procedure for both cases (regular and squash merge).
+Invoke `resolve-merge-conflict`, passing the squash-merge detection result in the skill invocation message — e.g., `"The parent branch <parent-branch> was squash-merged (no longer exists on remote). Rebase <current-branch> onto <target>."` vs `"Rebase <current-branch> onto <target>."` for normal cases. That skill owns the rebase procedure for both cases (regular and squash merge).
 
 **If the rebase succeeds cleanly** — push, then immediately fire off the following concurrently before moving to the next branch:
 
@@ -143,6 +143,8 @@ git push --force-with-lease origin HEAD
 # 1. Background sub-agent: invoke adjust-pr-base for this branch
 # 2. Background CI watch (see Step 6)
 ```
+
+**Exception — orphaned parent:** If the parent branch was detected as deleted/squash-merged (see Edge Cases: Orphaned Stack Member), invoke `adjust-pr-base` **before** the rebase — not as a background post-push task. GitHub's PR base must point to a valid branch before CI runs.
 
 Proceed to the next branch in the topological order without waiting for these to finish.
 
@@ -190,17 +192,19 @@ When CI results come back, process failures starting from the most upstream bran
 **Parallel diagnosis, top-down fixing:**
 
 1. Spawn `fix-github-actions-ci` background sub-agents for all failing branches simultaneously to diagnose in parallel.
-2. When diagnosis results come back, apply fixes in top-down order — fix the most upstream failure first.
+2. When diagnosis results come back, apply fixes in top-down order — fix the most upstream failure first. If a downstream branch's diagnosis arrives before the upstream fix is complete, **hold the result** — do not apply it yet.
 3. After pushing a fix upstream, re-cascade downstream branches (mini-cascade). Launch the re-cascade before waiting for the upstream CI to complete — as soon as the push is done, the rebase can start.
 4. Re-watch CI for the fixed branch immediately in a background shell.
+5. After the upstream fix + mini-cascade lands: check downstream CI status with `gh run view`. If CI now passes → the upstream fix resolved it; discard the held diagnosis. If CI still fails → apply the queued downstream fix.
 
 ```
 Example parallel diagnosis flow:
   [background sub-agent] fix-github-actions-ci for feat/auth-ui   ← diagnosing
   [background sub-agent] fix-github-actions-ci for feat/auth-api  ← diagnosing (simultaneously)
 
-  → auth-ui diagnosis done first: apply fix, push, start re-watch in background
-  → auth-api diagnosis done: check if it's still relevant (might be fixed by auth-ui fix)
+  → auth-ui diagnosis done first: apply fix, push, start re-watch + mini-cascade in background
+  → auth-api diagnosis done while auth-ui fix is in progress: hold the result
+  → after auth-api's mini-cascade CI result comes back: if pass → done; if still failing → apply auth-api's held fix
 ```
 
 **When to stop fixing:**
@@ -257,7 +261,7 @@ When fixing CI requires code changes and a new push, downstream branches become 
 
 ### Orphaned Stack Member
 
-A PR in the stack targets a branch that's been deleted or merged. Use `adjust-pr-base` to re-target it to the nearest valid ancestor or the default branch.
+A PR in the stack targets a branch that's been deleted or merged. Invoke `adjust-pr-base` **before** the rebase (not as a post-push background task) to re-target the PR to the nearest valid ancestor or the default branch. The rebase can proceed with the same target once `adjust-pr-base` completes.
 
 ## Boundaries
 
