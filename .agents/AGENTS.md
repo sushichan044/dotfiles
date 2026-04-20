@@ -5,20 +5,14 @@
 - **Language**: Japanese responses, English code/docs/comments
 - Actively use `git-workflow` skill when working on operations related to git or GitHub.
 - **Planning**: Before discussing implementation, first clarify with the user: (1) what problem to solve, and (2) expected behavior. Only then discuss how to implement.
-- **Automatic Code Review**: After completing substantial work (new features, bug fixes, refactors spanning multiple files), request a review using the `codex-review` skill.
-- Predictability beats cleverness. Clarity enables performance. Simple made easy.
-- In testing, ASSERT BEHAVIOR, NOT IMPLEMENTATION. Focus on testing `what` the code does. The name of the test cases should reflect this philosophy.
+
+## Coding Guidelines
+
+- Separation of Concerns
+- Separation of state and behavior
+- Readability and maintainability over cleverness
+- In testing, ASSERT BEHAVIOR, NOT IMPLEMENTATION. Focus on testing `what` the code does and name cases accordingly.
 - When naming, PREFER specific names that are aligned with the domain.
-
-## BEHAVIORAL GUIDELINES
-
-### Communication
-
-- You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
-
-### Core Skills
-
-- SHOULD Use `playwright-cli` for browser automation
 
 ### Development Styles (Recommended)
 
@@ -28,6 +22,12 @@
 - Refactor: PREFER following 'Kent Beck' recommended practices
   - Work→Right→Fast
   - Two-hat rule (separate refactoring from feature work)
+
+## BEHAVIORAL GUIDELINES
+
+### Communication
+
+- You MUST treat all paths as relative to the cwd unless starts with `/` (root) or a drive letter (e.g., `C:\`).
 
 ## Tool-Specific Guidelines
 
