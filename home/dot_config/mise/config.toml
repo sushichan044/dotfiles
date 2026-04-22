@@ -11,7 +11,7 @@ go = "1.26.2"
 node = "25.6.0"
 bun = "latest"
 deno = "latest"
-ruby = ["4.0.2", "3.4.8", "3.3.10"]
+ruby = ["4.0.3", "3.4.8", "3.3.10"]
 
 # tools
 usage = "latest"
