@@ -19,7 +19,7 @@
         "pathe": "2.0.3",
         "picocolors": "1.1.1",
         "shell-quote": "1.8.3",
-        "temporal-polyfill-lite": "0.3.4",
+        "temporal-polyfill-lite": "0.3.5",
         "unist-util-visit": "5.1.0",
       },
       "devDependencies": {
@@ -487,7 +487,7 @@
 
     "statuses": ["statuses@2.0.2", "", {}, "sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw=="],
 
-    "temporal-polyfill-lite": ["temporal-polyfill-lite@0.3.4", "", {}, "sha512-5dj2td2kK43u2yclrAKqa40gil++t3CiXW7DB9L43Jn1mEgZjRYGmxGC09yxeLFcfPbIE6LjC5ZaYn4e0uOZVA=="],
+    "temporal-polyfill-lite": ["temporal-polyfill-lite@0.3.5", "", {}, "sha512-np3EcFbuGJrJ8fp3rKTwpvfvPlkh54IY873Xh+5133Pq1QQy1mkNXrDmJjjZ35dhQkrJpVx8RwaNWt0189iDfg=="],
 
     "tinypool": ["tinypool@2.1.0", "", {}, "sha512-Pugqs6M0m7Lv1I7FtxN4aoyToKg1C4tu+/381vH35y8oENM/Ai7f7C4StcoK4/+BSw9ebcS8jRiVrORFKCALLw=="],
 
