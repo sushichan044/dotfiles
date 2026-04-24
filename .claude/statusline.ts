@@ -11,6 +11,7 @@ import {
   getCurrentGitBranch,
   getCurrentRepositoryName,
 } from "../tools/git";
+import { createOmakase } from "../tools/utils/omakase";
 import { isNonEmptyString } from "../tools/utils/string";
 
 // 256 colors
@@ -103,6 +104,9 @@ type StatusShape = {
   };
   hostname: string;
   model: string;
+  omakase: {
+    enabled: boolean;
+  };
   rateLimit:
     | {
         fiveHour: {
@@ -204,11 +208,12 @@ function buildRateLimitStatus(rateLimits: InputShape["rate_limits"]): StatusShap
 async function buildStatus(input: InputShape): Promise<StatusShape> {
   const userInfo = os.userInfo();
   const hostname = os.hostname();
-  const [gitAheadBehind, gitBranch, repositoryName, worktree] = await Promise.all([
+  const [gitAheadBehind, gitBranch, repositoryName, worktree, omakaseEnabled] = await Promise.all([
     getGitAheadBehind(input.workspace.current_dir),
     getCurrentGitBranch(input.workspace.current_dir),
     getCurrentRepositoryName(input.workspace.current_dir),
     detectIfInsideWorktree(input.workspace.current_dir),
+    createOmakase(input.workspace.current_dir).isEnabled(),
   ]);
 
   return {
@@ -221,6 +226,9 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     },
     hostname,
     model: input.model.display_name,
+    omakase: {
+      enabled: omakaseEnabled,
+    },
     rateLimit: input.rate_limits ? buildRateLimitStatus(input.rate_limits) : undefined,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
     username: userInfo.username,
@@ -360,8 +368,13 @@ function prettyPrint(status: StatusShape): string {
     return `v${status.version.current}`;
   };
 
+  const omakase = () => {
+    const label = status.omakase.enabled ? color.bold(color.hotpink("ON")) : "OFF";
+    return `omakase: ${label}`;
+  };
+
   return [
-    makeLineFromParts(version(), status.model, context()),
+    makeLineFromParts(version(), status.model, context(), omakase()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
     makeLineFromParts(repository(), branch(), aheadBehind(), worktree()),
   ].join("\n");

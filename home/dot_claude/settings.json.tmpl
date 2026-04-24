@@ -206,6 +206,15 @@
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/omakase.ts"
+          }
+        ]
       }
     ],
     "WorktreeCreate": [
