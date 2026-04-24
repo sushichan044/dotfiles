@@ -5,6 +5,7 @@
 - **Language**: Japanese responses, English code/docs/comments
 - Actively use `git-workflow` skill when working on operations related to git or GitHub.
 - **Planning**: Before discussing implementation, first clarify with the user: (1) what problem to solve, and (2) expected behavior. Only then discuss how to implement.
+- Delegate single-purpose, narrow-scope, independently verifiable side tasks to SubAgent as much as possible while keeping main-task decisions and final integration in the parent agent.
 
 ## Coding Guidelines
 
