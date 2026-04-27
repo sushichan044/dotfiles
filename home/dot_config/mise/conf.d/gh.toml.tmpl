@@ -1,8 +1,0 @@
-#:schema https://mise.jdx.dev/schema/mise.json
-
-[settings.github]
-{{ if .for_personal -}}
-credential_command = "op read 'op://dotfiles/GH-PAT-CLI/token'"
-{{- else -}}
-credential_command = "op read 'op://Employee/GH-PAT-CLI/token'"
-{{- end -}}

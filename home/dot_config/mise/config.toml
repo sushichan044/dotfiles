@@ -90,6 +90,9 @@ idiomatic_version_file_enable_tools = [
 ]
 trusted_config_paths = ["~/workspace/github.com/sushichan044"]
 
+[settings.github]
+use_git_credentials = true
+
 [settings.npm]
 package_manager = "bun"
 
