@@ -7,6 +7,16 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cli_default_open_behavior": "new_window",
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
   "edit_predictions": {
     "provider": "copilot",
   },
@@ -15,6 +25,7 @@
     "cursor_shape": "bar",
   },
   "project_panel": {
+    "dock": "left",
     "auto_fold_dirs": false,
   },
   "diagnostics": {
@@ -23,6 +34,7 @@
     },
   },
   "agent": {
+    "dock": "right",
     "enabled": true,
     "button": true,
     "model_parameters": [],
