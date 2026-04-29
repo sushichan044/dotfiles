@@ -67,7 +67,7 @@ yq = "latest"
 "npm:open-cli" = "latest"
 "npm:pr-auto-ready" = "latest"
 "npm:tsx" = "latest"
-"pipx:docling" = "latest"
+"pipx:docling" = "2.91.0"
 
 [env]
 SHARP_IGNORE_GLOBAL_LIBVIPS = "1" # we installed vips via brew, but use pre-compiled sharp by default when `npm install sharp`
