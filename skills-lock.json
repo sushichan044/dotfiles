@@ -136,6 +136,12 @@
       "sourceType": "github",
       "computedHash": "f506f95f84ff344a3e522f2e58069b632a5b3539d978f00c935ee8bab25b03f0"
     },
+    "retrospective": {
+      "source": "lacolaco/claude-plugins",
+      "sourceType": "github",
+      "skillPath": "retrospective/skills/retrospective/SKILL.md",
+      "computedHash": "60f3fa48cf9fb5c7f4e1f8cd3904be1a82aaba44e84b0ebf5518293c35269d24"
+    },
     "semgrep": {
       "source": "semgrep/skills",
       "sourceType": "github",
