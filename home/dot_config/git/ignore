@@ -16,3 +16,4 @@ AGENTS.override.md
 
 # AI
 .playwright-cli/
+.claude/worktrees/
