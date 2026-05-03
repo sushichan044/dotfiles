@@ -29,7 +29,7 @@
     "unist-util-visit": "5.1.0"
   },
   "devDependencies": {
-    "@opencode-ai/plugin": "1.14.29",
+    "@opencode-ai/plugin": "1.14.30",
     "@types/bun": "1.3.13",
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
