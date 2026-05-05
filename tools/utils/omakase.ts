@@ -2,51 +2,55 @@ import { mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
+import * as v from "valibot";
+
 import { createShell } from "./bun-sh";
 
 const sh = createShell();
 
-const stateFile = join(
+const STATE_FILE = join(
   process.env["XDG_CACHE_HOME"] ?? join(homedir(), ".cache"),
   "sushichan044",
   "omakase",
   "state.json",
 );
 
-export type Omakase = {
-  isEnabled: () => Promise<boolean>;
-  setEnabled: (enabled: boolean) => Promise<void>;
-};
+const DirectoryStateSchema = v.object({
+  enabled: v.boolean(),
+});
 
-async function readState(): Promise<Record<string, boolean>> {
-  const file = Bun.file(stateFile);
-  if (!(await file.exists())) return {};
+const SessionStateSchema = v.object({
+  prompt: v.string(),
+  cwd: v.string(),
+  savedAt: v.string(),
+});
 
-  const raw = (await file.json()) as unknown;
-  if (typeof raw !== "object" || raw === null) return {};
+const OmakaseStateSchema = v.object({
+  directories: v.record(v.string(), DirectoryStateSchema),
+  sessions: v.record(v.string(), SessionStateSchema),
+});
 
-  const out: Record<string, boolean> = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof v === "boolean") out[k] = v;
-  }
-  return out;
+type OmakaseState = v.InferOutput<typeof OmakaseStateSchema>;
+type SessionState = v.InferOutput<typeof SessionStateSchema>;
+
+const EMPTY_STATE: OmakaseState = { directories: {}, sessions: {} };
+
+async function readState(): Promise<OmakaseState> {
+  const file = Bun.file(STATE_FILE);
+  if (!(await file.exists())) return structuredClone(EMPTY_STATE);
+
+  const raw = await file.json().catch(() => null);
+  const result = v.safeParse(OmakaseStateSchema, raw);
+  return result.success ? result.output : structuredClone(EMPTY_STATE);
 }
 
-async function writeState(state: Record<string, boolean>): Promise<void> {
-  await mkdir(dirname(stateFile), { recursive: true });
-  await Bun.write(stateFile, JSON.stringify(state, null, 2) + "\n");
+async function writeState(state: OmakaseState): Promise<void> {
+  v.parse(OmakaseStateSchema, state);
+  await mkdir(dirname(STATE_FILE), { recursive: true });
+  await Bun.write(STATE_FILE, JSON.stringify(state, null, 2) + "\n");
 }
 
-/**
- * Resolve the storage key for a given path. Binds omakase state to the closest
- * git worktree root so toggling anywhere inside a repo (or a linked worktree)
- * applies to the whole tree. `git rev-parse --show-toplevel` returns the
- * current worktree's top — the main repo root from inside the main worktree,
- * or the linked worktree root from inside one.
- *
- * Falls back to the input path when not inside a git worktree.
- */
-export async function resolveOmakaseKey(cwd: string): Promise<string> {
+async function resolveKey(cwd: string): Promise<string> {
   const result = await sh`git -C ${cwd} rev-parse --show-toplevel`;
   if (result.exitCode === 0) {
     const top = result.text().trim();
@@ -55,18 +59,63 @@ export async function resolveOmakaseKey(cwd: string): Promise<string> {
   return cwd;
 }
 
-export function createOmakase(cwd: string): Omakase {
-  return {
-    async isEnabled() {
-      const key = await resolveOmakaseKey(cwd);
+export type OmakaseDirectoryContext = {
+  isEnabled: () => Promise<boolean>;
+  setEnabled: (enabled: boolean) => Promise<void>;
+};
+
+export type OmakaseSessionContext = OmakaseDirectoryContext & {
+  setLastPrompt: (prompt: string) => Promise<void>;
+  getLastPrompt: () => Promise<string | null>;
+  clearLastPrompt: () => Promise<void>;
+};
+
+export function createOmakaseContext(cwd: string): OmakaseDirectoryContext;
+export function createOmakaseContext(cwd: string, sessionId: string): OmakaseSessionContext;
+
+export function createOmakaseContext(
+  cwd: string,
+  sessionId?: string,
+): OmakaseDirectoryContext | OmakaseSessionContext {
+  const directoryCtx: OmakaseDirectoryContext = {
+    isEnabled: async () => {
+      const key = await resolveKey(cwd);
       const state = await readState();
-      return state[key] === true;
+      return state.directories[key]?.enabled === true;
     },
 
-    async setEnabled(enabled) {
-      const key = await resolveOmakaseKey(cwd);
+    setEnabled: async (enabled: boolean) => {
+      const key = await resolveKey(cwd);
       const state = await readState();
-      state[key] = enabled;
+      state.directories[key] = { enabled };
+      await writeState(state);
+    },
+  };
+
+  if (sessionId === undefined) return directoryCtx;
+
+  const sid = sessionId;
+  return {
+    ...directoryCtx,
+
+    setLastPrompt: async (prompt: string) => {
+      const state = await readState();
+      state.sessions[sid] = {
+        prompt,
+        cwd,
+        savedAt: new Date().toISOString(),
+      } satisfies SessionState;
+      await writeState(state);
+    },
+
+    getLastPrompt: async () => {
+      const state = await readState();
+      return state.sessions[sid]?.prompt ?? null;
+    },
+
+    clearLastPrompt: async () => {
+      const state = await readState();
+      delete state.sessions[sid];
       await writeState(state);
     },
   };

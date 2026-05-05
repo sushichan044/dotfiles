@@ -11,7 +11,7 @@ import {
   getCurrentGitBranch,
   getCurrentRepositoryName,
 } from "../tools/git";
-import { createOmakase } from "../tools/utils/omakase";
+import { createOmakaseContext } from "../tools/utils/omakase";
 import { isNonEmptyString } from "../tools/utils/string";
 
 // 256 colors
@@ -213,7 +213,7 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     getCurrentGitBranch(input.workspace.current_dir),
     getCurrentRepositoryName(input.workspace.current_dir),
     detectIfInsideWorktree(input.workspace.current_dir),
-    createOmakase(input.workspace.current_dir).isEnabled(),
+    createOmakaseContext(input.workspace.current_dir).isEnabled(),
   ]);
 
   return {

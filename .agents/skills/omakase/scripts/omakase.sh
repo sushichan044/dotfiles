@@ -3,7 +3,7 @@
 # State is keyed by the closest git worktree root (repo root or linked worktree
 # root) so toggling anywhere inside the tree applies to the whole tree.
 # Written to ~/.cache/sushichan044/omakase/state.json and consumed by
-# .claude/hooks/PreToolUse/omakase.ts to deny AskUserQuestion and push Claude
+# .claude/hooks/omakase.ts to deny AskUserQuestion and push Claude
 # toward autonomous, subagent-driven decision making.
 
 set -euo pipefail
@@ -12,7 +12,7 @@ state_dir="${XDG_CACHE_HOME:-$HOME/.cache}/sushichan044/omakase"
 state_file="$state_dir/state.json"
 
 mkdir -p "$state_dir"
-[[ -f "$state_file" ]] || printf '{}\n' >"$state_file"
+[[ -f "$state_file" ]] || printf '{"directories":{},"sessions":{}}\n' >"$state_file"
 
 mode="${1:-status}"
 key="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
@@ -31,17 +31,17 @@ write_state() {
 case "$mode" in
 on)
     # shellcheck disable=SC2016
-    write_state '.[$key] = true'
+    write_state '.directories[$key] = {"enabled": true}'
     printf 'omakase: ON for %s\n' "$key"
     ;;
 off)
     # shellcheck disable=SC2016
-    write_state '.[$key] = false'
+    write_state '.directories[$key] = {"enabled": false}'
     printf 'omakase: OFF for %s\n' "$key"
     ;;
 status)
     # shellcheck disable=SC2016
-    if jq -e --arg key "$key" '.[$key] // false | . == true' "$state_file" >/dev/null; then
+    if jq -e --arg key "$key" '.directories[$key].enabled // false' "$state_file" >/dev/null; then
         printf 'omakase: ON for %s\n' "$key"
     else
         printf 'omakase: OFF for %s\n' "$key"

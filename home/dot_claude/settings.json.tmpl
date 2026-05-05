@@ -67,6 +67,20 @@
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/UserPromptSubmit/datadog.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/omakase.ts"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/omakase.ts"
           }
         ]
       }
@@ -212,7 +226,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/omakase.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/omakase.ts"
           }
         ]
       }
