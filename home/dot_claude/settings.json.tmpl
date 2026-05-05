@@ -146,7 +146,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/dump_plan.ts"
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/dump_plan.ts",
+            "async": true
           }
         ]
       },
