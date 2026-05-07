@@ -5,7 +5,7 @@
 
 # Languages
 python = ["3.14.4", "3.12.10", "3.11.12"]
-java = "25"
+java = "25.0.3+9.0.LTS"
 uv = "latest"
 go = "1.26.2"
 node = "25.6.0"
