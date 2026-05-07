@@ -1,6 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "awsAuthRefresh": "aws sso login",
   "env": {
     {{/* https://github.com/unjs/std-env/blob/2b364bdb44d7e56e0fe2070758dd42fec55c6144/src/agents.ts#L70-L90 */ -}}
     "AI_AGENT": "claude",
@@ -17,12 +16,11 @@
     "DISABLE_BUG_COMMAND": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_TELEMETRY": "1",
-    "ENABLE_CLAUDEAI_MCP_SERVERS": "0",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
     "ENABLE_PROMPT_CACHING_1H": "1",
     "FORCE_AUTOUPDATE_PLUGINS": "1",
     "FORCE_AUTO_BACKGROUND_TASKS": "1"
   },
-  "showThinkingSummaries": true,
   "useAutoModeDuringPlan": true,
   "model": {{ if eq .for_personal false }}"opusplan"{{ else }}"sonnet"{{ end }}{{ if eq .for_personal false }},
   "effortLevel": "high"{{ end }},
