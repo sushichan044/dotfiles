@@ -24,7 +24,7 @@
         "valibot": "1.4.0",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.14.34",
+        "@opencode-ai/plugin": "1.14.35",
         "@types/bun": "1.3.13",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -76,9 +76,9 @@
 
     "@msgpackr-extract/msgpackr-extract-win32-x64": ["@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3", "", { "os": "win32", "cpu": "x64" }, "sha512-x0fWaQtYp4E6sktbsdAqnehxDgEc/VwM7uLsRCYWaiGu0ykYdZPiS8zCWdnjHwyiumousxfBm4SO31eXqwEZhQ=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.14.34", "", { "dependencies": { "@opencode-ai/sdk": "1.14.34", "effect": "4.0.0-beta.59", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.2", "@opentui/solid": ">=0.2.2" }, "optionalPeers": ["@opentui/core", "@opentui/solid"] }, "sha512-jF+38UfKXqYphH0K8FUF/QVyQ9mAVQ5Xk6JoHQHiooNaqCTwMRGNq5i7K4098HNy+haFHCuURXpJi+yLE8SXgQ=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.14.35", "", { "dependencies": { "@opencode-ai/sdk": "1.14.35", "effect": "4.0.0-beta.59", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.2", "@opentui/solid": ">=0.2.2" }, "optionalPeers": ["@opentui/core", "@opentui/solid"] }, "sha512-wbGsQZAYKGe5N+SnaZ1dU0S8d5WDauB8e5CEtOxqsXaQh1lbTUkvkO1PJ92TizcqfwnvaiDH1ND3uTcx5D2ryA=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.14.34", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-MsA5rdWJwkwY+umrgIABKqgFQuVHxsho7FeZaS2KHePozmh27NZOL8QZTY0/68D2j0yxjdMaTp63R31xsb+tww=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.14.35", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-yEeH+JGYEOmUL/fSrS2kWyR/5Qr/7q2+Ck2uecOA7JplgI76XXVtASkecXl+bHRwQSMM2j/f5eTvRUYkEqvGPA=="],
 
     "@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.48.0", "", { "os": "android", "cpu": "arm" }, "sha512-uwqk+/KhQvBIpULD8SMM/zAafMRC/+DV/xsEQjkkIsJ/kLmEI/2bxonVowcYTiXqqZ/a0FEW8DPkZY3VvwELDA=="],
 
