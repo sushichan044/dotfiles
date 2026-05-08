@@ -24,6 +24,7 @@
   "useAutoModeDuringPlan": true,
   "model": {{ if eq .for_personal false }}"opusplan"{{ else }}"sonnet"{{ end }}{{ if eq .for_personal false }},
   "effortLevel": "high"{{ end }},
+  "skillListingBudgetFraction": 0.05,
   "cleanupPeriodDays": 99999,
   "statusLine": {
     "type": "command",
