@@ -47,6 +47,17 @@ clear_brew_cache() {
     echo "✅ Homebrew cache cleaned."
 }
 
+clear_bun_cache() {
+    if ! type "bun" >/dev/null 2>&1; then
+        echo "⚠️ Command 'bun' not found. Skipping Bun cache cleanup..."
+        return 1
+    fi
+
+    bun pm cache rm
+
+    echo "✅ Bun cache cleaned."
+}
+
 LAST_RUN_FILE="$HOME/.cache/sushichan044/dotfiles/maintain_storage_last_run"
 
 get_last_run() {
@@ -89,6 +100,10 @@ run_maintenance() {
         all_success=false
     fi
     if ! clear_brew_cache; then
+        all_success=false
+    fi
+
+    if ! clear_bun_cache; then
         all_success=false
     fi
 
