@@ -30,7 +30,7 @@
     "valibot": "1.4.0"
   },
   "devDependencies": {
-    "@opencode-ai/plugin": "1.14.44",
+    "@opencode-ai/plugin": "1.14.45",
     "@types/bun": "1.3.13",
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
