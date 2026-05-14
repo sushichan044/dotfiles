@@ -24,7 +24,7 @@
         "valibot": "1.4.0",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.14.46",
+        "@opencode-ai/plugin": "1.14.47",
         "@types/bun": "1.3.13",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -76,9 +76,9 @@
 
     "@msgpackr-extract/msgpackr-extract-win32-x64": ["@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3", "", { "os": "win32", "cpu": "x64" }, "sha512-x0fWaQtYp4E6sktbsdAqnehxDgEc/VwM7uLsRCYWaiGu0ykYdZPiS8zCWdnjHwyiumousxfBm4SO31eXqwEZhQ=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.14.46", "", { "dependencies": { "@opencode-ai/sdk": "1.14.46", "effect": "4.0.0-beta.59", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.6", "@opentui/keymap": ">=0.2.6", "@opentui/solid": ">=0.2.6" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-JXV0h/dMFGVmEvlKSrbkMeiiIafwWlAGTbAQ4KaK1Bn5yWCFx5DkYVcS3BvgebdJEPkQ4tjVKmG/LHjfZwbjkA=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.14.47", "", { "dependencies": { "@opencode-ai/sdk": "1.14.47", "effect": "4.0.0-beta.59", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.6", "@opentui/keymap": ">=0.2.6", "@opentui/solid": ">=0.2.6" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-7cXOtNbd11mbri/GDjDklnbosuCsfxyUDX1WB+tfCWJ7a7moJ0WZEPUKbsjK1Kk/Kh+EakOdVoE3Ex7UbnTonA=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.14.46", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-7KOMuoCkNI+bLOw3GCg0nWZ5m7A/MzNsyLfTbZYmE/DIaUqkV2LNRULtrW6PHL1WtYVmJEFPws4dbw/4dVxjzA=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.14.47", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-DLWdtSET63sT0siUcZqTDR72LQzwepV4I3tW1UdY7ZNk4ghOtoXt3L9cAJ1Ou2dQB7xeO8PGI0pUYzfOCvXOjQ=="],
 
     "@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.48.0", "", { "os": "android", "cpu": "arm" }, "sha512-uwqk+/KhQvBIpULD8SMM/zAafMRC/+DV/xsEQjkkIsJ/kLmEI/2bxonVowcYTiXqqZ/a0FEW8DPkZY3VvwELDA=="],
 
