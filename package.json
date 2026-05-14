@@ -11,7 +11,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "ansis": "4.2.0",
+    "ansis": "4.3.0",
     "args-tokens": "0.24.3",
     "arkregex": "0.0.5",
     "cc-hooks-ts": "2.1.133",
