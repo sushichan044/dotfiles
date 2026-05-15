@@ -58,15 +58,16 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 ## 操作マップ（クイックリファレンス）
 
-| ユーザーの intent                              | 操作タイプ                            |
-| ---------------------------------------------- | ------------------------------------- |
-| commit して、変更を保存、コミット              | → [Commit](#commit)                   |
-| PR 作って、PR 出して、PR を開く                | → [Create PR](#create-pr)             |
-| push して、PR に反映して                       | → [Push to PR](#push-to-pr)           |
-| rebase して、最新に追いついて、ベースを更新    | → [Rebase](#rebase)                   |
-| スタック整理して、cascade rebase、全 PR を同期 | → [Stacked PR Sync](#stacked-pr-sync) |
-| PR レビューして、コメントして、差分を見て      | → [Review PR](#review-pr)             |
-| CI 直して、テスト落ちてる、ビルドが失敗        | → [Fix CI](#fix-ci)                   |
+| ユーザーの intent                                      | 操作タイプ                                                           |
+| ------------------------------------------------------ | -------------------------------------------------------------------- |
+| commit して、変更を保存、コミット                      | → [Commit](#commit)                                                  |
+| PR 作って、PR 出して、PR を開く                        | → [Create PR](#create-pr)                                            |
+| push して、PR に反映して                               | → [Push to PR](#push-to-pr)                                          |
+| rebase して、最新に追いついて、ベースを更新            | → [Rebase](#rebase)                                                  |
+| スタック整理して、cascade rebase、全 PR を同期         | → [Stacked PR Sync](#stacked-pr-sync)                                |
+| diff 整理して、コミット整えて、PR 分割して、大きすぎる | → [Reorganize Diff](#reorganize-diff) (Create PR からも自動呼び出し) |
+| PR レビューして、コメントして、差分を見て              | → [Review PR](#review-pr)                                            |
+| CI 直して、テスト落ちてる、ビルドが失敗                | → [Fix CI](#fix-ci)                                                  |
 
 操作タイプが複数に見えるときは、依存関係の順（例: commit → push → PR 作成）に処理する。
 
@@ -97,17 +98,21 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 **Steps**:
 
 1. コミットされていない変更があれば [Commit](#commit) を先に完走させる。
-2. `git push -u origin HEAD` でブランチを push する。
-3. **`prepare-issue-pr` スキルを呼び出して** PR title、body、初期 base branch を決める。base の初期推定はこのスキルに従う。
-4. デフォルトでは `gh pr create --draft --base <base-from-prepare-issue-pr> --title "<title>" --body "<body>"` で draft PR を作る。ユーザーが ready for review / non-draft を明示したときだけ `--draft` を外す。
-5. **`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
-6. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
+2. push 前に [Reorganize Diff](#reorganize-diff) を実行する。reorganize-diff の判定結果で本フローの残ステップが分岐する:
+   - **「分割不要」**: そのまま step 3 へ進む。
+   - **「コミット整理のみ」モード**: reorganize-diff が現ブランチのコミットを整理して `git push --force-with-lease` まで完走する。step 3 (push) はスキップして step 4 へ進む。
+   - **「スタック PR」モード**: reorganize-diff が複数の PR を作成し、`stacked-pr` スキルへハンドオフして完走する。本フローはここで終了。step 3 以降はスキップ。
+3. `git push -u origin HEAD` でブランチを push する。
+4. **`prepare-issue-pr` スキルを呼び出して** PR title、body、初期 base branch を決める。base の初期推定はこのスキルに従う。
+5. デフォルトでは `gh pr create --draft --base <base-from-prepare-issue-pr> --title "<title>" --body "<body>"` で draft PR を作る。ユーザーが ready for review / non-draft を明示したときだけ `--draft` を外す。
+6. **`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
+7. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
 
 **完了条件**:
 
-- PR が存在する（`gh pr view` で確認できる）
-- base branch が `adjust-pr-base` によって検証済み
-- `watch-ci` スキルが CI パスを確認済み
+- PR が存在する（`gh pr view` または `stacked-pr` の完了報告で確認できる）
+- single PR の場合: base branch が `adjust-pr-base` によって検証済み、`watch-ci` スキルが CI パスを確認済み
+- スタック PR の場合: `stacked-pr` スキルが完了報告を出している
 
 ---
 
@@ -164,6 +169,28 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 **完了条件**:
 
 - `stacked-pr` スキルが完了報告を出している
+
+---
+
+## Reorganize Diff
+
+**Entry**:
+
+- [Create PR](#create-pr) の step 2 から呼ばれたとき (push 前の自動チェック)
+- 「diff 整理して」「コミットを整えて」「PR が大きすぎる」「PR を分割して」など、diff の粒度を整える指示があるとき
+
+**Steps**:
+
+1. **`reorganize-diff` スキルに完全に委譲する**。Phase 1 (分析) は副作用なし、Phase 2 (実行) はユーザー承認が必要。
+2. Phase 1 が「分割不要」を返した場合、Phase 2 は実行されない。呼び出し元のフロー (例: [Create PR](#create-pr) の step 3 以降) をそのまま継続する。
+3. reorganize-diff が Phase 2 で `git push` / `gh pr create` まで完走した場合、その先のステップ (元の呼び出し元フローでの push / PR 作成) は再実行しない。
+
+**完了条件**:
+
+- `reorganize-diff` が次のいずれかを返している:
+  - **「分割不要」**: 既存の commit / PR 構造が論理変更と一致しているので Phase 2 は走らない。呼び出し元が後続フローを継続する。
+  - **「コミット整理のみ」**: 同一ブランチ上で Tier 2 コミットを再構成して `git push --force-with-lease` 済み。呼び出し元は push を再実行せず、PR 作成側の step に進む。
+  - **「スタック PR」**: Tier 1 単位で複数の draft PR を作成し、`stacked-pr` へハンドオフ済み。呼び出し元 (Create PR) はここで終了する。
 
 ---
 
