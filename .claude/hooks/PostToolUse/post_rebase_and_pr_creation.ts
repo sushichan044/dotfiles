@@ -21,8 +21,9 @@ function getTriggerContext(cmd: string): string[] | null {
     return [
       "You just ran `gh pr create`.",
       "If you are not already executing a multi-step workflow that covers post-PR-creation steps, do the following before completing the task:",
-      "1. Execute the `adjust-pr-base` skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
-      "2. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
+      "1. Execute `reorganize-diff` to organize your commits if not already done.",
+      "2. Execute the `adjust-pr-base` skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
+      "3. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
     ];
   }
 
