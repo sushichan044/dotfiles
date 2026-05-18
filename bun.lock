@@ -24,7 +24,7 @@
         "valibot": "1.4.0",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.14.51",
+        "@opencode-ai/plugin": "1.15.0",
         "@types/bun": "1.3.14",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -76,9 +76,9 @@
 
     "@msgpackr-extract/msgpackr-extract-win32-x64": ["@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3", "", { "os": "win32", "cpu": "x64" }, "sha512-x0fWaQtYp4E6sktbsdAqnehxDgEc/VwM7uLsRCYWaiGu0ykYdZPiS8zCWdnjHwyiumousxfBm4SO31eXqwEZhQ=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.14.51", "", { "dependencies": { "@opencode-ai/sdk": "1.14.51", "effect": "4.0.0-beta.65", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.10", "@opentui/keymap": ">=0.2.10", "@opentui/solid": ">=0.2.10" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-2110+2U+SdD90lNYHOmMx5Nkp2d9hitiZmSjsWm4H5BlzmiObJRzNV2HdYL1wPnScgglAYiwgrne08a3Z+XJNg=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.15.0", "", { "dependencies": { "@opencode-ai/sdk": "1.15.0", "effect": "4.0.0-beta.65", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.2.10", "@opentui/keymap": ">=0.2.10", "@opentui/solid": ">=0.2.10" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-97N985FDqNMpbBbsNotu0j3lkHwDyHX+2BnPFfnuNmBrTQNqLrn2UyA6wBfP6J5l4xUslwKNrH2IVrGIZeiSxQ=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.14.51", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-qaoVzYvUDm2rXohrC2GjMlMaThHUKxxDZlBMYt2U6gyPaZ/kLLUCUPOff3CSzLoX9Mx7cBaqpV9F/Evm5PIDsw=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.15.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-npmURKwd1HoV/i3CsGl2tdHpGhWSGVqTN1cp0s2gDH5gE6XduAtFmmVXBZ/ovJLh3Evu6sTVZ9n0IkJzFNeveQ=="],
 
     "@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.49.0", "", { "os": "android", "cpu": "arm" }, "sha512-HbifJ84prIh9+55CTPAU35JdRQrwg47y16cGerCC+iejSKOuHXYo2WDql6l7cQlzrYVtc3f4UWY+dBj2lRmOeA=="],
 
