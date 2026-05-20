@@ -35,7 +35,7 @@
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
     "@typescript/native-preview": "7.0.0-dev.20260519.1",
-    "@virtual-live-lab/tsconfig": "2.1.21",
+    "@virtual-live-lab/tsconfig": "2.1.23",
     "oxlint": "1.65.0",
     "typescript": "6.0.3"
   },
