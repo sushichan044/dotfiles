@@ -5,7 +5,6 @@
 - **Language**: Japanese responses, English code/docs/comments
 - **Coding Behavior**: You MUST follow the `karpathy-guidelines` skill for any coding, reviewing, or refactoring work. The rules in this file extend it with project-specific conventions and tool integrations; they do not replace it.
 - Actively use `git-workflow` skill when working on operations related to git or GitHub.
-- Delegate single-purpose, narrow-scope, independently verifiable side tasks to SubAgent as much as possible while keeping main-task decisions and final integration in the parent agent.
 
 ## Coding Guidelines
 
