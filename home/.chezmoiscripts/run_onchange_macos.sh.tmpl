@@ -70,6 +70,11 @@ defaults write NSAutomaticPeriodSubstitutionEnabled -bool false  # Disable autom
 # Keyboard
 defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool false  # Disable press-and-hold for keys
 defaults write NSGlobalDomain "com.apple.keyboard.fnState" -bool true # Use F1, F2, etc. keys as standard function keys
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false # Disable auto capitalize
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false # Disable smart quote
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false # Disable smart dash
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false # Disable auto spelling correction
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false # Disable automatic period substitution with double-space
 
 # Terminal
 defaults write com.apple.Terminal StringEncodings -array 4 # Only use UTF-8 in Terminal.app
