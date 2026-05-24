@@ -2,7 +2,7 @@
 name: investigate-flaky-test
 description: >-
   CI で失敗したテストが flaky（不安定）かどうかを調査するスキル。PR の影響箇所と関係なさそうな CI 失敗、re-run で通ったが原因を知りたい、同じテストが繰り返し落ちる、テストの信頼性を評価したいときに使う。「flaky test を調べて」「このテストが不安定かどうか確認して」「CI が落ちてるけど関係なさそう」「なぜかたまに落ちる」といった場面で必ずこのスキルを呼び出すこと。
-allowed-tools: Bash(gh run list:*), Bash(gh run view:*), Bash(gh pr view:*), Bash(gh pr checks:*)
+allowed-tools: Bash(gh run list:*), Bash(gh run view:*), Bash(gh pr view:*), Bash(gh pr checks:*), Bash(gh timeline:*)
 ---
 
 # investigate-flaky-test
@@ -29,7 +29,23 @@ gh run view <run-id> --log-failed
 
 エラーメッセージ・スタックトレース・ファイルパスをメモする。
 
-### Step 2: 過去 run での失敗履歴を確認
+### Step 2: PR タイムラインで直前のイベントを確認
+
+失敗 run のトリガーとなった PR イベント（force push / rebase / マージ）を確認する：
+
+```bash
+gh timeline <pr-number-or-url>
+```
+
+確認するポイント：
+
+- 失敗 run が起動する直前に force push や rebase があったか
+- `pushed` / `force-pushed` イベントのタイムスタンプと run の開始時刻が近接しているか
+- 別ブランチのマージや base branch の更新が絡んでいないか
+
+インフラ不安定・race condition が疑われる場合は「PR 操作起因の flaky」として Step 5 のレポートに記録する。
+
+### Step 3: 過去 run での失敗履歴を確認
 
 main ブランチの直近 run でも同じテストが落ちていないか確認する：
 
@@ -43,7 +59,7 @@ gh run view <other-run-id> --log-failed
 
 同じ test/step 名が他の PR・ブランチでも落ちていれば flaky の可能性が高い。
 
-### Step 3: テストコードの調査
+### Step 4: テストコードの調査
 
 失敗しているテストのソースコードを読み、以下の flaky パターンがないか確認する：
 
@@ -56,7 +72,7 @@ gh run view <other-run-id> --log-failed
 | ハードコードされたタイムアウト | 環境差異で遅延が変わりうる箇所                            |
 | テスト間の状態リーク           | 前のテストが後のテストに影響しうる副作用                  |
 
-### Step 4: レポートを出力する
+### Step 5: レポートを出力する
 
 以下の形式でまとめる：
 
@@ -90,7 +106,7 @@ gh run view <other-run-id> --log-failed
 - [ ] <対処案 3（例: issue を立てて既知の flaky としてマーク）>
 ```
 
-### Step 5: 次のアクションをユーザーに確認する
+### Step 6: 次のアクションをユーザーに確認する
 
 レポートを提示した上で、次のアクションをユーザーに確認する：
 

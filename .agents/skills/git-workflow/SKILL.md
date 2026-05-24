@@ -200,7 +200,7 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 **Steps**:
 
-1. 対象 PR を特定する（指示がなければ current branch の open PR）。
+1. 対象 PR を特定する（指示がなければ current branch の open PR）。PR の時系列イベント（コミット順序・レビュー投稿タイミング・force push 履歴）が必要な場合は `gh-timeline` スキルを先に呼び出す。
 2. read-only 指示がある場合は「diff と、対象 PR を特定するための最小 metadata の確認だけ。コメント投稿、返信、インラインコメントはしない」と明示してから **`github-pr-review-operation` スキルを呼び出す**。
 3. read-only 指示がない場合は **`github-pr-review-operation` スキルを呼び出す**。
 
