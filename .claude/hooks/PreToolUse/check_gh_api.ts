@@ -22,14 +22,31 @@ const hook = defineHook({
       return c.success();
     }
 
-    // Delegate permission decision to user for GraphQL
     if (gh.type === "graphql") {
+      if (gh.operationType === "query") {
+        return c.json({
+          event: "PreToolUse",
+          output: {
+            hookSpecificOutput: {
+              hookEventName: "PreToolUse",
+              permissionDecision: "allow",
+              permissionDecisionReason: "Read-only GraphQL query operation",
+            },
+          },
+        });
+      }
+
+      const reason =
+        gh.operationType === "mutation"
+          ? "GraphQL mutation operation requires user approval"
+          : "Unable to determine GraphQL operation type (not inline), requires user approval";
       return c.json({
         event: "PreToolUse",
         output: {
           hookSpecificOutput: {
             hookEventName: "PreToolUse",
             permissionDecision: "ask",
+            permissionDecisionReason: reason,
           },
         },
       });

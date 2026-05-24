@@ -199,11 +199,43 @@ describe("parseGhApiCommand", () => {
     });
   });
 
-  it("should parse gh api graphql command", () => {
+  it("should parse gh api graphql query operation", () => {
     const command = 'gh api graphql -f query="query { viewer { login } }"';
     const args = parseGhApiCommand(command);
 
     expect(args).toEqual({
+      operationType: "query",
+      type: "graphql",
+    });
+  });
+
+  it("should parse gh api graphql anonymous query operation", () => {
+    const command = 'gh api graphql -f query="{ viewer { login } }"';
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      operationType: "query",
+      type: "graphql",
+    });
+  });
+
+  it("should parse gh api graphql mutation operation", () => {
+    const command =
+      'gh api graphql -F query="mutation AddReaction($input: AddReactionInput!) { addReaction(input: $input) { subject { id } } }"';
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      operationType: "mutation",
+      type: "graphql",
+    });
+  });
+
+  it("should return unknown operationType when query is not inline", () => {
+    const command = "gh api graphql --input query.graphql";
+    const args = parseGhApiCommand(command);
+
+    expect(args).toEqual({
+      operationType: "unknown",
       type: "graphql",
     });
   });

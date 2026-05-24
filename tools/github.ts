@@ -238,8 +238,28 @@ type GhApiREST = {
 };
 
 type GhApiGraphQL = {
+  operationType: "mutation" | "query" | "unknown";
   type: "graphql";
 };
+
+function detectGraphQLOperationType(query: string): "mutation" | "query" | "unknown" {
+  const stripped = query
+    .split("\n")
+    .filter((line) => !line.trimStart().startsWith("#"))
+    .join("\n")
+    .trimStart();
+
+  if (stripped.startsWith("mutation")) return "mutation";
+  // shorthand syntax `{ ... }` and `subscription` are read-only
+  if (
+    stripped.startsWith("query") ||
+    stripped.startsWith("{") ||
+    stripped.startsWith("subscription")
+  ) {
+    return "query";
+  }
+  return "unknown";
+}
 
 export function parseGhApiCommand(command: string): GhApiResult | null {
   if (!command.startsWith("gh api ")) {
@@ -275,7 +295,13 @@ export function parseGhApiCommand(command: string): GhApiResult | null {
 
   const endpoint = parsed.values.endpoint;
   if (endpoint === "graphql") {
+    const queryArg = args.find(
+      (arg): arg is string => typeof arg === "string" && arg.startsWith("query="),
+    );
     return {
+      operationType: queryArg
+        ? detectGraphQLOperationType(queryArg.slice("query=".length))
+        : "unknown",
       type: "graphql",
     };
   }
