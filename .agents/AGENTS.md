@@ -4,6 +4,7 @@
 
 - **Language**: Japanese responses, English code/docs/comments
 - **Coding Behavior**: You MUST follow the `karpathy-guidelines` skill for any coding, reviewing, or refactoring work. The rules in this file extend it with project-specific conventions and tool integrations; they do not replace it.
+- **Frontend/Web Development**: You MUST follow the `modern-web-guidance` skill at the start of any task that produces HTML, CSS, or client-side JavaScript — whether written directly or compiled from a component framework. Web APIs evolve rapidly and training weights contain obsolete patterns — skipping this skill produces stale code.
 - Actively use `git-workflow` skill when working on operations related to git or GitHub.
 
 ## Coding Guidelines
