@@ -10,6 +10,7 @@ const hook = defineHook({
       Grep: true,
       Read: true,
       Write: true,
+      Bash: true,
     },
     SessionStart: true,
   },
@@ -80,6 +81,24 @@ const hook = defineHook({
           },
         });
       }
+    }
+
+    if (c.input.tool_name === "Bash") {
+      const toolsMaybeUnavailable = ["vitest", "jest"];
+
+      return c.json({
+        event: "PreToolUse",
+        output: {
+          hookSpecificOutput: {
+            hookEventName: "PreToolUse",
+            additionalContext: [
+              `You are in a linked git worktree (root: ${wt.worktreeRoot}).`,
+              `Tools like ${toolsMaybeUnavailable.join(", ")} may not work properly.`,
+              "If so, consider skipping these tools and prefer using CI pipelines to run them.",
+            ].join("\n"),
+          },
+        },
+      });
     }
 
     return c.success();
