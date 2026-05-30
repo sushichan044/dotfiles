@@ -197,8 +197,12 @@
           },
           {
             "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PreToolUse/inject_staged_diff.ts"
+          },
+          {
+            "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/inject_timestamp.ts"
-},
+          },
           {
             "type": "command",
             "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/worktree_root.ts"
