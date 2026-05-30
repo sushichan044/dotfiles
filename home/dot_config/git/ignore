@@ -1,6 +1,7 @@
 # general
 .DS_Store
 .idea
+.pnpm-store/
 
 # personal
 ,/
