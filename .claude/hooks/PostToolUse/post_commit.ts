@@ -1,11 +1,4 @@
-import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
-
-// detect git commit, git <options> commit.
-function isGitCommitCommand(cmd: string): boolean {
-  const pattern = regex(`^git(\\s+\\S+)*\\s+commit(\\s+\\S+)*$`);
-  return pattern.test(cmd);
-}
 
 const hook = defineHook({
   trigger: {
@@ -15,8 +8,8 @@ const hook = defineHook({
   },
 
   run: (c) => {
-    const cmd = c.input.tool_input.command;
-    if (!isGitCommitCommand(cmd)) {
+    const op = c.input.tool_response.gitOperation;
+    if (!op?.commit) {
       return c.success();
     }
 
@@ -26,7 +19,7 @@ const hook = defineHook({
         hookSpecificOutput: {
           additionalContext: [
             "You just committed some changes.",
-            "You MUST execute the `contextual-commit` skill before completing the task to tidy up your commit message.",
+            "You MUST execute the `contextual-commit` skill if not already done to tidy up the commit message",
           ].join("\n"),
           hookEventName: "PostToolUse",
         },

@@ -1,12 +1,6 @@
-import { regex } from "arkregex";
 import { defineHook } from "cc-hooks-ts";
 
 import { getPRNumberOfCurrentBranch } from "../../../tools/github";
-
-export function isGitPushCommand(cmd: string): boolean {
-  const pattern = regex(`^git(\\s+\\S+)*\\s+push(\\s+\\S+)*$`);
-  return pattern.test(cmd.trim());
-}
 
 export function buildPushTriggerContext(prNumber: number | null): string | null {
   if (prNumber == null) {
@@ -29,8 +23,8 @@ const hook = defineHook({
   },
 
   run: async (c) => {
-    const cmd = c.input.tool_input.command;
-    if (!isGitPushCommand(cmd)) {
+    const op = c.input.tool_response.gitOperation;
+    if (!op?.push) {
       return c.success();
     }
 

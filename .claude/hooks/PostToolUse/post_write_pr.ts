@@ -8,8 +8,8 @@ const hook = defineHook({
   },
 
   run: (c) => {
-    const cmd = c.input.tool_input.command;
-    if (!cmd.includes("gh pr create") && !cmd.includes("gh pr edit")) {
+    const op = c.input.tool_response.gitOperation;
+    if (!op || !(op.pr?.action === "created" || op.pr?.action === "edited")) {
       return c.success();
     }
 
