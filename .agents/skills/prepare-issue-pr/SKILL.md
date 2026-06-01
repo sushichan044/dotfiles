@@ -59,6 +59,16 @@ Treat the PR description as change intent, not as a second copy of the diff.
 - Avoid low-level implementation walkthroughs, line-by-line summaries, or code facts that are already obvious from the diff.
 - If the template asks for implementation notes, keep them brief and only include information that would be hard to infer from the code alone.
 
+### Keep It Minimal And Independent Of Sibling PRs
+
+Write the smallest explanation that lets a reviewer understand and judge this diff on its own.
+
+- **Default to a standalone description.** If the PR can be reviewed independently — its what, why, and user-facing impact are understandable without opening other PRs — describe it on its own terms and do not mention sibling, parent, or child PRs. Being part of a stack, or having been split out only to keep each diff small, is not by itself a reason to reference other PRs.
+- **Reference another PR only when this PR's purpose genuinely cannot be explained or justified without that context** (e.g. the diff looks like dead code until a parent PR is considered). Then include exactly the context needed and nothing more.
+- Gratuitous cross-PR references — "bottom of the stack", "the next PR needs this", "sets up PR #N", "prep for the migration", or a standing "stack note" — make review harder and add no information a reviewer of this diff needs. Omit them when the PR stands on its own.
+- If the only "why" you can state is "a later PR needs it", that usually means the change's own rationale has not been articulated yet. Reframe the why on the change's own terms — what it does and why that is correct or valuable by itself (the user-facing behavior it produces, the convention it aligns to, the risk it removes). Only when no standalone rationale truly exists is surrounding-stack context genuinely required; then state it concisely.
+- Stack order is already conveyed by the PR's base branch, which GitHub displays. You do not need to narrate the stack in prose to signal ordering.
+
 ### Implementation Notes Live In Code
 
 When the implementation needs extra reviewer guidance, put that guidance in the code where it will stay accurate.
