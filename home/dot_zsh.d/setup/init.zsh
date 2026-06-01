@@ -67,19 +67,23 @@ source_if_exists() {
 # Load files from a directory with .zsh extension recursively
 load_zsh_files_from_dir() {
     local dir="$1"
+    dir_exists "$dir" || return
 
-    if dir_exists "$dir"; then
-        # Use find to recursively search for .zsh files
-        while IFS= read -r -d '' file; do
-            # shellcheck disable=SC1090
-            is_readable "$file" && source "$file"
-        done < <(find "$dir" -name "*.zsh" -type f -print0 2>/dev/null | sort -z)
-    fi
+    # zsh native recursive glob: (N.) = nullglob + regular files only.
+    # Avoids forking find/sort; default glob order matches `find | sort`.
+    local file
+    for file in "$dir"/**/*.zsh(N.); do
+        # shellcheck disable=SC1090
+        is_readable "$file" && source "$file"
+    done
 }
 
 cached_eval() {
-  mkdir -p "$XDG_CACHE_HOME/zsh"
-  local cache="$XDG_CACHE_HOME/zsh/$(echo $1 | tr ' /' '__').zsh"
+  [[ -d "$XDG_CACHE_HOME/zsh" ]] || mkdir -p "$XDG_CACHE_HOME/zsh"
+  # Build cache key without forking echo/tr (equivalent to `tr ' /' '__'`).
+  local key="${1// /_}"
+  key="${key//\//_}"
+  local cache="$XDG_CACHE_HOME/zsh/${key}.zsh"
   if [[ ! -s "$cache" ]]; then
     eval $1 > $cache
   fi

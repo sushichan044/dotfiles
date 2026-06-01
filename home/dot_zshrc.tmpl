@@ -52,6 +52,11 @@ else
   compinit -C
 fi
 
+# Bytecode-compile the dump so the next `compinit -C` loads it faster
+if [[ -s "$HOME/.zcompdump" && ( ! -s "$HOME/.zcompdump.zwc" || "$HOME/.zcompdump" -nt "$HOME/.zcompdump.zwc" ) ]]; then
+  zcompile "$HOME/.zcompdump"
+fi
+
 # Only make targets appear in `make` completions
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 
@@ -63,7 +68,9 @@ zsh-defer load_zsh_files_from_dir "$HOME/.zsh.d/autoload/lazy"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 if command_exists mise; then
-  cached_eval "mise activate zsh"
+  # shims are already on PATH (see std-env.zsh), so defer activate off the
+  # critical path; mise.toml [env] applies from the first precmd onward.
+  zsh-defer cached_eval "mise activate zsh"
   zsh-defer cached_eval "mise completion zsh"
 fi
 
