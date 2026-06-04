@@ -43,12 +43,11 @@ is_linux() {
 }
 
 add_to_path_if_not_exists() {
-    local dir="$1"
-
-    case ":$PATH:" in
-    *":$dir:"*) ;;
-    *) export PATH="$dir:$PATH" ;;
-    esac
+    # Prepend, moving any existing occurrence to the front. `typeset -U path`
+    # keeps PATH unique, so re-sourcing std-env from .zprofile (after macOS
+    # path_helper in /etc/zprofile reorders PATH and demotes our custom dirs
+    # below the system ones) restores the intended priority.
+    path=("$1" "${(@)path:#$1}")
 }
 
 add_to_manpath_if_not_exists() {

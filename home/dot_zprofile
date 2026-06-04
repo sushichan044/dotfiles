@@ -3,6 +3,13 @@
 # shellcheck disable=SC1091
 source "$HOME/.zsh.d/setup/init.zsh"
 
+# Re-apply our PATH after /etc/zprofile's path_helper, which runs between
+# .zshenv and .zprofile on macOS and reorders PATH so that the system dirs
+# (/usr/bin, ...) come before everything we prepended in .zshenv. Without this,
+# mise shims and GNU coreutils lose to their system counterparts in login shells.
+# shellcheck disable=SC1091
+source "$HOME/.zsh.d/setup/std-env.zsh"
+
 if file_exists "$HOME/.orbstack/shell/init.zsh"; then
     # shellcheck disable=SC1090
     source "$HOME/.orbstack/shell/init.zsh"
