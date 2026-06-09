@@ -31,6 +31,7 @@ review and maintain.
   not need extra configurability.
 - **Documentation**: Add comments only where the logic is not self-evident. Do not add
   docstrings, comments, or type annotations to code you did not change.
+  - NOTICE: You should write comment for indicating WHY / WHY NOT, especially WHY NOT.
 - **Defensive coding**: Validate at system boundaries (user input, external APIs). Trust
   internal code and framework guarantees rather than guarding against cases that cannot happen.
 - **Abstractions**: Do not create helpers or abstractions for one-time operations.
