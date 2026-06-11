@@ -4,7 +4,7 @@
 
 > [!TIP]
 > memo here
-> https://scrapbox.io/sushichan044/dotfiles_%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9
+> <https://scrapbox.io/sushichan044/dotfiles_%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9>
 
 Linux / macOS / WSL
 
