@@ -18,6 +18,7 @@ conflict, surface the conflict rather than silently picking one.
 - **Understand the problem before the solution**: Before discussing _how_ to implement,
   be clear on (1) what problem is being solved and (2) the expected behavior. If either is
   ambiguous, clarify with the user before writing code.
+- When starting a subagent, please adjust the model according to the expected complexity of the task. Using a high-end model too much is not cost-effective.
 
 ## Acting and pausing
 
