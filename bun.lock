@@ -6,7 +6,7 @@
       "name": "@sushichan044/dotfiles",
       "dependencies": {
         "ansis": "4.3.1",
-        "args-tokens": "0.25.2",
+        "args-tokens": "0.26.1",
         "arkregex": "0.0.5",
         "cc-hooks-ts": "2.1.163",
         "css-color-names": "1.0.1",
@@ -202,7 +202,7 @@
 
     "ansis": ["ansis@4.3.1", "", {}, "sha512-BJ8/l4R5LRE7hW9WdSuGYrLSHi2ynxeFpDFbH0K/CgNeY/tyhk+vO6TYxXC5r5CpUhNVX310xzPsN/H9lCdfOA=="],
 
-    "args-tokens": ["args-tokens@0.25.2", "", {}, "sha512-0MGp0jB1xmCBYAg3dncMugGMRDNIWrUmigJofa2XEEwmet6cjw5DX8Eb1tqcSchrHGpCuoP6PwXKKg1iGVDGNQ=="],
+    "args-tokens": ["args-tokens@0.26.1", "", {}, "sha512-U0UrJ5V7X9QgEr1bPQs+/VaS1NJLGwOtzBBRizyZhDwbTviDaaNq5ju49JpFRLYYrZOZDiCCP3+bkA/OFU0ZfA=="],
 
     "arkregex": ["arkregex@0.0.5", "", { "dependencies": { "@ark/util": "0.56.0" } }, "sha512-ncYjBdLlh5/QnVsAA8De16Tc9EqmYM7y/WU9j+236KcyYNUXogpz3sC4ATIZYzzLxwI+0sEOaQLEmLmRleaEXw=="],
 

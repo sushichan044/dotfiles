@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "ansis": "4.3.1",
-    "args-tokens": "0.25.2",
+    "args-tokens": "0.26.1",
     "arkregex": "0.0.5",
     "cc-hooks-ts": "2.1.163",
     "css-color-names": "1.0.1",
