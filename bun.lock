@@ -24,7 +24,7 @@
         "valibot": "1.4.1",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.17.0",
+        "@opencode-ai/plugin": "1.17.1",
         "@types/bun": "1.3.14",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -76,9 +76,9 @@
 
     "@msgpackr-extract/msgpackr-extract-win32-x64": ["@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4", "", { "os": "win32", "cpu": "x64" }, "sha512-CmCXPQrkbwExx3j946/PtHWHbYJiCRBRDl4BlkRQcJB/YOwQxJRTpoo7aTsortjgoJ1x7opzTSxn7C+ASSLVjQ=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.17.0", "", { "dependencies": { "@opencode-ai/sdk": "1.17.0", "effect": "4.0.0-beta.74", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.3.4", "@opentui/keymap": ">=0.3.4", "@opentui/solid": ">=0.3.4" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-YiS6lTCMJ00CiJ9x31RnntkEPYgkDU+uL5bGkUgsJoUGUrxrwYNLvEKl5/UaslWuMP/nlRSZyV/6ZR+G71LCjA=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.17.1", "", { "dependencies": { "@opencode-ai/sdk": "1.17.1", "effect": "4.0.0-beta.74", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.3.4", "@opentui/keymap": ">=0.3.4", "@opentui/solid": ">=0.3.4" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-LoKYrJfVGLCmOXyuIMNsVsO8rkAREyiQWDNvQUUMul5h7uEofsPsytd/jUPa6dJ5GZ9OzYAFyybj7IdnhpFrjA=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.17.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-a4Fw6lEZqXhjkyTH0LNInntrdLaWcz9M1+eqQgSVqI6PAlcqC/Jo069k8VdGcU3u4qbETqmURec8+VfhS06Sqg=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.17.1", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-YTMtG3qCWgF37M9suOL5KpQTKU2Ibkd0/eKLS4tEIXe1S2wvUQ+/Hi1QARw4SoD6cy6+KUINvyo6dkhFEo7WLw=="],
 
     "@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.54.0", "", { "os": "android", "cpu": "arm" }, "sha512-NAtpl/SiaeU103e7/OmZw0MvUnsUUopW7hEm/ecegJg7YM0skQaA0IXEZoyTV6NUdiNPupdIUreRqUZTShbn/g=="],
 
