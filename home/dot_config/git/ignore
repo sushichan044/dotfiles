@@ -11,6 +11,7 @@
 
 .mise.local.toml
 .mise/prepare-state.toml
+.gitleaksignore.local
 CLAUDE.local.md
 # OpenAI Codex
 AGENTS.override.md
