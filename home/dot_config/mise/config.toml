@@ -49,6 +49,7 @@ yq = "latest"
 "github:sushichan044/sidetable" = "latest"
 "github:sushichan044/seil" = "latest"
 "go:github.com/codesenberg/bombardier" = "latest"
+"go:github.com/rokuosan/git-wtclean/cmd/git-wtclean" = "latest"
 # https://github.com/google/osv-scanner/issues/2759
 # "go:github.com/google/osv-scanner/v2/cmd/osv-scanner" = "latest"
 "go:github.com/x-motemen/gore/cmd/gore" = "latest"
@@ -96,6 +97,7 @@ idiomatic_version_file_enable_tools = [
   "zig",
 ]
 trusted_config_paths = ["~/workspace/github.com/sushichan044"]
+minimum_release_age_excludes = ["go:github.com/rokuosan/git-wtclean/cmd/git-wtclean"]
 
 [settings.github]
 use_git_credentials = true
