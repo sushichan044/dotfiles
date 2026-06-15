@@ -89,3 +89,5 @@ fi
 # https://developer.hashicorp.com/terraform/cli/config/config-file#provider-plugin-cache
 mkdir -p "$XDG_CACHE_HOME/terraform/plugin-cache"
 export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform/plugin-cache"
+
+export GITLEAKS_CONFIG="$XDG_CONFIG_HOME/gitleaks/gitleaks.toml"

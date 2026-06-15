@@ -5,8 +5,16 @@ source "$(dirname "$0")/_exec_local_hook" "$@"
 local_hook_status=$?
 
 if [ "$local_hook_status" -ne 0 ]; then
-    exit "$local_hook_status"
+  exit "$local_hook_status"
 fi
+
+run_semgrep() {
+  SEMGREP_SEND_METRICS=auto semgrep scan --config auto --error "${staged_files[@]}"
+}
+
+run_gitleaks() {
+  gitleaks protect -v --staged
+}
 
 # Only run semgrep if there are staged files
 staged_files=()
@@ -14,5 +22,6 @@ while IFS= read -r file; do
   staged_files+=("$file")
 done < <(git diff --cached --name-only --diff-filter=ACMR)
 if [ "${#staged_files[@]}" -gt 0 ]; then
-  SEMGREP_SEND_METRICS=auto semgrep scan --config auto --error "${staged_files[@]}"
+  run_semgrep
+  run_gitleaks
 fi

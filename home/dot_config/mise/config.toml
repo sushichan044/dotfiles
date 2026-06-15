@@ -42,6 +42,7 @@ yq = "latest"
 "cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
 "forgejo:mergiraf/mergiraf" = "latest"
 "github:datadog-labs/pup" = "latest"
+"github:gitleaks/gitleaks" = "latest"
 "github:k1LoW/deck" = "latest"
 "github:k1LoW/git-wt" = "latest"
 "github:k1LoW/mo" = "latest"
