@@ -135,8 +135,9 @@ func checkPassword(input, secret string) bool {
 ```go
 import "crypto/subtle"
 
-// For comparing tokens, MACs, or hashes (same-length values):
+// For comparing fixed-length tokens or hashes:
 func checkToken(input, expected string) bool {
+    // ConstantTimeCompare already handles unequal lengths without leaking timing
     return subtle.ConstantTimeCompare([]byte(input), []byte(expected)) == 1
 }
 

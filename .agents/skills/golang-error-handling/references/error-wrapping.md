@@ -49,7 +49,7 @@ if errors.Is(err, sql.ErrNoRows) {
 }
 ```
 
-### `errors.As` — extract a typed error from the chain
+### `errors.As / errors.AsType` — extract a typed error from the chain
 
 ```go
 // ✗ Bad — type assertion breaks on wrapped errors
@@ -58,6 +58,11 @@ if ve, ok := err.(*ValidationError); ok {
 // ✓ Good — traverses the entire error chain
 var ve *ValidationError
 if errors.As(err, &ve) {
+    log.Printf("validation failed on field %s: %s", ve.Field, ve.Msg)
+}
+
+// ✓ Better (Go 1.26+) — same behavior, simpler syntax
+if ve, ok := errors.AsType[*ValidationError](err); ok {
     log.Printf("validation failed on field %s: %s", ve.Field, ve.Msg)
 }
 ```

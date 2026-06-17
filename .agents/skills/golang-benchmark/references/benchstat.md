@@ -72,15 +72,15 @@ Parse-32    12.00 ± 0%   6.000 ± 0%  -50.00% (p=0.000 n=10)
 
 ## Reading the Output
 
-| Element                       | Meaning                                                                          | What to look for                                                                                       |
-| ----------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **median** (e.g., `4.592µ`)   | Central value across runs — more robust than mean because outliers don't skew it | The reference number for this benchmark                                                                |
-| **± N%** (e.g., `± 2%`)       | Half-width of the 95% confidence interval as a percentage of the median          | Low (≤2%) = stable measurement. High (>5%) = noisy — investigate noise sources before trusting results |
-| **vs base** (e.g., `-33.78%`) | Percentage change from the first input (base) to subsequent inputs               | Negative = faster/smaller. Positive = slower/larger                                                    |
-| **p=N** (e.g., `p=0.000`)     | p-value from Mann-Whitney U-test (non-parametric)                                | <0.05 = statistically significant. ≥0.05 = difference could be noise                                   |
-| **n=N** (e.g., `n=10`)        | Number of samples used in the comparison                                         | Should match your `-count`. Lower means some samples were filtered as outliers                         |
-| **`~`**                       | No statistically significant difference detected                                 | Do NOT claim improvement — the change might be zero                                                    |
-| **geomean** row               | Geometric mean of changes across all benchmarks in the table                     | Overall proportional change; useful when comparing many benchmarks at once                             |
+| Element                       | Meaning                                                                          | What to look for                                                                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **median** (e.g., `4.592µ`)   | Central value across runs — more robust than mean because outliers don't skew it | The reference number for this benchmark                                                                                   |
+| **± N%** (e.g., `± 2%`)       | Half-width of the 95% confidence interval as a percentage of the median          | Low (≤2%) = stable measurement. High (>5%) = noisy — investigate noise sources before trusting results                    |
+| **vs base** (e.g., `-33.78%`) | Percentage change from the first input (base) to subsequent inputs               | Negative = faster/smaller. Positive = slower/larger                                                                       |
+| **p=N** (e.g., `p=0.000`)     | p-value from Mann-Whitney U-test (non-parametric)                                | <0.05 = statistically significant. ≥0.05 = difference could be noise                                                      |
+| **n=N** (e.g., `n=10`)        | Number of samples used in the comparison                                         | Should usually match your `-count`; if it does not, check that each input file contains the same benchmark rows and units |
+| **`~`**                       | No statistically significant difference detected                                 | Do NOT claim improvement — the change might be zero                                                                       |
+| **geomean** row               | Geometric mean of changes across all benchmarks in the table                     | Overall proportional change; useful when comparing many benchmarks at once                                                |
 
 ### Unit normalization
 

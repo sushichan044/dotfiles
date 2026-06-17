@@ -98,7 +98,7 @@ go build -gcflags="-m" ./pkg/handler 2>&1 | grep -E "(inline|escape|moved to hea
 ./pkg/handler/handler.go:42:19: inlining call to validateInput
 ```
 
-The inline cost budget is 80 (as of Go 1.22+). Functions with higher cost (more AST nodes, complex control flow) are not inlined.
+The inline cost budget is approximately 80–82 AST nodes (as of Go 1.22+; has increased in later releases). Functions with higher cost (more AST nodes, complex control flow) are not inlined. Check the actual threshold with `-gcflags="-m -m"`.
 
 ### Common inlining blockers
 
@@ -112,7 +112,7 @@ The inline cost budget is 80 (as of Go 1.22+). Functions with higher cost (more 
 | **`select` statement**                  | Complex runtime interaction                        | Simplify channel patterns in hot functions                       |
 | **Large function body**                 | Many statements add up in cost                     | Break into smaller functions — the hot inner function may inline |
 
-**Value receivers vs pointer receivers:** Value receivers enable full inlining of method chains. Pointer receivers add indirection that can block inlining for fluent APIs. Check with `-gcflags="-m"`.
+**Value receivers vs pointer receivers:** Receiver choice can affect copying, aliasing, escape analysis, and inlining, but pointer receiver methods can inline too and value receivers do not guarantee inlining. Check real compiler decisions with `-gcflags="-m -m"`.
 
 ## SSA Dump
 

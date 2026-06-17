@@ -1,14 +1,14 @@
 ---
 name: golang-design-patterns
-description: "Idiomatic Golang design patterns — functional options, constructors, error flow and cascading, resource management and lifecycle, graceful shutdown, resilience, architecture, dependency injection, data handling, and streaming. Apply when designing Go APIs, structuring applications, choosing between patterns, making design decisions, architectural choices, or production hardening."
+description: "Idiomatic Golang design patterns — functional options, constructors, error flow and cascading, resource management and lifecycle, graceful shutdown, resilience, architecture, dependency injection, data handling, streaming, and more. Apply when explicitly choosing between architectural patterns, implementing functional options, designing constructor APIs, setting up graceful shutdown, applying resilience patterns, or asking which idiomatic Go pattern fits a specific problem."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.2"
+  version: "1.1.4"
   openclaw:
-    emoji: "🏗️"
+    emoji: "🏗"
     homepage: https://github.com/samber/cc-skills-golang
     requires:
       bins:
@@ -181,7 +181,7 @@ Error cases MUST be handled first with early return — keep the happy path at m
 
 - **Return error**: network failures, file not found, invalid input — anything a caller can handle
 - **Panic**: nil pointer in a place that should be impossible, violated invariant, `Must*` constructors used at init time
-- **`.Close()` errors**: acceptable to not check — `defer f.Close()` is fine without error handling
+- **`.Close()` / `Flush()` errors**: read-only cleanup can often use `defer f.Close()`, but write/flush resources must report close or flush errors when durability matters
 
 ## Data Handling
 

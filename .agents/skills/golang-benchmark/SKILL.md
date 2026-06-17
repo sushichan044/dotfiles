@@ -1,12 +1,12 @@
 ---
 name: golang-benchmark
-description: "Golang benchmarking, profiling, and performance measurement. Use when writing, running, or comparing Go benchmarks, profiling hot paths with pprof, interpreting CPU/memory/trace profiles, analyzing results with benchstat, setting up CI benchmark regression detection, or investigating production performance with Prometheus runtime metrics. Also use when the developer needs deep analysis on a specific performance indicator - this skill provides the measurement methodology, while golang-performance provides the optimization patterns."
+description: "Golang benchmarking, profiling, and performance measurement. Use when writing, running, or comparing Go benchmarks, profiling hot paths with pprof, interpreting CPU/memory/trace profiles, analyzing results with benchstat, setting up CI benchmark regression detection, or investigating production performance with Prometheus runtime metrics. Also use when the developer needs deep analysis on a specific performance indicator - this skill provides the measurement methodology, while `samber/cc-skills-golang@golang-performance` provides the optimization patterns."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.3"
+  version: "1.2.4"
   openclaw:
     emoji: "📊"
     homepage: https://github.com/samber/cc-skills-golang
@@ -25,6 +25,10 @@ allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(g
 
 **Thinking mode:** Use `ultrathink` for benchmark analysis, profile interpretation, and performance comparison tasks. Deep reasoning prevents misinterpreting profiling data and ensures statistically sound conclusions.
 
+**Dependencies:**
+
+- benchstat: `go install golang.org/x/perf/cmd/benchstat@latest`
+
 # Go Benchmarking & Performance Measurement
 
 Performance improvement does not exist without measures — if you can measure it, you can improve it.
@@ -35,7 +39,7 @@ This skill covers the full measurement workflow: write a benchmark, run it, prof
 
 ### `b.Loop()` (Go 1.24+) — preferred
 
-`b.Loop()` prevents the compiler from optimizing away the code under test — without it, the compiler can detect dead results and eliminate them, producing misleadingly fast numbers. It also excludes setup code before the loop from timing automatically.
+For Go 1.24+, prefer `b.Loop()` for new benchmarks. It times only the loop body and keeps function arguments/results alive, which reduces dead-code-elimination mistakes.
 
 ```go
 func BenchmarkParse(b *testing.B) {
@@ -46,23 +50,25 @@ func BenchmarkParse(b *testing.B) {
 }
 ```
 
-Existing `for range b.N` benchmarks still work but should migrate to `b.Loop()` — the old pattern requires manual `b.ResetTimer()` and a package-level sink variable to prevent dead code elimination.
+Legacy `b.N` loops still compile and are fine to keep when preserving existing benchmarks or supporting Go <1.24. They are easier to get wrong: setup may need `b.ResetTimer()`, and results may need a sink if the compiler can eliminate the work. Go 1.26 fixed an earlier `b.Loop()` inlining limitation — benchmarks on 1.24–1.25 already benefit from `b.Loop()` but may miss inlining optimizations that 1.26 delivers.
 
 ### Memory tracking
 
 ```go
 func BenchmarkAlloc(b *testing.B) {
     b.ReportAllocs() // or run with -benchmem flag
+    var sink []byte
     for b.Loop() {
-        _ = make([]byte, 1024)
+        sink = make([]byte, 1024)
     }
+    _ = sink
 }
 ```
 
 `b.ReportMetric()` adds custom metrics (e.g., throughput):
 
 ```go
-b.ReportMetric(float64(totalBytes)/b.Elapsed().Seconds(), "bytes/s")
+b.ReportMetric(float64(totalBytes)/b.Elapsed().Seconds(), "bytes/s") // b.Elapsed() is only valid inside b.Loop()
 ```
 
 ### Sub-benchmarks and table-driven
@@ -98,6 +104,38 @@ go test -bench=BenchmarkEncode -benchmem -count=10 ./pkg/... | tee bench.txt
 | `-trace=trace.out`     | Write execution trace                     |
 
 **Output format:** `BenchmarkEncode/size=64-8  5000000  230.5 ns/op  128 B/op  2 allocs/op` — the `-8` suffix is GOMAXPROCS, `ns/op` is time per operation, `B/op` is bytes allocated per op, `allocs/op` is heap allocation count per op.
+
+## Documenting Results in Commits
+
+Paste benchstat output in the commit body when the change has a measurable performance impact. This documents _why_ an optimization was made, prevents future readers from reverting it, and lets reviewers verify the claim without re-running benchmarks.
+
+Commit format:
+
+```
+perf(parser): reduce Parse allocations 50% with sync.Pool
+
+Replace per-call []byte allocation with a pooled buffer.
+
+goos: linux / goarch: amd64 / cpu: AMD Ryzen 9 5950X
+          │    old     │              new               │
+          │  sec/op    │  sec/op     vs base            │
+Parse-32    4.592µ ± 2%  3.041µ ± 1%  -33.78% (p=0.000 n=10)
+
+          │   old    │             new              │
+          │   B/op   │   B/op     vs base           │
+Parse-32   1.024Ki ± 0%  0.512Ki ± 0%  -50.00% (p=0.000 n=10)
+
+          │ old  │            new             │
+          │ allocs/op │ allocs/op  vs base    │
+Parse-32   12.00 ± 0%   6.000 ± 0%  -50.00% (p=0.000 n=10)
+```
+
+**Rules:**
+
+- Only include benchmarks directly affected by the change — strip unrelated rows
+- Never paste results with `~` (no statistical significance) — the improvement cannot be claimed
+- Include the hardware context line (`goos/goarch/cpu`) so results are reproducible
+- Use `perf(scope):` commit type for performance-only changes
 
 ## Profiling from Benchmarks
 

@@ -13,16 +13,13 @@ For detailed usage of each tool, see the dedicated reference files:
 
 Configure via environment variables — no recompile needed.
 
-| Command                                       | Use for                                                                               |
-| --------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `GODEBUG=gctrace=1 ./app`                     | GC frequency, pause times, heap sizes, CPU% — one line per GC cycle                   |
-| `GODEBUG=gcpacertrace=1 ./app`                | Why GC triggers when it does — pacer decisions (trigger ratio, heap goal)             |
-| `GODEBUG=schedtrace=1000 ./app`               | Load balancing, goroutine distribution across Ps — prints every 1000ms                |
-| `GODEBUG=schedtrace=1000,scheddetail=1 ./app` | Per-goroutine state detail on top of schedtrace                                       |
-| `GODEBUG=allocfreetrace=1 ./app`              | Individual allocation sites (very verbose — testing only)                             |
-| `GODEBUG=madvdontneed=1 ./app`                | Force memory return to OS — useful for container RSS monitoring (default in Go 1.16+) |
-| `GODEBUG=gccheckmark=1 ./app`                 | GC correctness debugging (rare — only when suspecting GC bugs)                        |
-| `GOTRACEBACK=all ./app`                       | Full goroutine dumps on panic — all goroutines, not just the crashing one             |
+| Command                                              | Use for                                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `GODEBUG=gctrace=1 ./app`                            | GC frequency, pause times, heap sizes, CPU% — one line per GC cycle                    |
+| `GODEBUG=gcpacertrace=1 ./app`                       | Why GC triggers when it does — pacer decisions (trigger ratio, heap goal)              |
+| `GODEBUG=schedtrace=1000 ./app`                      | Load balancing, goroutine distribution across Ps — prints every 1000ms                 |
+| `GODEBUG=schedtrace=1000,scheddetail=1 ./app`        | Per-goroutine state detail on top of schedtrace                                        |
+| Heap/alloc profiles (`go tool pprof -alloc_objects`) | Allocation sites and object churn; use instead of removed/stale allocation trace flags |
 
 → See `samber/cc-skills-golang@golang-troubleshooting` skill for detailed GODEBUG usage and interpretation.
 

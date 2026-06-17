@@ -6,7 +6,7 @@ license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.3"
+  version: "1.1.7"
   openclaw:
     emoji: "🔒"
     homepage: https://github.com/samber/cc-skills-golang
@@ -30,6 +30,10 @@ allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(g
 - **Review mode** — reviewing a PR for security issues. Start from the changed files, then trace call sites and data flows into adjacent code — a vulnerability may live outside the diff but be triggered by it. Sequential.
 - **Audit mode** — full codebase security scan. Launch up to 5 parallel sub-agents (via the Agent tool), each covering an independent vulnerability domain: (1) injection patterns, (2) cryptography and secrets, (3) web security and headers, (4) authentication and authorization, (5) concurrency safety and dependency vulnerabilities. Aggregate findings, score with DREAD, and report by severity.
 - **Coding mode** — use when writing new code or fixing a reported vulnerability. Follow the skill's sequential guidance. Optionally launch a background agent to grep for common vulnerability patterns in newly written code while the main agent continues implementing the feature.
+
+**Dependencies:**
+
+- govulncheck: `go install golang.org/x/vuln/cmd/govulncheck@latest`
 
 # Go Security
 
@@ -77,18 +81,18 @@ For the full methodology with Go examples, DFD trust boundaries, DREAD scoring, 
 
 ## Quick Reference
 
-| Severity | Vulnerability     | Defense                                                 | Standard Library Solution                  |
-| -------- | ----------------- | ------------------------------------------------------- | ------------------------------------------ |
-| Critical | SQL Injection     | Parameterized queries separate data from code           | `database/sql` with `?` placeholders       |
-| Critical | Command Injection | Pass args separately, never via shell concatenation     | `exec.Command` with separate args          |
-| High     | XSS               | Auto-escaping renders user data as text, not HTML/JS    | `html/template`, `text/template`           |
-| High     | Path Traversal    | Scope file access to a root, prevent `../` escapes      | `os.Root` (Go 1.24+), `filepath.Clean`     |
-| Medium   | Timing Attacks    | Constant-time comparison avoids byte-by-byte leaks      | `crypto/subtle.ConstantTimeCompare`        |
-| High     | Crypto Issues     | Use vetted algorithms; never roll your own              | `crypto/aes`, `crypto/rand`                |
-| Medium   | HTTP Security     | TLS + security headers prevent downgrade attacks        | `net/http`, configure TLSConfig            |
-| Low      | Missing Headers   | HSTS, CSP, X-Frame-Options prevent browser attacks      | Security headers middleware                |
-| Medium   | Rate Limiting     | Rate limits prevent brute-force and resource exhaustion | `golang.org/x/time/rate`, server timeouts  |
-| High     | Race Conditions   | Protect shared state to prevent data corruption         | `sync.Mutex`, channels, avoid shared state |
+| Severity | Vulnerability     | Defense                                                 | Standard Library Solution                                                                                                                                           |
+| -------- | ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Critical | SQL Injection     | Parameterized queries separate data from code           | `database/sql` with `?` placeholders                                                                                                                                |
+| Critical | Command Injection | Pass args separately, never via shell concatenation     | `exec.Command` with separate args                                                                                                                                   |
+| High     | XSS               | Auto-escaping renders user data as text, not HTML/JS    | `html/template`, `text/template`                                                                                                                                    |
+| High     | Path Traversal    | Scope untrusted file access to an allowed root          | Go 1.24+: use `os.Root`. Pre-Go 1.24: use `filepath.IsLocal` + `filepath.Rel` + separator-aware checks; never rely on `filepath.Clean` + `strings.HasPrefix` alone. |
+| Medium   | Timing Attacks    | Constant-time comparison avoids byte-by-byte leaks      | `crypto/subtle.ConstantTimeCompare`                                                                                                                                 |
+| High     | Crypto Issues     | Use vetted algorithms; never roll your own              | `crypto/aes`, `crypto/rand`                                                                                                                                         |
+| Medium   | HTTP Security     | TLS + security headers prevent downgrade attacks        | `net/http`, configure TLSConfig                                                                                                                                     |
+| Low      | Missing Headers   | HSTS, CSP, X-Frame-Options prevent browser attacks      | Security headers middleware                                                                                                                                         |
+| Medium   | Rate Limiting     | Rate limits prevent brute-force and resource exhaustion | `golang.org/x/time/rate`, server timeouts                                                                                                                           |
+| High     | Race Conditions   | Protect shared state to prevent data corruption         | `sync.Mutex`, channels, avoid shared state                                                                                                                          |
 
 ## Detailed Categories
 
@@ -114,18 +118,18 @@ For the full security review checklist organized by domain (input handling, data
 
 ### Static Analysis & Linting
 
-Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`. See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Security-relevant linters: `bodyclose`, `sqlclosecheck`, `nilerr`, `errcheck`, `govet`, `staticcheck`. See the `samber/cc-skills-golang@golang-lint` skill for configuration and usage.
 
 For deeper security-specific analysis:
 
 ```bash
 # Go security checker (SAST)
-go install github.com/securego/gosec/v2/cmd/gosec@latest
-gosec ./...
+go get -tool github.com/securego/gosec/v2/cmd/gosec@latest
+go tool gosec ./...
 
 # Vulnerability scanner — see golang-dependency-management for full govulncheck usage
-go install golang.org/x/vuln/cmd/govulncheck@latest
-govulncheck ./...
+go get -tool golang.org/x/vuln/cmd/govulncheck@latest
+go tool govulncheck ./...
 ```
 
 ### Security Testing
@@ -141,10 +145,10 @@ go test -fuzz=Fuzz
 ## Common Mistakes
 
 | Severity | Mistake                     | Fix                                                                                                                     |
-| -------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| -------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | High     | `math/rand` for tokens      | Output is predictable — attacker can reproduce the sequence. Use `crypto/rand`                                          |
 | Critical | SQL string concatenation    | Attacker can modify query logic. Parameterized queries keep data and code separate                                      |
-| Critical | `exec.Command("bash -c")`   | Shell interprets metacharacters (`;`, `                                                                                 | `, `` ` ``). Pass args separately to avoid shell parsing |
+| Critical | `exec.Command("bash -c")`   | Shell interprets metacharacters (`;`, `\|`, `` ` ``). Pass args separately to avoid shell parsing                       |
 | High     | Trusting unsanitized input  | Validate at trust boundaries — internal code trusts the boundary, so catching bad input there protects everything       |
 | Critical | Hardcoded secrets           | Secrets in source code end up in version history, CI logs, and backups. Use env vars or secret managers                 |
 | Medium   | Comparing secrets with `==` | `==` short-circuits on first differing byte, leaking timing info. Use `crypto/subtle.ConstantTimeCompare`               |
@@ -170,6 +174,8 @@ See **[Security Architecture](./references/architecture.md)** for detailed anti-
 ## Cross-References
 
 See `samber/cc-skills-golang@golang-database`, `samber/cc-skills-golang@golang-safety`, `samber/cc-skills-golang@golang-observability`, `samber/cc-skills-golang@golang-continuous-integration` skills.
+
+- → See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
 
 ## Additional Resources
 

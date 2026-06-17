@@ -1,12 +1,12 @@
 ---
 name: golang-stretchr-testify
-description: "Comprehensive guide to stretchr/testify for Golang testing. Covers assert, require, mock, and suite packages in depth. Use whenever writing tests with testify, creating mocks, setting up test suites, or choosing between assert and require. Essential for testify assertions, mock expectations, argument matchers, call verification, suite lifecycle, and advanced patterns like Eventually, JSONEq, and custom matchers. Trigger on any Go test file importing testify."
+description: "Comprehensive guide to stretchr/testify for Golang testing. Covers assert, require, mock, and suite packages in depth. Use when writing tests with testify, creating mocks, setting up test suites, or choosing between assert and require. Covers testify assertions, mock expectations, argument matchers, call verification, suite lifecycle, and advanced patterns like Eventually, JSONEq, and custom matchers. Apply when the codebase imports github.com/stretchr/testify."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.3"
+  version: "1.2.0"
   openclaw:
     emoji: "✅"
     homepage: https://github.com/samber/cc-skills-golang
@@ -187,9 +187,9 @@ Suite methods like `s.Equal()` behave like `assert`. For require: `s.Require().N
 
 ## Linters
 
-Use `testifylint` to catch wrong argument order, assert/require misuse, and more. See `samber/cc-skills-golang@golang-linter` skill.
+Use `testifylint` to catch wrong argument order, assert/require misuse, and more. See `samber/cc-skills-golang@golang-lint` skill.
 
 ## Cross-References
 
 - → See `samber/cc-skills-golang@golang-testing` skill for general test patterns, table-driven tests, and CI
-- → See `samber/cc-skills-golang@golang-linter` skill for testifylint configuration
+- → See `samber/cc-skills-golang@golang-lint` skill for testifylint configuration

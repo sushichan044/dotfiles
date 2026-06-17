@@ -1,12 +1,12 @@
 ---
 name: golang-testing
-description: "Provides a comprehensive guide for writing production-ready Golang tests. Covers table-driven tests, test suites with testify, mocks, unit tests, integration tests, benchmarks, code coverage, parallel tests, fuzzing, fixtures, goroutine leak detection with goleak, snapshot testing, memory leaks, CI with GitHub Actions, and idiomatic naming conventions. Use this whenever writing tests, asking about testing patterns or setting up CI for Go projects. Essential for ANY test-related conversation in Go."
+description: "Production-ready Golang tests — table-driven tests, testify suites and mocks, parallel tests, fuzzing, fixtures, goroutine leak detection with goleak, snapshot testing, code coverage, integration tests, idiomatic test naming. Use when writing or reviewing Go tests, choosing a testing approach, setting up Go test CI, or debugging flaky/slow tests. For testify-specific APIs see `samber/cc-skills-golang@golang-stretchr-testify`; for measurement methodology see `samber/cc-skills-golang@golang-benchmark`."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.2"
+  version: "1.2.2"
   openclaw:
     emoji: "🧪"
     homepage: https://github.com/samber/cc-skills-golang
@@ -33,6 +33,10 @@ allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(g
 - **Debug mode** — a test is failing or flaky. Work sequentially: reproduce reliably, isolate the failing assertion, trace the root cause in production code or test setup.
 
 > **Community default.** A company skill that explicitly supersedes `samber/cc-skills-golang@golang-testing` skill takes precedence.
+
+**Dependencies:**
+
+- gotests: `go install github.com/cweill/gotests/gotests@latest`
 
 # Go Testing Best Practices
 
@@ -67,10 +71,11 @@ package mypackage_test
 ### Naming Conventions
 
 ```go
-func TestAdd(t *testing.T) { ... }              // function test
+func TestAdd(t *testing.T) { ... }               // function test
 func TestMyStruct_MyMethod(t *testing.T) { ... } // method test
 func BenchmarkAdd(b *testing.B) { ... }          // benchmark
 func ExampleAdd() { ... }                        // example
+func FuzzAdd(f *testing.F) { ... }               // fuzz test
 ```
 
 ## Table-Driven Tests
@@ -161,9 +166,7 @@ func TestWorkerPool(t *testing.T) {
 
 ## testing/synctest for Deterministic Goroutine Testing
 
-> **Experimental:** `testing/synctest` is not yet covered by Go's compatibility guarantee. Its API may change in future releases. For stable alternatives, use `clockwork` (see [Mocking](./references/mocking.md)).
-
-`testing/synctest` (Go 1.24+) provides deterministic time for concurrent code testing. Time advances only when all goroutines are blocked, making ordering predictable.
+`testing/synctest` (Go 1.25+) provides deterministic tests for goroutines, timers, deadlines, and context cancellation. Time advances only when all goroutines are blocked, making ordering predictable.
 
 When to use `synctest` instead of real time:
 
@@ -173,31 +176,35 @@ When to use `synctest` instead of real time:
 
 ```go
 import (
+    "context"
     "testing"
-    "time"
     "testing/synctest"
-    "github.com/stretchr/testify/assert"
+    "time"
 )
 
-func TestChannelTimeout(t *testing.T) {
-    synctest.Run(func(t *testing.T) {
-        is := assert.New(t)
+func TestContextTimeout(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        const timeout = 5 * time.Second
 
-        ch := make(chan int, 1)
-        go func() {
-            time.Sleep(50 * time.Millisecond)
-            ch <- 42
-        }()
+        ctx, cancel := context.WithTimeout(t.Context(), timeout)
+        defer cancel()
 
-        select {
-        case v := <-ch:
-            is.Equal(42, v)
-        case <-time.After(100 * time.Millisecond):
-            t.Fatal("timeout occurred")
+        time.Sleep(timeout - time.Nanosecond)
+        synctest.Wait()
+        if err := ctx.Err(); err != nil {
+            t.Fatalf("before timeout: %v", err)
+        }
+
+        time.Sleep(time.Nanosecond)
+        synctest.Wait()
+        if err := ctx.Err(); err != context.DeadlineExceeded {
+            t.Fatalf("after timeout: got %v, want DeadlineExceeded", err)
         }
     })
 }
 ```
+
+Use `synctest.Test` in Go 1.25+ and Go 1.26+. Do not use the old Go 1.24 experimental `synctest.Run` API in Go 1.25+ or Go 1.26+ code. If a module explicitly targets Go 1.24 and opts into `GOEXPERIMENT=synctest`, use the old API only as a compatibility fallback.
 
 Key differences in `synctest`:
 
@@ -219,14 +226,14 @@ Write benchmarks to measure performance and detect regressions:
 ```go
 func BenchmarkStringConcatenation(b *testing.B) {
     b.Run("plus-operator", func(b *testing.B) {
-        for i := 0; i < b.N; i++ {
+        for b.Loop() {
             result := "a" + "b" + "c"
             _ = result
         }
     })
 
     b.Run("strings.Builder", func(b *testing.B) {
-        for i := 0; i < b.N; i++ {
+        for b.Loop() {
             var builder strings.Builder
             builder.WriteString("a")
             builder.WriteString("b")
@@ -245,13 +252,34 @@ func BenchmarkFibonacci(b *testing.B) {
     for _, size := range sizes {
         b.Run(fmt.Sprintf("n=%d", size), func(b *testing.B) {
             b.ReportAllocs()
-            for i := 0; i < b.N; i++ {
+            for b.Loop() {
                 Fibonacci(size)
             }
         })
     }
 }
 ```
+
+For Go 1.24+, new benchmarks should use `b.Loop()`. Use legacy `b.N` loops only when the module targets Go <1.24 or when preserving old benchmark code intentionally.
+
+### Go 1.26+: test artifacts
+
+When a test, benchmark, or fuzz target needs to persist files for inspection, use `ArtifactDir()` instead of ad-hoc paths or repo-local output.
+
+```go
+func TestRenderGoldenArtifact(t *testing.T) {
+    dir := t.ArtifactDir()
+
+    out := filepath.Join(dir, "rendered.json")
+    if err := os.WriteFile(out, renderedBytes, 0o644); err != nil {
+        t.Fatal(err)
+    }
+
+    t.Logf("artifact written: %s", out)
+}
+```
+
+Available on `*testing.T`, `*testing.B`, and `*testing.F` in Go 1.26+.
 
 ## Parallel Tests
 
@@ -369,7 +397,7 @@ For mock patterns, test fixtures, and time mocking, see [Mocking](./references/m
 
 ## Enforce with Linters
 
-Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`. See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Many test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`. See the `samber/cc-skills-golang@golang-lint` skill for configuration and usage.
 
 ## Cross-References
 
@@ -377,7 +405,8 @@ Many test best practices are enforced automatically by linters: `thelper`, `para
 - -> See `samber/cc-skills-golang@golang-database` skill (testing.md) for database integration test patterns
 - -> See `samber/cc-skills-golang@golang-concurrency` skill for goroutine leak detection with goleak
 - -> See `samber/cc-skills-golang@golang-continuous-integration` skill for CI test configuration and GitHub Actions workflows
-- -> See `samber/cc-skills-golang@golang-linter` skill for testifylint and paralleltest configuration
+- -> See `samber/cc-skills-golang@golang-lint` skill for testifylint and paralleltest configuration
+- -> See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
 
 ## Quick Reference
 

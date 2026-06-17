@@ -1,159 +1,55 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications. Generates creative, polished code that avoids generic AI aesthetics.
-license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
+description: Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.
+license: Complete terms in LICENSE.txt
 ---
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+# Frontend Design
 
-## Context Gathering Protocol
+Approach this as the design lead at a small studio known for giving every client a visual identity that could not be mistaken for anyone else's. This client has already rejected proposals that felt templated, and is paying for a distinctive point of view: make deliberate, opinionated choices about palette, typography, and layout that are specific to this brief, and take one real aesthetic risk you can justify.
 
-Design skills produce generic output without project context. You MUST have confirmed design context before doing any design work.
+## Ground it in the subject
 
-**Required context** — every design skill needs at minimum:
+If the brief does not pin down what the product or subject is, pin it yourself before designing: name one concrete subject, its audience, and the page's single job, and state your choice. If there's any information in your memory about the human's preferences, context about what they're building, or designs you've made before – use that as a hint. The subject's own world, its materials, instruments, artifacts, and vernacular, is where distinctive choices come from. Build with the brief's real content and subject matter throughout.
 
-- **Target audience**: Who uses this product and in what context?
-- **Use cases**: What jobs are they trying to get done?
-- **Brand personality/tone**: How should the interface feel?
+## Design principles
 
-Individual skills may require additional context — check the skill's preparation section for specifics.
+For web designs, the hero is a thesis. Open with the most characteristic thing in the subject's world, in whatever form makes sense for it: a headline, an image, an animation, a live demo, an interactive moment. Be deliberate with your choice: a big number with a small label, supporting stats, and a gradient accent is the template answer, only use if that's truly the best option.
 
-**CRITICAL**: You cannot infer this context by reading the codebase. Code tells you what was built, not who it's for or what it should feel like. Only the creator can provide this context.
+Typography carries the personality of the page. Pair the display and body faces deliberately, not the same families you would reach for on any other project, and set a clear type scale with intentional weights, widths, and spacing. Make the type treatment itself a memorable part of the design, not a neutral delivery vehicle for the content.
 
-**Gathering order:**
+Structure is information. Structural devices, numbering, eyebrows, dividers, labels, should encode something true about the content, not decorate it. Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence - like a real process or a typed timeline where order carries information the reader needs. Question if choices like numbered markers actually make sense before incorporating them.
 
-1. **Check current instructions (instant)**: If your loaded instructions already contain a **Design Context** section, proceed immediately.
-2. **Check .impeccable.md (fast)**: If not in instructions, read `.impeccable.md` from the project root. If it exists and contains the required context, proceed.
-3. **Run teach-impeccable (REQUIRED)**: If neither source has context, you MUST run the teach-impeccable skill NOW before doing anything else. Do NOT skip this step. Do NOT attempt to infer context from the codebase instead.
+Leverage motion deliberately. Think about where and if animation can serve the subject: a page-load sequence, a scroll-triggered reveal, hover micro-interactions, ambient atmosphere. An orchestrated moment usually lands harder than scattered effects; choose what the direction calls for. However, sometimes less is more, and extra animation contributes to the feeling that the design is AI-generated.
 
----
+Match complexity to the vision. Maximalist directions need elaborate execution; minimal directions need precision in spacing, type, and detail. Elegance is executing the chosen vision well.
 
-## Design Direction
+Consider written content carefully. Often a design brief may not contain real content, and it's up to you to come up with copy. Copy can make a design feel as templated as the design itself. See the below section on writing for more guidance.
 
-Commit to a BOLD aesthetic direction:
+## Process: brainstorm, explore, plan, critique, build, critique again
 
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+For calibration: AI-generated design right now clusters around three looks: (1) a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta accent; (2) a near-black background with a single bright acid-green or vermilion accent; (3) a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns. All three are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. Just like a human designer who's hired, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work—the key is intentionality, not intensity.
+Work in two passes. First, brainstorm a short design plan based on the human's design brief: create a compact token system with color, type, layout, and signature. Color: describe the palette as 4–6 named hex values. Type: the typefaces for 2+ roles (a characterful display face that's used with restraint, a complementary body face, and a utility face for captions or data if needed). Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Signature: the single unique element this page will be remembered by that embodies the brief in an appropriate way.
 
-Then implement working code that is:
+Then review that plan against the brief before building: if any part of it reads like the generic default you would produce for any similar page (work through a similar prompt to see if you arrive somewhere similar) rather than a choice made for this specific brief — revise that part, say what you changed and why. Only after you've confirmed the relative uniqueness of your design plan should you start to write the code, following the revised plan exactly and deriving every color and type decision from it.
 
-- Production-grade and functional
-- Visually striking and memorable
-- Cohesive with a clear aesthetic point-of-view
-- Meticulously refined in every detail
+When writing the code, be careful of structuring your CSS selector specificities. It's easy to generate CSS classes that cancel each other out (especially with a type-based selector like .section and a element-based selector like .cta). This can happen often with paddings/margins between sections.
 
-## Frontend Aesthetics Guidelines
+Try to do a lot of this planning and iteration in your thinking, and only show ideas to the user when you have higher confidence it'll delight them.
 
-### Typography
+## Restraint and self-critique
 
-→ _Consult [typography reference](reference/typography.md) for scales, pairing, and loading strategies._
+Spend your boldness in one place. Let the signature element be the one memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Not taking a risk can be a risk itself! Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected. Critique your own work as you build, taking screenshots if your environment supports it – a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creators have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
 
-Choose fonts that are beautiful, unique, and interesting. Pair a distinctive display font with a refined body font.
+## More on writing in design
 
-**DO**: Use a modular type scale with fluid sizing (clamp)
-**DO**: Vary font weights and sizes to create clear visual hierarchy
-**DON'T**: Use overused fonts—Inter, Roboto, Arial, Open Sans, system defaults
-**DON'T**: Use monospace typography as lazy shorthand for "technical/developer" vibes
-**DON'T**: Put large icons with rounded corners above every heading—they rarely add value and make sites look templated
+Words appear in a design for one reason: to make it easier to understand, and therefore easier to use. They are design material, not decoration. Bring the same intentionality to copy that you would bring to spacing and color. Before writing anything, ask what the design needs to say, and how it can best be said to help the person navigate the experience.
 
-### Color & Theme
+Write from the end user's side of the screen. Name things by what people control and recognize, never by how the system is built. A person manages notifications, not webhook config. Describe what something does in plain terms rather than selling it. Being specific is always better than being clever.
 
-→ _Consult [color reference](reference/color-and-contrast.md) for OKLCH, palettes, and dark mode._
+Use active voice as default. A control should say exactly what happens when it's used: "Save changes," not "Submit." An action keeps the same name through the whole flow, so the button that says "Publish" produces a toast that says "Published." The vocabulary of an interface is the signposting for someone navigating the product. Cohesion and consistency are how people learn their way around.
 
-Commit to a cohesive palette. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
+Treat failure and emptiness as moments for direction, not mood. Explain what went wrong and how to fix it, in the interface's voice rather than a person's. Errors don't apologize, and they are never vague about what happened. An empty screen is an invitation to act.
 
-**DO**: Use modern CSS color functions (oklch, color-mix, light-dark) for perceptually uniform, maintainable palettes
-**DO**: Tint your neutrals toward your brand hue—even a subtle hint creates subconscious cohesion
-**DON'T**: Use gray text on colored backgrounds—it looks washed out; use a shade of the background color instead
-**DON'T**: Use pure black (#000) or pure white (#fff)—always tint; pure black/white never appears in nature
-**DON'T**: Use the AI color palette: cyan-on-dark, purple-to-blue gradients, neon accents on dark backgrounds
-**DON'T**: Use gradient text for "impact"—especially on metrics or headings; it's decorative rather than meaningful
-**DON'T**: Default to dark mode with glowing accents—it looks "cool" without requiring actual design decisions
-
-### Layout & Space
-
-→ _Consult [spatial reference](reference/spatial-design.md) for grids, rhythm, and container queries._
-
-Create visual rhythm through varied spacing—not the same padding everywhere. Embrace asymmetry and unexpected compositions. Break the grid intentionally for emphasis.
-
-**DO**: Create visual rhythm through varied spacing—tight groupings, generous separations
-**DO**: Use fluid spacing with clamp() that breathes on larger screens
-**DO**: Use asymmetry and unexpected compositions; break the grid intentionally for emphasis
-**DON'T**: Wrap everything in cards—not everything needs a container
-**DON'T**: Nest cards inside cards—visual noise, flatten the hierarchy
-**DON'T**: Use identical card grids—same-sized cards with icon + heading + text, repeated endlessly
-**DON'T**: Use the hero metric layout template—big number, small label, supporting stats, gradient accent
-**DON'T**: Center everything—left-aligned text with asymmetric layouts feels more designed
-**DON'T**: Use the same spacing everywhere—without rhythm, layouts feel monotonous
-
-### Visual Details
-
-**DO**: Use intentional, purposeful decorative elements that reinforce brand
-**DON'T**: Use glassmorphism everywhere—blur effects, glass cards, glow borders used decoratively rather than purposefully
-**DON'T**: Use rounded elements with thick colored border on one side—a lazy accent that almost never looks intentional
-**DON'T**: Use sparklines as decoration—tiny charts that look sophisticated but convey nothing meaningful
-**DON'T**: Use rounded rectangles with generic drop shadows—safe, forgettable, could be any AI output
-**DON'T**: Use modals unless there's truly no better alternative—modals are lazy
-
-### Motion
-
-→ _Consult [motion reference](reference/motion-design.md) for timing, easing, and reduced motion._
-
-Focus on high-impact moments: one well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.
-
-**DO**: Use motion to convey state changes—entrances, exits, feedback
-**DO**: Use exponential easing (ease-out-quart/quint/expo) for natural deceleration
-**DO**: For height animations, use grid-template-rows transitions instead of animating height directly
-**DON'T**: Animate layout properties (width, height, padding, margin)—use transform and opacity only
-**DON'T**: Use bounce or elastic easing—they feel dated and tacky; real objects decelerate smoothly
-
-### Interaction
-
-→ _Consult [interaction reference](reference/interaction-design.md) for forms, focus, and loading patterns._
-
-Make interactions feel fast. Use optimistic UI—update immediately, sync later.
-
-**DO**: Use progressive disclosure—start simple, reveal sophistication through interaction (basic options first, advanced behind expandable sections; hover states that reveal secondary actions)
-**DO**: Design empty states that teach the interface, not just say "nothing here"
-**DO**: Make every interactive surface feel intentional and responsive
-**DON'T**: Repeat the same information—redundant headers, intros that restate the heading
-**DON'T**: Make every button primary—use ghost buttons, text links, secondary styles; hierarchy matters
-
-### Responsive
-
-→ _Consult [responsive reference](reference/responsive-design.md) for mobile-first, fluid design, and container queries._
-
-**DO**: Use container queries (@container) for component-level responsiveness
-**DO**: Adapt the interface for different contexts—don't just shrink it
-**DON'T**: Hide critical functionality on mobile—adapt the interface, don't amputate it
-
-### UX Writing
-
-→ _Consult [ux-writing reference](reference/ux-writing.md) for labels, errors, and empty states._
-
-**DO**: Make every word earn its place
-**DON'T**: Repeat information users can already see
-
----
-
-## The AI Slop Test
-
-**Critical quality check**: If you showed this interface to someone and said "AI made this," would they believe you immediately? If yes, that's the problem.
-
-A distinctive interface should make someone ask "how was this made?" not "which AI made this?"
-
-Review the DON'T guidelines above—they are the fingerprints of AI-generated work from 2024-2025.
-
----
-
-## Implementation Principles
-
-Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details.
-
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices across generations.
-
-Remember: Claude is capable of extraordinary creative work. Don't hold back—show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+Keep the register conversational and tuned: plain verbs, sentence case, no filler, with tone matched to the brand and the audience. Let each element do exactly one job. A label labels, an example demonstrates, and nothing quietly does double duty.

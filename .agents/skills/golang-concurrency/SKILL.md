@@ -6,7 +6,7 @@ license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.2"
+  version: "1.1.4"
   openclaw:
     emoji: "⚡"
     homepage: https://github.com/samber/cc-skills-golang
@@ -40,7 +40,7 @@ Go's concurrency model is built on goroutines and channels. Goroutines are cheap
 5. **Specify channel direction** (`chan<-`, `<-chan`) — the compiler prevents misuse at build time
 6. **Default to unbuffered channels** — larger buffers mask backpressure; use them only with measured justification
 7. **Always include `ctx.Done()` in select** — without it, goroutines leak after caller cancellation
-8. **Never use `time.After` in loops** — each call creates a timer that lives until it fires, accumulating memory. Use `time.NewTimer` + `Reset`
+8. **Avoid repeated `time.After` in hot loops** — each call allocates a timer and creates unnecessary churn; use `time.NewTimer` + `Reset` for long-running loops
 9. **Track goroutine leaks in tests** with `go.uber.org/goleak`
 
 For detailed channel/select code examples, see [Channels and Select Patterns](references/channels-and-select.md).
@@ -67,17 +67,17 @@ For detailed channel/select code examples, see [Channels and Select Patterns](re
 
 ## Sync Primitives Quick Reference
 
-| Primitive             | Use case                      | Key notes                                                      |
-| --------------------- | ----------------------------- | -------------------------------------------------------------- |
-| `sync.Mutex`          | Protect shared state          | Keep critical sections short; never hold across I/O            |
-| `sync.RWMutex`        | Many readers, few writers     | Never upgrade RLock to Lock (deadlock)                         |
-| `sync/atomic`         | Simple counters, flags        | Prefer typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool` |
-| `sync.Map`            | Concurrent map, read-heavy    | No explicit locking; use `RWMutex`+map when writes dominate    |
-| `sync.Pool`           | Reuse temporary objects       | Always `Reset()` before `Put()`; reduces GC pressure           |
-| `sync.Once`           | One-time initialization       | Go 1.21+: `OnceFunc`, `OnceValue`, `OnceValues`                |
-| `sync.WaitGroup`      | Wait for goroutine completion | `Add` before `go`; Go 1.24+: `wg.Go()` simplifies usage        |
-| `x/sync/singleflight` | Deduplicate concurrent calls  | Cache stampede prevention                                      |
-| `x/sync/errgroup`     | Goroutine group + errors      | `SetLimit(n)` replaces hand-rolled worker pools                |
+| Primitive             | Use case                      | Key notes                                                                                                                                                                                                        |
+| --------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sync.Mutex`          | Protect shared state          | Keep critical sections short; never hold across I/O                                                                                                                                                              |
+| `sync.RWMutex`        | Many readers, few writers     | Never upgrade RLock to Lock (deadlock)                                                                                                                                                                           |
+| `sync/atomic`         | Simple counters, flags        | Prefer typed atomics (Go 1.19+): `atomic.Int64`, `atomic.Bool`                                                                                                                                                   |
+| `sync.Map`            | Concurrent map, read-heavy    | No explicit locking; use `RWMutex`+map when writes dominate                                                                                                                                                      |
+| `sync.Pool`           | Reuse temporary objects       | Always `Reset()` before `Put()`; reduces GC pressure                                                                                                                                                             |
+| `sync.Once`           | One-time initialization       | Go 1.21+: `OnceFunc`, `OnceValue`, `OnceValues`                                                                                                                                                                  |
+| `sync.WaitGroup`      | Waiting for simple goroutines | Go 1.25+: prefer `wg.Go(func(){ ... })` for fire-and-wait tasks that do not panic and do not need error propagation. For Go <1.25 use `Add`/`Done`. For errors/cancellation/limits, use `errgroup` with context. |
+| `x/sync/singleflight` | Deduplicate concurrent calls  | Cache stampede prevention                                                                                                                                                                                        |
+| `x/sync/errgroup`     | Goroutine group + errors      | `SetLimit(n)` replaces hand-rolled worker pools                                                                                                                                                                  |
 
 For detailed examples and anti-patterns, see [Sync Primitives Deep Dive](references/sync-primitives.md).
 
@@ -126,6 +126,25 @@ When auditing concurrency across a large codebase, use up to 5 parallel sub-agen
 - -> See `samber/cc-skills-golang@golang-safety` skill for concurrent map access and race condition prevention
 - -> See `samber/cc-skills-golang@golang-troubleshooting` skill for debugging goroutine leaks and deadlocks
 - -> See `samber/cc-skills-golang@golang-design-patterns` skill for graceful shutdown patterns
+- -> See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
+
+### Go 1.26 experimental goroutine leak profile
+
+For Go 1.26 diagnostics, there is an experimental goroutine leak profile. It is useful for production-oriented leak investigation, but is gated by `GOEXPERIMENT=goroutineleakprofile`; do not rely on it as default stable behavior.
+
+Typical usage when the experiment is enabled:
+
+```bash
+curl http://localhost:6060/debug/pprof/goroutineleak?debug=2
+go tool pprof http://localhost:6060/debug/pprof/goroutineleak
+```
+
+Keep existing tools:
+
+- tests: `go.uber.org/goleak`
+- runtime count: `runtime.NumGoroutine()`
+- stack dump: `/debug/pprof/goroutine?debug=2`
+- race checks: `go test -race ./...`
 
 ## References
 

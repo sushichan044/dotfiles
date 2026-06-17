@@ -1,12 +1,12 @@
 ---
 name: golang-context
-description: "Idiomatic context.Context usage in Golang — creation, propagation, cancellation, timeouts, deadlines, context values, and cross-service tracing. Apply when working with context.Context in any Go code."
+description: "Idiomatic context.Context usage in Golang — propagation through API boundaries, cancellation, timeouts and deadlines, request-scoped values, context.WithoutCancel for background work outliving requests. Apply when designing context propagation across layers, debugging leaked or unexpired contexts, choosing between context.Background/TODO/WithoutCancel, or storing values in context. Not for code that merely accepts ctx as first parameter."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.1"
+  version: "1.2.1"
   openclaw:
     emoji: "🔗"
     homepage: https://github.com/samber/cc-skills-golang
@@ -29,7 +29,7 @@ allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(g
 2. `ctx` MUST be the first parameter, named `ctx context.Context`
 3. NEVER store context in a struct — pass explicitly through function parameters
 4. NEVER pass `nil` context — use `context.TODO()` if unsure
-5. `cancel()` MUST always be deferred immediately after `WithCancel`/`WithTimeout`/`WithDeadline`
+5. `cancel()` MUST be called on all control-flow paths for `WithCancel`/`WithTimeout`/`WithDeadline`, unless ownership of the context and cancel function is explicitly returned or transferred
 6. `context.Background()` MUST only be used at the top level (main, init, tests)
 7. **Use `context.TODO()`** as a placeholder when you know a context is needed but don't have one yet
 8. NEVER create a new `context.Background()` in the middle of a request path
@@ -80,4 +80,4 @@ func (s *OrderService) Create(ctx context.Context, order Order) error {
 
 ## Enforce with Linters
 
-Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`. → See the `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Many context pitfalls are caught automatically by linters: `govet`, `staticcheck`. → See the `samber/cc-skills-golang@golang-lint` skill for configuration and usage.

@@ -8,7 +8,7 @@ metadata:
   author: samber
   version: "1.1.1"
   openclaw:
-    emoji: "🏷️"
+    emoji: "🏷"
     homepage: https://github.com/samber/cc-skills-golang
     requires:
       bins:
@@ -154,10 +154,10 @@ For complete rules, examples, and rationale, see:
 
 ## Enforce with Linters
 
-Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`. See `samber/cc-skills-golang@golang-linter` skill for configuration and usage.
+Many naming convention issues are caught automatically by linters: `revive`, `predeclared`, `misspell`, `errname`. See `samber/cc-skills-golang@golang-lint` skill for configuration and usage.
 
 ## Cross-References
 
 - → See `samber/cc-skills-golang@golang-code-style` skill for broader formatting and style decisions
 - → See `samber/cc-skills-golang@golang-structs-interfaces` skill for interface naming depth and receiver design
-- → See `samber/cc-skills-golang@golang-linter` skill for automated enforcement (revive, predeclared, misspell, errname)
+- → See `samber/cc-skills-golang@golang-lint` skill for automated enforcement (revive, predeclared, misspell, errname)

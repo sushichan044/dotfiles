@@ -6,9 +6,9 @@ license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.1"
+  version: "1.1.3"
   openclaw:
-    emoji: "🗃️"
+    emoji: "🗃"
     homepage: https://github.com/samber/cc-skills-golang
     requires:
       bins:

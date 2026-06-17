@@ -1,14 +1,14 @@
 ---
 name: golang-error-handling
-description: "Idiomatic Golang error handling — creation, wrapping with %w, errors.Is/As, errors.Join, custom error types, sentinel errors, panic/recover, the single handling rule, structured logging with slog, HTTP request logging middleware, and samber/oops for production errors. Built to make logs usable at scale with log aggregation 3rd-party tools. Apply when creating, wrapping, inspecting, or logging errors in Go code."
+description: "Idiomatic Golang error handling — creation, wrapping with %w, errors.Is/As, errors.Join, custom error types, sentinel errors, panic/recover, the single handling rule, structured logging with slog, HTTP request logging middleware, and samber/oops for production errors. Built to make logs usable at scale with log aggregation 3rd-party tools. Apply when creating, wrapping, inspecting, or logging errors in Go code. For samber/oops specifics → See `samber/cc-skills-golang@golang-samber-oops` skill; for slog handler ecosystem → See `samber/cc-skills-golang@golang-samber-slog` skill."
 user-invocable: true
 license: MIT
 compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.1"
+  version: "1.2.0"
   openclaw:
-    emoji: "⚠️"
+    emoji: "⚠"
     homepage: https://github.com/samber/cc-skills-golang
     requires:
       bins:
@@ -37,7 +37,7 @@ This skill guides the creation of robust, idiomatic error handling in Go applica
 2. **Errors MUST be wrapped with context** using `fmt.Errorf("{context}: %w", err)`
 3. **Error strings MUST be lowercase**, without trailing punctuation
 4. **Use `%w` internally, `%v` at system boundaries** to control error chain exposure
-5. **MUST use `errors.Is` and `errors.As`** instead of direct comparison or type assertion
+5. **MUST use `errors.Is` for sentinel matching and `errors.As`/`errors.AsType` for typed chain inspection** instead of direct comparison or bare type assertions. For Go 1.26+, prefer `errors.AsType[T](err)` when `T` implements `error`; use `errors.As(err, &target)` for Go <1.26 or for non-error interface targets.
 6. **SHOULD use `errors.Join`** (Go 1.20+) to combine independent errors
 7. **Errors MUST be either logged OR returned**, NEVER both (single handling rule)
 8. **Use sentinel errors** for expected conditions, custom types for carrying data
@@ -47,13 +47,13 @@ This skill guides the creation of robust, idiomatic error handling in Go applica
 12. **Log HTTP requests** with structured middleware capturing method, path, status, and duration
 13. **Use log levels** to indicate error severity
 14. **Never expose technical errors to users** — translate internal errors to user-friendly messages, log technical details separately
-15. **Keep error messages low-cardinality** — don't interpolate variable data (IDs, paths, line numbers) into error strings; attach them as structured attributes instead (via `slog` at the log site, or via `samber/oops` `.With()` on the error itself) so APM/log aggregators (Datadog, Loki, Sentry) can group errors properly
+15. **Keep log grouping low-cardinality** — at logging/APM boundaries, keep message templates stable and attach IDs, paths, line numbers, and counts as structured attributes. Error values may include useful operational context, but avoid putting high-cardinality data into the stable log message used for grouping.
 
 ## Detailed Reference
 
 - **[Error Creation](./references/error-creation.md)** — How to create errors that tell the story: error messages should be lowercase, no punctuation, and describe what happened without prescribing action. Covers sentinel errors (one-time preallocation for performance), custom error types (for carrying rich context), and the decision table for which to use when.
 
-- **[Error Wrapping and Inspection](./references/error-wrapping.md)** — Why `fmt.Errorf("{context}: %w", err)` beats `fmt.Errorf("{context}: %v", err)` (chains vs concatenation). How to inspect chains with `errors.Is`/`errors.As` for type-safe error handling, and `errors.Join` for combining independent errors.
+- **[Error Wrapping and Inspection](./references/error-wrapping.md)** — Why `fmt.Errorf("{context}: %w", err)` beats `fmt.Errorf("{context}: %v", err)` (chains vs concatenation). How to inspect chains with `errors.Is`, `errors.As`, and Go 1.26+ `errors.AsType` for type-safe error handling, and `errors.Join` for combining independent errors.
 
 - **[Error Handling Patterns and Logging](./references/error-handling.md)** — The single handling rule: errors are either logged OR returned, NEVER both (prevents duplicate logs cluttering aggregators). Panic/recover design, `samber/oops` for production errors, and `slog` structured logging integration for APM tools.
 
@@ -73,6 +73,7 @@ When auditing error handling across a large codebase, use up to 5 parallel sub-a
 - → See `samber/cc-skills-golang@golang-observability` for structured logging setup, log levels, and request logging middleware
 - → See `samber/cc-skills-golang@golang-safety` for nil interface trap and nil error comparison pitfalls
 - → See `samber/cc-skills-golang@golang-naming` for error naming conventions (ErrNotFound, PathError)
+- → See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
 
 ## References
 
