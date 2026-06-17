@@ -1,8 +1,6 @@
 // @ts-check
 /**
- * @fileoverview
- *   Send tips when using web fetch in Claude Code.
- *
+ * @file Send tips when using web fetch in Claude Code.
  * @see {@link https://docs.anthropic.com/en/docs/claude-code/hooks}
  */
 

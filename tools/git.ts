@@ -112,18 +112,23 @@ export function createIsGitIgnored(cwd: string): (...filePaths: string[]) => Pro
 type WorktreeInfo =
   | {
       /**
-       * In a linked worktree, `git rev-parse --show-toplevel` points at the top of the linked worktree, so we cannot get the repo name.
+       * In a linked worktree, `git rev-parse --show-toplevel` points at the top of the linked
+       * worktree, so we cannot get the repo name.
        *
-       * Instead, we can infer the repo name by looking at the common git dir, which still points to the main worktree.
+       * Instead, we can infer the repo name by looking at the common git dir, which still points to
+       * the main worktree.
        */
       inferredRepoName: string | null;
       insideLinkedWorktree: true;
       /**
-       * The root of the main worktree, which is where the .git directory lives. This is used for tools that need to access git metadata, like the Git tool or the ProhibitEditDefaultBranch hook.
+       * The root of the main worktree, which is where the .git directory lives. This is used for
+       * tools that need to access git metadata, like the Git tool or the ProhibitEditDefaultBranch
+       * hook.
        */
       mainRepoRoot: string;
       /**
-       * The root of the linked worktree, which is where the worktree-specific files live. This is used for tools that need to access files within the worktree.
+       * The root of the linked worktree, which is where the worktree-specific files live. This is
+       * used for tools that need to access files within the worktree.
        */
       worktreeRoot: string;
     }
@@ -160,7 +165,9 @@ export async function detectIfInsideWorktree(cwd: string): Promise<WorktreeInfo>
 }
 
 /**
- * Get the absolute path of the worktree root for a given branch name. This is used to determine the correct worktree root when inside a linked worktree, since `git rev-parse --show-toplevel` will point to the linked worktree root instead of the main worktree root.
+ * Get the absolute path of the worktree root for a given branch name. This is used to determine the
+ * correct worktree root when inside a linked worktree, since `git rev-parse --show-toplevel` will
+ * point to the linked worktree root instead of the main worktree root.
  */
 async function getWorktreeRootFromName(cwd: string, branch: string): Promise<string | null> {
   const result = await sh`git -C ${cwd} wt ${branch} --nocd`;

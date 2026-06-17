@@ -1,8 +1,9 @@
+import os from "node:os";
+
 import { Ansis } from "ansis";
 import colorNames from "css-color-names";
-import "temporal-polyfill-lite/global";
 import getStdin from "get-stdin";
-import os from "node:os";
+import { Temporal } from "temporal-polyfill-lite";
 
 import type { GitAheadBehind, GitWorkingTreeChangeSummary } from "../tools/git";
 import {
@@ -52,40 +53,38 @@ type InputShape = {
   rate_limits?: {
     five_hour: {
       /**
-       * @example 1774029600
+       * @example
+       *   1774029600;
        */
       resets_at: number;
       /**
-       * @example 42.3
+       * @example
+       *   42.3;
        */
       used_percentage: number;
     };
     seven_day: {
       /**
-       * @example 1774029600
+       * @example
+       *   1774029600;
        */
       resets_at: number;
       /**
-       * @example 42.3
+       * @example
+       *   42.3;
        */
       used_percentage: number;
     };
   };
   session_id: string;
-  /**
-   * Absolute path to the transcript file where the full conversation is logged.
-   */
+  /** Absolute path to the transcript file where the full conversation is logged. */
   transcript_path: string;
   version: string;
   workspace: {
     added_dirs: string[];
-    /**
-     * Absolute path to the current working directory where Claude is running.
-     */
+    /** Absolute path to the current working directory where Claude is running. */
     current_dir: string;
-    /**
-     * Absolute path to the root directory of the project Claude is operating in.
-     */
+    /** Absolute path to the root directory of the project Claude is operating in. */
     project_dir: string;
   };
 };
@@ -96,7 +95,8 @@ type StatusShape = {
     aheadBehind: GitAheadBehind | null;
     branch: string | null;
     /**
-     * @example "dotfiles"
+     * @example
+     *   "dotfiles";
      */
     repository: string | null;
 
@@ -111,24 +111,29 @@ type StatusShape = {
     | {
         fiveHour: {
           /**
-           * @example 42.3
+           * @example
+           *   42.3;
            */
           remainingTimePercentage: number;
           /**
-           * @example 42.3
+           * @example
+           *   42.3;
            */
           remainingTokenPercentage: number;
           resetsAt: Temporal.ZonedDateTime;
         };
         weekly: {
           /**
-           * Percentage of the current rate limit window that has elapsed. Calculated based on the resetsAt time and the current time.
+           * Percentage of the current rate limit window that has elapsed. Calculated based on the
+           * resetsAt time and the current time.
            *
-           * @example 42.3
+           * @example
+           *   42.3;
            */
           remainingTimePercentage: number;
           /**
-           * @example 42.3
+           * @example
+           *   42.3;
            */
           remainingTokenPercentage: number;
           resetsAt: Temporal.ZonedDateTime;
@@ -146,18 +151,18 @@ type StatusShape = {
 type WorktreeStatus =
   | {
       /**
-       * In a linked worktree, `git rev-parse --show-toplevel` points at the top of the linked worktree, so we cannot get the repo name.
+       * In a linked worktree, `git rev-parse --show-toplevel` points at the top of the linked
+       * worktree, so we cannot get the repo name.
        *
-       * Instead, we can infer the repo name by looking at the common git dir, which still points to the main worktree.
+       * Instead, we can infer the repo name by looking at the common git dir, which still points to
+       * the main worktree.
        */
       inferredRepoName: string | null;
       insideLinkedWorktree: true;
     }
   | { insideLinkedWorktree: false };
 
-/**
- * @see https://www.nerdfonts.com/cheat-sheet for icons to use in the status line.
- */
+/** @see https://www.nerdfonts.com/cheat-sheet for icons to use in the status line. */
 const NERD_ICONS = {
   GIT_BRANCH: "\uf418",
   GIT_REPO: "\uf401",

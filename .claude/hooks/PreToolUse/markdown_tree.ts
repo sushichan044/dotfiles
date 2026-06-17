@@ -1,6 +1,8 @@
+import { realpath, stat } from "node:fs/promises";
+
+import { regex } from "arkregex";
 import { $ } from "bun";
 import { defineHook } from "cc-hooks-ts";
-import { realpath, stat } from "node:fs/promises";
 
 import { headingTreeOfMarkdownFile } from "../../../tools/extract-md-heading";
 
@@ -13,11 +15,10 @@ const getLineCount = async (path: string): Promise<number | null> => {
 
   const lines = await $`wc -l ${realPath}`.text();
 
-  const numberRegex = /^\s*(\d+)\s/;
+  const numberRegex = regex("^\\s*(\\d+)\\s");
   const matches = numberRegex.exec(lines);
-  if (matches && matches?.length >= 2) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return parseInt(matches[1]!, 10);
+  if (matches) {
+    return parseInt(matches[1], 10);
   }
 
   return null;

@@ -1,9 +1,9 @@
 #!/usr/bin/env -S bun run --silent
 
-import type { Root } from "mdast";
-
-import { fromMarkdown } from "mdast-util-from-markdown";
 import { readFile, realpath, stat } from "node:fs/promises";
+
+import type { Root } from "mdast";
+import { fromMarkdown } from "mdast-util-from-markdown";
 import { CONTINUE, visit } from "unist-util-visit";
 
 type HeadingTreeNodeData = {
@@ -25,9 +25,7 @@ type HeadingTree = {
 };
 
 const buildHeadingTree = (tree: Root, metadata: HeadingTree["metadata"]): HeadingTree => {
-  /**
-   * sorted by appearance in the document
-   */
+  /** Sorted by appearance in the document */
   const extractedHeadings: HeadingTreeNodeData[] = [];
   visit(tree, "heading", (node) => {
     const text = node.children

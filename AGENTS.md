@@ -23,3 +23,9 @@ chezmoi docs available at context7.
 - `.agent/`: AI agent system prompts and configurations.
 - `.claude/hooks`: Hooks for Claude Code. Using sushichan044/cc-hooks-ts and typescript and Bun.
 - `tools/`: Custom scripts for automation. Commonly for `.claude/hooks` usage.
+
+## Script (JavaScript tooling)
+
+- `vp check`: Run formatter, linter, type checker.
+- `vp check --fix`: Run formatter, linter, type checker with auto-fix where possible.
+- `vp run test`: Run test suite.

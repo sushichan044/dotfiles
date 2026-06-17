@@ -1,7 +1,6 @@
 import type { GoProject } from "./go";
-import type { JavaScriptProject } from "./javascript";
-
 import { openGoProject } from "./go";
+import type { JavaScriptProject } from "./javascript";
 import { openJavaScriptProject } from "./javascript";
 
 type Projects = {

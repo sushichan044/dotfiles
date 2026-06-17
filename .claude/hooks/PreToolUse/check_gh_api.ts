@@ -1,7 +1,4 @@
-/**
- * Hook to validate gh api commands
- * Allows safe read-only GitHub API operations
- */
+/** Hook to validate gh api commands Allows safe read-only GitHub API operations */
 
 import { defineHook } from "cc-hooks-ts";
 

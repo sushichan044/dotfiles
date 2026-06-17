@@ -1,18 +1,14 @@
 // @ts-check
-/**
- * @fileoverview
- *   Utility functions for GitHub URL parsing and gh CLI command generation.
- */
+/** @file Utility functions for GitHub URL parsing and gh CLI command generation. */
 
 import { parse } from "args-tokens";
 import { check as isReservedNameByGitHub } from "github-reserved-names";
 import { parse as parseIntoArray } from "shell-quote";
 
-import type { MaybeLiteral } from "./utils/types";
-
 import { isRawContentURL } from "./url";
 import { createShell } from "./utils/bun-sh";
 import { isNonEmptyString } from "./utils/string";
+import type { MaybeLiteral } from "./utils/types";
 
 export type GitHubPathType =
   | { filename: string; type: "workflow" }
@@ -36,7 +32,7 @@ interface GistInfo {
 type GhCommandResult = {
   /**
    * @example
-   * `gh pr view 123 --repo owner/repo`
+   *   `gh pr view 123 --repo owner/repo`;
    */
   command: string;
 
@@ -164,7 +160,7 @@ export function extractGistInfo(url: URL): GistInfo | null {
   const gistId = parts[1]!;
 
   let filename: string | undefined;
-  if (url.hash?.startsWith("#file-")) {
+  if (url.hash.startsWith("#file-")) {
     filename = url.hash.slice(6).replace(/-/g, ".");
   }
 

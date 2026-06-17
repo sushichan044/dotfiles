@@ -1,5 +1,5 @@
 import { defineHook } from "cc-hooks-ts";
-import "temporal-polyfill-lite/global";
+import { Temporal } from "temporal-polyfill-lite";
 
 const hook = defineHook({
   trigger: {

@@ -2,7 +2,6 @@ import { defineHook } from "cc-hooks-ts";
 import { format } from "oxfmt";
 
 import type { Shell } from "../../../tools/utils/bun-sh";
-
 import { createShell } from "../../../tools/utils/bun-sh";
 
 async function dumpPlanToNote(sh: Shell, plan: string): Promise<string> {

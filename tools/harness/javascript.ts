@@ -1,7 +1,6 @@
-import type { Agent } from "package-manager-detector";
-
 import { spawn } from "bun";
 import { isPackageExists } from "local-pkg";
+import type { Agent } from "package-manager-detector";
 import { resolveCommand } from "package-manager-detector/commands";
 import { detect } from "package-manager-detector/detect";
 
