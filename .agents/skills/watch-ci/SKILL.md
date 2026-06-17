@@ -7,6 +7,9 @@ allowed-tools: Bash(git branch:*), Bash(git push:*), Bash(gh run list:*), Bash(g
 
 # watch-ci
 
+> [!NOTE]
+> この作業は安い AI Model で済ませたいので、あなたが高価な Model であれば以降の作業は安い Model の SubAgent に移譲してください.
+
 push または PR 作成後の CI を監視し、失敗したら re-run を試みてから原因をトリアージし、適切なスキルで修正してパスするまでループする。
 
 ## Procedure

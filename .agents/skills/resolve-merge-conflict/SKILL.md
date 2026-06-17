@@ -6,6 +6,9 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 # resolve-merge-conflict
 
+> [!NOTE]
+> この作業は安い AI Model で済ませたいので、あなたが高価な Model であれば以降の作業は安い Model の SubAgent に移譲してください.
+
 ## 最初にやること
 
 - branch の目的を 1-2 文で確認する

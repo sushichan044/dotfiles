@@ -6,6 +6,9 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 
 # stacked-pr
 
+> [!NOTE]
+> この作業は安い AI Model で済ませたいので、あなたが高価な Model であれば以降の作業は安い Model の SubAgent に移譲してください.
+
 依存関係のある複数の PR を管理・同期する。PR 間の依存を検出し、カスケード rebase で整合性を保ち、CI を上流から修正する。
 
 ## When This Skill Applies
