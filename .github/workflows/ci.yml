@@ -29,17 +29,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Bun
-        uses: ./.github/actions/setup-bun
+      - name: Setup
+        uses: ./.github/actions/setup-env
 
-      - name: Run ESLint
-        run: bun run lint
+      - run: vp check
 
-      - name: Run typecheck
-        run: bun run typecheck
-
-      - name: Run oxfmt
-        run: bun run format:check
-
-      - name: Run test
-        run: bun test
+      - run: vp run test
