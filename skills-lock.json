@@ -359,6 +359,12 @@
       "skillPath": "terraform/module-generation/skills/refactor-module/SKILL.md",
       "computedHash": "f506f95f84ff344a3e522f2e58069b632a5b3539d978f00c935ee8bab25b03f0"
     },
+    "request-copilot-review": {
+      "source": "k1LoW/gh-copilot-review",
+      "sourceType": "github",
+      "skillPath": "skills/request-copilot-review/SKILL.md",
+      "computedHash": "1f8d4273bc6dda7d4e164d9c1a8f2024616ac225ad0430fe64bd8196741654f8"
+    },
     "retrospective": {
       "source": "lacolaco/claude-plugins",
       "sourceType": "github",
