@@ -15,6 +15,7 @@ conflict, surface the conflict rather than silently picking one.
   training weights contain obsolete patterns, so skipping this skill produces stale code.
 - **Git / GitHub work**: Use the `git-workflow` skill for any git or GitHub operation
   (commit, PR, rebase, stack management, review, CI).
+- Use `receiving-code-review` skill when addressing code review feedback.
 - **Understand the problem before the solution**: Before discussing _how_ to implement,
   be clear on (1) what problem is being solved and (2) the expected behavior. If either is
   ambiguous, clarify with the user before writing code.
