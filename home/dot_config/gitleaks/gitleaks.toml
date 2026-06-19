@@ -2,3 +2,7 @@ title = "gitleaks config"
 
 [extend]
 useDefault = true
+
+[[allowlists]]
+description = "Exclude agent skills"
+paths = ['''(\.agents|\.claude)\/skills/.*''']
