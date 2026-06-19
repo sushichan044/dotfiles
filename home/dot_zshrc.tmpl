@@ -148,12 +148,19 @@ fi
 zsh-defer unfunction source
 
 # Expand alias with space and enter
+# Expand only right after typing. After a completion (TAB) the menu may be
+# "armed"; calling the _expand_alias completion widget there re-fires it and
+# jumps to the next candidate instead of inserting a literal space / accepting.
 _simple_abbreviation() {
-  zle _expand_alias
+  if [[ $LASTWIDGET == (self-insert|magic-space|backward-delete-char) ]]; then
+    zle _expand_alias
+  fi
   zle self-insert
 }
 _simple_abbreviation_accept_line() {
-  zle _expand_alias
+  if [[ $LASTWIDGET == (self-insert|magic-space|backward-delete-char) ]]; then
+    zle _expand_alias
+  fi
   zle accept-line
 }
 zle -N _simple_abbreviation
