@@ -6,6 +6,4 @@ if ! type brew >/dev/null 2>&1; then
     exit 1
 fi
 
-brew bundle --file="$HOME/.Brewfile" cleanup --force
-
 brew update && brew upgrade && brew bundle install --file="$HOME/.Brewfile"
