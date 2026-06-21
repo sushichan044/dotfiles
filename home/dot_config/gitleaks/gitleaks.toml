@@ -5,4 +5,7 @@ useDefault = true
 
 [[allowlists]]
 description = "Exclude agent skills"
-paths = ['''(\.agents|\.claude)\/skills/.*''']
+paths = [
+  '''(\.agents|\.claude)\/skills/.*''', # agent skills
+  '''(patches\/.+\.patch$)''', # pnpm patches
+]
