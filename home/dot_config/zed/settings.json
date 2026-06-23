@@ -7,11 +7,29 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "outline_panel": {
-    "dock": "left"
+  "agent": {
+    "enabled": false
   },
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "base_keymap": "VSCode",
+  "buffer_font_fallbacks": ["Fira Code", "Consolas", "Courier New", "monospace"],
+  "buffer_font_family": "Firple",
+  "buffer_font_size": 15,
   "collaboration_panel": {
     "dock": "left"
+  },
+  "colorize_brackets": true,
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  "edit_predictions": {
+    "provider": "copilot"
   },
   "file_scan_exclusions": [
     "**/.git",
@@ -23,65 +41,25 @@
     "**/Thumbs.db",
     "**/.classpath",
     "**/.settings",
-    // k1low/git-wt
     "**/.wt"
   ],
-  "git_panel": {
-    "tree_view": true,
-    "dock": "left"
-  },
-  "edit_predictions": {
-    "provider": "copilot"
-  },
-  "terminal": {
-    "font_family": "MesloLGS NF",
-    "cursor_shape": "bar"
-  },
-  "project_panel": {
-    "dock": "left",
-    "auto_fold_dirs": false
-  },
-  "diagnostics": {
-    "inline": {
-      "enabled": true
-    }
-  },
-  "agent": {
-    "enabled": false
-  },
-  "minimap": {
-    "show": "never"
-  },
-  "current_line_highlight": "all",
-  "cursor_blink": true,
-  "autosave": {
-    "after_delay": {
-      "milliseconds": 1000
-    }
-  },
-  "buffer_font_fallbacks": ["Fira Code", "Consolas", "Courier New", "monospace"],
-  "buffer_font_family": "Firple",
   "file_types": {
     "perl": ["*.latexmkrc"],
-    "xml": ["*.plist"],
-    "tailwindcss": ["*.css"]
+    "tailwindcss": ["*.css"],
+    "xml": ["*.plist"]
   },
-  "colorize_brackets": true,
-  "linked_edits": true,
-  "show_edit_predictions": true,
-  "ensure_final_newline_on_save": true,
-  "base_keymap": "VSCode",
+  "formatter": "language_server",
+  "git": {
+    "worktree_directory": ".wt"
+  },
+  "git_panel": {
+    "dock": "left",
+    "tree_view": true
+  },
   "icon_theme": "Material Icon Theme",
-  "ui_font_size": 16,
-  "buffer_font_size": 15,
-  "theme": {
-    "mode": "dark",
-    "light": "One Light",
-    "dark": "One Dark Pro"
-  },
   "languages": {
-    "Ruby": {
-      "language_servers": ["ruby-lsp", "!solargraph", "!rubocop"]
+    "CSS": {
+      "language_servers": ["tailwindcss-intellisense-css", "!vscode-css-language-server"],
     },
     "HTML+ERB": {
       "language_servers": ["herb", "ruby-lsp"]
@@ -89,9 +67,86 @@
     "JS+ERB": {
       "language_servers": ["ruby-lsp"]
     },
+    "Ruby": {
+      "language_servers": ["ruby-lsp", "!solargraph", "!rubocop"]
+    },
     "YAML+ERB": {
       "language_servers": ["ruby-lsp"]
     }
   },
-  "show_whitespaces": "trailing"
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classFunctions": ["clsx", "cn"],
+        "experimental": {
+          // see https://github.com/paolotiu/tailwind-intellisense-regex-list
+          "classRegex": [
+            // https://github.com/paolotiu/tailwind-intellisense-regex-list#string-endings-most-useful
+            ["\\b\\w*Style\\b\\s*=\\s*[\"'`]([^\"'`]*)[\"'`]"],
+            ["\\b\\w*ClassName\\b\\s*=\\s*[\"'`]([^\"'`]*)[\"'`]"],
+            ["\\b\\w*ClassNames\\b\\s*=\\s*[\"'`]([^\"'`]*)[\"'`]"],
+
+            // https://github.com/paolotiu/tailwind-intellisense-regex-list#javascript-string-variable-with-keywords
+            [
+              "(?:\\b(?:const|let|var)\\s+)?[\\w$_]*(?:[Ss]tyles|[Cc]lasses|[Cc]lassnames)[\\w\\d]*\\s*(?:=|\\+=)\\s*['\"]([^'\"]*)['\"]"
+            ],
+
+            // https://github.com/paolotiu/tailwind-intellisense-regex-list#tailwind-merge
+            ["(?:twMerge|twJoin)\\(([^;]*)[\\);]", "[`'\"`]([^'\"`;]*)[`'\"`]"],
+
+            // https://github.com/paolotiu/tailwind-intellisense-regex-list#tailwind-variants
+            ["tv\\({([^]*?)}\\)", "[\"'`]([^\"'`]*)[\"'`]"],
+
+            // https://github.com/paolotiu/tailwind-intellisense-regex-list#dom  ["classList.(?:add|remove|toggle)\\(([^)]*)\\)", "(?:'|\"|`)([^\"'`]*)(?:'|\"|`)"]
+            ["classList.(?:add|remove|toggle)\\(([^)]*)\\)", "(?:'|\"|`)([^\"'`]*)(?:'|\"|`)"],
+
+            // JS / TS
+            "\\.className\\s*[+]?=\\s*['\"]([^'\"]*)['\"]",
+            "\\.setAttributeNS\\(.*,\\s*['\"]class['\"],\\s*['\"]([^'\"]*)['\"]",
+            "\\.setAttribute\\(['\"]class['\"],\\s*['\"]([^'\"]*)['\"]",
+            
+            // Astro
+            "class:list=\"{([^}]*)}\"",
+            "class:list='{([^}]*)}'",
+
+            // Svelte
+            "class:\\s*([^\\s{]+)",
+            "\\{\\s*class:\\s*\"([^\"]*)\"",
+            "\\{\\s*class:\\s*'([^']*)'",
+            
+            // Vue
+            ":class=\"([^\"]*)\"",
+            ":class='([^']*)'",
+            
+            // ERB
+            "\\bclass:\\s*['\"]([^'\"]*)['\"]"
+          ]
+        },
+        "includeLanguages": {
+          "astro": "html",
+          "vue": "html"
+        }
+      }
+    }
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "project_panel": {
+    "auto_fold_dirs": false,
+    "dock": "left"
+  },
+  "show_whitespaces": "trailing",
+  "telemetry": {
+    "metrics": false
+  },
+  "terminal": {
+    "cursor_shape": "bar",
+    "font_family": "MesloLGS NF"
+  },
+  "theme": {
+    "dark": "One Dark Pro",
+    "light": "One Light",
+    "mode": "dark"
+  }
 }
