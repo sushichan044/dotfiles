@@ -9,48 +9,65 @@
 {
   "cli_default_open_behavior": "new_window",
   "outline_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "collaboration_panel": {
-    "dock": "left"
+    "dock": "left",
   },
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/.wt",
+  ],
   "git_panel": {
     "tree_view": true,
-    "dock": "left"
+    "dock": "left",
   },
   "edit_predictions": {
-    "provider": "copilot"
+    "provider": "copilot",
   },
   "terminal": {
     "font_family": "MesloLGS NF",
-    "cursor_shape": "bar"
+    "cursor_shape": "bar",
   },
   "project_panel": {
     "dock": "left",
-    "auto_fold_dirs": false
+    "auto_fold_dirs": false,
   },
   "diagnostics": {
     "inline": {
-      "enabled": true
-    }
+      "enabled": true,
+    },
   },
   "agent": {
     "dock": "right",
     "enabled": true,
     "button": true,
-    "model_parameters": []
+    "model_parameters": [],
   },
   "minimap": {
-    "show": "never"
+    "show": "never",
   },
   "current_line_highlight": "all",
   "cursor_blink": true,
   "autosave": {
     "after_delay": {
-      "milliseconds": 1000
-    }
+      "milliseconds": 1000,
+    },
   },
-  "buffer_font_fallbacks": ["Fira Code", "Consolas", "Courier New", "monospace"],
+  "buffer_font_fallbacks": [
+    "Fira Code",
+    "Consolas",
+    "Courier New",
+    "monospace",
+  ],
   "buffer_font_family": "Firple",
   "file_types": {
     "dotenv": [".env*"],
@@ -66,9 +83,8 @@
       "common-versions.json",
       "pnpm-config.json",
       "rush.json",
-      "version-policies.json"
+      "version-policies.json",
     ],
-    "github-actions-workflow": ["**/.github/actions/*/action.yml"],
     "json": ["*.json", "*.json.tmpl"],
     "markdown": ["*.md ", "*.rmd", "*.snap", "*.snap.new"],
     "xml": ["*.plist"],
@@ -77,12 +93,18 @@
       "*.tmpl",
       "*.zsh.tmpl",
       "dot_z*.tmpl",
-      "dot_zsh.d/completions/*.tmpl"
+      "dot_zsh.d/completions/*.tmpl",
     ],
     "tailwindcss": ["*.css"],
-    "env": ["*.env", "*.env.development", "*.env.production", "*.env.sample", ".env.example"],
+    "env": [
+      "*.env",
+      "*.env.development",
+      "*.env.production",
+      "*.env.sample",
+      ".env.example",
+    ],
     "json5": ["*.json5"],
-    "yaml": ["*.yaml.tmpl", "*.yml.tmpl"]
+    "yaml": ["*.yaml.tmpl", "*.yml.tmpl"],
   },
   "colorize_brackets": true,
   "linked_edits": true,
@@ -95,25 +117,37 @@
   "theme": {
     "mode": "dark",
     "light": "One Light",
-    "dark": "One Dark Pro"
+    "dark": "One Dark Pro",
   },
   "lsp": {
     "biome": {
       "settings": {
-        "require_config_file": true
-      }
-    }
+        "require_config_file": true,
+      },
+    },
   },
   "languages": {
     "JavaScript": {
       "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      }
+        "source.fixAll.eslint": true,
+      },
     },
     "TypeScript": {
       "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      }
-    }
-  }
+        "source.fixAll.eslint": true,
+      },
+    },
+    "Ruby": {
+      "language_servers": ["ruby-lsp", "!solargraph", "!rubocop"],
+    },
+    "HTML+ERB": {
+      "language_servers": ["herb", "ruby-lsp"],
+    },
+    "JS+ERB": {
+      "language_servers": ["ruby-lsp"],
+    },
+    "YAML+ERB": {
+      "language_servers": ["ruby-lsp"],
+    },
+  },
 }
