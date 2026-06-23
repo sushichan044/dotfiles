@@ -1,0 +1,251 @@
+[settings]
+
+# basic
+[[abbr]]
+keyword = "mkdir"
+expansion = "mkdir -p"
+allow_conflict = true
+
+[[abbr]]
+keyword = "reitou"
+expansion = "tar -zcvf"
+
+[[abbr]]
+keyword = "kaitou"
+expansion = "tar -xvf"
+
+[[abbr]]
+keyword = "rrr"
+expansion = "exec $SHELL -l"
+
+# git
+[[abbr]]
+keyword = "g"
+expansion = "git"
+
+[[abbr]]
+keyword = "gc"
+expansion = "git commit -m '{{"{{message}}"}}' --allow-empty"
+allow_conflict = true
+
+[[abbr]]
+keyword = "gs"
+expansion = "git status"
+allow_conflict = true
+
+[[abbr]]
+keyword = "gps"
+expansion = "git push"
+
+[[abbr]]
+keyword = "gpf"
+expansion = "git push --force-with-lease"
+
+[[abbr]]
+keyword = "gpl"
+expansion = "git pull"
+
+[[abbr]]
+keyword = "grm"
+expansion = "git rm"
+
+[[abbr]]
+keyword = "grt"
+expansion = "cd \"$(git repo-root)\""
+
+[[abbr]]
+keyword = "lg"
+expansion = "lazygit"
+
+[[abbr]]
+keyword = "gg"
+expansion = "ghq get -u"
+
+[[abbr]]
+keyword = "genignore"
+expansion = "gh repo gitignore"
+
+[[abbr]]
+keyword = "genlicense"
+expansion = "gh repo license"
+
+# brew
+[[abbr]]
+keyword = "br"
+expansion = "brew"
+
+[[abbr]]
+keyword = "bru"
+expansion = "brew update && brew bundle install --file=\"$HOME/.Brewfile\""
+
+[[abbr]]
+keyword = "bri"
+expansion = "brew install"
+
+# docker
+[[abbr]]
+keyword = "d"
+expansion = "docker"
+
+[[abbr]]
+keyword = "dc"
+expansion = "docker compose"
+allow_conflict = true
+
+[[abbr]]
+keyword = "dcb"
+expansion = "docker compose build"
+
+[[abbr]]
+keyword = "dcu"
+expansion = "docker compose up -d"
+
+[[abbr]]
+keyword = "dcd"
+expansion = "docker compose down"
+
+# mise
+[[abbr]]
+keyword = "m"
+expansion = "mise"
+
+[[abbr]]
+keyword = "mi"
+expansion = "mise install"
+
+[[abbr]]
+keyword = "mr"
+expansion = "mise run"
+
+[[abbr]]
+keyword = "mw"
+expansion = "mise watch"
+
+[[abbr]]
+keyword = "mp"
+expansion = "mise deps install"
+
+# latex
+[[abbr]]
+keyword = "tl"
+expansion = "sudo tlmgr"
+
+[[abbr]]
+keyword = "tlu"
+expansion = "sudo tlmgr update --self && sudo tlmgr update --all"
+
+# editors
+[[abbr]]
+keyword = "cv"
+expansion = "code ."
+
+[[abbr]]
+keyword = "cw"
+expansion = "code *.code-workspace(.N[1])"
+
+[[abbr]]
+keyword = "rv"
+expansion = "rubymine ."
+
+[[abbr]]
+keyword = "zv"
+expansion = "zed ."
+
+[[abbr]]
+keyword = "xv"
+expansion = "xed ."
+
+# ai agents
+[[abbr]]
+keyword = "c"
+expansion = "claude"
+
+[[abbr]]
+keyword = "oc"
+expansion = "opencode"
+
+# chezmoi
+[[abbr]]
+keyword = "cz"
+expansion = "chezmoi"
+
+# ls
+{{ if lookPath "eza" -}}
+[[abbr]]
+keyword = "ls"
+expansion = "eza --hyperlink --group-directories-first"
+allow_conflict = true
+
+[[abbr]]
+keyword = "ll"
+expansion = "eza --hyperlink -abghHliS --git --time-style=iso --group-directories-first"
+{{ else if eq .ostype "darwin" -}}
+[[abbr]]
+keyword = "ls"
+expansion = "ls -G"
+allow_conflict = true
+
+[[abbr]]
+keyword = "ll"
+expansion = "ls -l -G"
+{{ else -}}
+[[abbr]]
+keyword = "ls"
+expansion = "ls --color=always"
+allow_conflict = true
+
+[[abbr]]
+keyword = "ll"
+expansion = "ls -l --color=always"
+{{ end }}
+
+{{ if and (eq .ostype "linux") (lookPath "apt") -}}
+# apt
+[[abbr]]
+keyword = "agi"
+expansion = "sudo apt install"
+
+[[abbr]]
+keyword = "agu"
+expansion = "sudo apt update && sudo apt upgrade"
+
+[[abbr]]
+keyword = "agc"
+expansion = "sudo apt autoremove -y && sudo apt autoclean -y"
+
+[[abbr]]
+keyword = "agr"
+expansion = "sudo apt remove"
+{{ end }}
+
+# difit
+[[abbr]]
+keyword = "dft"
+expansion = "difit --include-untracked"
+
+[[abbr]]
+keyword = "dfp"
+expansion = "difit --pr"
+
+# zellij
+[[abbr]]
+keyword = "za"
+expansion = "zellij attach"
+
+{{ if eq .ostype "wsl" -}}
+# wsl
+[[abbr]]
+keyword = "open"
+expansion = "wsl-open"
+allow_conflict = true
+
+[[abbr]]
+keyword = "ssh"
+expansion = "ssh.exe"
+allow_conflict = true
+
+[[abbr]]
+keyword = "ssh-add"
+expansion = "ssh-add.exe"
+allow_conflict = true
+{{ end }}

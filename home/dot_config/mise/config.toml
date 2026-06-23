@@ -41,6 +41,7 @@ yq = "latest"
 "cargo:octorus" = "latest"
 "cargo:rust-script" = "latest"
 "cargo:pitchfork-cli" = "latest" # https://pitchfork.jdx.dev/
+"github:ushironoko/abbrs" = "latest"
 "forgejo:mergiraf/mergiraf" = "latest"
 "github:datadog-labs/pup" = "latest"
 "github:gitleaks/gitleaks" = "latest"
