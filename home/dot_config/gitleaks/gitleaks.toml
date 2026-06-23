@@ -5,7 +5,10 @@ useDefault = true
 
 [[allowlists]]
 description = "Exclude agent skills"
+paths = ['''(\.agents|\.claude)\/skills/.*''']
+
+[[allowlists]]
+description = "Exclude monkey patches"
 paths = [
-  '''(\.agents|\.claude)\/skills/.*''', # agent skills
-  '''(patches\/.+\.patch$)''', # pnpm patches
+  '''(patches\/.+\.patch$)''', # pnpm
 ]
