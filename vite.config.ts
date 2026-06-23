@@ -2,7 +2,6 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   fmt: {
-    ignorePatterns: ["home/dot_config/zed/private_settings.json"],
     jsdoc: true,
     sortImports: true,
   },

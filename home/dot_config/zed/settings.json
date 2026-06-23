@@ -1,0 +1,97 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    // k1low/git-wt
+    "**/.wt"
+  ],
+  "git_panel": {
+    "tree_view": true,
+    "dock": "left"
+  },
+  "edit_predictions": {
+    "provider": "copilot"
+  },
+  "terminal": {
+    "font_family": "MesloLGS NF",
+    "cursor_shape": "bar"
+  },
+  "project_panel": {
+    "dock": "left",
+    "auto_fold_dirs": false
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  "agent": {
+    "enabled": false
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "current_line_highlight": "all",
+  "cursor_blink": true,
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "buffer_font_fallbacks": ["Fira Code", "Consolas", "Courier New", "monospace"],
+  "buffer_font_family": "Firple",
+  "file_types": {
+    "perl": ["*.latexmkrc"],
+    "xml": ["*.plist"],
+    "tailwindcss": ["*.css"]
+  },
+  "colorize_brackets": true,
+  "linked_edits": true,
+  "show_edit_predictions": true,
+  "ensure_final_newline_on_save": true,
+  "base_keymap": "VSCode",
+  "icon_theme": "Material Icon Theme",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "One Dark Pro"
+  },
+  "languages": {
+    "Ruby": {
+      "language_servers": ["ruby-lsp", "!solargraph", "!rubocop"]
+    },
+    "HTML+ERB": {
+      "language_servers": ["herb", "ruby-lsp"]
+    },
+    "JS+ERB": {
+      "language_servers": ["ruby-lsp"]
+    },
+    "YAML+ERB": {
+      "language_servers": ["ruby-lsp"]
+    }
+  },
+  "show_whitespaces": "trailing"
+}
