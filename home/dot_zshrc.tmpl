@@ -101,14 +101,6 @@ if command_exists sidetable; then
   zsh-defer cached_eval "sidetable completion zsh"
 fi
 
-if command_exists ngrok; then
-  zsh-defer cached_eval "ngrok completion"
-fi
-
-if command_exists pitchfork; then
-  zsh-defer cached_eval "pitchfork completion zsh"
-fi
-
 if command_exists op; then
   zsh-defer cached_eval "op completion zsh"
 fi
@@ -117,8 +109,8 @@ if command_exists pnpm; then
   zsh-defer cached_eval "pnpm completion zsh"
 fi
 
-if command_exists cf; then
-  zsh-defer cached_eval "cf completion zsh"
+if command_exists abbrs; then
+  zsh-defer cached_eval "abbrs init zsh"
 fi
 
 if command_exists zmx; then
@@ -146,7 +138,3 @@ if dir_exists "$GCLOUD_BASE"; then
 fi
 
 zsh-defer unfunction source
-
-if command_exists abbrs; then
-  eval "$(abbrs init zsh)"
-fi
