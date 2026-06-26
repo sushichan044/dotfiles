@@ -59,7 +59,7 @@
   "icon_theme": "Material Icon Theme",
   "languages": {
     "CSS": {
-      "language_servers": ["tailwindcss-intellisense-css", "!vscode-css-language-server"],
+      "language_servers": ["tailwindcss-intellisense-css", "!vscode-css-language-server"]
     },
     "HTML+ERB": {
       "language_servers": ["herb", "ruby-lsp"]
@@ -104,7 +104,7 @@
             "\\.className\\s*[+]?=\\s*['\"]([^'\"]*)['\"]",
             "\\.setAttributeNS\\(.*,\\s*['\"]class['\"],\\s*['\"]([^'\"]*)['\"]",
             "\\.setAttribute\\(['\"]class['\"],\\s*['\"]([^'\"]*)['\"]",
-            
+
             // Astro
             "class:list=\"{([^}]*)}\"",
             "class:list='{([^}]*)}'",
@@ -113,11 +113,11 @@
             "class:\\s*([^\\s{]+)",
             "\\{\\s*class:\\s*\"([^\"]*)\"",
             "\\{\\s*class:\\s*'([^']*)'",
-            
+
             // Vue
             ":class=\"([^\"]*)\"",
             ":class='([^']*)'",
-            
+
             // ERB
             "\\bclass:\\s*['\"]([^'\"]*)['\"]"
           ]
