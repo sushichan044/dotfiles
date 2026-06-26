@@ -17,8 +17,7 @@ const hook = defineHook({
           hookSpecificOutput: {
             additionalContext: [
               "You just ran `git rebase`.",
-              "If you are not already executing a multi-step workflow that covers PR base verification, execute the `adjust-pr-base` skill before completing the task.",
-              "Use that skill to inspect the current branch PR, possible parent PRs, and whether the PR base branch should change.",
+              "Execute the `adjust-pr-base` skill to adjust the PR base branch.",
             ].join("\n"),
             hookEventName: "PostToolUse",
           },
@@ -32,10 +31,9 @@ const hook = defineHook({
         output: {
           hookSpecificOutput: {
             additionalContext: [
-              "You just created a pull request.",
-              "If you are not already executing a multi-step workflow that covers post-PR-creation steps, do the following before completing the task:",
-              "1. Execute `reorganize-diff` to organize your commits if not already done.",
-              "2. Execute the `adjust-pr-base` skill to inspect the current PR, possible parent PRs, and whether `gh pr edit --base ...` is needed.",
+              "You just created a pull request. Do following steps to ensure the PR is properly set up:",
+              "1. Execute `reorganize-diff` skill, tidy commit size, and force push if necessary.",
+              "2. Execute the `adjust-pr-base` skill to adjust the PR base branch.",
             ].join("\n"),
             hookEventName: "PostToolUse",
           },
