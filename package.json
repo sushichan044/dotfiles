@@ -19,9 +19,9 @@
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
     "shell-quote": "1.9.0",
-    "temporal-polyfill-lite": "0.4.1",
+    "temporal-polyfill-lite": "0.4.2",
     "unist-util-visit": "5.1.0",
-    "valibot": "1.4.1"
+    "valibot": "1.4.2"
   },
   "devDependencies": {
     "@opencode-ai/plugin": "1.17.11",
