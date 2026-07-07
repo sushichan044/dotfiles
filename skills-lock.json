@@ -267,6 +267,12 @@
       "sourceType": "github",
       "skillPath": "skills/triage-pr-reviews/SKILL.md",
       "computedHash": "624df0a7ffb7f5de0a327660ff96211d4e95a92c5f49413b902f8bae4c3546b8"
+    },
+    "writing-great-skills": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/writing-great-skills/SKILL.md",
+      "computedHash": "42fe94c64d7b9acda9ce7d6495a3476893a1b18615986528f55f7162a29789d4"
     }
   }
 }
