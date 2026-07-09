@@ -6,7 +6,7 @@
       "name": "@sushichan044/dotfiles",
       "dependencies": {
         "ansis": "4.3.1",
-        "args-tokens": "0.27.0",
+        "args-tokens": "0.28.0",
         "arkregex": "0.0.7",
         "cc-hooks-ts": "2.1.199",
         "css-color-names": "1.0.1",
@@ -325,7 +325,7 @@
 
     "ansis": ["ansis@4.3.1", "", {}, "sha512-BJ8/l4R5LRE7hW9WdSuGYrLSHi2ynxeFpDFbH0K/CgNeY/tyhk+vO6TYxXC5r5CpUhNVX310xzPsN/H9lCdfOA=="],
 
-    "args-tokens": ["args-tokens@0.27.0", "", {}, "sha512-bA4QwSNK94NG99lTZSxqCpKwQOMAfmK9If3nt1udvFTIY3b6Vj/3QzpXuOtegiYh2197zQLc8eejKDJm8Emj/g=="],
+    "args-tokens": ["args-tokens@0.28.0", "", {}, "sha512-jZVhQzAB7jr87SphE8+ZbpB98BUCGuR/+vuH9jDAdbXOakHQRVsXWH68Q2IPxpyxjc2Zu/ROLqS9rPaDbU13Xg=="],
 
     "aria-query": ["aria-query@5.3.0", "", { "dependencies": { "dequal": "^2.0.3" } }, "sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A=="],
 
