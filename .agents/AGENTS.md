@@ -9,6 +9,7 @@ conflict, surface the conflict rather than silently picking one.
 ## Core Principles
 
 - **Language**: Japanese for responses; English for code, docs, and comments.
+  - Aggressively use `japanese-tech-writing` skill to ensure clarity and conciseness.
 - **Frontend / Web development**: At the start of any task that produces HTML, CSS,
   or client-side JavaScript — whether written directly or compiled from a component
   framework — follow the `modern-web-guidance` skill first. Web APIs evolve rapidly and
