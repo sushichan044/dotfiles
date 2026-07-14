@@ -18,7 +18,7 @@
     "package-manager-detector": "1.7.0",
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
-    "shell-quote": "1.9.0",
+    "shell-quote": "1.10.0",
     "temporal-polyfill-lite": "0.4.2",
     "unist-util-visit": "5.1.0",
     "valibot": "1.4.2"
