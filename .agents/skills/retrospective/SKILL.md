@@ -1,6 +1,6 @@
 ---
 name: retrospective
-description: "Retrospective based on a 6-stage process (input → interpretation → planning → action → inspection → output). Surfaces problems and opportunities bottom-up from outputs and applies fixes top-down from upstream. Use this skill after finishing a task, before creating a PR, or whenever the user says 'retrospective', 'wrap up learnings', or similar."
+description: "Retrospective grounded in the garbage-in-garbage-out principle: traces problems from Output back to their upstream origin across six stages, then fixes at the stage where the cause lives — knowledge deficiencies get knowledge fixes, not downstream rule patches. Implements fixes in the current session. Use after finishing a task, before creating a PR, or whenever the user says 'retrospective', 'wrap up learnings', or similar."
 user-invocable: true
 ---
 
@@ -8,78 +8,123 @@ user-invocable: true
 
 Run before a commit or PR is created.
 
-An agent's task execution proceeds through 6 stages.
+## Core principle: fix where it broke
+
+This retrospective is grounded in garbage-in-garbage-out: if the input was wrong, no amount of downstream rules can reliably compensate. Each problem is traced to the upstream stage where it originated, and the fix is applied there — not patched over downstream.
+
+An Input-stage deficiency (missing, stale, or wrong knowledge) is fixed by knowledge operations — not by appending a rule that says "remember to check X."
 
 ## On the limits of self-report
 
-Same-context self-reflection is documented to fail via "degeneration of thought" (Reflexion, Multi-Agent Reflexion): the reflecting model reinforces its original bias rather than finding a new angle.
-
-This skill mitigates that by ending the Submission with one mandatory `retrospective-critic` invocation that audits six bias surfaces in one fresh-context pass.
-
-Critics shift the probability away from append-only failure modes; they do not eliminate it. A low-finding verdict is not proof of thoroughness — only that the critic did not catch the main agent.
+Same-context self-reflection fails via "degeneration of thought" (Reflexion, Multi-Agent Reflexion). This skill mitigates that with three parallel critic agents at Submission, each auditing from a fresh context.
 
 ## The 6 stages
 
-- **Input**: Receiving instructions, context, skills, CLAUDE.md, tool descriptions, and actively collecting information.
-- **Interpretation**: Reading the meaning, intent, and premises of the input.
-- **Planning**: Task decomposition, ordering, tool selection, scope definition.
-- **Action**: Tool invocation, file edits, command execution.
-- **Inspection**: Verifying results and judging pass/fail.
-- **Output**: Reporting to the user and deciding what to persist.
+- **Input**: Knowledge, rules, tools, and instructions received or collected.
+- **Interpretation**: Reading meaning, intent, and premises.
+- **Planning**: Decomposition, ordering, tool selection, scope.
+- **Action**: Tool invocation, edits, commands.
+- **Inspection**: Verifying results, judging pass/fail.
+- **Output**: Reporting, persistence decisions.
 
-## Phase 1: Fact recording
+## Phase 1: Session facts
 
-Record what occurred at each stage in chronological order. Do not mix in interpretation.
+Brief chronological record. No interpretation.
 
-For Output, include the user's reaction (dissatisfaction or satisfaction) — this is the downstream signal Phase 2 lifts upstream.
+Inventory every rule and knowledge source in context — CLAUDE.md at each layer, memory entries (which fired, which did not), skills invoked, agents used, KB pages read. Include the user's reaction in Output.
 
-## Phase 2: Bottom-up Problem and Opportunity surfacing
+## Phase 2: Bottom-up tracing
 
-Walk from Output back to Input. At each stage, surface both axes:
+Walk from Output back to Input. At each stage:
 
-- **Problems** — failures that occurred. Could this stage have caught the downstream Problem? Is the true cause here, or further upstream?
-- **Opportunities** — no failure occurred, but a better outcome was possible: a faster path, a newly available tool, an unmet ideal.
+- **Problems** — what went wrong? Is the true cause here, or further upstream?
+- **Opportunities** — no failure, but a better outcome was reachable.
 
-A retrospective that surfaces only Problems is a defensive workflow. A hole plugged upstream is not plugged again downstream.
+**Root cause test**: "If this cause were eliminated at this stage, would all downstream symptoms disappear?" If yes, this is the true cause. If no, trace further upstream.
 
-## Phase 3: Keeps
+Record the originating stage for each cause. This attribution drives Phase 4.
 
-At each stage, name a success pattern worth keeping.
+## Phase 3: Remediation design
 
-Quality bar: applicable to similar future situations, phrased as a principle, not as a single verified fact.
+For each true cause and opportunity from Phase 2, **design** a fix at the stage where the cause lives. A downstream patch for an upstream cause is not a valid fix. Do not implement yet — implementation happens after critic audit in Phase 4.
 
-## Phase 4: Top-down Try rollout
+### Input — the context was wrong or missing
 
-For each true cause from Problems and each gap from Opportunities, write a Try from Input downward.
+Knowledge or tool access was deficient. No downstream rule compensates for bad input.
 
-If the cause is cut off upstream, no downstream countermeasure is needed. Layered defense only when the upstream countermeasure is low-confidence.
+- **Knowledge**: invoke `kb-ingest` to create missing pages, revise stale pages, or reorganize. If a wiki page was consulted but inaccurate, update it now. If needed knowledge was absent, ingest it now.
+- **Project documentation**: if the project has a docs layer that feeds agent context (design docs, ADRs, architecture notes), create or update the relevant document there. Project-specific context belongs in the project, not in the KB.
+- **Tools**: configure MCP servers, hooks, or access.
 
-## Phase 5: Improvement implementation flow
+### Interpretation — the context was present but misread
 
-For each Try, judge from Step 1 in order, and stop at the first step that applies.
+- **Fix** ambiguous rules (wrong content, unclear trigger, too abstract to pattern-match).
+- **Move** rules to the correct layer (invisible at the point of decision = wrong layer).
+- **Delete** obsolete or contradictory rules.
 
-1. **Eliminate** — architectural change, automation that removes the work.
-2. **Deterministic guardrail** — lint, typecheck, CI, hook.
-3. **Skill** — multi-step recurring workflow.
-4. **Agent prompt** — specific agent behavior.
-5. **Operate on the existing rule library** — prefer **delete** (rule no longer needed), **move** (wrong placement), **fix** (rule content is wrong) over **append** (new rule). Re-wording is explicitly out of scope: if a rule fails to fire, the defect is structural, not rhetorical.
+### Planning — understood correctly, planned poorly
 
-As a retrospective outcome, do not modify the global layer (everything under `~/.claude/`). Present global candidates to the user as a separate task.
+- **Skill**: codify as a recurring workflow.
+- **Agent**: define specialized behavior.
+
+### Action — plan correct, execution failed
+
+- **Eliminate**: automate the manual step.
+- **Guardrail**: hook, lint, CI, typecheck.
+
+### Inspection — verification missed the defect
+
+- Strengthen verification steps or test coverage.
+
+### Output — correct but poorly delivered
+
+- Fix reporting, persistence, or communication rules.
+
+### Remediation targets and prohibited sinks
+
+The retrospective writes fixes to authoritative layers only: project CLAUDE.md, project documentation (design docs, ADRs, or any docs directory that serves as agent context), skill definitions, agent definitions, guardrail configurations, or KB pages (for cross-project knowledge). If the project has a documentation layer that feeds agent context, it is a valid — and often correct — remediation target for Input-stage fixes.
+
+Two prohibited sinks:
+
+- **Memory** — the retrospective does not write to memory. Memory is managed by other workflows; it is not a remediation target. Any retrospective action that writes to memory is an unconditional violation.
+- **KB as project substitute** — the KB is an agent-personal cross-project index. Project-specific rules, conventions, or decisions belong in the project's own CLAUDE.md or documentation, not in the KB. Placing project knowledge in the KB removes it from the team's shared artifacts. KB ingestion is appropriate only for cross-project facts that have no single-project home.
+
+critic-remediation audits both sinks.
 
 ## Submission
 
-Invoke `retrospective-critic` (bundled at `agents/retrospective-critic.md`) once. Pass it:
+**Critic invocation is unconditionally mandatory.** A retrospective that does not invoke all three critics is invalid and must not be presented to the user. There is no exception — not for simple sessions, not for time constraints, not for "no findings to audit." The critics exist because same-context self-reflection is structurally unreliable; skipping them defeats the retrospective's only safeguard against bias.
 
-- the workspace rule library entry points
-- the Keeps and Opportunities from Phase 2 / 3
-- the Step 5 search log
-- the proposed Submission text
-- the workspace writing-style source
+Invoke three critics **in parallel** (bundled under `agents/`):
 
-Action the verdict's findings this retrospective wherever possible:
+| Agent                   | Perspective                                                                 |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `critic-coverage`       | Exhaustiveness — source enumeration, stage coverage, missed problems        |
+| `critic-classification` | Correctness — stage attribution, library drift                              |
+| `critic-remediation`    | Remediation soundness — stage alignment, implementation verification, style |
 
-- `delete`, `move`, or `fix` workspace-local rules immediately
-- queue plugin-PR-scoped findings as separate PRs
-- report items requiring external coordination as `needs explicit follow-up`
+### Disposition of critic findings
 
-Present the result to the user as a single readable headline plus a list of actions taken, followed by counters (problems surfaced, opportunities surfaced, deleted, moved, fixed, appended). If uncommitted changes remain, commit and push.
+Every finding from every critic must receive an explicit disposition. No finding may be silently dropped.
+
+- **actioned** — the finding was addressed. Cite the evidence: file path edited, skill invoked, classification corrected.
+- **contested** — the finding is incorrect. State the specific counter-argument: what fact the critic missed or got wrong. "I disagree" without a falsifiable reason is not a counter-argument.
+
+Present a disposition table listing every finding, its disposition, and the evidence or counter-argument. A finding without a disposition is an audit failure.
+
+## Phase 4: Implementation
+
+Implementation begins here — after critics have audited and all findings have dispositions. No fix may be implemented before this phase.
+
+**Implement each fix in this session.** Do not propose — execute.
+
+- Knowledge operations: invoke the relevant `kb-*` skill now.
+- Rule operations: edit the file directly (CLAUDE.md, skill, agent).
+- Guardrails: create or modify the configuration.
+- Global layer (`~/.claude/`): the retrospective does not modify the global layer directly. Instead, prepare and submit the change as a prompt for a global-layer-managing agent — specifying the target file, the exact edit (old text → new text), and the rationale. A bare "this belongs in the global layer" with no actionable prompt is a deferred finding, not a prepared one.
+
+Only actions requiring external coordination (user auth, cross-repo, upstream dependency) may be deferred as `needs explicit follow-up`.
+
+Present the result as a headline plus the disposition table, with counters (problems traced, opportunities surfaced, knowledge operations, rule fixes, findings actioned, findings contested, items deferred).
+
+If uncommitted changes remain, commit and push.
