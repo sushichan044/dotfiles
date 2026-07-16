@@ -18,6 +18,12 @@
       "skillPath": "ast-grep/skills/ast-grep/SKILL.md",
       "computedHash": "3bca45167617f547e97454ae16d271ba3aeb2550d89e6ef1942057bd122c0061"
     },
+    "codex-consultation": {
+      "source": "shokai/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/codex-consultation/skills/codex-consultation/SKILL.md",
+      "computedHash": "15c189ab71296c14aa811c02fe9dde1cfc771acfdd9a055f0e70b2051e5d435f"
+    },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
       "sourceType": "github",
