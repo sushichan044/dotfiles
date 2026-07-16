@@ -115,9 +115,7 @@ interface SomeType<T> {
 
 ```json
 {
-  "compilerOptions": {
-    /* ... */
-  },
+  "compilerOptions": {/* ... */},
   "include": ["src"],
   "exclude": ["**/node_modules", "**/.*/"]
 }

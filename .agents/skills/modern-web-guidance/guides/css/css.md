@@ -305,6 +305,7 @@ For most styling purposes (e.g. colors, borders, backgrounds, typography, etc) t
 - To select one among many options presented in a dropdown: Use a `<select>` + `appearance: base-select` + `::picker(select)`. For more info see `branded-select-styling` (via `npx -y modern-web-guidance@latest retrieve "branded-select-styling"`)
 - Selecting one or more among multiple options laid out inline in the page: Use a `<input type=checkbox>` or `<input type=radio>` inside a `<label>` for each option. Style via `label:has(:checked)`.
 - Style checkboxes, radios and switches via `appearance: none` + generated content (`::before`/`::after`) or background images to draw the checked state.
+
 <!-- Customizable select listbox version currently buggy + this has much better browser support -->
 
 #### Non-textual `<input>`s (buttons, sliders, file inputs etc.)

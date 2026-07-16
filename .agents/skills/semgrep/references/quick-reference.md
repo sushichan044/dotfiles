@@ -57,10 +57,10 @@ pattern-either:
 
 ```yaml
 # Examples
-pattern: $FUNC($ARG)           # Capture function and arg
-pattern: func($_, $IMPORTANT)  # Ignore first, capture second
-pattern: func($...ARGS)        # Capture all arguments
-pattern: func(...)             # Match any arguments
+pattern: $FUNC($ARG) # Capture function and arg
+pattern: func($_, $IMPORTANT) # Ignore first, capture second
+pattern: func($...ARGS) # Capture all arguments
+pattern: func(...) # Match any arguments
 ```
 
 ### Deep Matching
