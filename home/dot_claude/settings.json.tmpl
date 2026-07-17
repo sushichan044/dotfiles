@@ -253,6 +253,16 @@
           }
         ]
       }
+    ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/MessageDisplay/ensure-whitespace.ts"
+          }
+        ]
+      }
     ]
   },
   "sandbox": {
