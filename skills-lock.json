@@ -18,6 +18,12 @@
       "skillPath": "ast-grep/skills/ast-grep/SKILL.md",
       "computedHash": "3bca45167617f547e97454ae16d271ba3aeb2550d89e6ef1942057bd122c0061"
     },
+    "batch-grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/in-progress/batch-grill-me/SKILL.md",
+      "computedHash": "f448831b8f04518b1527408f1d5024384ad5f543bdbaac6fabb7aa053ad60489"
+    },
     "codex-consultation": {
       "source": "shokai/agent-skills",
       "sourceType": "github",
