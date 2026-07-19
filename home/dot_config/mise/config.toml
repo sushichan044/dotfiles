@@ -42,6 +42,7 @@ yq = "latest"
 "cargo:rust-script" = "latest"
 "github:ushironoko/abbrs" = "latest"
 "forgejo:mergiraf/mergiraf" = "latest"
+"github:byron/dua-cli" = "2.38.0"
 "github:datadog-labs/pup" = "latest"
 "github:gitleaks/gitleaks" = "latest"
 "github:k1LoW/deck" = "latest"
@@ -98,7 +99,10 @@ idiomatic_version_file_enable_tools = [
   "zig",
 ]
 trusted_config_paths = ["~/workspace/github.com/sushichan044"]
-minimum_release_age_excludes = ["go:github.com/rokuosan/git-wtclean/cmd/git-wtclean"]
+minimum_release_age_excludes = [
+  "go:github.com/rokuosan/git-wtclean/cmd/git-wtclean",
+  "github:sushichan044/kg",
+]
 
 [settings.github]
 use_git_credentials = true
