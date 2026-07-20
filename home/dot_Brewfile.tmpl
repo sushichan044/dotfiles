@@ -169,7 +169,6 @@ if OS.mac?
   cask "1password-cli"
   cask "altair-graphql-client"
   cask "appcleaner"
-  cask "claude"
   cask "cmux"
   cask "coconutbattery"
   cask "codex-app"
@@ -228,6 +227,7 @@ if OS.mac?
   cask "tailscale-app"
   cask "zotero"
 {{ else }}
+  cask "claude"
   cask "ollama-app" # needs high machine resource, expected to have 32GB+ RAM
   cask "slack"
 {{ end }}
