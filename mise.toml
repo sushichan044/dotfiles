@@ -1,5 +1,5 @@
 [tools]
-vite-plus = { version = "0.2.4", postinstall = "vp env off" } # do not manage nodejs with vite-plus
+vite-plus = { version = "0.2.5", postinstall = "vp env off" } # do not manage nodejs with vite-plus
 
 [plugins]
 vite-plus = "https://github.com/markmals/mise-vite-plus"
