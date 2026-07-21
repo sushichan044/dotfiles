@@ -6,45 +6,13 @@ tap "artginzburg/tap", trusted: {
   formulae: ["sudo-touchid"],
 }
 tap "buo/cask-upgrade", trusted: true
-tap "caarlos0/tap", trusted: {
-  casks: ["svu"],
-}
-tap "goreleaser/tap", trusted: {
-  casks: ["goreleaser"],
-}
-tap "homeport/tap", trusted: {
-  formulae: ["termshot"],
-}
 tap "kayac/tap", trusted: {
   formulae: ["ecspresso"],
 }
-tap "songmu/tap", trusted: {
-  formulae: ["laminate"],
-}
-tap "sushichan044/tap", trusted: {
-  formulae: ["mdfm"],
-}
-tap "suzuki-shunsuke/ghalint", trusted: {
-  formulae: ["ghalint"],
-}
-tap "suzuki-shunsuke/pinact", trusted: {
-  formulae: ["pinact"],
-}
-tap "wtsnjp/tex2img", trusted: {
-  formulae: ["tex2img"],
-}
 
 # from custom tap
-brew "homeport/tap/termshot", trusted: true
 brew "kayac/tap/ecspresso", trusted: true
-brew "songmu/tap/laminate", trusted: true
-brew "wtsnjp/tex2img/tex2img", trusted: true
 
-cask "caarlos0/tap/svu", trusted: true
-cask "goreleaser/tap/goreleaser", trusted: true
-cask "sushichan044/tap/mdfm", trusted: true
-cask "suzuki-shunsuke/ghalint/ghalint", trusted: true
-cask "suzuki-shunsuke/pinact/pinact", trusted: true
 if OS.mac?
   brew "artginzburg/tap/sudo-touchid",
     trusted: true,
