@@ -5,10 +5,7 @@ pre-commit:
   jobs:
     - name: autofix TypeScript
       group:
-        parallel: false
         jobs:
-          - run: bun run lint:fix {staged_files}
+          - run: vp check --fix {staged_files}
             glob: "*.{js,cjs,mjs,ts,cts,mts,jsx,tsx}"
-            stage_fixed: true
-          - run: bun run format {staged_files}
             stage_fixed: true
