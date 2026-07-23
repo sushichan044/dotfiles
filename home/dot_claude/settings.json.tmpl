@@ -37,7 +37,6 @@
     "claude-md-management@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
@@ -100,15 +99,6 @@
           {
             "type": "command",
             "command": "jq -r '.tool_input.file_path' | xargs -I {} seil post-edit {} --reporter claude"
-          }
-        ]
-      },
-      {
-        "matcher": "Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/hooks/PostToolUse/superpowers/worktree.ts"
           }
         ]
       },
