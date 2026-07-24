@@ -15,7 +15,7 @@
     "github-reserved-names": "2.2.0",
     "local-pkg": "1.2.1",
     "mdast-util-from-markdown": "2.0.3",
-    "package-manager-detector": "1.7.0",
+    "package-manager-detector": "1.8.0",
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
     "shell-quote": "1.10.0",
