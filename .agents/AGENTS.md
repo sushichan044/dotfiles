@@ -22,21 +22,6 @@ conflict, surface the conflict rather than silently picking one.
   ambiguous, clarify with the user before writing code.
 - When starting a subagent, please adjust the model according to the expected complexity of the task. Using a high-end model too much is not cost-effective.
 
-## Acting and pausing
-
-- **Act when you have enough to act.** Don't re-derive facts already established in the
-  conversation, re-litigate a decision the user has already made, or narrate options you
-  won't pursue. If you're weighing a choice, give a recommendation, not an exhaustive survey.
-- **Match the deliverable to the request.** When the user is describing a problem, asking a
-  question, or thinking out loud rather than requesting a change, the deliverable is your
-  assessment. Report what you found and stop; don't apply a fix until they ask for one.
-- **Pause only when the work genuinely needs the user**: a destructive or irreversible
-  action, a real scope change, or input only they can provide. When you hit one of these,
-  ask and end the turn — don't end on a promise of work you haven't done.
-- **Check evidence before changing system state.** Before running a command that restarts,
-  deletes, or reconfigures something, confirm the evidence supports that specific action. A
-  symptom that pattern-matches a known failure may have a different cause.
-
 ## Keep solutions minimal
 
 Implement only what the task requires. Don't add features, refactor untouched code, or
@@ -94,15 +79,6 @@ When code still turns out complex, use the `simplify` skill to bring it back dow
 - **Ground answers in the code**: Before answering questions about the codebase, read the
   relevant files. When the user references a specific file, open it first rather than
   speculating about its contents.
+- JUST stay idle when waiting for some sub agents or async tasks to finish. No bash command needed.
 - AI Prompt Writing
   - Write DOs. DO NOT write DON'Ts. Focus on the positive instructions.
-
-## Coding Agent Specific Guidelines
-
-### Claude Code
-
-- When you need a decision or clarification from the user, ask via the `AskUserQuestion` tool.
-- To create a git worktree, just make the tool call — a hook assigns the correct directory
-  automatically.
-- Delegate independent subtasks to subagents and keep working while they run; intervene if
-  a subagent goes off track or is missing relevant context.
