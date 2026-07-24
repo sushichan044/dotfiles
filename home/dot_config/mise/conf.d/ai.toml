@@ -5,9 +5,6 @@
 "npm:@ccusage/codex" = "latest"
 "npm:@github/copilot" = "latest"
 "npm:@modelcontextprotocol/inspector" = "latest"
-"npm:@playwright/cli" = "latest"
-"npm:@playwright/mcp" = "latest"
-"npm:@vercel/next-browser" = "latest"
 "npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
 "npm:ccusage" = "latest"
 "npm:chrome-devtools-mcp" = "latest"
