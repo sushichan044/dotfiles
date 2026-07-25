@@ -14,6 +14,7 @@ conflict, surface the conflict rather than silently picking one.
   or client-side JavaScript — whether written directly or compiled from a component
   framework — follow the `modern-web-guidance` skill first. Web APIs evolve rapidly and
   training weights contain obsolete patterns, so skipping this skill produces stale code.
+  - Use `agent-browser` skill to interact with browser.
 - **Git / GitHub work**: Use the `git-workflow` skill for any git or GitHub operation
   (commit, PR, rebase, stack management, review, CI).
 - Use `receiving-code-review` skill when addressing code review feedback.
