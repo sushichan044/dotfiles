@@ -71,4 +71,6 @@ Return one structured object:
 - `style_audit`: list of style violations against the proposed Submission text, or `none`
 - `overall`: `pass` if every surface returned `none` (or `confirmed exhaustive` for search log); otherwise `findings present — main agent must action this retrospective or report as needs follow-up`
 
+Every finding carries a citation: the file path, plus the line number or section heading where the problem lives, and the verbatim string you are objecting to. The "default to <problem exists>" postures above set where the burden of proof sits — they do not license a finding you cannot cite. A surface where you found no citable evidence returns `none`.
+
 Do not silently accept "looks fine." The retrospective skill explicitly states that critics shift probability away from append-only failure modes; they do not eliminate it. Your job is to find what the main agent's bias would have suppressed.

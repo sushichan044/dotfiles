@@ -7,9 +7,6 @@ allowed-tools: Bash(git branch:*), Bash(git push:*), Bash(gh run list:*), Bash(g
 
 # watch-ci
 
-> [!NOTE]
-> この作業は安い AI Model で済ませたいので、あなたが高価な Model であれば以降の作業は安い Model の SubAgent に移譲してください.
-
 push または PR 作成後の CI を監視し、失敗したら re-run を試みてから原因をトリアージし、適切なスキルで修正してパスするまでループする。
 
 ## Procedure
@@ -103,7 +100,11 @@ gh run view <run-id> --log-failed
 **判定結果によるルーティング:**
 
 - **関連あり** → `fix-github-actions-ci` スキルを呼び出す。このスキルが原因特定・修正・commit/push まで完走する。
-- **関連なし** → `investigate-flaky-test` スキルを呼び出す。調査レポートをユーザーに提示して終了する。
+- **関連なし** → 修正を試みず、次を報告して終了する。PR の変更に起因しない失敗を推測で直すと、原因を隠したまま別の変更を積むことになる。
+  - 失敗した workflow 名と step 名
+  - 失敗ログの該当箇所（エラーメッセージと、あれば外部サービス名やタイムアウト値）
+  - PR の変更ファイルと重複しないと判断した根拠
+  - re-run を何回試したか
 
 ### 6. 修正後: ループ
 
@@ -113,7 +114,7 @@ gh run view <run-id> --log-failed
 
 - CI がパスした → 成功レポートを出して終了
 - flaky として記録し re-run でパスした → 成功レポート（flaky 注記付き）を出して終了
-- `investigate-flaky-test` が完了した → 調査レポートをユーザーに渡して終了
+- PR の変更と無関係な失敗と判定した → Step 5 の報告内容をユーザーに渡して終了
 - 同一ブランチで `fix-github-actions-ci` による修正を 3 回試みたが CI が改善しない → ユーザーに報告して終了（無限ループ防止）
 - ユーザーが停止を指示した
 

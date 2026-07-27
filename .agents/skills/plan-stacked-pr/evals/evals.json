@@ -16,8 +16,8 @@
           "check": "Creates individual plan files for each PR in the stack"
         },
         {
-          "name": "delegates-to-split-big-pr",
-          "check": "Delegates split granularity to split-big-pr Phase 1"
+          "name": "delegates-to-reorganize-diff",
+          "check": "Delegates split granularity to reorganize-diff Phase 1"
         },
         {
           "name": "scope-defined",

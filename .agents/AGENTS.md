@@ -9,7 +9,8 @@ conflict, surface the conflict rather than silently picking one.
 ## Core Principles
 
 - **Language**: Japanese for responses; English for code, docs, and comments.
-  - Aggressively use `japanese-tech-writing` skill to ensure clarity and conciseness.
+  - Use the `japanese-tech-writing` skill when writing or revising a Japanese document —
+    a chapter, article, design doc, or README. Ordinary chat replies do not need it.
 - **Frontend / Web development**: At the start of any task that produces HTML, CSS,
   or client-side JavaScript — whether written directly or compiled from a component
   framework — follow the `modern-web-guidance` skill first. Web APIs evolve rapidly and
@@ -17,11 +18,14 @@ conflict, surface the conflict rather than silently picking one.
   - Use `agent-browser` skill to interact with browser.
 - **Git / GitHub work**: Use the `git-workflow` skill for any git or GitHub operation
   (commit, PR, rebase, stack management, review, CI).
-- Use `receiving-code-review` skill when addressing code review feedback.
 - **Understand the problem before the solution**: Before discussing _how_ to implement,
   be clear on (1) what problem is being solved and (2) the expected behavior. If either is
   ambiguous, clarify with the user before writing code.
-- When starting a subagent, please adjust the model according to the expected complexity of the task. Using a high-end model too much is not cost-effective.
+- **Delegating to subagents**: Delegate when the user asks for it, or when the work is a
+  broad read-only sweep whose intermediate output you don't need in context. Handle the rest
+  yourself — a task you can finish in a few tool calls is cheaper done inline. Keep concurrent
+  subagents to a handful, and match the model to the task: a mechanical or narrow task belongs
+  on a small model.
 
 ## Keep solutions minimal
 
@@ -62,16 +66,13 @@ When code still turns out complex, use the `simplify` skill to bring it back dow
 
 ## Communicating with the user
 
-- **Lead with the outcome.** Your first sentence after finishing should answer "what
-  happened" or "what did you find" — the thing the user would ask for if they said "just
-  give me the TLDR." Supporting detail comes after. Readability matters more than brevity.
-- **Write the final summary for a reader who didn't watch you work.** Drop the working
-  shorthand: no arrow chains, no made-up labels, no references to reasoning the user never
-  saw. Spell out terms; give each file, commit, or flag its own plain-language clause.
-- **Ground progress claims in evidence.** Report only work you can point to a tool result
-  for. If something isn't verified yet, say so. If tests fail, say so with the output; if a
-  step was skipped, say that; when something is done and verified, state it plainly without
-  hedging.
+- **Lead with the outcome.** The first sentence answers "what happened" or "what did you
+  find." Supporting detail comes after.
+- **Write for a reader who didn't watch you work.** No arrow chains, no made-up labels, no
+  references to reasoning the user never saw. Give each file, commit, or flag its own
+  plain-language clause.
+- **Keep it short by default.** A few sentences, plus a short list when structure helps.
+  Go longer only when the user asks for depth or the material genuinely needs it.
 
 ## Behavioral Guidelines
 
@@ -81,5 +82,5 @@ When code still turns out complex, use the `simplify` skill to bring it back dow
   relevant files. When the user references a specific file, open it first rather than
   speculating about its contents.
 - JUST stay idle when waiting for some sub agents or async tasks to finish. No bash command needed.
-- AI Prompt Writing
-  - Write DOs. DO NOT write DON'Ts. Focus on the positive instructions.
+- **Writing prompts for agents**: describe the desired end state as a positive instruction.
+  When a prohibition feels necessary, rewrite it as the behavior you want instead.

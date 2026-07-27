@@ -43,7 +43,7 @@ Use `japanese-tech-writing` skill when writing in Japanese.
 5. Suggest a title.
    - Provide 2-3 concise options when that helps decision-making.
    - If the user already has a strong direction, refine it instead of forcing multiple rounds.
-   - After presenting candidates, use an interactive question tool when available to narrow wording with the user until the title and draft are settled.
+   - After presenting candidates, use `AskUserQuestion` to narrow wording with the user until the title and draft are settled.
 
 6. Handle stacked PRs sanely.
    - Treat chained branches as first-class workflow, not an edge case.
@@ -92,7 +92,7 @@ If the current branch already has an existing PR, treat that PR's base branch as
 
 When the `adjust-pr-base` procedure returns a clear result, use it. When multiple candidates are equally plausible or confidence is low:
 
-- Prefer an interactive question tool when available.
+- Use `AskUserQuestion`.
 - Present 1-2 likely parent choices plus the default branch as a fallback choice.
 - Each choice must include both:
   - the branch name
@@ -131,7 +131,7 @@ When revising an existing PR after review, keep the discussion state clean.
 4. For Pull Requests, inspect the diff and infer the best base branch.
 5. Collect obvious high-value reference URLs when they exist.
 6. Draft the title and body in the template's structure.
-7. If base branch or wording is still ambiguous, use an interactive question tool when available to converge with the user.
+7. If base branch or wording is still ambiguous, use `AskUserQuestion` to converge with the user.
 8. Return the finalized draft in a form the user can reuse directly, and include a `gh pr create` command example only when it helps.
 
 ## Boundaries
@@ -139,7 +139,7 @@ When revising an existing PR after review, keep the discussion state clean.
 - This skill is for preparing the draft, not forcing PR creation or memo storage.
 - The default deliverable is a ready-to-use title/body draft. If the user also wants to create the PR, provide the appropriate command with the inferred base branch, but do not create the PR unless explicitly asked in the host environment.
 - Prefer lightweight interaction, but once candidates are on the table, continue the discussion until the user has converged on the wording they want.
-- For interactive clarification, prefer a dedicated question-asking tool call over burying the decision inside a long free-form response when such a tool is available in the environment.
+- For interactive clarification, use `AskUserQuestion` rather than burying the decision inside a long free-form response.
 - Be complete, but avoid turning the process into a checklist ceremony.
 
 ## Output

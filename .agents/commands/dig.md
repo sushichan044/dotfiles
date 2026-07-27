@@ -6,15 +6,13 @@ allowed-tools:
   - Read
   - Grep
   - Glob
-  - TodoRead
-  - TodoWrite
   - AskUserQuestion
 context: fork
 # borrowed from https://github.com/fumiya-kume/claude-code/blob/a4da9358cc7b810e3ecec4f5f6b0b329eddce1c7/dig/commands/dig.md
 # license is GPL-3.0
 ---
 
-Read the current plan file and interview me in detail using the AskUserQuestionTool about literally anything.
+Read the current plan file and interview me in detail using the `AskUserQuestion` tool about literally anything.
 
 - Product Spec
 - Technical detail
@@ -65,7 +63,7 @@ After receiving user answers, output:
 
 ## Important Notes
 
-- **Must use AskUserQuestion tool** - Not conversational questions
+- **Must use the `AskUserQuestion` tool** - Not conversational questions
 - Each option must include **pros/cons**
 - Use multiSelect sparingly (default: false)
 - Read CLAUDE.md before generating questions to align with project patterns

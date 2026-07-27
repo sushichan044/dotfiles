@@ -6,9 +6,6 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 
 # stacked-pr
 
-> [!NOTE]
-> この作業は安い AI Model で済ませたいので、あなたが高価な Model であれば以降の作業は安い Model の SubAgent に移譲してください.
-
 依存関係のある複数の PR を管理・同期する。PR 間の依存を検出し、カスケード rebase で整合性を保ち、CI を上流から修正する。
 
 ## When This Skill Applies
@@ -23,28 +20,25 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 
 Stacked PRs form a chain: each PR targets its parent branch rather than `main`. When an upstream branch changes, every downstream branch must rebase onto the updated parent in order, one level at a time. CI failures are fixed top-down because upstream CI is independent of downstream changes — once an upstream branch's CI passes, it stays passed regardless of what happens below.
 
-## Parallelism Strategy
+## Concurrency Strategy
 
-**Maximize concurrency at every opportunity.** The rebase itself must be sequential (topological order), but everything around it — fetches, CI watches, PR base adjustments, CI failure diagnostics — should run in parallel whenever possible.
+すべてのブランチが 1 つの working tree を共有する。境界はそこで引く。
 
-Key parallelism opportunities:
+**逐次に実行するもの（working tree を変更する操作）**: `git checkout`、`git rebase`、`git push`、conflict の解消。並行させると互いの index と HEAD を壊すため、必ずトポロジカル順に 1 ブランチずつ処理する。
 
-| Phase            | What to parallelize                                                                                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Discovery        | `git fetch` all candidate branches concurrently                                                                                                               |
-| Rebase loop      | After each push, immediately launch `adjust-pr-base` as a background sub-agent and a background CI watch before moving to the next branch                     |
-| CI watching      | All CI watches run concurrently                                                                                                                               |
-| CI fix diagnosis | Spawn `fix-github-actions-ci` sub-agents in parallel for independent failures; apply fixes top-down but don't wait for one diagnosis before starting the next |
+**同時に発行してよいもの（read-only な照会）**: `gh pr list`、`gh pr view`、`gh repo view`、`gh pr checks`、`git merge-base --is-ancestor`、`git rev-parse`。これらは 1 メッセージ内に複数の Bash 呼び出しを並べて同時発行する。
 
-**Run Bash commands in the background wherever possible** — independent commands should never block each other.
+**`git fetch`**: 複数 ref をまとめた 1 回の `git fetch origin <ref>...` にする。fetch を並行させるより往復が少ない。
 
-**Sub-agent pattern:** Use background sub-agents for tasks that involve multiple steps but don't need to block the main thread — e.g., `adjust-pr-base`, `fix-github-actions-ci`. Launch them immediately after the triggering action (push, CI failure detection) and collect results later.
+**長時間ブロックするコマンド**: `gh run watch` のように待つコマンドは、Bash tool に background 実行のパラメータがあれば background で走らせる。
+
+このスキルは cascade を自分で完走させる。`adjust-pr-base` や `fix-github-actions-ci` は該当箇所でインラインに呼び出す（いずれも gh 呼び出し数回で終わるため、切り出す利得がない）。
 
 ## Procedure
 
 ### 1. Identify the Starting Point
 
-Issue both lookups concurrently in background (they're independent):
+Issue both lookups concurrently (they're independent):
 
 ```bash
 git branch --show-current
@@ -55,7 +49,7 @@ If the current branch itself needs rebasing onto its parent first, do that befor
 
 ### 2. Discover Downstream Branches
 
-**First**, issue a single API call to get all open PRs, and fetch the default branch name concurrently in background (independent):
+**First**, issue a single API call to get all open PRs, and fetch the default branch name concurrently (independent):
 
 ```bash
 gh pr list --author "@me" --state open --limit 50 \
@@ -69,7 +63,7 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 git fetch origin <branch1> <branch2> <branch3> ...
 ```
 
-**Then**, run all ancestry checks concurrently in background:
+**Then**, run all ancestry checks concurrently (read-only):
 
 ```bash
 current_head=$(git rev-parse HEAD)
@@ -115,11 +109,11 @@ Stack from feat/auth:
 Proceed with cascade rebase? (3 branches)
 ```
 
-Wait for user confirmation before proceeding. Use an interactive question tool when available.
+Wait for user confirmation before proceeding. Use `AskUserQuestion` for the confirmation.
 
 ### 5. Cascade Rebase
 
-Process branches in topological order. The rebase itself is sequential (each branch depends on its parent being done), but fire off parallel work immediately after each push.
+Process branches one at a time in topological order. Each branch depends on its parent being pushed, and every branch shares the same working tree, so this loop is strictly sequential from start to finish.
 
 For each branch:
 
@@ -137,19 +131,17 @@ git ls-remote --heads origin <parent-branch>
 
 Invoke `resolve-merge-conflict`, passing the squash-merge detection result in the skill invocation message — e.g., `"The parent branch <parent-branch> was squash-merged (no longer exists on remote). Rebase <current-branch> onto <target>."` vs `"Rebase <current-branch> onto <target>."` for normal cases. That skill owns the rebase procedure for both cases (regular and squash merge).
 
-**If the rebase succeeds cleanly** — push, then immediately fire off the following concurrently before moving to the next branch:
+**If the rebase succeeds cleanly** — push, then run `adjust-pr-base` for this branch before moving on:
 
 ```bash
 git push --force-with-lease origin HEAD
-
-# Fire-and-forget — don't wait before moving to the next branch:
-# 1. Background sub-agent: invoke adjust-pr-base for this branch
-# 2. Background CI watch (see Step 6)
 ```
 
-**Exception — orphaned parent:** If the parent branch was detected as deleted/squash-merged (see Edge Cases: Orphaned Stack Member), invoke `adjust-pr-base` **before** the rebase — not as a background post-push task. GitHub's PR base must point to a valid branch before CI runs.
+`adjust-pr-base` is a handful of `gh` calls, so run it inline. Record this branch's pushed HEAD (`git rev-parse HEAD`) — Step 7 compares against it to detect re-cascade needs.
 
-Proceed to the next branch in the topological order without waiting for these to finish.
+**Exception — orphaned parent:** If the parent branch was detected as deleted/squash-merged (see Edge Cases: Orphaned Stack Member), invoke `adjust-pr-base` **before** the rebase. GitHub's PR base must point to a valid branch before CI runs.
+
+CI 監視は各ブランチでは行わない。cascade を全ブランチ完走させてから Step 6 でまとめて扱う。cascade 途中で CI 修正を挟むと、まだ rebase していない downstream を二度触ることになる。
 
 **If conflicts arise:**
 
@@ -161,55 +153,41 @@ Proceed to the next branch in the topological order without waiting for these to
 - Check with `git merge-base --is-ancestor origin/<parent-branch> HEAD`
 - If already up-to-date, skip with a note
 
-**Independent siblings:** When two branches at the same depth are both ready to rebase (their shared parent was just pushed), spawn each rebase as a separate background sub-agent so they proceed in parallel. Collect results before moving to their children.
+**Independent siblings:** Two branches at the same depth have no dependency on each other, but they still share one working tree — rebase them one after the other, in either order. Finish both before descending to their children.
 
-### 6. Watch CI
+### 6. Watch CI, Upstream First
 
-各ブランチの push 直後に **`watch-ci` スキルを background sub-agent として invoke** する — cascade 全体の完了を待たない。
+cascade 完走後、`watch-ci` スキルを上流から下流の順に 1 ブランチずつ呼び出す。`watch-ci` は監視・再実行・flaky 判定・`fix-github-actions-ci` 委譲まで完走する。
 
-```
-# Immediately after push for <branch>:
-Invoke watch-ci as a background sub-agent for <branch>.
-```
+**Why upstream first?** Each PR's CI tests its diff against its parent branch. Downstream changes never affect upstream CI. So once an upstream branch passes CI, it's stable — there's no need to re-check it regardless of what happens downstream. 逆に upstream の修正は downstream を必ず古くするので、upstream を確定させないまま downstream を直しても手戻りになる。
 
-全ブランチの push が完了した時点で、全 `watch-ci` インスタンスが並列で稼働している。`watch-ci` は監視・再実行・flaky 判定・`fix-github-actions-ci` 委譲まで完走する。
+先に全ブランチの CI 状態だけ一覧したい場合は、read-only な `gh pr checks` を全 PR に対して同時発行してよい。修正を伴う `watch-ci` の呼び出し自体は 1 ブランチずつ行う。
 
-### 7. Coordinate CI and Re-cascade After Upstream Fixes
+### 7. Re-cascade After Upstream Fixes
 
-Background `watch-ci` sub-agents からの結果を上流ブランチ順に収集する。
-
-**Why top-down?** Each PR's CI tests its diff against its parent branch. Downstream changes never affect upstream CI. So once an upstream branch passes CI, it's stable — there's no need to re-check it regardless of what happens downstream.
-
-**Re-cascade trigger:** `watch-ci` が CI 失敗を修正して新しいコミットを push した場合、その downstream ブランチが古くなる。`watch-ci` sub-agent の完了後、元の push 時の HEAD と現在の `origin/<branch>` を比較して検出する:
+`watch-ci` が CI 失敗を修正して新しいコミットを push すると、その downstream ブランチが古くなる。Step 5 で記録した pushed HEAD と現在の remote HEAD を比較して検出する:
 
 ```bash
 git rev-parse origin/<branch>
 ```
 
-新しいコミットが検出されたら、downstream ブランチに mini-cascade を開始する:
+新しいコミットが検出されたら、そのブランチより下だけを mini-cascade する:
 
-1. Downstream ブランチを topological order でリベース（各ブランチで `resolve-merge-conflict` を invoke）
-2. Push して新しい `watch-ci` を background sub-agent として起動する
+1. Downstream ブランチを topological order で 1 つずつ rebase する（conflict が出たら `resolve-merge-conflict` を invoke）
+2. Push してから、その downstream ブランチの `watch-ci` を改めて呼び出す
 
-**Upstream の `watch-ci` が完了する前に downstream `watch-ci` が先に結果を返した場合:**
-
-- Downstream CI pass → 記録して待機を続ける
-- Downstream CI fail → 結果を保留する。Upstream の修正が mini-cascade されてから新しい CI 結果が届くまで適用しない。Mini-cascade 後も fail なら保留済みの `watch-ci` 修正内容を適用する
+**Ordering rule:** あるブランチの CI 修正が終わるまで、その downstream の CI 修正には着手しない。upstream の修正で downstream の失敗が消えることがあり、先に downstream を直すと不要な変更を積む。
 
 **When to stop:**
 
-- 全 `watch-ci` sub-agent が pass で完了 → Step 8 へ
-- `watch-ci` が「upstream 変更と無関係な失敗（flaky、インフラ）」として報告 → 報告して次へ
+- 全ブランチが CI pass → Step 8 へ
+- `watch-ci` が「PR の変更と無関係な失敗（flaky、インフラ）」として報告 → その内容を記録して次のブランチへ進む
+- 同一ブランチの mini-cascade が 2 回を超えた → 停止して状況を報告する
 - ユーザーが停止を指示
 
-### 8. Collect Background Results and Report
+### 8. Report
 
-Before generating the final report, collect all outstanding background tasks:
-
-- Read results from all `watch-ci` background sub-agents
-- Read results from all `adjust-pr-base` background sub-agents
-
-Then summarize the entire cascade:
+Summarize the entire cascade:
 
 ```
 ## Cascade Rebase Report
@@ -219,7 +197,7 @@ Starting point: feat/auth
 | Branch | PR | Rebase | Conflicts | Push | CI |
 |--------|-----|--------|-----------|------|----|
 | feat/auth-ui | #42 | ✅ clean | — | ✅ | ✅ pass |
-| feat/auth-ui-tests | #43 | ✅ clean | — | ✅ | ⏳ running |
+| feat/auth-ui-tests | #43 | ✅ clean | — | ✅ | ⚠️ flaky (passed on rerun) |
 | feat/auth-api | #44 | ⚠️ conflicts | 2 auto-resolved | ✅ | ❌ lint failure (fixed) |
 
 Actions taken:
@@ -249,12 +227,12 @@ When fixing CI requires code changes and a new push, downstream branches become 
 
 ### Orphaned Stack Member
 
-A PR in the stack targets a branch that's been deleted or merged. Invoke `adjust-pr-base` **before** the rebase (not as a post-push background task) to re-target the PR to the nearest valid ancestor or the default branch. The rebase can proceed with the same target once `adjust-pr-base` completes.
+A PR in the stack targets a branch that's been deleted or merged. Invoke `adjust-pr-base` **before** the rebase to re-target the PR to the nearest valid ancestor or the default branch. The rebase can proceed with the same target once `adjust-pr-base` completes.
 
 ## Boundaries
 
 - このスキルは依存関係のある PR の同期・メンテナンスを扱う。新規スタックの作成や大きな PR の分割は扱わない。
-  - 大きな PR/ブランチを stacked PR に分割するには `split-big-pr` スキルを使う。
+  - 大きな PR/ブランチを stacked PR に分割するには `reorganize-diff` スキルを使う。
   - 大きな機能開発の stacked PR 計画を立てるには `plan-stacked-pr` スキルを使う。
   - これらのスキルで作成されたスタックの継続的メンテナンス（cascade rebase、CI 監視・修正、スタック同期）は本スキルが担う。
 - This skill orchestrates the cascade by invoking specialized skills (`adjust-pr-base`, `resolve-merge-conflict`, `fix-github-actions-ci`) at the appropriate points. Each skill owns its own domain logic.

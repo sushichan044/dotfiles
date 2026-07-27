@@ -17,7 +17,7 @@ Create a structured plan for developing a large feature using stacked PRs. The p
 
 ## Core Idea
 
-Planning a stacked PR workflow has two distinct phases: drawing the big picture, then determining the split granularity. This skill handles the big picture — understanding the feature, identifying major areas and their dependencies, and producing plan documents. The actual PR split granularity (how many PRs, what goes where) is determined by the `split-big-pr` skill, which owns the splitting criteria and PR sizing guidelines.
+Planning a stacked PR workflow has two distinct phases: drawing the big picture, then determining the split granularity. This skill handles the big picture — understanding the feature, identifying major areas and their dependencies, and producing plan documents. The actual PR split granularity (how many PRs, what goes where) is determined by the `reorganize-diff` skill, which owns the Tier 1 (PR boundary) and Tier 2 (commit boundary) criteria.
 
 The output is a set of markdown files that serve as the working document throughout development. Each file contains explicit instructions to use the `stacked-pr` skill during implementation.
 
@@ -51,7 +51,7 @@ Present this as a high-level overview to the user. This is the "what needs to ha
 
 ### 3. Determine Split Granularity
 
-Use the `split-big-pr` skill's **Phase 1 (Analysis)** to determine the actual PR boundaries. That skill owns the PR granularity guidelines (`references/pr-granularity.md` in its directory) and the splitting procedure — it decides how many PRs, what goes in each, and in what order.
+Use the `reorganize-diff` skill's **Phase 1 (分析)** to determine the actual PR boundaries. That skill owns the granularity criteria and the splitting procedure — it decides how many PRs, what goes in each, and in what order.
 
 Provide it with the big picture from Step 2: the major areas, their dependencies, and the delivery strategy. If there is existing code (a branch or diff), point it at that too.
 
@@ -169,7 +169,7 @@ This PR is part of a stacked PR workflow.
 
 - Use the `prepare-issue-pr` skill when creating this PR to draft the title, body, and base branch
 - Use the `stacked-pr` skill for cascade rebase, CI monitoring, and stack sync
-- Use the `split-big-pr` skill if this PR itself grows too large and needs further splitting
+- Use the `reorganize-diff` skill if this PR itself grows too large and needs further splitting
 - Base branch: `<parent-branch-name>`
 
 When implementing this PR:
@@ -216,8 +216,8 @@ If some of the work is already done (e.g., a branch exists with partial changes)
 ## Boundaries
 
 - This skill produces **plan documents only** — it does not create branches or PRs.
-- Split granularity decisions are delegated to `split-big-pr` Phase 1. This skill does not own PR sizing guidelines.
-- For executing the split (creating branches and PRs from an existing diff), use `split-big-pr` Phase 2.
+- Split granularity decisions are delegated to `reorganize-diff` Phase 1. This skill does not own PR sizing guidelines.
+- For executing the split (creating branches and PRs from an existing diff), use `reorganize-diff` Phase 2.
 - For ongoing stack maintenance (rebase, CI, sync), use the `stacked-pr` skill.
 - The plan stays at the "what and why" level. Implementation details ("how") are out of scope.
 - The `<topic>` directory location is determined in consultation with the user, not prescribed by this skill.
