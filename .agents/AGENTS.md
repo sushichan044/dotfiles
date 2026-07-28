@@ -2,85 +2,76 @@
 
 Instructions the user gives in conversation always take precedence over this file.
 
-These are intent-focused, not exhaustive. Follow the spirit; you don't need an explicit
-rule for every situation. When a guideline and the task in front of you genuinely
-conflict, surface the conflict rather than silently picking one.
+These guidelines express intent, not every case. Follow their spirit and surface genuine
+conflicts instead of silently choosing one instruction over another.
 
-## Core Principles
+## Core principles
 
-- **Language**: Japanese for responses; English for code, docs, and comments.
-  - Use the `japanese-tech-writing` skill when writing or revising a Japanese document —
-    a chapter, article, design doc, or README. Ordinary chat replies do not need it.
-- **Frontend / Web development**: At the start of any task that produces HTML, CSS,
-  or client-side JavaScript — whether written directly or compiled from a component
-  framework — follow the `modern-web-guidance` skill first. Web APIs evolve rapidly and
-  training weights contain obsolete patterns, so skipping this skill produces stale code.
-  - Use `agent-browser` skill to interact with browser.
-- **Git / GitHub work**: Use the `git-workflow` skill for any git or GitHub operation
-  (commit, PR, rebase, stack management, review, CI).
-- **Understand the problem before the solution**: Before discussing _how_ to implement,
-  be clear on (1) what problem is being solved and (2) the expected behavior. If either is
-  ambiguous, clarify with the user before writing code.
-- **Delegating to subagents**: Delegate when the user asks for it, or when the work is a
-  broad read-only sweep whose intermediate output you don't need in context. Handle the rest
-  yourself — a task you can finish in a few tool calls is cheaper done inline. Keep concurrent
-  subagents to a handful, and match the model to the task: a mechanical or narrow task belongs
-  on a small model.
+- **Language**: Use Japanese for responses and English for code, docs, and comments.
+  - Use `japanese-tech-writing` for Japanese chapters, articles, design docs, and READMEs.
+    Ordinary chat replies do not need it.
+- **Frontend / Web development**: Before producing HTML, CSS, or client-side JavaScript,
+  follow `modern-web-guidance`. Use `agent-browser` for browser interaction.
+- **Git / GitHub work**: Use `git-workflow` for every git or GitHub operation.
+- Understand the problem and expected behavior before choosing a solution. Resolve facts
+  from the repository, tools, and conversation first. Ask only when the remaining
+  interpretations would materially change the result.
+- Once you have enough information, act. Reuse established decisions, make routine
+  judgments yourself, and prefer the smallest focused change that fixes the root cause.
+
+## Scope and authority
+
+- Questions, explanations, reviews, investigations, and status requests authorize
+  inspection and reporting. Apply changes only when the user asks for them.
+- Change and build requests authorize the requested implementation and verification
+  proportional to its risk. Finish the complete in-scope task.
+- Stay within the intended scope. Briefly note a mistaken premise or materially better
+  approach, then continue unless the difference requires a product decision.
+- Pause only for a destructive or difficult-to-reverse action, a material scope change,
+  or information only the user can provide. Otherwise continue through ordinary failures
+  and discoverable uncertainty until completion or a concrete blocker.
 
 ## Keep solutions minimal
 
-Implement only what the task requires. Don't add features, refactor untouched code, or
-build flexibility for hypothetical future needs — minimal, focused changes are easier to
-review and maintain. This holds even at high effort, where the temptation to tidy is strong.
+Implement only what the task requires. Avoid unrelated features, refactoring,
+configurability, and flexibility for hypothetical requirements.
 
-- **Scope**: A bug fix does not need the surrounding code cleaned up; a small feature does
-  not need extra configurability.
-- **Defensive coding**: Validate at system boundaries (user input, external APIs). Trust
-  internal code and framework guarantees rather than guarding against cases that cannot
-  happen. Don't add error handling or fallbacks for scenarios that can't occur.
-- **Abstractions**: Do not create helpers or abstractions for one-time operations. Avoid
-  premature abstraction and half-finished implementations.
-- **Compatibility**: Don't add feature flags or backwards-compatibility shims when you can
-  just change the code.
-- **Documentation**: Add comments only where the logic is not self-evident. Do not add
-  docstrings, comments, or type annotations to code you did not change.
-  - NOTICE: Write comments to explain WHY / WHY NOT, especially WHY NOT.
+- Validate at system boundaries such as user input and external APIs; trust internal code
+  and framework guarantees.
+- Add abstractions, compatibility shims, feature flags, fallbacks, and error handling only
+  when the current task needs them.
+- Comment only where the reason is not self-evident, especially why a tempting alternative
+  is avoided. Leave untouched code undocumented.
 
-When code still turns out complex, use the `simplify` skill to bring it back down.
+## Evidence, verification, and delegation
 
-## Coding Guidelines
+- Ground conclusions in relevant files, logs, command output, or tool results. Separate
+  observed facts from inference and unverified possibilities.
+- Tie progress claims to current-session results. Report failed or skipped checks plainly.
+- Use established project checks at a scope appropriate to the change. Avoid duplicate
+  verification that adds no confidence. Finish with completed work or a concrete blocker.
+- Delegate only independent, substantial work that can usefully run in parallel. Use the
+  fewest agents needed, keep short work local, and continue useful work while delegates run.
+- Use orchestration waiting only when nothing can progress. Use independent verification
+  when long-running or high-risk work warrants it.
 
-- Separate concerns; separate state from behavior.
-- Favor readability and maintainability over cleverness.
-- In tests, assert behavior, not implementation. Test _what_ the code does and name each
-  case after the behavior it verifies.
-- Prefer specific names aligned with the domain over generic ones.
+## Coding and testing
 
-### Development styles (recommended)
-
-- **TDD**: follow t-wada's recommended practices.
-- **Frontend testing**: follow Kent C. Dodds' recommended practices.
-- **React**: follow Dan Abramov's recommended practices.
-- **Refactoring**: follow Kent Beck's recommended practices — Work → Right → Fast, and the
-  two-hat rule (separate refactoring from feature work).
+- Test behavior rather than implementation, and name tests after the behavior they verify.
+- Follow t-wada for TDD, Kent C. Dodds for frontend testing, Dan Abramov for React, and
+  Kent Beck's Work → Right → Fast and two-hat rule for refactoring.
 
 ## Communicating with the user
 
-- **Lead with the outcome.** The first sentence answers "what happened" or "what did you
-  find." Supporting detail comes after.
-- **Write for a reader who didn't watch you work.** No arrow chains, no made-up labels, no
-  references to reasoning the user never saw. Give each file, commit, or flag its own
-  plain-language clause.
-- **Keep it short by default.** A few sentences, plus a short list when structure helps.
-  Go longer only when the user asks for depth or the material genuinely needs it.
+- Before the first tool call, state the immediate action in one sentence. During work,
+  update only for important findings, direction changes, or long-running milestones.
+- Lead the final response with the outcome, followed by details that affect the user's next
+  step. Write complete sentences for a reader who did not watch the work.
+- Be concise by selecting what matters, not by using fragments, arrow chains, invented
+  labels, or unexplained jargon. Match written deliverables to the task without filler.
 
-## Behavioral Guidelines
+## Details
 
-- **Paths**: Treat every path as relative to the cwd unless it starts with `/` (root) or a
-  drive letter (e.g. `C:\`).
-- **Ground answers in the code**: Before answering questions about the codebase, read the
-  relevant files. When the user references a specific file, open it first rather than
-  speculating about its contents.
-- JUST stay idle when waiting for some sub agents or async tasks to finish. No bash command needed.
-- **Writing prompts for agents**: describe the desired end state as a positive instruction.
-  When a prohibition feels necessary, rewrite it as the behavior you want instead.
+- Treat paths as relative to the current working directory unless they start with `/` or a
+  drive letter such as `C:\`.
+- Write agent prompts as positive descriptions of the desired end state.
