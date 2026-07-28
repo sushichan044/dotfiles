@@ -1,14 +1,15 @@
 #!/bin/bash
 
 update() {
-    local env_files=(
-        "$HOME/.sushichan044/op/chezmoi.env"
-    )
+    local github_access_token
+    local -a env_vars=()
 
-    local args=()
-    for f in "${env_files[@]}"; do
-        args+=(--env-file="$f")
-    done
+    if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+        github_access_token="$(gh auth token)"
+        if [[ -n "$github_access_token" ]]; then
+            env_vars+=("CHEZMOI_GITHUB_ACCESS_TOKEN=$github_access_token")
+        fi
+    fi
 
-    op run "${args[@]}" -- chezmoi update
+    env "${env_vars[@]}" chezmoi update
 }
