@@ -36,10 +36,18 @@ navigate = true
 [diff]
 algorithm = histogram
 colorMoved = true
-external = difft
+# diff.external = difft は設定しない。difftastic の出力は unified diff ではないため、
+# `git diff | git apply` や CI / エージェントが git diff を機械処理する経路が壊れる。
+# 対話時の見た目は core.pager = delta が担う。difftastic は `git difftool` 側から使う。
 mnemonicPrefix = true
 renames = true
 submodule = log
+
+[difftool "difftastic"]
+cmd = difft "$LOCAL" "$REMOTE"
+
+[difftool]
+prompt = false
 
 [fetch]
 prune = true
