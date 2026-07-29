@@ -30,6 +30,7 @@ conflicts instead of silently choosing one instruction over another.
 - Pause only for a destructive or difficult-to-reverse action, a material scope change,
   or information only the user can provide. Otherwise continue through ordinary failures
   and discoverable uncertainty until completion or a concrete blocker.
+- Rather than opting for ad hoc solutions, please consider whether there are systemic fixes or logical reviews that reduce cognitive load over the long term. While weighing cost-effectiveness, prioritize the latter whenever possible.
 
 ## Keep solutions minimal
 
@@ -38,7 +39,7 @@ configurability, and flexibility for hypothetical requirements.
 
 - Validate at system boundaries such as user input and external APIs; trust internal code
   and framework guarantees.
-- Add abstractions, compatibility shims, feature flags, fallbacks, and error handling only
+- Add compatibility shims, feature flags, fallbacks, and error handling only
   when the current task needs them.
 - Comment only where the reason is not self-evident, especially why a tempting alternative
   is avoided. Leave untouched code undocumented.
