@@ -75,3 +75,4 @@ configurability, and flexibility for hypothetical requirements.
 - Treat paths as relative to the current working directory unless they start with `/` or a
   drive letter such as `C:\`.
 - Write agent prompts as positive descriptions of the desired end state.
+- JUST stay idle when waiting for some sub agents or async tasks to finish. No bash command needed.
