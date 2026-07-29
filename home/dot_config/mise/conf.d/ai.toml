@@ -18,6 +18,3 @@ bin = "codex"
 [tools."github:openai/codex".platforms]
 linux-x64 = { asset_pattern = "codex-x86*.tar.gz" }
 macos-arm64 = { asset_pattern = "codex-aarch64*.tar.gz" }
-
-[env]
-AGENT_BROWSER_AUTO_CONNECT = "1" # https://github.com/vercel-labs/agent-browser/pull/786
