@@ -23,7 +23,7 @@ const hook = defineHook({
       return c.success();
     }
 
-    if (urlObj.hostname.includes("notion.so")) {
+    if (urlObj.hostname.includes("notion.so") || urlObj.hostname.includes("app.notion.com")) {
       return c.json({
         event: "PreToolUse",
         output: {
