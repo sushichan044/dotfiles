@@ -23,7 +23,7 @@
         "valibot": "1.4.2",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.18.6",
+        "@opencode-ai/plugin": "1.18.7",
         "@types/bun": "1.3.14",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -93,9 +93,9 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.5", "", { "dependencies": { "@tybys/wasm-util": "^0.10.2" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.18.6", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.18.6", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-xqHIkmXhAOjw8UJYW4s7iiW6P/eoEuU8tKf13YBstdXqH46rTxPvsD+KMw8cSZ/PVF0bdrrVsj58l0j3xpW3Qg=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.18.7", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.18.7", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-kXm5hqur5JiF/xJPaQYkuNn7vSl4ya09YgL/pIvIrggWCLFsfo1gXqNbONRcGW7m5Ih2k6kgMXFyjB9or1+dEg=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.18.6", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-bK2rca3tYOo1h2tWNaO+lUiL+qZ9wgE/HcM3N46FahykYwL5RL1r2G6GEVyV3BBv5Qs0g0+yIlosBWJWwF13AQ=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.18.7", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-5txVELvCxzC3O/MYnRKdTvBN3TqQjE3PaEks3kDRA/moWzMSUhdm15xCth/Mz/NPYyGTn2u4IdScdV9vLTfLRg=="],
 
     "@oxc-project/runtime": ["@oxc-project/runtime@0.141.0", "", {}, "sha512-Z/6jQ0dyvE2fVjMUO7GoD4h+3q0G4lI4BWQNjaPhC4RPxaS4hF1b7/QYKB/Tl+KAQwqqKgMF54ukR/VvV5FILg=="],
 
