@@ -29,7 +29,7 @@
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
     "@virtual-live-lab/tsconfig": "2.1.23",
-    "oxfmt": "0.60.0",
+    "oxfmt": "0.61.0",
     "typescript": "7.0.2",
     "vite-plus": "0.2.6"
   },
