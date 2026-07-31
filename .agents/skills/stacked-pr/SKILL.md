@@ -1,10 +1,11 @@
 ---
 name: stacked-pr
-description: 依存関係のある複数の PR を管理・同期するためのスキル。stacked PR のカスケード rebase、PR 間の依存検出、base branch 管理、CI の上流優先修正を行う。PR が別の PR に依存している状況全般で使う — cascade rebase、スタック sync、依存先 PR 更新後のメンテ、PR チェーンの整合性確認などをするときなど。
-allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), Bash(git checkout:*), Bash(git fetch:*), Bash(git rebase:*), Bash(git add:*), Bash(git diff:*), Bash(git show:*), Bash(git merge-base:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git cat-file:*), Bash(git restore:*), Bash(git push:*), Bash(git log:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr edit:*), Bash(gh pr checks:*), Bash(gh pr create:*), Bash(gh repo view:*), Bash(gh run view:*), Bash(gh run list:*), Bash(gh run watch:*)
+description: 依存関係のある複数の PR を管理・同期するためのスキル。stacked PR のカスケード rebase、PR 間の依存検出、base branch 管理、CI の上流優先修正を行う。PR が別の PR に依存している状況全般で使う。
 ---
 
 # stacked-pr
+
+WARNING: If the repo is using GitHub, just use `gh-stack` skill to use GitHub's native stacked PR features.
 
 依存関係のある複数の PR を管理・同期する。PR 間の依存を検出し、カスケード rebase で整合性を保ち、CI を上流から修正する。
 
