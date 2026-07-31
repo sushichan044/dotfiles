@@ -1,240 +1,254 @@
 ---
 name: stacked-pr
-description: 依存関係のある複数の PR を管理・同期するためのスキル。stacked PR のカスケード rebase、PR 間の依存検出、base branch 管理、CI の上流優先修正を行う。PR が別の PR に依存している状況全般で使う。
+description: 依存関係のある複数の PR を管理・同期するためのスキル。GitHub なら `gh-stack` skill (gh stack コマンド) へ必ず委譲し、その preflight・復旧・検証・CI を担当する。GitHub 以外のホストでは手動カスケード rebase を行う。PR が別の PR に依存している状況全般で使う。
 ---
 
 # stacked-pr
 
-WARNING: If the repo is using GitHub, just use `gh-stack` skill to use GitHub's native stacked PR features.
+依存関係のある複数の PR を同期する。**道具の選択はホストで決まる**。GitHub なら `gh-stack` を使い、それ以外でだけ手動カスケードを行う。
 
-依存関係のある複数の PR を管理・同期する。PR 間の依存を検出し、カスケード rebase で整合性を保ち、CI を上流から修正する。
+このスキルの役割は、gh-stack が扱わない領域を埋めることにある: preflight、壊れたときの復旧、rebase 結果の検証、CI の上流優先修正。gh-stack skill は vendored（`skills-lock.json` 管理）なので、そこに知見を書き足さずここに置く。
 
 ## When This Skill Applies
 
 - 依存関係のある複数の PR を扱うとき全般
 - 親ブランチが更新され、子 PR が古くなったとき
-- PR チェーン全体を最新状態に同期したいとき
-- スタックの途中の PR がマージされ、残りの PR を re-target・rebase する必要があるとき
-- 機能開発で stacked PR 戦略を使っていて、スタック全体のメンテが必要なとき
+- スタックの途中の PR がマージされ、残りを re-target・rebase する必要があるとき
+- `gh stack rebase` / `gh stack sync` が conflict や中断で止まったとき（復旧はここが担当する）
 
-## Core Idea
+## Routing: GitHub なら必ず gh-stack
 
-Stacked PRs form a chain: each PR targets its parent branch rather than `main`. When an upstream branch changes, every downstream branch must rebase onto the updated parent in order, one level at a time. CI failures are fixed top-down because upstream CI is independent of downstream changes — once an upstream branch's CI passes, it stays passed regardless of what happens below.
+rebase を始める前にホストを判定する。推測しない。
 
-## Concurrency Strategy
+```bash
+git remote get-url origin
+```
 
-すべてのブランチが 1 つの working tree を共有する。境界はそこで引く。
+- `github.com`（GitHub Enterprise 含む）→ **[Route A: gh-stack](#route-a-gh-stack)**。手動カスケードに逃げない
+- それ以外（GitLab、Gerrit、素の git remote 等）→ **[Route B: 手動カスケード](#route-b-手動カスケード非-github)**
 
-**逐次に実行するもの（working tree を変更する操作）**: `git checkout`、`git rebase`、`git push`、conflict の解消。並行させると互いの index と HEAD を壊すため、必ずトポロジカル順に 1 ブランチずつ処理する。
+Route A の中で `git rebase --onto` を手で叩くのは [Repair](#a-3-repair-playbook) のときだけで、それは Route B への切り替えではない。復旧したら gh-stack の管理下へ戻す。
 
-**同時に発行してよいもの（read-only な照会）**: `gh pr list`、`gh pr view`、`gh repo view`、`gh pr checks`、`git merge-base --is-ancestor`、`git rev-parse`。これらは 1 メッセージ内に複数の Bash 呼び出しを並べて同時発行する。
+---
 
-**`git fetch`**: 複数 ref をまとめた 1 回の `git fetch origin <ref>...` にする。fetch を並行させるより往復が少ない。
+## Route A: gh-stack
 
-**長時間ブロックするコマンド**: `gh run watch` のように待つコマンドは、Bash tool に background 実行のパラメータがあれば background で走らせる。
+コマンドの仕様・フラグ・exit code の意味は `gh-stack` skill が持つ。ここには**その前後にやること**だけを書く。
 
-このスキルは cascade を自分で完走させる。`adjust-pr-base` や `fix-github-actions-ci` は該当箇所でインラインに呼び出す（いずれも gh 呼び出し数回で終わるため、切り出す利得がない）。
+### A-1. Preflight
 
-## Procedure
+rebase・push の前に毎回確認する。ここを飛ばすと A-3 の復旧作業になる。
 
-### 1. Identify the Starting Point
+```bash
+gh stack view --json          # exit 0 でスタックとして認識されているか
+git worktree list             # スタックのブランチが他の worktree に取られていないか
+git config rerere.enabled     # true でないと conflict 解決が使い回されない
+git config remote.pushDefault # remote が複数あるとき必要
+```
 
-Issue both lookups concurrently (they're independent):
+判定:
+
+- **worktree に取られているブランチがある**: gh stack はそのブランチを checkout できず、rebase が途中で止まる。さらに `gh stack rebase --abort` も `already used by worktree` で復旧しきれない。先に worktree を畳むか、そのブランチだけ当該 worktree 内で手動 rebase する
+- **exit 2 (not in a stack)**: `gh stack checkout <stack-number|pr-number>` で取り込むか、`gh stack init --base <trunk> <branch>...` で作る
+- **exit 6 (disambiguation required)**: 共有されていないブランチへ `gh stack checkout <branch>` してから再実行する
+- **exit 9 (stacked PRs unavailable)**: repo で stacked PR が有効化されていない。ユーザーに有効化を促し、それまでの暫定として Route B を使う
+
+`gh stack view --json` の `head` が実際のブランチ tip と一致しているかも見る。ズレていたら記録が古い（[A-3](#a-3-repair-playbook) の症状 1）。
+
+```bash
+gh stack view --json | jq -r '.branches[] | select(.head) | "\(.name) \(.head[0:10])"'
+git rev-parse --short <branch>
+```
+
+### A-2. 通常運用
+
+```bash
+gh stack view --json    # 現状把握 (isMerged / needsRebase / pr.state)
+gh stack rebase         # fetch + trunk 追従 + カスケード rebase（push はしない）
+```
+
+- **push は別ステップ**にする。`gh stack push` は全ブランチへの force-with-lease push であり履歴書き換えにあたるので、実行前にユーザーの承認を取る
+- `gh stack sync` は fetch → rebase → push → PR 状態同期を一括で行う。承認済みで一気に流したいときだけ使う
+- マージ済みブランチのローカル掃除は `gh stack sync --prune`。非対話環境では `--prune` を明示しないと実行されない
+- 下段の PR がマージされたら、**その時点で** sync を通す。放置して trunk が進むほど A-3 の症状 1 を踏みやすくなる
+
+rebase が成功したら [A-4](#a-4-verify) を実行してから push する。
+
+### A-3. Repair playbook
+
+#### 症状 1: 身に覚えのないファイルで conflict する / replay 対象が多すぎる
+
+gh stack が記録している base が古く、既に trunk に入っているコミットまで replay しようとしている。下段 PR が squash merge されたあとに trunk が進むと起きる。
+
+検知（rebase が止まった状態で実行する）:
+
+```bash
+git rev-list --count origin/<trunk>..<branch>   # 本来 replay すべき自分のコミット数
+wc -l < .git/rebase-merge/git-rebase-todo       # 実際に replay しようとしている数
+```
+
+この 2 つが大きく食い違い、conflict しているファイルがブランチの関心と無関係なら確定。
+
+対処:
+
+1. `gh stack rebase --abort`
+2. [手動 `--onto` カスケード](#手動---onto-カスケード)で下から積み直す
+3. [A-4](#a-4-verify) で検証する
+4. `gh stack push` を通して gh stack の記録（head / base）を実際の tip に合わせる
+5. `gh stack view --json` の `head` が実 tip と一致し、`needsRebase` が全 false になったことを確認する。まだズレるなら `gh stack unstack --local` → `gh stack init --base <trunk> <下から順のブランチ>` で作り直す（`--local` なので GitHub 側のスタックは保持される）
+
+#### 症状 2: `--abort` が worktree で失敗する
+
+```
+⚠ Rebase aborted but some branches could not be fully restored:
+  checkout <branch>: ... is already used by worktree at '...'
+```
+
+復旧が中途半端に終わっている。`git worktree list` で場所を特定し、そのディレクトリの中で `git status` / `git rebase --abort` を実行して個別に戻す。以降は Preflight で worktree を潰してから gh stack を動かす。
+
+#### 症状 3: 並行編集で下流が古くなる
+
+ユーザーや別セッションがスタックのブランチへ commit / push していることがある。カスケードの直前に必ず tip を取り直す。
+
+```bash
+for b in <下から順のブランチ>; do printf '%s %s %s\n' "$b" "$(git rev-parse --short "$b")" "$(git rev-parse --short "origin/$b" 2>/dev/null)"; done
+```
+
+上流の tip が想定と違ったら、その上流を起点に下流を積み直す。作業中に増えたコミットは捨てずに取り込む。
+
+#### 手動 `--onto` カスケード
+
+下から順に、1 ブランチずつ実行する。gh stack の記録ではなく**実際の SHA**を使うので、記録が壊れていても影響を受けない。
+
+```bash
+# 実行前に必ず: replay されるのが自分のコミットだけか確認する
+git log --oneline <古い親の tip>..<ブランチ>
+
+git rebase --onto <新しい親の tip> <古い親の tip> <ブランチ>
+```
+
+- **古い親の tip** は rebase 前の親ブランチの tip。`gh stack view --json` の `base`、`git reflog show <親>`、親が squash merge 済みなら `gh pr view <親PR番号> --json headRefOid --jq .headRefOid` から取る
+- 確認コマンドの出力が想定より多いなら、指定した「古い親の tip」が実際の分岐点ではない。スタックの途中に rebase コピー（同じ subject の別 SHA）が挟まっていることがあるので、`git log --oneline origin/<trunk>..<ブランチ>` と突き合わせて分岐点を取り直す
+- 他の worktree に取られているブランチは、その worktree の中で実行する
+- conflict したら `resolve-merge-conflict` skill を呼ぶ
+
+### A-4. Verify
+
+push の前に、rebase が中身を変えていないことを確認する。
+
+```bash
+# 1. 各レイヤの diff が rebase 前後で同一か（patch-id が一致するか）
+git diff <旧親> <旧tip> | git patch-id --stable
+git diff <新親> <新tip> | git patch-id --stable
+
+# 2. スタックが直列につながっているか
+git merge-base --is-ancestor origin/<trunk> <bottom>
+git merge-base --is-ancestor <親> <子>   # 全ペアで
+
+# 3. push 後: local と remote が一致しているか
+git fetch origin --quiet
+git rev-parse <branch> origin/<branch>
+```
+
+patch-id が食い違ったレイヤは、conflict 解決で内容が変わったか、replay 範囲を間違えている。push する前に原因を突き止める。
+
+---
+
+## Route B: 手動カスケード（非 GitHub）
+
+GitHub 以外のホストでは gh stack が使えないので、依存関係を自分で組み立てて順に rebase する。
+
+### B-1. スタックの構築
+
+現在のブランチと、その下流を洗い出す。read-only な照会は 1 メッセージ内で同時に発行してよい。
 
 ```bash
 git branch --show-current
-gh pr view --json number,title,url,baseRefName,headRefName,state 2>/dev/null
+git fetch origin <branch1> <branch2> ...            # 1 回にまとめる
+git merge-base --is-ancestor $(git rev-parse HEAD) <oid>   # 下流判定
 ```
 
-If the current branch itself needs rebasing onto its parent first, do that before cascading. Invoke the `resolve-merge-conflict` skill if conflicts arise.
+各ブランチの親は PR の base branch。親が現在のブランチのものから順にトポロジカルに並べる。同じ深さで互いに依存しないブランチは独立した兄弟で、順序はどちらでもよい。
 
-### 2. Discover Downstream Branches
+### B-2. 計画の提示
 
-**First**, issue a single API call to get all open PRs, and fetch the default branch name concurrently (independent):
+ブランチ・PR・rebase 先の一覧を示し、`AskUserQuestion` で承認を取ってから実行する。
 
-```bash
-gh pr list --author "@me" --state open --limit 50 \
-  --json number,headRefName,headRefOid,baseRefName,url
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
-```
+### B-3. カスケード
 
-**Then**, fetch all candidate remote branches — prefer a single `git fetch` with multiple refs to minimize round-trips:
+すべてのブランチが 1 つの working tree を共有するので、**厳密に逐次**で処理する。並行させると index と HEAD が壊れる。
 
-```bash
-git fetch origin <branch1> <branch2> <branch3> ...
-```
+各ブランチについて [手動 `--onto` カスケード](#手動---onto-カスケード)と同じ手順を適用し、成功したら `git push --force-with-lease origin HEAD` してから次へ進む。push 後は `adjust-pr-base` をインラインで実行する（gh コマンド数回で終わるので切り出さない）。
 
-**Then**, run all ancestry checks concurrently (read-only):
+親が削除・squash merge されている場合は、rebase の**前**に `adjust-pr-base` を実行する。PR の base が有効なブランチを指していないと CI が走らない。
 
-```bash
-current_head=$(git rev-parse HEAD)
-git merge-base --is-ancestor "$current_head" <oid1>
-git merge-base --is-ancestor "$current_head" <oid2>
-git merge-base --is-ancestor "$current_head" <oid3>
-```
+CI 監視はカスケードの途中では行わない。全ブランチを完走させてから [CI](#ci-upstream-first) でまとめて扱う。
 
-If yes, this PR is a downstream descendant. Record it with its parent relationship.
+---
 
-### 3. Build the Stack Tree
+## CI (upstream first)
 
-From the discovered descendants, build the parent-child tree:
+gh-stack は CI を扱わない。どちらの Route でも、カスケード完走後にここを実行する。
 
-- A branch's parent is its PR's `baseRefName`
-- Sort topologically: branches whose parent is the current branch come first, then their children, and so on
+`watch-ci` skill を**上流から下流の順に 1 ブランチずつ**呼び出す。各 PR の CI は自分の親との差分を検証するので、下流の変更が上流の CI に影響することはない。上流が通れば以後は安定する。逆に上流を直せば下流は必ず古くなるため、上流を確定させないまま下流を直すと手戻りになる。
 
-The result is an ordered list of branches to rebase, each paired with its parent branch.
+先に全体の状態だけ見たいときは、read-only な `gh pr checks` を全 PR へ同時発行してよい。修正を伴う `watch-ci` の呼び出しは 1 ブランチずつ行う。
 
-**Example:**
+### 上流修正後の再カスケード
 
-```
-main ← feat/auth (current, already rebased)
-         ├─ feat/auth-ui
-         │   └─ feat/auth-ui-tests
-         └─ feat/auth-api
-```
+`watch-ci` が CI 失敗を直して新しいコミットを push すると、その下流が古くなる。
 
-Rebase order: `feat/auth-ui` → `feat/auth-ui-tests` → `feat/auth-api`
+1. そのブランチより下だけを積み直す（Route A なら `gh stack rebase --upstack`、Route B なら手動で 1 つずつ）
+2. push してから、その下流の `watch-ci` を改めて呼ぶ
 
-Branches at the same depth level with no dependency between them (e.g., `feat/auth-ui` and `feat/auth-api` above) are **independent siblings** — note them for potential parallel handling after their shared parent is rebased.
+停止条件:
 
-### 4. Show Plan and Confirm
+- 全ブランチ CI pass → Report へ
+- `watch-ci` が「PR の変更と無関係な失敗（flaky、インフラ）」と報告 → 記録して次のブランチへ
+- 同一ブランチの再カスケードが 2 回を超えた → 停止して状況を報告する
 
-Present the stack and planned actions:
+---
+
+## Report
 
 ```
-Stack from feat/auth:
-  1. feat/auth-ui (PR #42) ← rebase onto feat/auth
-  2. feat/auth-ui-tests (PR #43) ← rebase onto feat/auth-ui
-  3. feat/auth-api (PR #44) ← rebase onto feat/auth   [sibling of #1]
+## Stack Sync Report
 
-Proceed with cascade rebase? (3 branches)
+Route: gh-stack (github.com)
+Trunk: main
+
+| Branch | PR | Rebase | Verify | Push | CI |
+|--------|-----|--------|--------|------|-----|
+| feat/auth-ui | #42 | ✅ clean | ✅ patch-id 一致 | ✅ | ✅ pass |
+| feat/auth-api | #44 | ⚠️ conflict 2件解決 | ✅ patch-id 一致 | ✅ | ❌ lint (修正済み) |
+
+Repair:
+- gh stack の記録 base が古く 22 commits を replay しようとしたため abort し、--onto で積み直した
+- gh stack push で metadata を再同期（needsRebase 全 false を確認）
 ```
 
-Wait for user confirmation before proceeding. Use `AskUserQuestion` for the confirmation.
-
-### 5. Cascade Rebase
-
-Process branches one at a time in topological order. Each branch depends on its parent being pushed, and every branch shares the same working tree, so this loop is strictly sequential from start to finish.
-
-For each branch:
-
-```bash
-git checkout <branch>
-```
-
-**Before rebasing, detect if the parent PR was squash-merged:**
-
-```bash
-# If parent branch no longer exists on remote, it was likely squash-merged
-git ls-remote --heads origin <parent-branch>
-# Returns nothing → squash merge; pass this context to resolve-merge-conflict
-```
-
-Invoke `resolve-merge-conflict`, passing the squash-merge detection result in the skill invocation message — e.g., `"The parent branch <parent-branch> was squash-merged (no longer exists on remote). Rebase <current-branch> onto <target>."` vs `"Rebase <current-branch> onto <target>."` for normal cases. That skill owns the rebase procedure for both cases (regular and squash merge).
-
-**If the rebase succeeds cleanly** — push, then run `adjust-pr-base` for this branch before moving on:
-
-```bash
-git push --force-with-lease origin HEAD
-```
-
-`adjust-pr-base` is a handful of `gh` calls, so run it inline. Record this branch's pushed HEAD (`git rev-parse HEAD`) — Step 7 compares against it to detect re-cascade needs.
-
-**Exception — orphaned parent:** If the parent branch was detected as deleted/squash-merged (see Edge Cases: Orphaned Stack Member), invoke `adjust-pr-base` **before** the rebase. GitHub's PR base must point to a valid branch before CI runs.
-
-CI 監視は各ブランチでは行わない。cascade を全ブランチ完走させてから Step 6 でまとめて扱う。cascade 途中で CI 修正を挟むと、まだ rebase していない downstream を二度触ることになる。
-
-**If conflicts arise:**
-
-- Invoke the `resolve-merge-conflict` skill to handle the conflict resolution
-- If the conflict is too complex to auto-resolve, stop the cascade at this branch and report what's left
-
-**If a branch is already up-to-date:**
-
-- Check with `git merge-base --is-ancestor origin/<parent-branch> HEAD`
-- If already up-to-date, skip with a note
-
-**Independent siblings:** Two branches at the same depth have no dependency on each other, but they still share one working tree — rebase them one after the other, in either order. Finish both before descending to their children.
-
-### 6. Watch CI, Upstream First
-
-cascade 完走後、`watch-ci` スキルを上流から下流の順に 1 ブランチずつ呼び出す。`watch-ci` は監視・再実行・flaky 判定・`fix-github-actions-ci` 委譲まで完走する。
-
-**Why upstream first?** Each PR's CI tests its diff against its parent branch. Downstream changes never affect upstream CI. So once an upstream branch passes CI, it's stable — there's no need to re-check it regardless of what happens downstream. 逆に upstream の修正は downstream を必ず古くするので、upstream を確定させないまま downstream を直しても手戻りになる。
-
-先に全ブランチの CI 状態だけ一覧したい場合は、read-only な `gh pr checks` を全 PR に対して同時発行してよい。修正を伴う `watch-ci` の呼び出し自体は 1 ブランチずつ行う。
-
-### 7. Re-cascade After Upstream Fixes
-
-`watch-ci` が CI 失敗を修正して新しいコミットを push すると、その downstream ブランチが古くなる。Step 5 で記録した pushed HEAD と現在の remote HEAD を比較して検出する:
-
-```bash
-git rev-parse origin/<branch>
-```
-
-新しいコミットが検出されたら、そのブランチより下だけを mini-cascade する:
-
-1. Downstream ブランチを topological order で 1 つずつ rebase する（conflict が出たら `resolve-merge-conflict` を invoke）
-2. Push してから、その downstream ブランチの `watch-ci` を改めて呼び出す
-
-**Ordering rule:** あるブランチの CI 修正が終わるまで、その downstream の CI 修正には着手しない。upstream の修正で downstream の失敗が消えることがあり、先に downstream を直すと不要な変更を積む。
-
-**When to stop:**
-
-- 全ブランチが CI pass → Step 8 へ
-- `watch-ci` が「PR の変更と無関係な失敗（flaky、インフラ）」として報告 → その内容を記録して次のブランチへ進む
-- 同一ブランチの mini-cascade が 2 回を超えた → 停止して状況を報告する
-- ユーザーが停止を指示
-
-### 8. Report
-
-Summarize the entire cascade:
-
-```
-## Cascade Rebase Report
-
-Starting point: feat/auth
-
-| Branch | PR | Rebase | Conflicts | Push | CI |
-|--------|-----|--------|-----------|------|----|
-| feat/auth-ui | #42 | ✅ clean | — | ✅ | ✅ pass |
-| feat/auth-ui-tests | #43 | ✅ clean | — | ✅ | ⚠️ flaky (passed on rerun) |
-| feat/auth-api | #44 | ⚠️ conflicts | 2 auto-resolved | ✅ | ❌ lint failure (fixed) |
-
-Actions taken:
-- Resolved 2 merge conflicts in feat/auth-api (import reordering)
-- Fixed lint error in feat/auth-api/src/handler.ts
-- All PR bases verified correct
-```
+報告に必ず含めるもの: 使った Route、復旧作業をしたならその内容と原因、検証の結果、未解決のまま残したもの。
 
 ## Edge Cases
 
-### Branch Has No Open PR
+### ブランチに open PR がない
 
-Skip it but warn: the branch exists in the ancestry chain but has no PR. It might be a local-only branch or a deleted PR.
+スキップして警告する。ancestry には乗っているが PR がない（ローカル専用、PR 削除済み）。
 
-### Conflict Cannot Be Auto-Resolved
+### conflict を自動解決できない
 
-Stop the cascade at the conflicting branch. Report:
+そのブランチでカスケードを止める。どのブランチのどのファイルか、どこまで rebase 済みかを報告し、手動解決後に再開を申し出る。gh stack の途中なら `gh stack rebase --abort` で全ブランチを戻せる（worktree の制約は [症状 2](#症状-2---abort-が-worktree-で失敗する) を参照）。
 
-- Which branch has the conflict
-- What files are conflicted
-- What the cascade state is (which branches were already rebased)
-- Ask the user to resolve manually, then offer to continue the cascade
+### スタックの途中がマージされた
 
-### CI Fix Triggers Re-Cascade
-
-When fixing CI requires code changes and a new push, downstream branches become stale again. Re-cascade from that point. Track which branches have been re-rebased to avoid infinite loops — if the same branch needs re-rebasing more than twice, stop and report.
-
-### Orphaned Stack Member
-
-A PR in the stack targets a branch that's been deleted or merged. Invoke `adjust-pr-base` **before** the rebase to re-target the PR to the nearest valid ancestor or the default branch. The rebase can proceed with the same target once `adjust-pr-base` completes.
+Route A では `gh stack rebase` / `sync` がマージ済みブランチを skip して自動で処理する。PR の base は GitHub 側が自動 retarget するので `adjust-pr-base` は多くの場合 no-op になる。Route B では `adjust-pr-base` を rebase の前に実行する。
 
 ## Boundaries
 
 - このスキルは依存関係のある PR の同期・メンテナンスを扱う。新規スタックの作成や大きな PR の分割は扱わない。
-  - 大きな PR/ブランチを stacked PR に分割するには `reorganize-diff` スキルを使う。
-  - 大きな機能開発の stacked PR 計画を立てるには `plan-stacked-pr` スキルを使う。
-  - これらのスキルで作成されたスタックの継続的メンテナンス（cascade rebase、CI 監視・修正、スタック同期）は本スキルが担う。
-- This skill orchestrates the cascade by invoking specialized skills (`adjust-pr-base`, `resolve-merge-conflict`, `fix-github-actions-ci`) at the appropriate points. Each skill owns its own domain logic.
-- If the user asks to create a new branch in the stack while cascading, finish the cascade first, then address the new branch request separately.
+  - 大きな PR/ブランチを stacked PR に分割するには `reorganize-diff` skill を使う
+  - 大きな機能開発の stacked PR 計画を立てるには `plan-stacked-pr` skill を使う
+  - これらが作ったスタックの継続的メンテナンス（カスケード rebase、CI 監視・修正、同期）は本スキルが担う
+- gh stack のコマンド仕様・非対話フラグ・exit code は `gh-stack` skill が持つ。ここで重複して定義しない。`gh-stack` は vendored なので編集もしない
+- conflict 解決は `resolve-merge-conflict`、PR base の修正は `adjust-pr-base`、CI は `watch-ci` と `fix-github-actions-ci` に委譲する
+- カスケード中に新しいブランチ追加を頼まれたら、カスケードを完走させてから別途対応する

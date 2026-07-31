@@ -126,8 +126,9 @@ main
 ## Workflow
 
 This feature is developed using stacked PRs. Each PR plan below is designed
-to be worked on using the `stacked-pr` skill for branch creation, cascade
-rebase, CI monitoring, and stack synchronization.
+to be worked on using the `stacked-pr` skill for cascade rebase, CI
+monitoring, and stack synchronization. On GitHub, `stacked-pr` drives the
+native `gh stack` commands via the `gh-stack` skill.
 
 When starting work on any PR in this plan:
 1. Use the `prepare-issue-pr` skill to draft the PR with correct base branch and template compliance
@@ -168,9 +169,9 @@ in the stack? What value does shipping this independently provide?>
 This PR is part of a stacked PR workflow.
 
 - Use the `prepare-issue-pr` skill when creating this PR to draft the title, body, and base branch
-- Use the `stacked-pr` skill for cascade rebase, CI monitoring, and stack sync
+- Use the `stacked-pr` skill for cascade rebase, CI monitoring, and stack sync (it delegates to `gh stack` on GitHub)
 - Use the `reorganize-diff` skill if this PR itself grows too large and needs further splitting
-- Base branch: `<parent-branch-name>`
+- Base branch: `<parent-branch-name>` (on GitHub, `gh stack submit` wires this automatically)
 
 When implementing this PR:
 

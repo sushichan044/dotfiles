@@ -61,25 +61,48 @@ allowed-tools: Bash(git status:*) Bash(git branch:*) Bash(git fetch:*) Bash(git 
 
 2. 次の conflict が出たら繰り返す
 
-## squash merge された親ブランチへの rebase
+## replay 範囲がおかしいときは `--onto` を使う
 
-通常の `git rebase` では対処できないケースがある。
+通常の `git rebase` では対処できないケースがある。共通する症状は「**自分のブランチと無関係なファイルで大量に conflict する**」。
 
-**症状**: 親ブランチが squash merge されており、rebase すると親ブランチのコミットが原因のコンフリクトが大量発生する。
+原因はどちらも同じで、rebase の起点（分岐点）が実態とズレており、既に base 側に入っているコミットまで再適用しようとしている。
 
-**原因**: squash merge は親ブランチの全コミットを 1 つの新しいコミットに畳む。子ブランチの履歴には元の親コミットが残っているため、git は「まだ取り込まれていない」と判断して再適用しようとする。
+**ケース 1: 親ブランチが squash merge された**
 
-**対処**:
+squash merge は親ブランチの全コミットを 1 つの新しいコミットに畳む。子ブランチの履歴には元の親コミットが残っているため、git は「まだ取り込まれていない」と判断して再適用する。
+
+**ケース 2: stacked PR ツールの記録した base が古い**
+
+`gh stack` などは各ブランチの base を記録しているが、下段 PR のマージ後に base が更新されず古いコミットを指し続けることがある。その状態で rebase すると、base から現在までに base branch へ入った他人のコミットまで replay 対象になる。
+
+### 検知
+
+rebase を始める前（または止まった直後）に、replay されるべき数と実際の数を突き合わせる。
 
 ```bash
-# 1. 親 PR の headRefOid（squash 前の先頭コミット）を取得
+git rev-list --count origin/<新しいbase>..HEAD   # 本来 replay すべき自分のコミット数
+wc -l < .git/rebase-merge/git-rebase-todo        # 実際に replay しようとしている数
+```
+
+食い違っていたら `--onto` に切り替える。
+
+### 対処
+
+```bash
+# 1. 「古い親の tip」を特定する
+#    squash merge 済みの親なら PR の headRefOid が使える
 old_parent_tip=$(gh pr view <親PRの番号> --json headRefOid --jq .headRefOid)
+#    ツールの記録が古いだけなら、rebase 前の親 tip を reflog から取る
+#    git reflog show <親ブランチ>
 
 # 2. ローカルに存在するか確認（なければ fetch）
 git cat-file -e "$old_parent_tip" 2>/dev/null || \
   git fetch origin $(gh pr view <親PRの番号> --json headRefName --jq .headRefName)
 
-# 3. --onto で「親のコミット以降だけ」を新しい base に乗せ直す
+# 3. replay 対象が自分のコミットだけか確認する（ここを飛ばさない）
+git log --oneline "$old_parent_tip"..HEAD
+
+# 4. --onto で「親のコミット以降だけ」を新しい base に乗せ直す
 git rebase --onto origin/<新しいbase> "$old_parent_tip"
 ```
 
@@ -88,7 +111,7 @@ git rebase --onto origin/<新しいbase> "$old_parent_tip"
 - `old_parent_tip..HEAD` の範囲のコミット（= 自分のコミットだけ）を
 - `origin/main` の上に乗せる
 
-これで親ブランチのコミットは再適用されない。
+step 3 の出力に他人のコミットが混ざっていたら、指定した `old_parent_tip` が実際の分岐点ではない。スタックの途中に同じ subject の rebase コピーが挟まっていることがあるので、`git log --oneline origin/<新しいbase>..HEAD` と突き合わせて取り直す。
 
 ## generated file / lockfile
 
@@ -138,6 +161,8 @@ git push --force-with-lease origin HEAD
 
 push 後、このブランチに open PR があれば `adjust-pr-base` skill を実行する。
 rebase 先が変わった場合、PR の base branch も古いまま残ることがあるため。
+
+ただし stacked PR の一部として `stacked-pr` skill から呼ばれた場合、push と base の面倒は呼び出し元が見る。ここでは rebase の完了だけを報告して戻る。
 
 報告すること:
 

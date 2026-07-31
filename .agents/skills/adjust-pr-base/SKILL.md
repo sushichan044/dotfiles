@@ -23,24 +23,39 @@ Do not add extra policy or heuristics.
 
 - After `git rebase`
 - After `gh pr create`
-- When working with stacked PRs
+- When working with stacked PRs on a host without native stack support
 - When checking whether `gh pr edit --base ...` is needed
 - After a parent PR has been merged or closed, to update this PR's base to the default branch
+
+## When Not To Use
+
+Skip this skill when the PR belongs to a `gh stack` stack. `gh stack submit` / `gh stack link` set each PR's base to its parent branch, and GitHub re-targets a PR to the default branch when its base branch is merged. Running this procedure there is a no-op at best, and it can fight the tool when the stack is mid-repair. The `stacked-pr` skill decides when a base actually needs fixing.
+
+Check with `gh stack view --json` before starting: if the current branch appears in `.branches[]`, stop and report that the stack owns the base.
 
 ## Rules
 
 Follow these rules in order:
 
-1. Only inspect the PR for the current branch.
-2. Only consider open PRs as parent candidates. Merged or closed PRs are never parent candidates — if the parent PR was merged, it is no longer a valid base and the default branch must be used instead.
-3. A parent candidate must be an ancestor of `HEAD`.
-4. If multiple parent candidates exist, choose the one with the smallest `git rev-list <candidate>..HEAD --count`.
-5. If no parent candidate exists (including when the only candidate was a now-merged/closed PR), use the default branch.
-6. If the current base already matches the target base, do nothing.
-7. Only update the PR description when the target base comes from an open parent PR and `gh pr edit --base` is run.
-8. If the current branch has no open PR, stop and report that nothing was changed.
+1. If the current branch belongs to a `gh stack` stack, stop and report `stack-owned`. Do not edit the base.
+2. Only inspect the PR for the current branch.
+3. Only consider open PRs as parent candidates. Merged or closed PRs are never parent candidates — if the parent PR was merged, it is no longer a valid base and the default branch must be used instead.
+4. A parent candidate must be an ancestor of `HEAD`.
+5. If multiple parent candidates exist, choose the one with the smallest `git rev-list <candidate>..HEAD --count`.
+6. If no parent candidate exists (including when the only candidate was a now-merged/closed PR), use the default branch.
+7. If the current base already matches the target base, do nothing.
+8. Only update the PR description when the target base comes from an open parent PR and `gh pr edit --base` is run.
+9. If the current branch has no open PR, stop and report that nothing was changed.
 
 ## Procedure
+
+### 0. Check stack membership
+
+```bash
+gh stack view --json 2>/dev/null | jq -r '.currentBranch as $c | .branches[] | select(.name == $c) | .name'
+```
+
+If this returns a branch name, stop and report `stack-owned`.
 
 ### 1. Read current branch and PR
 
@@ -138,8 +153,8 @@ Current branch: <branch>
 Current PR: <url>
 Previous base: <old-base>
 Target base: <target-base>
-Action: changed | unchanged | no-open-pr
-Reason: nearest open ancestor PR | no open ancestor PR, so default branch | parent PR merged/closed, so default branch
+Action: changed | unchanged | no-open-pr | stack-owned
+Reason: nearest open ancestor PR | no open ancestor PR, so default branch | parent PR merged/closed, so default branch | branch is in a gh stack stack
 Description: updated-base-pr-link | unchanged
 ```
 

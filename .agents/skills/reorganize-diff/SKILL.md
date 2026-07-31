@@ -195,27 +195,36 @@ git commit -m "<type>(<scope>): <message>"
 
 Tier 1 の依存順にブランチを作成し、各ブランチ内を Tier 2 コミットで構成する。
 
+GitHub の repo では、ブランチ作成に `gh stack` を使う。ブランチ名はそのまま使われる（prefix は付かない）。
+
 ```bash
-# Tier 1 ブランチ作成
-git checkout -b <pr-branch> <parent-branch>
+gh stack init <bottom-branch>          # スタックの最下段を作る（作成して checkout まで行う）
 
 # Tier 2 コミットを依存順に積む
 git checkout <source-ref> -- <path>
-git add -p
+git add -p                             # hunk 単位で意図的に stage する
 git commit -m "<type>(<scope>): <message>"
+
+gh stack add <next-branch>             # 次の Tier 1 を 1 段積む（以降くり返し）
 ```
 
-各ブランチ完成後:
+GitHub 以外のホストでは `git checkout -b <pr-branch> <parent-branch>` で 1 段ずつ作る。
+
+全ブランチを積み終えたら、まとめて PR にする。
 
 ```bash
-gh pr create \
-  --draft \
-  --base <parent-branch> \
-  --title "<title>" \
-  --body "<body>"
+gh stack submit --auto                 # push + draft PR 作成 + base の連結
 ```
 
-PR 本文の生成は `prepare-issue-pr` スキルに委譲する。
+`gh stack submit` は各 PR の base を 1 つ下のブランチに設定し、GitHub 上でスタックとして束ねる。個別の `gh pr create --base` は使わない。
+
+GitHub 以外のホスト、または repo で stacked PR が有効化されていない（`gh stack` が exit 9）場合のみ、従来どおり手で作る。
+
+```bash
+gh pr create --draft --base <parent-branch> --title "<title>" --body "<body>"
+```
+
+PR 本文の生成は `prepare-issue-pr` スキルに委譲する。`gh stack submit --auto` はコミットメッセージからタイトルを自動生成するため、本文を整えるのは PR 作成後になる（`gh pr edit`）。
 PR 作成後のスタック管理は `stacked-pr` スキルに委譲する。
 
 元の monolithic PR を置き換える場合は、元 PR に新スタックへのリンクを貼った上でクローズを提案する（自動クローズしない）。

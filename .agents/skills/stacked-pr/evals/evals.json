@@ -3,64 +3,146 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "feat/auth ブランチを main に rebase したんだけど、この下に feat/auth-ui と feat/auth-api の2つの子PRがぶら下がってる。スタック全体を sync してほしい。feat/auth-ui は #42、feat/auth-api は #44。あと auth-ui の下に auth-ui-tests (#43) もある。",
-      "expected_output": "Should discover 3 downstream branches, build the correct topological order (auth-ui → auth-ui-tests → auth-api), show a plan, cascade rebase each one, push, adjust PR bases, and launch CI watches in background. The report should show all 3 branches with their status.",
+      "prompt": "github.com/acme/web の 3段スタックを sync してほしい。main ← refactor/core (#10) ← refactor/api (#11) ← refactor/cli (#12)。さっき main に新しいコミットが入ったので全部追いつかせて。",
+      "expected_output": "Should detect the host is GitHub and route to the gh-stack skill instead of hand-rolling a cascade. Should run preflight (gh stack view --json, git worktree list, rerere/pushDefault config), then gh stack rebase, verify the result, and ask for approval before gh stack push.",
       "files": [],
       "assertions": [
         {
-          "name": "correct-topological-order",
-          "check": "Rebase order is topologically correct: auth-ui before auth-ui-tests"
+          "name": "routes-to-gh-stack",
+          "check": "Uses gh stack commands (view --json / rebase), not a hand-written per-branch git rebase cascade"
         },
-        { "name": "discovery-all-three", "check": "All three downstream branches are identified" },
-        { "name": "show-plan-before-rebase", "check": "Shows plan and asks for user confirmation" },
-        { "name": "force-push-with-lease", "check": "Uses --force-with-lease for all pushes" },
-        { "name": "pr-base-adjustment", "check": "Checks/adjusts PR base after each rebase" },
-        { "name": "ci-watch-background", "check": "CI watches launched in background" },
-        { "name": "structured-report", "check": "Produces structured summary report at end" }
+        {
+          "name": "non-interactive-flags",
+          "check": "gh stack view is always called with --json"
+        },
+        {
+          "name": "preflight-worktree",
+          "check": "Checks git worktree list before running gh stack rebase"
+        },
+        {
+          "name": "push-approval",
+          "check": "Asks for user approval before gh stack push / sync because it force-pushes"
+        },
+        {
+          "name": "verify-before-push",
+          "check": "Verifies ancestry chain and per-layer diffs before pushing"
+        },
+        {
+          "name": "structured-report",
+          "check": "Produces a report stating which route was used and the per-branch outcome"
+        }
       ]
     },
     {
       "id": 2,
-      "prompt": "stacked PR のメンテしたい。今 feat/payment にいるんだけど、親の feat/checkout が force-push されたっぽい。まず自分を rebase してから、下流の feat/payment-tests (#51) も更新して。CI 落ちたら直して。",
-      "expected_output": "Should first rebase the current branch (feat/payment) onto its parent (feat/checkout), then discover and rebase the downstream branch (feat/payment-tests). Should handle CI failures top-down.",
+      "prompt": "gh stack rebase したら cdp-dashboard の全然関係ないファイルで conflict した。スタックの下2段は昨日 squash merge されてる。直して。",
+      "expected_output": "Should recognize this as a stale recorded base: gh stack is replaying commits that are already in trunk. Should compare the number of commits to replay against the branch's own commits, abort, redo the cascade with git rebase --onto from the real fork point, verify, then push to refresh gh stack metadata.",
       "files": [],
       "assertions": [
         {
-          "name": "self-rebase-first",
-          "check": "Rebases feat/payment onto feat/checkout BEFORE cascading downstream"
+          "name": "detects-stale-base",
+          "check": "Compares git rev-list --count origin/<trunk>..<branch> against the rebase todo length instead of resolving the conflicts one by one"
         },
         {
-          "name": "cascade-downstream",
-          "check": "Rebases feat/payment-tests onto updated feat/payment"
-        },
-        { "name": "ci-top-down-priority", "check": "CI failures fixed upstream first" },
-        {
-          "name": "no-upstream-recheck",
-          "check": "Passed upstream CI not re-checked during downstream fixes"
+          "name": "aborts-first",
+          "check": "Runs gh stack rebase --abort before attempting a manual fix"
         },
         {
-          "name": "ci-fix-approach",
-          "check": "Structured approach to diagnose and fix CI failures"
+          "name": "uses-onto-with-real-sha",
+          "check": "Rebuilds the stack bottom-up with git rebase --onto <new parent tip> <old parent tip>, using actual SHAs rather than gh stack's recorded base"
+        },
+        {
+          "name": "checks-replay-range",
+          "check": "Runs git log --oneline <old parent tip>..<branch> to confirm only the branch's own commits are replayed before rebasing"
+        },
+        {
+          "name": "refreshes-metadata",
+          "check": "Re-syncs gh stack state afterwards (gh stack push, and confirms view --json head matches the real tip)"
+        },
+        {
+          "name": "returns-to-gh-stack",
+          "check": "Treats the manual --onto pass as repair, not as a permanent switch away from gh stack"
         }
       ]
     },
     {
       "id": 3,
-      "prompt": "3段のスタックで cascade rebase してほしい。main ← refactor/core (#10) ← refactor/api (#11) ← refactor/cli (#12)。refactor/core にいて、さっき main から rebase した。api と cli を順番に sync して、全部の CI が通るか確認して。conflict あったら自動で解決してくれていいよ。",
-      "expected_output": "Should discover refactor/api and refactor/cli as downstream. Rebase api onto core first, then cli onto api. Auto-resolve conflicts where possible. Push both, adjust PR bases, watch CI for both.",
+      "prompt": "gh stack rebase --abort したのに `checkout feat/api: ... is already used by worktree at '.wt/feat-api'` って出て、ブランチが戻りきってないっぽい。",
+      "expected_output": "Should explain that gh stack cannot check out a branch held by another worktree, locate it with git worktree list, and restore that branch from inside the worktree directory. Should add the worktree check to preflight before re-running gh stack.",
       "files": [],
       "assertions": [
-        { "name": "correct-linear-order", "check": "Rebases api before cli" },
         {
-          "name": "auto-conflict-resolution",
-          "check": "Addresses auto-resolving conflicts per user request"
+          "name": "identifies-worktree-cause",
+          "check": "Attributes the failed restore to the branch being checked out in another worktree"
         },
         {
-          "name": "rebase-onto-correct-parent",
-          "check": "Each branch rebased onto direct parent, not skip-level"
+          "name": "recovers-inside-worktree",
+          "check": "Runs the recovery (git status / git rebase --abort) inside the worktree directory rather than the main checkout"
         },
-        { "name": "ci-watch-all", "check": "CI watched for both rebased branches" },
-        { "name": "pr-base-verification", "check": "PR bases verified after rebase" }
+        {
+          "name": "verifies-restored-tips",
+          "check": "Confirms every stack branch tip after the recovery instead of trusting the abort output"
+        },
+        {
+          "name": "prevents-recurrence",
+          "check": "States that the worktree must be cleared or handled manually before running gh stack again"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "うちの GitLab に置いてる repo で stacked PR (MR) のメンテしたい。feat/payment にいて、親の feat/checkout が force-push された。下流の feat/payment-tests も更新して。",
+      "expected_output": "Should detect the host is not GitHub, fall back to the manual cascade route, rebase the current branch onto its parent first, then cascade downstream sequentially with force-with-lease pushes and inline base adjustment.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "detects-non-github",
+          "check": "Checks the remote URL and chooses the manual cascade route instead of gh stack"
+        },
+        {
+          "name": "self-rebase-first",
+          "check": "Rebases feat/payment onto feat/checkout before cascading downstream"
+        },
+        {
+          "name": "sequential-cascade",
+          "check": "Processes branches strictly one at a time because they share one working tree"
+        },
+        {
+          "name": "plan-confirmation",
+          "check": "Shows the stack and asks for confirmation before rewriting history"
+        },
+        {
+          "name": "force-push-with-lease",
+          "check": "Uses --force-with-lease for every push"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "スタック全体を rebase して push したんだけど、CI が何本か落ちてる。全部通してほしい。main ← feat/a (#20) ← feat/b (#21) ← feat/c (#22)。",
+      "expected_output": "Should watch and fix CI upstream first, one branch at a time via watch-ci, re-cascade only the branches below a fixed one, and stop after repeated re-cascades of the same branch.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "ci-owned-by-this-skill",
+          "check": "Recognizes that gh stack does not handle CI and invokes watch-ci itself"
+        },
+        {
+          "name": "ci-upstream-first",
+          "check": "Fixes feat/a before feat/b and feat/c"
+        },
+        {
+          "name": "no-upstream-recheck",
+          "check": "Does not re-check upstream CI that already passed"
+        },
+        {
+          "name": "re-cascade-after-fix",
+          "check": "Re-cascades only the downstream of a branch whose CI fix added new commits"
+        },
+        {
+          "name": "loop-guard",
+          "check": "Stops and reports if the same branch needs re-cascading more than twice"
+        }
       ]
     }
   ]

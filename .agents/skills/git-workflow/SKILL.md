@@ -47,6 +47,17 @@ PR を新規作成するときだけ取得する。
 gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 ```
 
+### Stack membership
+
+current branch が stacked PR の一部かを判定する。PR を作る前、rebase する前に必ず取る。
+
+```bash
+gh stack view --json 2>/dev/null | jq -r '.currentBranch as $c | .branches[] | select(.name == $c) | .name'
+```
+
+- ブランチ名が返る: current branch は stack の一部。[Create PR](#create-pr) と [Rebase](#rebase) は stack 用の分岐に入る
+- 何も返らない / コマンドが失敗する: stack ではない単独ブランチとして扱う
+
 ### Global rules
 
 1. **Read-only override が最優先**: ユーザーが「見るだけ」「確認だけ」「コメントしない」のように write を抑止したら、各操作節より優先して write 系操作を止める。サブスキルに委譲するときも read-only 制約を明示して渡す。
@@ -55,6 +66,8 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 4. **staged 変更がないまま commit が必要なら、`git add` の前にユーザー確認を取る**: 何を stage するかは暗黙に決めない。
 5. **委譲先の責務を上書きしない**: base branch の確定は `prepare-issue-pr` の初期推定と `adjust-pr-base` の最終検証に従う。`git-workflow` 自身で別の base 選定ロジックを足さない。
 6. **state probe は routing 前に 1 回実行する**: その後に state を変える write（commit, PR create, rebase, push）を行った場合だけ、次の分岐や確認の前に必要な probe を取り直す。
+7. **stack のブランチを単独で扱わない**: `Stack membership` probe が stack の一部だと示したら、rebase も PR 作成も [Stacked PR Sync](#stacked-pr-sync) 経由にする。1 ブランチだけ rebase して push すると下流が壊れる。
+8. **履歴を書き換える push は承認を取る**: `git push --force-with-lease` と `gh stack push` / `gh stack sync` は、対象ブランチと影響する PR を提示してからユーザーの承認を得て実行する。
 
 ## 操作マップ（クイックリファレンス）
 
@@ -63,8 +76,9 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 | commit して、変更を保存、コミット                      | → [Commit](#commit)                                                  |
 | PR 作って、PR 出して、PR を開く                        | → [Create PR](#create-pr)                                            |
 | push して、PR に反映して                               | → [Push to PR](#push-to-pr)                                          |
-| rebase して、最新に追いついて、ベースを更新            | → [Rebase](#rebase)                                                  |
+| rebase して、最新に追いついて、ベースを更新            | → [Rebase](#rebase)（stack なら Stacked PR Sync）                    |
 | スタック整理して、cascade rebase、全 PR を同期         | → [Stacked PR Sync](#stacked-pr-sync)                                |
+| gh stack が止まった、スタックが壊れた、下段がマージ済み | → [Stacked PR Sync](#stacked-pr-sync)                                |
 | diff 整理して、コミット整えて、PR 分割して、大きすぎる | → [Reorganize Diff](#reorganize-diff) (Create PR からも自動呼び出し) |
 | PR レビューして、コメントして、差分を見て              | → [Review PR](#review-pr)                                            |
 | CI 直して、テスト落ちてる、ビルドが失敗                | → [Fix CI](#fix-ci)                                                  |
@@ -100,13 +114,14 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 1. コミットされていない変更があれば [Commit](#commit) を先に完走させる。
 2. push 前に [Reorganize Diff](#reorganize-diff) を実行する。reorganize-diff の判定結果で本フローの残ステップが分岐する:
    - **「分割不要」**: そのまま step 3 へ進む。
-   - **「コミット整理のみ」モード**: reorganize-diff が現ブランチのコミットを整理して `git push --force-with-lease` まで完走する。step 3 (push) はスキップして step 4 へ進む。
+   - **「コミット整理のみ」モード**: reorganize-diff が現ブランチのコミットを整理して `git push --force-with-lease` まで完走する。step 4 (push) はスキップして step 5 へ進む。
    - **「スタック PR」モード**: reorganize-diff が複数の PR を作成し、`stacked-pr` スキルへハンドオフして完走する。本フローはここで終了。step 3 以降はスキップ。
-3. `git push -u origin HEAD` でブランチを push する。
-4. **`prepare-issue-pr` スキルを呼び出して** PR title、body、初期 base branch を決める。base の初期推定はこのスキルに従う。
-5. デフォルトでは `gh pr create --draft --base <base-from-prepare-issue-pr> --title "<title>" --body "<body>"` で draft PR を作る。ユーザーが ready for review / non-draft を明示したときだけ `--draft` を外す。
-6. **`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
-7. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
+3. `Stack membership` probe が current branch を stack の一部だと示した場合、以降は **[Stacked PR Sync](#stacked-pr-sync) に委譲する**。`stacked-pr` 経由で `gh stack submit --auto`（draft で作る。ready for review にするときだけ `--open`）を使い、単独の `git push` と `gh pr create` は行わない。stack の base 連結は gh stack が張るので step 6 の `adjust-pr-base` も不要。
+4. stack でない場合は `git push -u origin HEAD` でブランチを push する。
+5. **`prepare-issue-pr` スキルを呼び出して** PR title、body、初期 base branch を決める。base の初期推定はこのスキルに従う。
+6. デフォルトでは `gh pr create --draft --base <base-from-prepare-issue-pr> --title "<title>" --body "<body>"` で draft PR を作る。ユーザーが ready for review / non-draft を明示したときだけ `--draft` を外す。
+7. **`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
+8. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
 
 **完了条件**:
 
@@ -123,7 +138,7 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 **Steps**:
 
 1. コミットされていない変更があれば [Commit](#commit) を先に完走させる。
-2. 直前に [Rebase](#rebase) を実行していない場合だけ `git push` する。`Rebase -> Push to PR` の流れではこの step をスキップする。
+2. 直前に [Rebase](#rebase) を実行していない場合だけ `git push` する。`Rebase -> Push to PR` の流れではこの step をスキップする。current branch が stack の一部なら単独 push はせず、[Stacked PR Sync](#stacked-pr-sync) に委譲する。
 3. PR のタイトル・説明がブランチの最新状態を反映しているか確認する:
 
    ```bash
@@ -143,7 +158,9 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 ## Rebase
 
-**Entry**: 「rebase して」「最新に追いついて」「ベース更新して」などの指示がある。
+**Entry**: 「rebase して」「最新に追いついて」「ベース更新して」などの指示があり、current branch が stack の一部**ではない**とき。
+
+`Stack membership` probe が stack の一部だと示したら、この節は使わず [Stacked PR Sync](#stacked-pr-sync) に回す。1 ブランチだけ rebase して push すると下流のブランチが必ず壊れる。
 
 **Steps**:
 
@@ -160,11 +177,15 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 ## Stacked PR Sync
 
-**Entry**: 「スタックを整理して」「cascade rebase して」「全 PR を同期して」など、複数の依存 PR のメンテナンスが必要な状況。
+**Entry**:
+
+- 「スタックを整理して」「cascade rebase して」「全 PR を同期して」など、複数の依存 PR のメンテナンスが必要な状況
+- `Stack membership` probe が current branch を stack の一部だと示した状態での rebase / push / PR 作成
+- `gh stack` のコマンドが conflict や中断で止まっているとき
 
 **Steps**:
 
-1. **`stacked-pr` スキルに完全に委譲する**。
+1. **`stacked-pr` スキルに完全に委譲する**。GitHub の repo なら `stacked-pr` が `gh-stack` skill（`gh stack` コマンド）へ委譲し、preflight・復旧・検証・CI を自分で担当する。GitHub 以外では手動カスケードに切り替わる。この振り分けを `git-workflow` 側で先取りしない。
 
 **完了条件**:
 
@@ -182,7 +203,7 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 **Steps**:
 
 1. **`reorganize-diff` スキルに完全に委譲する**。Phase 1 (分析) は副作用なし、Phase 2 (実行) はユーザー承認が必要。
-2. Phase 1 が「分割不要」を返した場合、Phase 2 は実行されない。呼び出し元のフロー (例: [Create PR](#create-pr) の step 3 以降) をそのまま継続する。
+2. Phase 1 が「分割不要」を返した場合、Phase 2 は実行されない。呼び出し元のフロー (例: [Create PR](#create-pr) の step 3 以降) をそのまま継続する。stack の一部なら step 3 で [Stacked PR Sync](#stacked-pr-sync) に入る。
 3. reorganize-diff が Phase 2 で `git push` / `gh pr create` まで完走した場合、その先のステップ (元の呼び出し元フローでの push / PR 作成) は再実行しない。
 
 **完了条件**:
@@ -246,3 +267,4 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 - 操作タイプが不明な場合は、この skill 冒頭の state probe を実行してから判断する。
 - `Rebase -> Push to PR` は `git push` を 2 回行うフローではない。Rebase 側の push を再利用し、後段は PR metadata と CI を更新する。
+- stack のブランチでは [Push to PR](#push-to-pr) の単独 push も使わない。`stacked-pr` 経由の `gh stack push` で全ブランチをまとめて更新する。
