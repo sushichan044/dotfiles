@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+script_path="$(chezmoi source-path)/tools/symlink-agent-skills.ts"
+exec bun run --silent "$script_path" "$@"
