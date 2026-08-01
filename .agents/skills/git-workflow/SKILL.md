@@ -71,17 +71,17 @@ gh stack view --json 2>/dev/null | jq -r '.currentBranch as $c | .branches[] | s
 
 ## 操作マップ（クイックリファレンス）
 
-| ユーザーの intent                                      | 操作タイプ                                                           |
-| ------------------------------------------------------ | -------------------------------------------------------------------- |
-| commit して、変更を保存、コミット                      | → [Commit](#commit)                                                  |
-| PR 作って、PR 出して、PR を開く                        | → [Create PR](#create-pr)                                            |
-| push して、PR に反映して                               | → [Push to PR](#push-to-pr)                                          |
-| rebase して、最新に追いついて、ベースを更新            | → [Rebase](#rebase)（stack なら Stacked PR Sync）                    |
-| スタック整理して、cascade rebase、全 PR を同期         | → [Stacked PR Sync](#stacked-pr-sync)                                |
+| ユーザーの intent                                       | 操作タイプ                                                           |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| commit して、変更を保存、コミット                       | → [Commit](#commit)                                                  |
+| PR 作って、PR 出して、PR を開く                         | → [Create PR](#create-pr)                                            |
+| push して、PR に反映して                                | → [Push to PR](#push-to-pr)                                          |
+| rebase して、最新に追いついて、ベースを更新             | → [Rebase](#rebase)（stack なら Stacked PR Sync）                    |
+| スタック整理して、cascade rebase、全 PR を同期          | → [Stacked PR Sync](#stacked-pr-sync)                                |
 | gh stack が止まった、スタックが壊れた、下段がマージ済み | → [Stacked PR Sync](#stacked-pr-sync)                                |
-| diff 整理して、コミット整えて、PR 分割して、大きすぎる | → [Reorganize Diff](#reorganize-diff) (Create PR からも自動呼び出し) |
-| PR レビューして、コメントして、差分を見て              | → [Review PR](#review-pr)                                            |
-| CI 直して、テスト落ちてる、ビルドが失敗                | → [Fix CI](#fix-ci)                                                  |
+| diff 整理して、コミット整えて、PR 分割して、大きすぎる  | → [Reorganize Diff](#reorganize-diff) (Create PR からも自動呼び出し) |
+| PR レビューして、コメントして、差分を見て               | → [Review PR](#review-pr)                                            |
+| CI 直して、テスト落ちてる、ビルドが失敗                 | → [Fix CI](#fix-ci)                                                  |
 
 操作タイプが複数に見えるときは、依存関係の順（例: commit → push → PR 作成）に処理する。
 
