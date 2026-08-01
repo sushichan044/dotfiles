@@ -56,6 +56,7 @@ Here’s how to create a basic parallax effect:
 5.  **Stagger the animations:** To make the layers move at different speeds, you can use one of two main approaches: **staggering in the keyframes**, or **staggering the `animation-range`**.
 
     Both of these approaches can use hardcoded values, or can use the `sibling-index()`/`sibling-count()` implementation. The hardcoded values are easiest and also useful when having only a limited amount of layers. The `sibling-index()`/`sibling-count()` implementation is handy when you have many layers.
+
     - **Staggering in the keyframes:**
 
       Using **hardcoded values**, you can define a custom property for each layer to manually control its parallax offset.

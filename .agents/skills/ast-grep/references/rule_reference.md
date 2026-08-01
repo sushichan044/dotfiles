@@ -219,7 +219,7 @@ Matches zero or more AST nodes (non-greedy). Useful for variable numbers of argu
 - **Example**: `console.log($$$)` matches `console.log()`, `console.log('hello')`, and `console.log('debug:', key, value)`.
 - **Example**: `function $FUNC($$$ARGS) { $$$ }` matches functions with varying parameters/statements.
 
-### Non-Capturing Metavariables (\_VAR)
+### Non-Capturing Metavariables (_VAR)
 
 Metavariables starting with an underscore (`_`) are not captured. They can match different content even if named identically, optimizing performance.
 

@@ -22,6 +22,7 @@ To add entry and exit effects to an element, you need to combine a few CSS prope
     ```
 
 2.  **Attach the entry and exit keyframes to the element.** You can do this by defining multiple animations in the `animation` property.
+
     - Give the entry animation an `animation-fill-mode` of `backwards` so that it applies its initial state before the animation starts.
     - Give the exit animation an `animation-fill-mode` of `forwards` so that it maintains its final state after the animation is complete.
 
@@ -44,6 +45,7 @@ To add entry and exit effects to an element, you need to combine a few CSS prope
     By default, `view()` tracks the element on the `block` axis. If you need to track it on the `inline` axis, you can use `view(inline)`.
 
 4.  **Limit the animations to the `entry` and `exit` ranges.** The `animation-range` property allows you to specify which part of the timeline an animation should run on.
+
     - The `entry` range covers the time from when the element first enters the viewport until it is fully visible.
     - The `exit` range covers the time from when the element starts to leave the viewport until it is completely hidden.
 

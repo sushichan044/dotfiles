@@ -20,7 +20,7 @@ SHOW STATUS LIKE 'Threads_connected';           -- current count
 
 ## Pool Sizing Formula
 
-A good starting point for OLTP: **pool size = (CPU cores \* N)** where N is typically 2-10. This is a baseline — tune based on:
+A good starting point for OLTP: **pool size = (CPU cores * N)** where N is typically 2-10. This is a baseline — tune based on:
 
 - Query characteristics (I/O-bound queries may benefit from more connections)
 - Actual connection usage patterns (monitor `Threads_connected` vs `Max_used_connections`)

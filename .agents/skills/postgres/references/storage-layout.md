@@ -13,7 +13,7 @@ tags: postgres, storage, pgdata, toast, fillfactor, tablespaces, disk, operation
 - **pg_wal/** — WAL files
 - **pg_xact/** — transaction commit status
 
-"Cluster" in PostgreSQL = single instance with one PGDATA, not an HA cluster. Each table/index = one or more files, split into 1GB segments. Tables have companion **\_fsm** (free space map) and **\_vm** (visibility map); indexes have **\_fsm** only (no \_vm), except hash indexes.
+"Cluster" in PostgreSQL = single instance with one PGDATA, not an HA cluster. Each table/index = one or more files, split into 1GB segments. Tables have companion **\_fsm** (free space map) and **\_vm** (visibility map); indexes have **\_fsm** only (no _vm), except hash indexes.
 
 ## Visibility Map and Free Space Map
 

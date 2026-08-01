@@ -88,6 +88,8 @@
 
 ## Caching
 
+**hot** (<https://github.com/samber/hot>) In-memory caching library for Go with 9 eviction algorithms (LRU, LFU, TinyLFU, W-TinyLFU, S3FIFO, ARC, TwoQueue, SIEVE, FIFO), TTL, loaders with singleflight deduplication, sharding, and stale-while-revalidate.
+
 **Ristretto** (<https://github.com/dgraph-io/ristretto>) High-performance memory-bound Go cache.
 
 **BigCache** (<https://github.com/allegro/bigcache>) Efficient key/value cache for gigabytes of data. Sharded, optimized for high throughput.

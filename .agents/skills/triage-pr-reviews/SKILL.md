@@ -61,6 +61,7 @@ For each comment, in order:
 ```
 
 2. **Ask the user what to do**. Present the following action choices and wait for the user's response before proceeding. The user may pick one of the predefined actions or provide free-text instructions:
+
    - For `type: "thread"` (inline review thread), offer:
      1. **Fix in code** — Make the code change only
      2. **Fix & reply & resolve** — Make the code change, post a reply, and resolve the thread
