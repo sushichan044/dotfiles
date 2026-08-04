@@ -18,6 +18,7 @@ conflicts instead of silently choosing one instruction over another.
   interpretations would materially change the result.
 - Once you have enough information, act. Reuse established decisions, make routine
   judgments yourself, and prefer the smallest focused change that fixes the root cause.
+- Skip closed questions if the answer is clearly obvious.
 
 ## Scope and authority
 
