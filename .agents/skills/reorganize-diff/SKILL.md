@@ -1,6 +1,6 @@
 ---
 name: reorganize-diff
-description: 大きなブランチや PR を、機能・振る舞い単位の PR と、その内側のコード変更種別ごとのコミットに2段階で再編成するスキル。「PR が大きすぎる」「PR を分けたら1コミットの大きなPRになった」「コミットが整理されていない」「PoC をレビュー可能な単位に崩したい」「diff の分割方法を相談したい」「plan-stacked-pr から分割粒度の決定を委譲されたとき」に使う。PR 粒度（機能/振る舞い）とコミット粒度（コード変更種別）を明示的に2層で管理する。
+description: 大きなブランチや PR を、機能・振る舞い単位の PR と、その内側のコード変更種別ごとのコミットに2段階で再編成するスキル。「PR が大きすぎる」「PR を分けたら1コミットの大きなPRになった」「コミットが整理されていない」「WIP コミットが混ざっている」「試行錯誤の履歴を整理したい」「PoC をレビュー可能な単位に崩したい」「diff の分割方法を相談したい」「plan-stacked-pr から分割粒度の決定を委譲されたとき」に使う。PR 粒度（機能/振る舞い）とコミット粒度（コード変更種別）を明示的に2層で管理する。
 allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), Bash(git checkout:*), Bash(git fetch:*), Bash(git diff:*), Bash(git show:*), Bash(git merge-base:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git cherry-pick:*), Bash(git restore:*), Bash(git stash:*), Bash(git reset:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr create:*), Bash(gh pr diff:*), Bash(gh repo view:*)
 ---
 
@@ -11,7 +11,17 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 - **Tier 1 (PR 単位)**: ユーザーが認識できる機能・振る舞いの変化
 - **Tier 2 (コミット単位)**: Tier 1 の PR 内でのコード変更種別
 
-**不変条件**: PR 1 つにコミット 1 つはほぼ常に Tier 2 が省略されたサイン。
+**入力は最終差分だけ**（`git diff <base>...HEAD`）。既存のコミット履歴は参考情報であり、再現対象ではない。試行錯誤や作業順序の痕跡（WIP、後続コミットで打ち消される変更、typo/lint の後追い修正）を再構成後の履歴に持ち込まない。
+
+**不変条件**:
+
+1. 再構成後の全コミットの差分の総和は、元の最終差分と一致する。
+2. 各コミットはコミット単位でレビューできる（判定基準は「Tier 2 — コミット境界」節）。
+3. 後続コミットが打ち消す変更を、前のコミットに含めない。
+
+PR 1 つにコミット 1 つはほぼ常に不変条件 2 が省略されたサイン。
+
+最終差分そのものを変える提案（不要な変更を落とす等）は本 skill のスコープ外。必要ならその差分を提示し、個別に承認を得る。
 
 ---
 
@@ -40,6 +50,13 @@ Tier 1 の典型例:
 ### Tier 2 — コミット境界（コード変更種別粒度）
 
 Tier 1 の PR 内で、コード変更の種別ごとにコミットを分ける。順序は依存関係に基づく（後続コミットは前コミットに依存できる）。
+
+**コミット単位でレビューできる**とは、次の 4 つを満たすこと:
+
+1. そのコミットの差分だけを読んで、何が変わったかを 1 文で説明できる。
+2. 同一 PR 内の後続コミットで削除・書き換えられる行を含まない。
+3. 依存先が自分より前のコミットに閉じている（foundational → consuming の順）。
+4. レビュアーの「この変更は要る/要らない」の判断が、後続コミットで覆らない。
 
 問い:
 
@@ -106,7 +123,21 @@ git log "${default_branch}...HEAD" --oneline
 
 実行が必要かつ PR 分割か commit 整理かが不明な場合は、実行前に1つだけ確認する: 「スタック PR（Tier 1 + Tier 2）にするか、コミット整理のみ（Tier 2 のみ）にするか?」
 
-### 1-2. Tier 1 分割（PR 境界）
+### 1-2. 過程コミットの判定
+
+最終差分と既存コミットを突き合わせ、破棄・畳み込みの対象を特定する。
+
+```bash
+git log "${base}...HEAD" --stat     # 各コミットが触ったファイル
+git diff "${base}...HEAD" --stat    # 最終差分に残っているファイル
+```
+
+- 最終差分に痕跡を残していないコミット（追加してから削除、revert 対）はまるごと破棄する。
+- 対象機能に対する WIP・fixup・typo・lint 修正は、対応する本体の Tier 2 コミットに畳み込む。畳み込み後の内容・メッセージは本体側を優先する。本体は、同じファイルへの変更を最終的に確定した直近のコミットとする。
+- 最終差分に含まれるが対象機能と無関係な変更（既存ファイルへの typo/コメント修正など）は、独立した最小コミットとして分離し、機能本体のコミット群より前に置く。
+- 破棄・畳み込みの一覧を 1-5 の計画出力に含める。
+
+### 1-3. Tier 1 分割（PR 境界）
 
 差分全体を読み、ユーザー視点の機能・振る舞い単位でグループ化する。
 
@@ -116,18 +147,21 @@ git log "${default_branch}...HEAD" --oneline
 
 1文で説明できない単位はまだ広すぎる。「and also」が続くなら複数の単位。
 
-### 1-3. Tier 2 分割（各 Tier 1 内のコミット境界）
+### 1-4. Tier 2 分割（各 Tier 1 内のコミット境界）
 
 各 Tier 1 単位に含まれる変更を、コード変更種別ごとに Tier 2 に分解し、依存順に並べる。
 
-粒度の判断基準は本 skill の「2層モデル」節（Tier 2 の典型例と、同一ファイル / 同一変更種別が混在する場合の扱い）に従う。
-
-### 1-4. 計画出力
+### 1-5. 計画出力
 
 **Tier 1 分割あり（スタック PR モード）**:
 
 ```text
 Reorganization Plan:
+
+破棄する過程コミット:
+  - <SHA/subject> — <破棄理由（後続で打ち消された/revert 対など）>
+畳み込む過程コミット:
+  - <SHA/subject> → <畳み込み先の Tier 2 commit>
 
 PR 1: <slug> — <機能/振る舞いの一行説明>
   Base: <parent-branch>
@@ -152,6 +186,11 @@ Branch: <current-branch>
 PR: <PR number or "none"> — <feature description>
 Action: Tier 2 コミット整理のみ（PR 構造は変更しない）
 
+破棄する過程コミット:
+  - <SHA/subject> — <破棄理由（後続で打ち消された/revert 対など）>
+畳み込む過程コミット:
+  - <SHA/subject> → <畳み込み先の Tier 2 commit>
+
 Tier 2 commits (依存順):
   1. <変更種別>: <一行説明>  (scope: <files/areas>)
   2. <変更種別>: <一行説明>
@@ -164,22 +203,24 @@ Tier 2 commits (依存順):
 
 ## Phase 2: 実行
 
-承認なしに実行しない。
+承認なしに実行しない。`git commit` 実行時にリポジトリ側の pre-commit/pre-push hook（lint・security scan 等）の出力が挟まることがあるが、これは git 操作の成否判定に含めない。
 
 ### 2-1. 作業開始前の安全確保
 
 ```bash
+original_head=$(git rev-parse HEAD)
+git branch "backup/$(git branch --show-current)-pre-reorganize"   # checkout せずに退避
 git stash   # 未コミット変更がある場合
-# または作業前バックアップブランチ
-git checkout -b backup/<branch-name>-pre-reorganize
 ```
+
+`original_head` は 2-4 の差分同一性検証で使う。復旧が必要なときは `git reset --hard backup/<branch-name>-pre-reorganize`。
 
 ### 2-2. 変更の抽出手法
 
-既存コミット境界と論理変更境界の一致度で手法を選ぶ:
+再構成の入力は最終差分だけ。既存コミット履歴は参考情報であり、再現対象ではない。
 
-- **コミット境界が論理変更と一致している**: `git cherry-pick` を使う
-- **コミットが混在 / 作業ツリーが雑然**: ファイルまたは hunk 単位で選択的にステージする
+- 既存コミットの差分がそのまま最終差分の一部として残っている（後続で打ち消されていない、単一の Tier 2 に収まっている）→ `git cherry-pick` で再利用してよい
+- それ以外（後続で打ち消された / WIP / fixup / 複数種別が混在）→ 最終状態から作り直す
 
 ```bash
 git checkout -b <branch-name> <parent-branch>
@@ -189,7 +230,9 @@ git add <path>
 git commit -m "<type>(<scope>): <message>"
 ```
 
-コミット後、`contextual-commit` スキルでコミットメッセージを仕上げる。
+コミットメッセージは元のコミットメッセージを転用せず、実際の diff 内容に基づいて書く。cherry-pick した件名が Tier 2 の変更種別と食い違うなら、reset して同一内容で再コミットし直す（非対話 rebase の reword は使わない）。
+
+再構成コミットは既存差分の機械的な再配置であり新規の意思決定を伴わないため、`contextual-commit` の action line は付けない。Conventional Commits の subject のみで十分。リポジトリ側の hook が別の整形を促しても、この規定を優先する。
 
 ### 2-3. スタック PR モード（Tier 1 分割あり）
 
@@ -210,7 +253,13 @@ gh stack add <next-branch>             # 次の Tier 1 を 1 段積む（以降�
 
 GitHub 以外のホストでは `git checkout -b <pr-branch> <parent-branch>` で 1 段ずつ作る。
 
-全ブランチを積み終えたら、まとめて PR にする。
+全ブランチを積み終えたら、スタック全体の差分が元の最終差分と一致することを確認してから PR にする。
+
+```bash
+git diff <stack-base> <top-branch> --stat   # 1-1 で取った git diff <base>...HEAD --stat と一致すること
+```
+
+一致しなければ hunk か未追跡ファイルの取りこぼしなので、原因を突き止めるまで submit しない。
 
 ```bash
 gh stack submit --auto                 # push + draft PR 作成 + base の連結
@@ -237,12 +286,24 @@ PR 作成後のスタック管理は `stacked-pr` スキルに委譲する。
 merge_base=$(git merge-base HEAD origin/<base-branch>)
 git reset "$merge_base"   # 全変更をステージに戻す
 # Tier 2 ごとに git add / git add -p → git commit を繰り返す
+```
+
+push 前に差分同一性を検証する。
+
+```bash
+git diff "$original_head" HEAD --stat   # 空であること
+git status --short                       # 未コミット・未追跡が残っていないこと
+```
+
+過程コミットの破棄・畳み込みは最終差分を変えないので、この差分は必ず空になる。空でなければ hunk か未追跡ファイルの取りこぼしなので、原因を突き止めるまで push しない。あわせて各コミットに「Tier 2 — コミット境界」節の 4 条件（コミット単位でレビューできる）を当てて確認する。
+
+```bash
 git push --force-with-lease origin HEAD
 ```
 
-コミットシーケンスが論理的に読めることを確認してから push する。
-
 ### 2-5. 結果報告
+
+両モード共通で、破棄・畳み込みした過程コミットの一覧、差分同一性の検証結果、backup ブランチ名を含める。
 
 **スタック PR モード**:
 
@@ -260,17 +321,9 @@ git push --force-with-lease origin HEAD
 
 ## Edge Cases
 
-### 同一ファイルに複数 Tier 2 が混在
-
-hunk が独立していれば `git add -p` で分離する。分離不能なら foundational 側の Tier 2 にまとめて計画に明記する。
-
 ### 循環依存
 
 A と B が互いを必要とする場合は1つの論理変更。分割しない。
-
-### 差分はすでに適切な粒度
-
-既存のコミットや PR 境界が論理変更と一致しているなら「分割不要」と伝える。
 
 ### Tier 1 単位内の独立した Tier 2 同士
 
