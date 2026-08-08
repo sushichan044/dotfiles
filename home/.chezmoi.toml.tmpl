@@ -19,8 +19,8 @@ pager = "delta"
 exclude = ["scripts", "externals"]
 
 [edit]
-command = "zed"
-args = [ "-n" ]
+command = "code"
+args = [ "-n", "--wait" ]
 
 [hooks.read-source-state.pre]
 script = "{{ .chezmoi.sourceDir }}/.chezmoihooks/read-source-state/pre.sh"
