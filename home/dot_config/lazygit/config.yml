@@ -7,12 +7,11 @@ customCommands:
     context: "files"
     loadingText: "opening commitizen commit tool"
     output: terminal
-
 gui:
   language: "ja"
   nerdFontsVersion: "3"
 git:
   # ref: https://github.com/jesseduffield/lazygit/discussions/2403#discussioncomment-6785560
   overrideGpg: true
-  pagers:
-    - useExternalDiffGitConfig: true
+  diffRenderers:
+    - type: extDiff
