@@ -13,7 +13,11 @@
 # Codex repository has too many assets, so we specify the asset pattern to avoid downloading unnecessary assets.
 [tools."github:openai/codex"]
 version = "latest"
-bin = "codex"
-[tools."github:openai/codex".platforms]
-linux-x64 = { asset_pattern = "codex-x86*.tar.gz" }
-macos-arm64 = { asset_pattern = "codex-aarch64*.tar.gz" }
+# Install codex-code-mode-host into the same directory as codex.
+# https://mise.jdx.dev/dev-tools/backends/github.html#multiple-assets-from-the-same-release
+additional_asset_patterns = [
+  'codex-code-mode-host-{{ arch(x64="x86_64", arm64="aarch64") }}-{{ os(macos="apple-darwin", linux="unknown-linux-musl", windows="pc-windows-msvc") }}*.tar.gz',
+]
+# additional_asset_patterns extracts as codex-code-mode-host-<arch>-<os>; codex expects
+# the sidecar binary named exactly codex-code-mode-host next to the main binary.
+postinstall = 'mv "$MISE_TOOL_INSTALL_PATH"/codex-code-mode-host-* "$MISE_TOOL_INSTALL_PATH"/codex-code-mode-host'
