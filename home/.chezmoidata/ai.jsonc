@@ -26,6 +26,11 @@
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
         },
+        "xcode": {
+          "type": "stdio",
+          "command": "xcrun",
+          "args": ["mcpbridge"],
+        },
       },
     },
   },
@@ -64,6 +69,10 @@
         "sentry": {
           "type": "http",
           "url": "https://mcp.sentry.dev/mcp",
+        },
+        "xcode": {
+          "command": "xcrun",
+          "args": ["mcpbridge"],
         },
       },
       "model_reasoning_effort": "medium",
