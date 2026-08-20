@@ -7,7 +7,7 @@
 python = ["3.14.7", "3.12.10"]
 java = "26.0.0"
 uv = "latest"
-go = "1.26.7"
+go = "1.27.0"
 node = "26.4.0"
 bun = "latest"
 deno = "latest"
