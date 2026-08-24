@@ -10,8 +10,9 @@ export function buildPushTriggerContext(prNumber: number | null): string | null 
   return [
     `Pull request #${prNumber} exists for the current branch you just pushed.`,
     "Execute following steps to ensure the PR is properly set up:",
-    "1. Review whether the PR title, description, and metadata still match the latest branch state. If updates are needed, edit the PR.",
-    "2. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
+    "1. Use `sanitize-artifacts` skill to sanitize code, issue, PR, and so on.",
+    "2. Review whether the PR title, description, and metadata still match the latest branch state. If updates are needed, edit the PR.",
+    "3. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
   ].join("\n");
 }
 
