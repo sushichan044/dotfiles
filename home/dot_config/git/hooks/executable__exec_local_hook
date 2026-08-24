@@ -18,8 +18,10 @@ fi
 
 # --- local hook fallback ---
 # Run per-repo .git/hooks/<hook> if it exists and is not a lefthook shim
+# Execute rather than source: sourcing leaves $0 pointing at this dispatcher, so local
+# hooks that derive paths from $0 (e.g. a symlink into the repo's build tooling) resolve
+# against ~/.config instead of the repo root.
 LOCAL_HOOK="${GIT_ROOT}/.git/hooks/${HOOK_NAME}"
-if [ -f "$LOCAL_HOOK" ] && ! grep -q 'call_lefthook' "$LOCAL_HOOK" 2>/dev/null; then
-    # shellcheck disable=SC1090
-    source "$LOCAL_HOOK"
+if [ -f "$LOCAL_HOOK" ] && [ -x "$LOCAL_HOOK" ] && ! grep -q 'call_lefthook' "$LOCAL_HOOK" 2>/dev/null; then
+    "$LOCAL_HOOK" "$@"
 fi
