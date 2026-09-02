@@ -104,7 +104,7 @@ idiomatic_version_file_enable_tools = [
   "zig",
 ]
 trusted_config_paths = ["~/workspace/github.com/sushichan044"]
-minimum_release_age_excludes = ["github:sushichan044/kg"]
+minimum_release_age_excludes = ["github:sushichan044/kg", "claude", "github:openai/codex"]
 
 [settings.github]
 use_git_credentials = true
