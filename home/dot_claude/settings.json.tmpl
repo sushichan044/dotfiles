@@ -1,5 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "cleanupPeriodDays": 99999,
+  "skillListingBudgetFraction": 0.05,
   "env": {
     {{/* https://github.com/unjs/std-env/blob/2b364bdb44d7e56e0fe2070758dd42fec55c6144/src/agents.ts#L70-L90 */ -}}
     "AI_AGENT": "claude",
@@ -21,36 +23,177 @@
     "FORCE_AUTOUPDATE_PLUGINS": "1",
     "FORCE_AUTO_BACKGROUND_TASKS": "1"
   },
-  "useAutoModeDuringPlan": true,
-  "skillListingBudgetFraction": 0.05,
-  "cleanupPeriodDays": 99999,
-  "statusLine": {
-    "type": "command",
-    "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/statusline.ts"
-  },
-  "language": "Japanese",
-  "enabledPlugins": {
-    "pr-review-toolkit@claude-plugins-official": true,
-    "discord@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "ruby-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true,
-    "codex@openai-codex": true
-  },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    }
+    "permissions": {
+    "defaultMode": "auto",
+    "allow": [
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "WebSearch",
+
+      "Bash(git:*)",
+
+      "Bash(gh cache:*)",
+      "Bash(gh extension browse:*)",
+      "Bash(gh extension list:*)",
+      "Bash(gh extension search:*)",
+      "Bash(gh gist list:*)",
+      "Bash(gh gist view:*)",
+
+      "Bash(gh issue list:*)",
+      "Bash(gh issue status:*)",
+      "Bash(gh issue view:*)",
+
+      "Bash(gh label list:*)",
+
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr view:*)",
+
+      "Bash(gh release list:*)",
+      "Bash(gh release view:*)",
+
+      "Bash(gh repo gitignore:*)",
+      "Bash(gh repo license:*)",
+      "Bash(gh repo list:*)",
+      "Bash(gh repo sync:*)",
+      "Bash(gh repo view:*)",
+
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh run download:*)",
+
+      "Bash(gh search:*)",
+
+      "Bash(gh workflow list:*)",
+      "Bash(gh workflow view:*)",
+
+      "Bash(gh sub-issue:*)",
+
+      "Bash(mise install:*)",
+      "Bash(mise run:*)",
+
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "Bash(sed:*)",
+      "Bash(jq:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(less:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(pwd:*)",
+      "Bash(wc:*)",
+      "Bash(diff:*)",
+      "Bash(awk:*)",
+      "Bash(cut:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+
+      "Bash(basename:*)",
+      "Bash(dirname:*)",
+      "Bash(realpath:*)",
+      "Bash(readlink:*)",
+
+      "Bash(man:*)",
+      "Bash(which:*)",
+      "Bash(type:*)",
+
+      "Bash(fd:*)",
+      "Bash(rg:*)",
+
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(na:*)",
+      "Bash(ni:*)",
+
+      "Bash(bundle:*)",
+
+      "Bash(go build:*)",
+      "Bash(go doc:*)",
+      "Bash(go mod:*)",
+      "Bash(go get:*)",
+      "Bash(go list:*)",
+      "Bash(go test:*)",
+      "Bash(go tool pprof:*)",
+      "Bash(go vet:*)",
+      "Bash(go version:*)",
+
+      "Bash(semgrep:*)",
+      "Bash(shellcheck:*)",
+
+      "Skill(codex-review)",
+      "Bash(codex review:*)",
+
+      "Skill(prepare-issue-pr)",
+
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__context7__query-docs",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__bundlephobia__get_npm_package_info",
+      "mcp__deepwiki__read_wiki_structure",
+      "mcp__deepwiki__read_wiki_contents",
+      "mcp__deepwiki__ask_question",
+      "mcp__ide__getDiagnostics",
+      "mcp__notion__notion-fetch",
+      "mcp__grep__searchGitHub",
+      "mcp__sentry__get_issue_details",
+      "mcp__sentry__find_projects",
+      "mcp__sentry__search_issues",
+      "mcp__sentry__search_events",
+      "mcp__sentry__search_docs",
+      "mcp__sentry__get_doc",
+
+      "Bash(aws cloudfront describe-function:*)",
+      "Bash(aws s3api get-bucket-public-access-block:*)",
+      "Bash(aws s3api get-public-access-block:*)",
+      "Bash(aws cloudfront get-origin-access-control:*)",
+
+      "Read(**/*tailwind_token*)"
+    ],
+    "deny": [
+      "Bash(sudo:*)",
+
+      "Read(.env*)",
+      "Read(.env.*)",
+      "Read(.dev.vars)",
+      "Read(.dev.vars.*)",
+      "Read(id_rsa)",
+      "Read(id_ed25519)",
+      "Read(**/*key*)",
+      "Edit(.env*)",
+      "Edit(**/secrets/**)",
+
+      "Bash(curl:*)",
+      "Bash(http:*)",
+      "Bash(wget:*)",
+
+      "Bash(nc:*)",
+      "Bash(npm publish:*)",
+      "Bash(pnpm publish:*)",
+
+      "Bash(gh pr merge:*)",
+
+      "Bash(psql:*)",
+      "Bash(mysql:*)",
+      "Bash(mongod:*)",
+
+      "Bash(go mod vendor:*)",
+
+      "Bash(semgrep ci:*)",
+      "Bash(semgrep login:*)",
+
+      "NotebookEdit"
+    ]
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -254,6 +397,34 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bun run --silent -i {{ .chezmoi.workingTree }}/.claude/statusline.ts"
+  },
+    "enabledPlugins": {
+    "pr-review-toolkit@claude-plugins-official": true,
+    "discord@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "ruby-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "language": "Japanese",
   "sandbox": {
     "excludedCommands": [
       "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
@@ -264,7 +435,9 @@
       ]
     }
   },
-  "autoMode": {
+  "skipAutoPermissionPrompt": true,
+  "useAutoModeDuringPlan": true,
+    "autoMode": {
     "allow": [
       "$defaults",
       "Edit(.claude/skills/*)",
@@ -277,177 +450,5 @@
       "$defaults"
     ]
   },
-  "skipAutoPermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto",
-    "allow": [
-      "Edit",
-      "Write",
-      "NotebookEdit",
-      "WebSearch",
-
-      "Bash(git:*)",
-
-      "Bash(gh cache:*)",
-      "Bash(gh extension browse:*)",
-      "Bash(gh extension list:*)",
-      "Bash(gh extension search:*)",
-      "Bash(gh gist list:*)",
-      "Bash(gh gist view:*)",
-
-      "Bash(gh issue list:*)",
-      "Bash(gh issue status:*)",
-      "Bash(gh issue view:*)",
-
-      "Bash(gh label list:*)",
-
-      "Bash(gh pr checks:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr ready:*)",
-      "Bash(gh pr status:*)",
-      "Bash(gh pr view:*)",
-
-      "Bash(gh release list:*)",
-      "Bash(gh release view:*)",
-
-      "Bash(gh repo gitignore:*)",
-      "Bash(gh repo license:*)",
-      "Bash(gh repo list:*)",
-      "Bash(gh repo sync:*)",
-      "Bash(gh repo view:*)",
-
-      "Bash(gh run list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh run watch:*)",
-      "Bash(gh run download:*)",
-
-      "Bash(gh search:*)",
-
-      "Bash(gh workflow list:*)",
-      "Bash(gh workflow view:*)",
-
-      "Bash(gh sub-issue:*)",
-
-      "Bash(mise install:*)",
-      "Bash(mise run:*)",
-
-      "Bash(ls:*)",
-      "Bash(mv:*)",
-      "Bash(sed:*)",
-      "Bash(jq:*)",
-      "Bash(cp:*)",
-      "Bash(mkdir:*)",
-      "Bash(cat:*)",
-      "Bash(less:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(grep:*)",
-      "Bash(find:*)",
-      "Bash(tree:*)",
-      "Bash(pwd:*)",
-      "Bash(wc:*)",
-      "Bash(diff:*)",
-      "Bash(awk:*)",
-      "Bash(cut:*)",
-      "Bash(sort:*)",
-      "Bash(uniq:*)",
-
-      "Bash(basename:*)",
-      "Bash(dirname:*)",
-      "Bash(realpath:*)",
-      "Bash(readlink:*)",
-
-      "Bash(man:*)",
-      "Bash(which:*)",
-      "Bash(type:*)",
-
-      "Bash(fd:*)",
-      "Bash(rg:*)",
-
-      "Bash(npm:*)",
-      "Bash(pnpm:*)",
-      "Bash(na:*)",
-      "Bash(ni:*)",
-
-      "Bash(bundle:*)",
-
-      "Bash(go build:*)",
-      "Bash(go doc:*)",
-      "Bash(go mod:*)",
-      "Bash(go get:*)",
-      "Bash(go list:*)",
-      "Bash(go test:*)",
-      "Bash(go tool pprof:*)",
-      "Bash(go vet:*)",
-      "Bash(go version:*)",
-
-      "Bash(semgrep:*)",
-      "Bash(shellcheck:*)",
-
-      "Skill(codex-review)",
-      "Bash(codex review:*)",
-
-      "Skill(prepare-issue-pr)",
-
-      "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs",
-      "mcp__context7__query-docs",
-      "mcp__sequential-thinking__sequentialthinking",
-      "mcp__bundlephobia__get_npm_package_info",
-      "mcp__deepwiki__read_wiki_structure",
-      "mcp__deepwiki__read_wiki_contents",
-      "mcp__deepwiki__ask_question",
-      "mcp__ide__getDiagnostics",
-      "mcp__notion__notion-fetch",
-      "mcp__grep__searchGitHub",
-      "mcp__sentry__get_issue_details",
-      "mcp__sentry__find_projects",
-      "mcp__sentry__search_issues",
-      "mcp__sentry__search_events",
-      "mcp__sentry__search_docs",
-      "mcp__sentry__get_doc",
-
-      "Bash(aws cloudfront describe-function:*)",
-      "Bash(aws s3api get-bucket-public-access-block:*)",
-      "Bash(aws s3api get-public-access-block:*)",
-      "Bash(aws cloudfront get-origin-access-control:*)",
-
-      "Read(**/*tailwind_token*)"
-    ],
-    "deny": [
-      "Bash(sudo:*)",
-
-      "Read(.env*)",
-      "Read(.env.*)",
-      "Read(.dev.vars)",
-      "Read(.dev.vars.*)",
-      "Read(id_rsa)",
-      "Read(id_ed25519)",
-      "Read(**/*key*)",
-      "Edit(.env*)",
-      "Edit(**/secrets/**)",
-
-      "Bash(curl:*)",
-      "Bash(http:*)",
-      "Bash(wget:*)",
-
-      "Bash(nc:*)",
-      "Bash(npm publish:*)",
-      "Bash(pnpm publish:*)",
-
-      "Bash(gh pr merge:*)",
-
-      "Bash(psql:*)",
-      "Bash(mysql:*)",
-      "Bash(mongod:*)",
-
-      "Bash(go mod vendor:*)",
-
-      "Bash(semgrep ci:*)",
-      "Bash(semgrep login:*)",
-
-      "NotebookEdit"
-    ]
-  }
+  "outputStyle": "Concise"
 }
