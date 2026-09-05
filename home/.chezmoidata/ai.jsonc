@@ -19,7 +19,7 @@
           "url": "https://mcp.deepwiki.com/mcp",
         },
         "e-gov-law": {
-          "command": "bunx",
+          "command": "npx",
           "args": ["github:kannkyo/e-gov-law-mcp"],
         },
         "notion": {
@@ -68,7 +68,7 @@
           "url": "https://mcp.deepwiki.com/mcp",
         },
         "e-gov-law": {
-          "command": "bunx",
+          "command": "npx",
           "args": ["github:kannkyo/e-gov-law-mcp"],
         },
         "notion": {
