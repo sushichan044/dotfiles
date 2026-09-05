@@ -12,6 +12,18 @@ Filesystem vulnerabilities can lead to unauthorized file access, data leakage, a
 
 ---
 
+## Table of Contents
+
+- [Directory Traversal — High](#directory-traversal--high)
+- [Zip Archive Path Traversal — High](#zip-archive-path-traversal--high)
+- [Decompression Bomb — Medium](#decompression-bomb--medium)
+- [Insecure Temporary File Creation — Medium](#insecure-temporary-file-creation--medium)
+- [Insecure File Permissions — Medium](#insecure-file-permissions--medium)
+- [Insecure mkdir — Low](#insecure-mkdir--low)
+- [Insecure File Write Permissions — Medium](#insecure-file-write-permissions--medium)
+- [Tainted File Read — High](#tainted-file-read--high)
+- [CWE References](#cwe-references)
+
 ## Directory Traversal — High
 
 Paths like `../../etc/passwd` access files outside intended directory.
@@ -32,7 +44,7 @@ defer root.Close()
 f, err := root.Open(filename) // cannot escape root directory
 ```
 
-`os.Root` prevents ordinary path traversal at the OS level. All operations (`Open`, `Create`, `Stat`, `OpenFile`, etc.) are confined to the root directory, and symlinks that resolve outside the root are rejected. It is not a full sandbox: it does not by itself block bind mounts, special device files, or all `/proc`-style filesystem behavior. For archive extraction and uploads, still reject special files and choose a root without attacker-controlled mounts.
+`os.Root` prevents ordinary path traversal at the OS level — all operations (`Open`, `Create`, `Stat`, `OpenFile`, etc.) are confined to the root directory, and symlinks that resolve outside the root are rejected. It is not a full sandbox: it does not by itself block bind mounts, special device files, or all `/proc`-style filesystem behavior. For archive extraction and uploads, still reject special files and choose a root without attacker-controlled mounts.
 
 **Good (pre-Go 1.24 fallback):**
 

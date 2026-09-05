@@ -3,10 +3,10 @@ name: golang-documentation
 description: "Comprehensive documentation guide for Golang projects, covering godoc comments, README, CONTRIBUTING, CHANGELOG, Go Playground, Example tests, API docs, and llms.txt. Use when writing or reviewing doc comments, documentation, adding code examples, setting up doc sites, or discussing documentation best practices. Triggers for both libraries and applications/CLIs."
 user-invocable: true
 license: MIT
-compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
+compatibility: Designed for Claude Code, Codex or similar harness, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.6"
+  version: "1.3.2"
   openclaw:
     emoji: "📝"
     homepage: https://github.com/samber/cc-skills-golang
@@ -15,11 +15,13 @@ metadata:
         - go
     install: []
 allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(git:*) Agent WebFetch
+paths:
+  - "**/*.go"
 ---
 
 **Persona:** You are a Go technical writer and API designer. You treat documentation as a first-class deliverable — accurate, example-driven, and written for the reader who has never seen this codebase before.
 
-**Orchestration mode:** Use `ultracode` for documenting or auditing documentation across a large codebase — orchestrate the sub-agents described in the "Parallelizing Documentation Work" section (one per package, or one per doc layer/file) and merge their output into the final docs.
+**Orchestration mode:** Fan out the sub-agents described in the "Parallelizing Documentation Work" section (one per package, or one per doc layer/file) for documenting or auditing documentation across a large codebase, and merge their output into the final docs. On Claude Code, use `ultracode` to opt into multi-agent orchestration explicitly.
 
 **Modes:**
 
@@ -34,7 +36,10 @@ Write documentation that serves both humans and AI agents. Good documentation ma
 
 ## Cross-References
 
-See `samber/cc-skills-golang@golang-naming` skill for naming conventions in doc comments. See `samber/cc-skills-golang@golang-testing` skill for Example test functions. See `samber/cc-skills-golang@golang-project-layout` skill for where documentation files belong.
+- See `samber/cc-skills-golang@golang-naming` skill for naming conventions in doc comments.
+- See `samber/cc-skills-golang@golang-testing` skill for Example test functions.
+- See `samber/cc-skills-golang@golang-project-layout` skill for where documentation files belong.
+- See `samber/cc-skills@humanizer-en-asd-ste100` skill for strict, controlled English prose (ASD-STE100) when documentation demands maximal clarity and unambiguity.
 
 ## Writing Principles
 
@@ -49,6 +54,8 @@ Apply to every piece of documentation you write or review:
 **Preserve meaning when editing** — keep modality intact (`must`/`should`/`may` are different obligations). Preserve conditions, warnings, required actions. A cleaner sentence that changes obligations is wrong.
 
 **Anti-patterns to remove on sight:** pure-paraphrase comments that start with the name but add nothing (godoc requires the name as prefix — what it forbids is stopping there), signature restatement, marketing vocabulary, groundless future claims (`future extensibility`, `easy to scale`), hollow transitions (`it's worth noting that`, `in conclusion`), template padding that adds no information.
+
+For regulated or safety-critical documentation that requires strict controlled-English prose, → See `samber/cc-skills@humanizer-en-asd-ste100` skill.
 
 ## Step 1: Detect Project Type
 
@@ -92,7 +99,7 @@ A private project might not need a documentation website, llms.txt, Go Playgroun
 
 ## Parallelizing Documentation Work
 
-When documenting a large codebase with many packages, use up to 5 parallel sub-agents (via the Agent tool) for independent tasks:
+When documenting a large codebase with many packages, use up to 5 parallel sub-agents for independent tasks:
 
 - Assign each sub-agent to verify and fix doc comments in a different set of packages
 - Generate `ExampleXxx` test functions for multiple packages simultaneously
@@ -164,15 +171,15 @@ For the full README guidance and application-specific sections, see [Project Doc
 
 ## Step 5: CONTRIBUTING & Changelog
 
-**CONTRIBUTING.md** — Help contributors get started in under 10 minutes. Include: prerequisites, clone, build, test, PR process. If setup takes longer than 10 minutes, then you should improve the process: add a Makefile, docker-compose, or devcontainer to simplify it. See [Project Docs](./references/project-docs.md#contributingmd).
+**CONTRIBUTING.md** — Help contributors get started in under 10 minutes, covering prerequisites, clone, build, test, and PR process. If setup takes longer, improve the process with a Makefile, docker-compose, or devcontainer. See [Project Docs](./references/project-docs.md#contributingmd).
 
-**Changelog** — Track changes using [Keep a Changelog](https://keepachangelog.com/) format or GitHub Releases. Copy the template from [templates/CHANGELOG.md](./assets/templates/CHANGELOG.md). Each entry answers _what changed for the reader_ — internal refactors without user-visible impact belong in commit history. Don't inflate a fixed edge case into a broad "reliability improvement" claim. See [Project Docs](./references/project-docs.md#changelog).
+**Changelog** — Track changes using [Keep a Changelog](https://keepachangelog.com/) format or GitHub Releases, copying the template from [templates/CHANGELOG.md](./assets/templates/CHANGELOG.md). Write each entry to answer _what changed for the reader_ — internal refactors without user-visible impact belong in commit history, and a fixed edge case never becomes a broad "reliability improvement" claim. See [Project Docs](./references/project-docs.md#changelog).
 
 ## Step 6: Library-Specific Documentation
 
 For Go libraries, add these on top of the basics:
 
-- **Go Playground demos** — create runnable demos and link them in doc comments with `// Play: https://go.dev/play/p/xxx`. Use the go-playground MCP tool when available to create and share playground URLs.
+- **Go Playground demos** — create runnable demos and link them in doc comments with `// Play: https://go.dev/play/p/xxx`. Use a Go Playground integration when one is available to create and share playground URLs.
 - **Example test functions** — write `func ExampleXxx()` in `_test.go` files. These are executable documentation verified by `go test`.
 - **Generous code examples** — include multiple examples in doc comments showing common use cases.
 - **godoc** — your doc comments render on [pkg.go.dev](https://pkg.go.dev). Use `go doc` locally to preview; to inspect how a published package renders its docs, symbols, and examples, → See `samber/cc-skills-golang@golang-pkg-go-dev` skill.

@@ -7,9 +7,18 @@
     "trap": "Without the skill, the model uses time.After(5*time.Second) inside the for/select loop, creating repeated timer allocations/churn instead of reusing a timer",
     "assertions": [
       { "id": "1.1", "text": "Does NOT use time.After inside the loop body" },
-      { "id": "1.2", "text": "Creates time.NewTimer (or time.NewTicker) outside the loop" },
-      { "id": "1.3", "text": "Calls timer.Reset() after handling a message or timeout" },
-      { "id": "1.4", "text": "Calls timer.Stop() (or defers it) to clean up the timer" },
+      {
+        "id": "1.2",
+        "text": "Creates time.NewTimer (or time.NewTicker) outside the loop"
+      },
+      {
+        "id": "1.3",
+        "text": "Calls timer.Reset() after handling a message or timeout"
+      },
+      {
+        "id": "1.4",
+        "text": "Calls timer.Stop() (or defers it) to clean up the timer"
+      },
       {
         "id": "1.5",
         "text": "For Go 1.23+, does not use the old stale-drain pattern; for Go <1.23 compatibility, drains before Reset when Stop reports a possible pending value"
@@ -23,7 +32,10 @@
     "prompt": "I have a producer goroutine that sends items to a channel and a consumer goroutine that reads from it. The consumer knows when it has received enough items and wants to signal completion. How should I close the channel to stop the producer?",
     "trap": "Without the skill, the model closes the channel from the consumer side, which panics if the producer writes after close",
     "assertions": [
-      { "id": "2.1", "text": "Does NOT close the channel from the consumer/receiver side" },
+      {
+        "id": "2.1",
+        "text": "Does NOT close the channel from the consumer/receiver side"
+      },
       {
         "id": "2.2",
         "text": "Uses a separate signaling mechanism (done channel, context cancellation, or similar) for the consumer to tell the producer to stop"
@@ -75,8 +87,14 @@
         "id": "4.1",
         "text": "The generator function returns <-chan int (receive-only for callers)"
       },
-      { "id": "4.2", "text": "The doubler function accepts <-chan int as input parameter" },
-      { "id": "4.3", "text": "The doubler function returns <-chan int (receive-only for callers)" },
+      {
+        "id": "4.2",
+        "text": "The doubler function accepts <-chan int as input parameter"
+      },
+      {
+        "id": "4.3",
+        "text": "The doubler function returns <-chan int (receive-only for callers)"
+      },
       {
         "id": "4.4",
         "text": "Internally, channels are created as bidirectional but exposed as directional through return types"
@@ -98,7 +116,10 @@
         "id": "5.1",
         "text": "Recommends starting with unbuffered (or very small buffer like 0 or 1) as the default"
       },
-      { "id": "5.2", "text": "Explains that large buffers mask backpressure problems" },
+      {
+        "id": "5.2",
+        "text": "Explains that large buffers mask backpressure problems"
+      },
       {
         "id": "5.3",
         "text": "States that buffer size should be based on measured need, not arbitrary choice"
@@ -107,7 +128,10 @@
         "id": "5.4",
         "text": "Does NOT suggest a large arbitrary buffer (e.g., 100, 1000) without explaining the tradeoffs"
       },
-      { "id": "5.5", "text": "Mentions that buffered channels hide the problem of slow consumers" }
+      {
+        "id": "5.5",
+        "text": "Mentions that buffered channels hide the problem of slow consumers"
+      }
     ]
   },
   {
@@ -121,7 +145,10 @@
         "id": "6.1",
         "text": "Sends Task values (not *Task pointers) through the channel, OR explicitly documents why pointers are safe in this case"
       },
-      { "id": "6.2", "text": "The channel type is chan Task (value type) rather than chan *Task" },
+      {
+        "id": "6.2",
+        "text": "The channel type is chan Task (value type) rather than chan *Task"
+      },
       {
         "id": "6.3",
         "text": "Does not mutate the Task struct after sending it on the channel (or sends a copy)"
@@ -143,7 +170,10 @@
         "id": "7.1",
         "text": "Uses errgroup (golang.org/x/sync/errgroup) instead of sync.WaitGroup for error propagation"
       },
-      { "id": "7.2", "text": "Uses errgroup.WithContext to cancel siblings on first error" },
+      {
+        "id": "7.2",
+        "text": "Uses errgroup.WithContext to cancel siblings on first error"
+      },
       {
         "id": "7.3",
         "text": "Uses g.SetLimit(10) for bounded concurrency instead of a hand-rolled semaphore"
@@ -165,14 +195,26 @@
     "prompt": "Write a Go function that reads from an input channel, transforms each item, and writes to an output channel. It should run as a goroutine.",
     "trap": "Without the skill, the model writes a select with only channel operations but no ctx.Done() case, causing goroutine leaks on cancellation",
     "assertions": [
-      { "id": "8.1", "text": "The function accepts a context.Context parameter" },
-      { "id": "8.2", "text": "Every select statement includes a case <-ctx.Done(): return branch" },
+      {
+        "id": "8.1",
+        "text": "The function accepts a context.Context parameter"
+      },
+      {
+        "id": "8.2",
+        "text": "Every select statement includes a case <-ctx.Done(): return branch"
+      },
       {
         "id": "8.3",
         "text": "Both the read from input channel AND the write to output channel are wrapped in select with ctx.Done()"
       },
-      { "id": "8.4", "text": "The goroutine exits cleanly when context is cancelled" },
-      { "id": "8.5", "text": "The output channel is closed when the goroutine exits (defer close)" }
+      {
+        "id": "8.4",
+        "text": "The goroutine exits cleanly when context is cancelled"
+      },
+      {
+        "id": "8.5",
+        "text": "The output channel is closed when the goroutine exits (defer close)"
+      }
     ]
   },
   {
@@ -211,14 +253,23 @@
     "prompt": "Write a Go function that uses sync.Pool to reuse bytes.Buffer objects for encoding JSON responses in an HTTP handler. Show the pool setup and the handler.",
     "trap": "Without the skill, the model returns the buffer to the pool without calling Reset(), leading to dirty objects and data corruption",
     "assertions": [
-      { "id": "10.1", "text": "Calls buf.Reset() BEFORE bufPool.Put(buf), not after Get()" },
+      {
+        "id": "10.1",
+        "text": "Calls buf.Reset() BEFORE bufPool.Put(buf), not after Get()"
+      },
       {
         "id": "10.2",
         "text": "Uses defer to ensure the buffer is returned to the pool even on error"
       },
-      { "id": "10.3", "text": "Does not assume the object from Get() is clean/zeroed" },
+      {
+        "id": "10.3",
+        "text": "Does not assume the object from Get() is clean/zeroed"
+      },
       { "id": "10.4", "text": "The pool's New function creates a new buffer" },
-      { "id": "10.5", "text": "Does not store persistent state in pooled objects" }
+      {
+        "id": "10.5",
+        "text": "Does not store persistent state in pooled objects"
+      }
     ]
   },
   {
@@ -232,12 +283,18 @@
         "id": "11.1",
         "text": "Adds defer func() { recover() }() or equivalent panic recovery inside the goroutine"
       },
-      { "id": "11.2", "text": "Logs or handles the recovered panic (not just silently swallowed)" },
+      {
+        "id": "11.2",
+        "text": "Logs or handles the recovered panic (not just silently swallowed)"
+      },
       {
         "id": "11.3",
         "text": "The goroutine has a shutdown mechanism (context, done channel, or similar)"
       },
-      { "id": "11.4", "text": "Mentions that a panic in a goroutine crashes the entire process" }
+      {
+        "id": "11.4",
+        "text": "Mentions that a panic in a goroutine crashes the entire process"
+      }
     ]
   },
   {
@@ -247,7 +304,10 @@
     "prompt": "My Go service has an expensive database query for user profiles. Under load, hundreds of goroutines request the same user profile simultaneously, causing a thundering herd on the database. How should I solve this?",
     "trap": "Without the skill, the model suggests only traditional caching (TTL-based) or a mutex, missing singleflight which deduplicates in-flight requests",
     "assertions": [
-      { "id": "12.1", "text": "Recommends golang.org/x/sync/singleflight as the primary solution" },
+      {
+        "id": "12.1",
+        "text": "Recommends golang.org/x/sync/singleflight as the primary solution"
+      },
       {
         "id": "12.2",
         "text": "Shows usage of group.Do(key, func) where key identifies the deduplicated resource"
@@ -289,7 +349,10 @@
         "id": "13.4",
         "text": "Mentions that goroutine pipelines are appropriate when stages involve I/O or need true parallelism"
       },
-      { "id": "13.5", "text": "Does NOT build a multi-goroutine pipeline for this use case" }
+      {
+        "id": "13.5",
+        "text": "Does NOT build a multi-goroutine pipeline for this use case"
+      }
     ]
   }
 ]

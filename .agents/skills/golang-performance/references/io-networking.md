@@ -2,6 +2,26 @@
 
 Network and I/O bottlenecks show up as goroutines blocked on syscalls or waiting for responses. The key levers are connection reuse, proper timeouts, and streaming instead of buffering.
 
+## Table of Contents
+
+- [HTTP Transport Configuration](#http-transport-configuration)
+  - [Connection pooling](#connection-pooling)
+  - [Timeouts](#timeouts)
+  - [Drain response body for connection reuse](#drain-response-body-for-connection-reuse)
+- [Streaming vs Buffering](#streaming-vs-buffering)
+  - [Avoid io.ReadAll for large payloads](#avoid-ioreadall-for-large-payloads)
+  - [Streaming JSON](#streaming-json)
+- [JSON Performance](#json-performance)
+- [Cgo Overhead](#cgo-overhead)
+- [Buffered I/O](#buffered-io)
+- [Concurrent Multi-Stage Pipelines](#concurrent-multi-stage-pipelines)
+  - [The unusual scenario](#the-unusual-scenario)
+  - [When to use this (and when NOT to)](#when-to-use-this-and-when-not-to)
+- [Batch Operations](#batch-operations)
+  - [Database: batch inserts over row-by-row](#database-batch-inserts-over-row-by-row)
+  - [HTTP: batch API calls](#http-batch-api-calls)
+  - [Channel: batch processing from a stream](#channel-batch-processing-from-a-stream)
+
 ## HTTP Transport Configuration
 
 **Diagnose:** 1- `go tool pprof` (goroutine + block profile) — look for goroutines blocked on `net/http.(*Transport).dialConn` or `net/http.(*persistConn).readLoop`; many goroutines waiting here means connection pool exhaustion 2- `fgprof` — captures both on-CPU and off-CPU wait time; look for HTTP calls dominating wall-clock time even when CPU profile shows them as cheap 3- `go tool trace` — visualize goroutine lifecycles; look for long gaps where goroutines wait for network I/O instead of processing 4- Prometheus `go_goroutines` — monitor goroutine count in production; steadily rising under stable load suggests connection or goroutine leaks from misconfigured HTTP clients
@@ -108,7 +128,7 @@ The standard `encoding/json` package uses reflection to inspect struct fields at
 - **Custom `MarshalJSON`/`UnmarshalJSON`** — hand-written methods for hot-path types eliminate reflection
 - **Code-generation libraries** — `easyjson`, `ffjson` generate marshal/unmarshal methods at build time, no reflection at runtime
 - **Drop-in replacements** — `github.com/goccy/go-json`, `github.com/json-iterator/go`, `github.com/bytedance/sonic` offer 2-5x better performance
-- **`encoding/json/v2`** (experimental, behind `GOEXPERIMENT=jsonv2`) — evaluate deliberately; most production code should keep `encoding/json` unless the project explicitly opts into the experiment
+- **`encoding/json/v2`** (default JSON implementation since Go 1.27; introduced experimental behind `GOEXPERIMENT=jsonv2` in Go 1.25) — migrate deliberately: it is stricter than v1 (rejects duplicate object keys and invalid UTF-8), so re-run tests against real payloads before relying on it in a hot path
 
 When using third-party JSON libraries, refer to the library's official documentation for up-to-date API signatures.
 

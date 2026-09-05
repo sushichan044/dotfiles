@@ -4,6 +4,22 @@ Thirteen clusters where skills overlap. Each cluster includes a boundary table, 
 
 ---
 
+## Table of Contents
+
+- [1. Performance cluster](#1-performance-cluster)
+- [2. Dependency injection cluster](#2-dependency-injection-cluster)
+- [3. samber/\* functional cluster](#3-samber-functional-cluster)
+- [4. Error handling cluster](#4-error-handling-cluster)
+- [5. Style / naming / lint / docs cluster](#5-style--naming--lint--docs-cluster)
+- [6. CLI cluster](#6-cli-cluster)
+- [7. Testing cluster](#7-testing-cluster)
+- [8. design-patterns vs structs-interfaces](#8-design-patterns-vs-structs-interfaces)
+- [9. concurrency vs context](#9-concurrency-vs-context)
+- [10. safety vs security](#10-safety-vs-security)
+- [11. modernize vs lint](#11-modernize-vs-lint)
+- [12. Package lookup / discovery cluster](#12-package-lookup--discovery-cluster)
+- [13. golang-refactoring vs. the target-state rule skills](#13-golang-refactoring-vs-the-target-state-rule-skills)
+
 ## 1. Performance cluster
 
 Four skills form a "deep analysis" cluster. `golang-observability` is the always-on counterpart; the other three are activated on demand.
@@ -241,7 +257,13 @@ These four skills all touch "third-party packages", but each owns a different st
 
 > Note: this skill cross-references the other three in its body (and they reference it back). Prefer `golang-pkg-go-dev` over Context7 for any Go package fact-lookup.
 
-**Sub-boundary — `godig` vs `gopls`:** both touch third-party code, but `godig` queries the remote pkg.go.dev index (works for packages not yet added to the project, no local build needed) while `gopls` (→ `samber/cc-skills-golang@golang-gopls`, via its MCP server, the native `LSP` tool, or its CLI) reasons about your actual resolved build in `go.sum` (including `replace`d forks). "Where is `Foo` defined in my repo?" or "find every call site of this dependency's function in my code" → `golang-gopls` (`go_search`/`go_symbol_references`), not `golang-pkg-go-dev` — godig has no visibility into local, unpublished code or call sites inside your own repo. "Does this package I haven't added yet have known CVEs?" → `golang-pkg-go-dev` (`vulns`); "can my current build actually reach a vulnerability in a dependency I already use?" → `golang-gopls` (`go_vulncheck`) or `golang-security` (`govulncheck` whole-tree). See the `samber/cc-skills-golang@golang-gopls` skill for the full gopls reference, and the `samber/cc-skills-golang@golang-how-to` skill's "`godig` vs gopls vs Context7 vs govulncheck" section for the full breakdown.
+**Sub-boundary — `godig` vs `gopls`:** both touch third-party code, but `godig` queries the remote pkg.go.dev index (works for packages not yet added to the project, no local build needed) while `gopls` (→ `samber/cc-skills-golang@golang-gopls`, via its MCP server, the native `LSP` tool, or its CLI) reasons about your actual resolved build in `go.sum` (including `replace`d forks).
+
+- "Where is `Foo` defined in my repo?" or "find every call site of this dependency's function in my code" → `golang-gopls` (`go_search`/`go_symbol_references`), not `golang-pkg-go-dev` — godig has no visibility into local, unpublished code or call sites inside your own repo.
+- "Does this package I haven't added yet have known CVEs?" → `golang-pkg-go-dev` (`vulns`).
+- "Can my current build actually reach a vulnerability in a dependency I already use?" → `golang-gopls` (`go_vulncheck`) or `golang-security` (`govulncheck` whole-tree).
+
+See the `samber/cc-skills-golang@golang-gopls` skill for the full gopls reference, and the `samber/cc-skills-golang@golang-how-to` skill's "`godig` vs gopls vs Context7 vs govulncheck" section for the full breakdown.
 
 ---
 

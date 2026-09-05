@@ -42,7 +42,9 @@ Parse the command output and present a short summary:
 
 - Status: <Completed | Skipped (already reviewed) | Timed out | Failed>
 - Outdated reviews minimized: <n> (omit if 0)
+- Review assessment: <assessment line | unknown>
 - Unresolved inline review comments: <n | none | unknown>
+- Suppressed review comments: <n> (omit if 0)
 - URL: <pr url>
 ```
 
@@ -52,7 +54,12 @@ How to fill in **Unresolved inline review comments** for a **Completed** or **Sk
 - If the output contains `No unresolved inline review comments from Copilot`, report `none`.
 - If neither line is present (e.g., `WaitForReviewCompletion` returned via the propagation fallback because Copilot left without leaving a fresh review), report `unknown` and note that no fresh Copilot review for the current head was detected.
 
-For other statuses, omit the **Unresolved inline review comments** line.
+How to fill in **Review assessment** and **Suppressed review comments**:
+
+- If the output contains `Copilot review assessment: <text>`, report `<text>` verbatim (e.g. `🟡 Not ready to approve`) together with the indented summary line that follows it. Otherwise report `unknown`.
+- If the output contains `Copilot has N suppressed review comment(s) ...`, report `N`. The lines that follow it list `path:line` plus the finding text; these are review findings Copilot reported only in its review overview, so treat them exactly like inline comments.
+
+For other statuses, omit the **Review assessment**, **Unresolved inline review comments**, and **Suppressed review comments** lines.
 
 Then, depending on status:
 
@@ -63,6 +70,7 @@ Then, depending on status:
 
 ## Rules
 
+- Never conclude "nothing to address" from the inline comment count alone. A Copilot review can report findings without leaving any inline comment: the assessment says it is not ready to approve, and/or the findings are listed as suppressed comments. When the output contains `Copilot did not approve this pull request`, or the assessment is not an approving one, or suppressed comments are listed, report those findings as work remaining.
 - Do not pass `--force` unless the user explicitly asks to override the pre-conditions.
 - Do not push, merge, or modify code as part of this skill. It only requests a review and reports the outcome.
 - Prefer `gh` commands for GitHub data; do not call the REST/GraphQL API directly when an equivalent `gh` command exists.

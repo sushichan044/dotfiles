@@ -2,6 +2,26 @@
 
 → See `samber/cc-skills-golang@golang-naming` skill for naming conventions that reduce the need for comments.
 
+## Table of Contents
+
+- [Function & Method Doc Comments](#function--method-doc-comments)
+  - [Why, Not What](#why-not-what)
+  - [Anti-Patterns to Remove on Sight](#anti-patterns-to-remove-on-sight)
+  - [Format](#format)
+  - [Full Comment Template](#full-comment-template)
+  - [What to Document](#what-to-document)
+  - [Error Cases and Limitations](#error-cases-and-limitations)
+  - [Deprecated Functions](#deprecated-functions)
+  - [Interface Documentation](#interface-documentation)
+  - [Method Comments on Structs](#method-comments-on-structs)
+  - [Inline Code Examples in Comments](#inline-code-examples-in-comments)
+  - [Playground Links](#playground-links)
+- [File & Package Comments](#file--package-comments)
+  - [Package Comment](#package-comment)
+  - [File-Level Description](#file-level-description)
+  - [When to Add File Descriptions](#when-to-add-file-descriptions)
+  - [Godoc Headings in Comments](#godoc-headings-in-comments)
+
 ## Function & Method Doc Comments
 
 ### Why, Not What
@@ -189,7 +209,7 @@ func Transform[T any, U any](slice []T, fn func(T) U) []U {
 
 ### Playground Links
 
-Add a `Play:` line linking to a runnable Go Playground example of a public library. Use the samber/go-playground-mcp tool to create and share playground URLs when available:
+Add a `Play:` line linking to a runnable Go Playground example of a public library. Use a Go Playground integration to create and share playground URLs when one is available:
 
 ```go
 // Map applies a function to each element of a slice.

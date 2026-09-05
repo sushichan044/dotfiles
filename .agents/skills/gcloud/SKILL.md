@@ -72,49 +72,17 @@ interacting with the Google Cloud SDK (`gcloud` CLI). Following these rules is
 critical to avoid hallucinated commands, flags, flag values, and positional
 argument syntax, prevent destructive actions, and minimize context window usage.
 
-## Getting Started
+## Execution Modes
 
-### 1. Installation
+AI agents can interact with Google Cloud resources in two primary ways:
 
-If the `gcloud` executable is missing, refer to the official
-[Google Cloud CLI Installation Guide](https://docs.cloud.google.com/sdk/docs/install-sdk.md.txt)
-to install it on the current platform (Linux, macOS, Windows, etc.).
-
-### 2. Authorization
-
-Authenticate the CLI with Google Cloud. Choose the flow that matches the running
-environment:
-
-- **User Account (Interactive)**: Run `gcloud auth login`. Follow the browser
-  prompts to sign in.
-- **User Account (Headless Flow)**: If operating on a terminal without a web
-  browser (e.g. containers, remote SSH), append the `--no-browser` flag:
-  `gcloud auth login --no-browser`. Copy the URL, sign in on another machine,
-  and return the authentication code.
-- **Application Default Credentials (ADC)**: To authenticate code calls from
-  local applications or SDK libraries, set up ADC via `gcloud auth
-application-default login` (append `--no-browser` for headless
-  environments).
-- **Service Account (Best for Detached/Headless Automation)**: Authenticate
-  directly using a JSON key file. Ideal for fully automated, background tasks
-  and pipelines: `gcloud auth activate-service-account
---key-file=path/to/key.json`. Note that some organizations may restrict
-  access to JSON key files for security reasons.
-- **Service Account Impersonation (Preferred for Local Pair-Programming
-  Agents)**: Leverage the human developer's existing user credentials to
-  assume a service account identity. Best for local development assistants to
-  avoid insecure private keys on human workstations: `gcloud config set
-auth/impersonate_service_account SERVICE_ACCT_EMAIL`
-
-_Separation of Privilege (Critical)_: Both service account approaches ensure the
-agent's permissions remain strictly distinct from the human user's wide access
-limits (enforcing least privilege), and ensure actions are properly audited
-under the agent's focused identity. _(Impersonation requires
-`roles/iam.serviceAccountTokenCreator`)_.
-
-For more detailed strategies and authentication types (such as Workload Identity
-Federation), see
-[Authorizing the gcloud CLI](https://docs.cloud.google.com/sdk/docs/authorizing.md.txt).
+- **Direct CLI Execution**: Executing `gcloud` commands directly in a local or
+  automated shell environment. See [CLI Usage](references/cli-usage.md) for
+  installation, authentication flows, and configuration management.
+- **Model Context Protocol (MCP)**: Invoking structured tools via the Cloud
+  CLI remote MCP server (`run_gcloud_command`). See
+  [MCP Usage](references/mcp-usage.md) for tool schemas, parameter rules, and
+  server configuration.
 
 ## Core Principles
 
@@ -292,3 +260,13 @@ compute` or `gcloud help`) to discover available subgroups and commands if
 Refer to the
 [gcloud CLI Scripting Guide](https://docs.cloud.google.com/sdk/docs/scripting-gcloud.md.txt)
 for guidance on using the gcloud CLI in automation.
+
+## Reference Directory
+
+- [CLI Usage](references/cli-usage.md): Platform installation, authentication
+  methods (interactive, headless, ADC, service account keys, impersonation),
+  and local configuration management.
+
+- [MCP Usage](references/mcp-usage.md): Using the Cloud CLI remote MCP
+  server (`run_gcloud_command`), project parameter scoping, input files, and
+  execution guidelines.

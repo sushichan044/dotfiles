@@ -1,12 +1,12 @@
 ---
 name: golang-concurrency
-description: "Golang concurrency patterns. Use when writing or reviewing concurrent Go code involving goroutines, channels, select, locks, sync primitives, errgroup, singleflight, worker pools, or fan-out/fan-in pipelines. Also triggers when you detect goroutine leaks, race conditions, channel ownership issues, or need to choose between channels and mutexes."
+description: "Golang concurrency design — goroutine lifecycle and leak prevention, channels and `select`, channel ownership and direction, `sync.Mutex`/`RWMutex`/`sync.Map`/`sync.Once`/atomics, `errgroup`, `singleflight`, worker pools, and fan-out/fan-in pipelines. Use when writing or reviewing concurrent Go code, when choosing between channels and mutexes, when protecting a shared map or counter, or when a goroutine has no clear exit. Not for defensive coding unrelated to concurrency such as nil panics, slice aliasing, or numeric overflow (→ See `samber/cc-skills-golang@golang-safety` skill), and not for debugging a specific hung, crashing, or racing program after the fact (→ See `samber/cc-skills-golang@golang-troubleshooting` skill)."
 user-invocable: true
 license: MIT
-compatibility: Designed for Claude Code or similar AI coding agents, and for projects using Golang.
+compatibility: Designed for Claude Code, Codex or similar harness, and for projects using Golang.
 metadata:
   author: samber
-  version: "1.1.5"
+  version: "1.2.1"
   openclaw:
     emoji: "⚡"
     homepage: https://github.com/samber/cc-skills-golang
@@ -15,11 +15,13 @@ metadata:
         - go
     install: []
 allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(git:*) Agent AskUserQuestion
+paths:
+  - "**/*.go"
 ---
 
 **Persona:** You are a Go concurrency engineer. You assume every goroutine is a liability until proven necessary — correctness and leak-freedom come before performance.
 
-**Orchestration mode:** Use `ultracode` for auditing concurrent code across a large codebase — orchestrate the five sub-agents described in the "Parallelizing Concurrency Audits" section and consolidate their findings into one report.
+**Orchestration mode:** Fan out the five sub-agents described in the "Parallelizing Concurrency Audits" section for auditing concurrent code across a large codebase, and consolidate their findings into one report. On Claude Code, use `ultracode` to opt into multi-agent orchestration explicitly.
 
 **Modes:**
 
@@ -99,7 +101,7 @@ For pipeline patterns (fan-out/fan-in, bounded workers, generator chains, Go 1.2
 
 ## Parallelizing Concurrency Audits
 
-When auditing concurrency across a large codebase, use up to 5 parallel sub-agents (Agent tool):
+When auditing concurrency across a large codebase, use up to 5 parallel sub-agents:
 
 1. Find all goroutine spawns (`go func`, `go method`) and verify shutdown mechanisms
 2. Search for mutable globals and shared state without synchronization
@@ -123,18 +125,16 @@ When auditing concurrency across a large codebase, use up to 5 parallel sub-agen
 
 ## Cross-References
 
-- -> See `samber/cc-skills-golang@golang-performance` skill for false sharing, cache-line padding, `sync.Pool` hot-path patterns
-- -> See `samber/cc-skills-golang@golang-context` skill for cancellation propagation and timeout patterns
-- -> See `samber/cc-skills-golang@golang-safety` skill for concurrent map access and race condition prevention
-- -> See `samber/cc-skills-golang@golang-troubleshooting` skill for debugging goroutine leaks and deadlocks
-- -> See `samber/cc-skills-golang@golang-design-patterns` skill for graceful shutdown patterns
-- -> See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
+- → See `samber/cc-skills-golang@golang-performance` skill for false sharing, cache-line padding, `sync.Pool` hot-path patterns
+- → See `samber/cc-skills-golang@golang-context` skill for cancellation propagation and timeout patterns
+- → See `samber/cc-skills-golang@golang-safety` skill for concurrent map access and race condition prevention
+- → See `samber/cc-skills-golang@golang-troubleshooting` skill for debugging goroutine leaks and deadlocks
+- → See `samber/cc-skills-golang@golang-design-patterns` skill for graceful shutdown patterns
+- → See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines
 
-### Go 1.26 experimental goroutine leak profile
+### Goroutine leak profile
 
-For Go 1.26 diagnostics, there is an experimental goroutine leak profile. It is useful for production-oriented leak investigation, but is gated by `GOEXPERIMENT=goroutineleakprofile`; do not rely on it as default stable behavior.
-
-Typical usage when the experiment is enabled:
+The goroutine leak profile (experimental behind `GOEXPERIMENT=goroutineleakprofile` in Go 1.26) is generally available in `runtime/pprof` since Go 1.27 — no build flag required. It is a useful production-oriented leak signal alongside the existing tools below.
 
 ```bash
 curl http://localhost:6060/debug/pprof/goroutineleak?debug=2

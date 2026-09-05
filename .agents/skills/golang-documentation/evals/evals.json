@@ -47,8 +47,14 @@
           "id": "2.3",
           "text": "The demo code snippet (limiter := ...) appears before the Getting Started section"
         },
-        { "id": "2.4", "text": "Getting Started appears after demo and before Features" },
-        { "id": "2.5", "text": "Contributing and License appear at the end, after Features" }
+        {
+          "id": "2.4",
+          "text": "Getting Started appears after demo and before Features"
+        },
+        {
+          "id": "2.5",
+          "text": "Contributing and License appear at the end, after Features"
+        }
       ]
     },
     {
@@ -65,9 +71,15 @@
           "id": "3.2",
           "text": "Includes a Parameters section listing dst, src, and overwrite with descriptions"
         },
-        { "id": "3.3", "text": "Explains the overwrite behavior (when true vs false)" },
+        {
+          "id": "3.3",
+          "text": "Explains the overwrite behavior (when true vs false)"
+        },
         { "id": "3.4", "text": "Documents nil dst handling (creates new map)" },
-        { "id": "3.5", "text": "Includes an inline code Example section showing usage" }
+        {
+          "id": "3.5",
+          "text": "Includes an inline code Example section showing usage"
+        }
       ]
     },
     {
@@ -76,7 +88,10 @@
       "prompt": "I have a Go package with 2 files: `handler.go` and `middleware.go`. My teammate suggests I should create a `doc.go` file for the package-level documentation comment. Is that the right approach? Where should I put the package comment?",
       "trap": "Model without skill might agree to create doc.go (it's a common pattern). Skill teaches: doc.go is for packages with 3+ files; for small packages, put the comment at the top of the main .go file",
       "assertions": [
-        { "id": "4.1", "text": "Advises AGAINST creating doc.go for a 2-file package" },
+        {
+          "id": "4.1",
+          "text": "Advises AGAINST creating doc.go for a 2-file package"
+        },
         {
           "id": "4.2",
           "text": "Recommends placing the package comment at the top of the main .go file (handler.go)"
@@ -101,7 +116,10 @@
       "prompt": "Write Example test functions for this Go library function that converts temperatures. I need examples for: basic Celsius to Fahrenheit, Fahrenheit to Celsius, and Kelvin to Celsius conversions.\n\n```go\npackage tempconv\n\n// Convert converts a temperature from one unit to another.\nfunc Convert(value float64, from, to Unit) float64 { ... }\n```",
       "trap": "Model might name multiple examples as ExampleConvert1/ExampleConvert2 or ExampleConvertCelsiusToFahrenheit (capitalized suffix). Skill teaches lowercase suffix convention.",
       "assertions": [
-        { "id": "5.1", "text": "Uses external test package (package tempconv_test)" },
+        {
+          "id": "5.1",
+          "text": "Uses external test package (package tempconv_test)"
+        },
         {
           "id": "5.2",
           "text": "Multiple examples use lowercase suffix: ExampleConvert_celsiusToFahrenheit or similar lowercase pattern"
@@ -110,7 +128,10 @@
           "id": "5.3",
           "text": "Every example includes an // Output: comment for go test verification"
         },
-        { "id": "5.4", "text": "Examples use fmt.Println to print results (not fmt.Printf)" },
+        {
+          "id": "5.4",
+          "text": "Examples use fmt.Println to print results (not fmt.Printf)"
+        },
         {
           "id": "5.5",
           "text": "Examples import the package and call tempconv.Convert (external test package pattern)"
@@ -163,7 +184,10 @@
           "id": "7.3",
           "text": "Keeps the null pointer and off-by-one fixes under ### Fixed — they are bugs, not vulnerabilities"
         },
-        { "id": "7.4", "text": "Does not move non-security bugs into the Security section" },
+        {
+          "id": "7.4",
+          "text": "Does not move non-security bugs into the Security section"
+        },
         {
           "id": "7.5",
           "text": "Notes that the Security category exists as its own top-level changelog category, not a subcategory of Fixed"
@@ -188,7 +212,10 @@
           "id": "8.3",
           "text": "llms.txt includes Key Concepts or API Reference listing the main types and functions"
         },
-        { "id": "8.4", "text": "llms.txt includes Common Patterns section with code examples" },
+        {
+          "id": "8.4",
+          "text": "llms.txt includes Common Patterns section with code examples"
+        },
         {
           "id": "8.5",
           "text": "Mentions registering for discoverability platforms (Context7, DeepWiki, or similar)"
@@ -213,7 +240,10 @@
           "id": "9.3",
           "text": "Documents the exponential backoff behavior (delay multiplied by backoff factor)"
         },
-        { "id": "9.4", "text": "Documents context cancellation behavior (returns ctx.Err())" },
+        {
+          "id": "9.4",
+          "text": "Documents context cancellation behavior (returns ctx.Err())"
+        },
         {
           "id": "9.5",
           "text": "Includes an inline Example section showing a realistic usage pattern"
@@ -350,7 +380,10 @@
           "id": "14.3",
           "text": "Recommends adding comments directly to proto messages, services, and RPCs"
         },
-        { "id": "14.4", "text": "Recommends buf for proto linting and breaking change detection" },
+        {
+          "id": "14.4",
+          "text": "Recommends buf for proto linting and breaking change detection"
+        },
         {
           "id": "14.5",
           "text": "Mentions grpc-gateway as an option for projects needing both REST and gRPC from the same proto"
@@ -403,7 +436,10 @@
           "id": "16.3",
           "text": "Reduces the setup steps to 3 or fewer commands (e.g., clone, docker-compose up, make test)"
         },
-        { "id": "16.4", "text": "Mentions or suggests devcontainer for consistent environments" },
+        {
+          "id": "16.4",
+          "text": "Mentions or suggests devcontainer for consistent environments"
+        },
         {
           "id": "16.5",
           "text": "Separates unit tests (fast, no deps) from integration tests (needs PostgreSQL/Redis)"
@@ -424,8 +460,14 @@
           "id": "17.2",
           "text": "The Play: line uses the exact format `// Play: https://go.dev/play/p/...` (not inline, not as a different label)"
         },
-        { "id": "17.3", "text": "Comment starts with 'Filter' followed by a verb phrase" },
-        { "id": "17.4", "text": "Includes an inline code Example section (tab-indented)" },
+        {
+          "id": "17.3",
+          "text": "Comment starts with 'Filter' followed by a verb phrase"
+        },
+        {
+          "id": "17.4",
+          "text": "Includes an inline code Example section (tab-indented)"
+        },
         {
           "id": "17.5",
           "text": "Documents that a new slice is returned (original is not modified)"
@@ -442,9 +484,18 @@
           "id": "18.1",
           "text": "Recommends a docs/architecture/ directory (not wiki or README section)"
         },
-        { "id": "18.2", "text": "Uses numbered file format (0001-xxx.md, 0002-xxx.md)" },
-        { "id": "18.3", "text": "Each ADR has Context section explaining the need" },
-        { "id": "18.4", "text": "Each ADR has Design/Decision section explaining what was chosen" },
+        {
+          "id": "18.2",
+          "text": "Uses numbered file format (0001-xxx.md, 0002-xxx.md)"
+        },
+        {
+          "id": "18.3",
+          "text": "Each ADR has Context section explaining the need"
+        },
+        {
+          "id": "18.4",
+          "text": "Each ADR has Design/Decision section explaining what was chosen"
+        },
         {
           "id": "18.5",
           "text": "Each ADR has Consequences section (positive and negative trade-offs)"
@@ -469,8 +520,14 @@
           "id": "19.3",
           "text": "Uses ExampleClient_Post for the POST request example (same TypeName_MethodName pattern)"
         },
-        { "id": "19.4", "text": "Every example includes an // Output: comment" },
-        { "id": "19.5", "text": "Uses external test package (package httpclient_test)" }
+        {
+          "id": "19.4",
+          "text": "Every example includes an // Output: comment"
+        },
+        {
+          "id": "19.5",
+          "text": "Uses external test package (package httpclient_test)"
+        }
       ]
     },
     {
@@ -487,7 +544,10 @@
           "id": "20.2",
           "text": "Recommends registering with DeepWiki (deepwiki.com) specifically"
         },
-        { "id": "20.3", "text": "Recommends adding an llms.txt file at the repository root" },
+        {
+          "id": "20.3",
+          "text": "Recommends adding an llms.txt file at the repository root"
+        },
         {
           "id": "20.4",
           "text": "Recommends adding Go Playground demos linked from doc comments with the // Play: format"

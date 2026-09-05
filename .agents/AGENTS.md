@@ -10,6 +10,7 @@ conflicts instead of silently choosing one instruction over another.
 - **Language**: Use Japanese for responses and English for code, docs, and comments.
   - Use `japanese-tech-writing` for Japanese chapters, articles, design docs, and READMEs.
     Ordinary chat replies do not need it.
+  - Use `natural-japanese` proactively for Japanese.
 - **Frontend / Web development**: Before producing HTML, CSS, or client-side JavaScript,
   follow `modern-web-guidance`. Use `agent-browser` for browser interaction.
 - **Git / GitHub work**: Use `git-workflow` for every git or GitHub operation.
