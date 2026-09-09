@@ -1,6 +1,6 @@
 ---
 name: gh-timeline
-description: Use this to view the timeline of GitHub issues or pull requests. Note that it does not fetch the title and description, unlike `gh pr view`.
+description: Inspect chronological GitHub issue or PR events, including reviews, commits, force pushes, and merges.
 allowed-tools:
   - Bash(gh timeline *)
 ---
@@ -17,3 +17,9 @@ gh timeline <issue-or-pr-number-or-URL>
 Output is JSON by default under an AI agent runtime. For the JSON schema,
 flag list, drill-down via `gh api`, and worked examples, run
 `gh timeline --help`.
+
+Resolve the target from the conversation or current repository through `git-workflow`.
+Fetch title and body separately when needed; the timeline supplies event history.
+Finish with the events relevant to the question, timestamps, and source references.
+If output is incomplete or the command fails, report the coverage gap rather than
+inferring that an event did not occur.

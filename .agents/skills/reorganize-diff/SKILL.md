@@ -1,6 +1,6 @@
 ---
 name: reorganize-diff
-description: 大きなブランチや PR を、機能・振る舞い単位の PR と、その内側のコード変更種別ごとのコミットに2段階で再編成するスキル。「PR が大きすぎる」「PR を分けたら1コミットの大きなPRになった」「コミットが整理されていない」「WIP コミットが混ざっている」「試行錯誤の履歴を整理したい」「PoC をレビュー可能な単位に崩したい」「diff の分割方法を相談したい」「plan-stacked-pr から分割粒度の決定を委譲されたとき」に使う。PR 粒度（機能/振る舞い）とコミット粒度（コード変更種別）を明示的に2層で管理する。
+description: Analyze or reorganize a final diff into behavior-focused PRs and reviewable commits, including split plans requested by plan-stacked-pr.
 allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), Bash(git checkout:*), Bash(git fetch:*), Bash(git diff:*), Bash(git show:*), Bash(git merge-base:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git cherry-pick:*), Bash(git restore:*), Bash(git stash:*), Bash(git reset:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr create:*), Bash(gh pr diff:*), Bash(gh repo view:*)
 ---
 
@@ -19,7 +19,8 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(git status:*), Bash(git branch:*), B
 2. 各コミットはコミット単位でレビューできる（判定基準は「Tier 2 — コミット境界」節）。
 3. 後続コミットが打ち消す変更を、前のコミットに含めない。
 
-PR 1 つにコミット 1 つはほぼ常に不変条件 2 が省略されたサイン。
+A single commit is sufficient when it meets all Tier 2 criteria. Split by responsibility,
+not by a minimum commit count.
 
 最終差分そのものを変える提案（不要な変更を落とす等）は本 skill のスコープ外。必要ならその差分を提示し、個別に承認を得る。
 
@@ -197,23 +198,29 @@ Tier 2 commits (依存順):
   ...
 ```
 
-計画提示後、実行前にユーザー承認を得る。
+Present the concrete plan. Proceed when the requested reorganization covers its
+branches and history changes. Ask only for unresolved scope, destructive impact,
+or publication beyond existing authorization. A planning-only request ends here.
 
 ---
 
 ## Phase 2: 実行
 
-承認なしに実行しない。`git commit` 実行時にリポジトリ側の pre-commit/pre-push hook（lint・security scan 等）の出力が挟まることがあるが、これは git 操作の成否判定に含めない。
+Execute within the scope established in Phase 1. Respect hook exit status and verify
+the resulting commit or remote state; a rejected hook means the operation failed.
 
 ### 2-1. 作業開始前の安全確保
 
 ```bash
 original_head=$(git rev-parse HEAD)
 git branch "backup/$(git branch --show-current)-pre-reorganize"   # checkout せずに退避
-git stash   # 未コミット変更がある場合
+# Preserve unrelated tracked and untracked changes before rebuilding history.
 ```
 
-`original_head` は 2-4 の差分同一性検証で使う。復旧が必要なときは `git reset --hard backup/<branch-name>-pre-reorganize`。
+Use `original_head` for final tree comparison. Prefer an isolated worktree when local
+changes are present. Record the exact backup ref and any saved-work identifier.
+Recover from the backup while preserving work created since the backup; a destructive
+reset requires approval for the exact work it would discard.
 
 ### 2-2. 変更の抽出手法
 
@@ -232,7 +239,9 @@ git commit -m "<type>(<scope>): <message>"
 
 コミットメッセージは元のコミットメッセージを転用せず、実際の diff 内容に基づいて書く。cherry-pick した件名が Tier 2 の変更種別と食い違うなら、reset して同一内容で再コミットし直す（非対話 rebase の reword は使わない）。
 
-再構成コミットは既存差分の機械的な再配置であり新規の意思決定を伴わないため、`contextual-commit` の action line は付けない。Conventional Commits の subject のみで十分。リポジトリ側の hook が別の整形を促しても、この規定を優先する。
+For mechanical redistribution without new decisions, use a Conventional Commit subject.
+Preserve repository-required message structure and hooks; use `contextual-commit`
+when a commit introduces a new decision that needs context.
 
 ### 2-3. スタック PR モード（Tier 1 分割あり）
 
@@ -256,10 +265,13 @@ GitHub 以外のホストでは `git checkout -b <pr-branch> <parent-branch>` �
 全ブランチを積み終えたら、スタック全体の差分が元の最終差分と一致することを確認してから PR にする。
 
 ```bash
-git diff <stack-base> <top-branch> --stat   # 1-1 で取った git diff <base>...HEAD --stat と一致すること
+git diff --exit-code <original-head> <top-branch>
 ```
 
-一致しなければ hunk か未追跡ファイルの取りこぼしなので、原因を突き止めるまで submit しない。
+An empty content diff verifies the final tree for a linear stack on the original base.
+For independent sibling PRs, combine them in an isolated verification worktree and
+compare that tree to the original. If the base changed, account for its changes
+separately. A matching diffstat alone does not prove content equality.
 
 ```bash
 gh stack submit --auto                 # push + draft PR 作成 + base の連結
@@ -270,13 +282,15 @@ gh stack submit --auto                 # push + draft PR 作成 + base の連結
 GitHub 以外のホスト、または repo で stacked PR が有効化されていない（`gh stack` が exit 9）場合のみ、従来どおり手で作る。
 
 ```bash
-gh pr create --draft --base <parent-branch> --title "<title>" --body "<body>"
+# GitHub without native stack support:
+gh pr create --draft --base <parent-branch> --title "<title>" --body-file <body-file>
 ```
 
 PR 本文の生成は `prepare-issue-pr` スキルに委譲する。`gh stack submit --auto` はコミットメッセージからタイトルを自動生成するため、本文を整えるのは PR 作成後になる（`gh pr edit`）。
 PR 作成後のスタック管理は `stacked-pr` スキルに委譲する。
 
-元の monolithic PR を置き換える場合は、元 PR に新スタックへのリンクを貼った上でクローズを提案する（自動クローズしない）。
+When replacing an existing PR, report the replacement URLs. Posting a migration comment
+or closing the original PR requires authorization for those actions.
 
 ### 2-4. コミット整理のみモード（Tier 1 分割なし）
 
@@ -284,7 +298,7 @@ PR 作成後のスタック管理は `stacked-pr` スキルに委譲する。
 
 ```bash
 merge_base=$(git merge-base HEAD origin/<base-branch>)
-git reset "$merge_base"   # 全変更をステージに戻す
+git reset "$merge_base"   # Preserve file content and unstage the changes
 # Tier 2 ごとに git add / git add -p → git commit を繰り返す
 ```
 
@@ -333,7 +347,7 @@ A と B が互いを必要とする場合は1つの論理変更。分割しな�
 
 ## 境界
 
-- Phase 1 は分析のみで副作用なし。Phase 2 はユーザー承認と明示的な実行指示が必要。
+- Phase 1 is analysis only. Phase 2 uses the execution scope established in Phase 1.
 - ユーザーが Tier 1 不要（PR は変えない）と言った場合は Tier 2 のみ実行する。
 - PR 作成後のスタック管理は `stacked-pr` に委譲する。
 - `plan-stacked-pr` から委譲されたときは Phase 1 のみ実行する。

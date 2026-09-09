@@ -1,6 +1,6 @@
 ---
 name: japanese-tech-writing
-description: 日本語の技術文書・書籍原稿の文章規範。整形（一文一行、引用ブロック、脚注、コラム記法）、段落と論証の構成（パラグラフライティング）、論証の厳密さ（ツッコミどころの除去）、読み手の負荷の管理、視点と語り、演出の抑制、LLM っぽい空句の禁止、冗長の排除を定める。日本語で技術書の章、草稿、記事、解説文を書くとき、または推敲・リライトするときに使用する。
+description: Write or revise Japanese technical chapters, articles, explanations, and READMEs with consistent formatting, precise arguments, and readable prose.
 ---
 
 # 日本語技術文書の文章規範
@@ -8,6 +8,15 @@ description: 日本語の技術文書・書籍原稿の文章規範。整形（�
 日本語で技術的な原稿（書籍の章、記事、解説文）を書く・推敲するときは、以下の規範に従う。
 
 ## 整形
+
+Apply these preferences to the requested technical deliverable. For narrative chapters,
+preserve discovery where useful; for reports, READMEs, and direct explanations,
+state the main result early. The user's format and purpose govern these choices.
+
+Complete a revision when affected claims match their evidence, terminology is
+consistent, forward references resolve, and formatting follows the target document.
+Preserve supported uncertainty and necessary context. Additional passes require a
+concrete remaining defect.
 
 - 一文ごとに改行する。段落の区切りは空行で示す。
 - コード、差分、ログ、設定ファイルの断片はコードブロックで示す。
@@ -25,7 +34,8 @@ description: 日本語の技術文書・書籍原稿の文章規範。整形（�
 
 - 一つの段落には一つのトピックだけを置く。場面の進行（調査、報告、検証、評価）が複数混ざった長い段落は、一歩ずつの段落に分割する。
 - 段落の最初の文を読めば、その段落が何の話かわかるようにする。
-- 段落の先頭では、前の段落との論理関係を接続表現で明示する（「であれば」「実際」「しかし」「この例自体からも」）。
+- Make paragraph relationships clear through content and order. Add a connective
+  when the relationship would otherwise be unclear.
 - 新しい概念・術語を導入するときは、いきなり「XはYである」の辞書型断定で始めない。先に導入文で対象を置き、次にその働き・差分を述べ、必要なら三文目で定義を与える。
 - 論証は一方向に進める。結論を出してから反論を処理し、結論を言い直す構成にしない。反論と疑念の処理を終えてから、結論を一度だけ置く。
 - 例への弁明（作為的に見える、への先回りなど）は、場面の山場の直後に挟んで流れを切らない。次の節の冒頭でまとめて処理する。
@@ -108,7 +118,7 @@ LLM が大量生成する、中身のない型に誘惑されない。書き上�
 - **弱い緩和と称賛**：「〜と言えるだろう」「〜かもしれない」（根拠なく主張を弱める場合だけ。推量・仮定・読者の疑念・作中人物の認識なら残す）、「非常に」「極めて」「大いに」（中身のない強調）
 
 悪い例：「本章では、〇〇の理論を正面から扱う」「この前提を、ここで正面から回収する」「多角的に分析すると、重要なのは〜である」。
-良い例：「本章では、〇〇の理論を扱う」「ここで、この前提を回収する」「評価の核心は、正しさを誰が知っているかにある」。
+良い例：「〇〇の理論は、この制約を説明する」「この前提が成り立つのは、入力が独立している場合である」「評価の核心は、正しさを誰が知っているかにある」。
 
 ## 冗長の排除
 

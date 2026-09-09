@@ -1,152 +1,52 @@
 ---
 name: sanitize-artifacts
-description: Inspect and revise generated artifacts so they read as natural, standalone deliverables, without leaking prompt instructions, conversation history, implementation constraints, or production process artifacts into user-facing content.
+description: Inspect generated artifacts for prompt leakage or production residue, and revise them when the user requests cleanup or polishing.
 ---
 
-# sanitize-artifacts
+# Sanitize Artifacts
 
-Use this skill when the user asks you to inspect, clean up, sanitize, revise, polish, or quality-check artifacts produced during the current work session.
+Make the artifact a coherent standalone deliverable for its intended audience. Conversation context guides its design; audience needs determine its visible content.
 
-This skill is especially important when the artifact was produced through iterative prompting, corrective instructions, examples, constraints, or vibe-coding-style collaboration.
+## Workflow
 
-## Goal
+1. Identify the artifact, its audience, and the requested operation from the session. Inspection and quality-check requests authorize findings; cleanup, revision, or polishing requests authorize edits. Reuse existing authorization when both are requested.
+2. Classify suspect content using the rules below. Preserve technical correctness, necessary assumptions, and user-facing requirements.
+3. For authorized edits, remove residue or rewrite it as useful audience-facing content. For inspection, report concrete locations and suggested revisions.
+4. Review affected sections and their surrounding context for consistency and completeness. Finish when each identified issue is resolved or reported, and the artifact still meets its original purpose.
 
-Revise the artifact so that it stands on its own as a coherent final deliverable.
+## Content Classification
 
-The artifact must not expose unnecessary traces of:
+| Content                         | Treatment                                                                   |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| Information the audience needs  | Keep it visible, including necessary caveats or implementation constraints. |
+| Production guidance             | Express it through structure, tone, scope, defaults, naming, or design.     |
+| Incidental conversation residue | Remove it during revision.                                                  |
 
-- the user's prompts
-- conversation history
-- intermediate reasoning
-- implementation constraints
-- tool choices
-- avoided approaches
-- prompt-engineering instructions
-- scaffolding used during production
-- examples that were provided only to guide intent
-- corrective feedback given during the conversation
+Phrases such as "As requested," "Unlike the previous version," "The prompt says," or "This section was added because" are inspection cues. Judge their purpose in context rather than deleting by keyword. A revision history or operational constraint may itself be part of the requested deliverable.
 
-The final artifact should look like it was intentionally designed for its real audience, not assembled from the conversation that produced it.
+## Examples and Constraints
 
-## Core Principle
+Use prompt examples to infer audience, abstraction level, tone, and design intent. Include an example in the artifact when it helps that audience understand the subject.
 
-Treat the conversation as production context, not automatically as artifact content.
+Translate production constraints into concrete content:
 
-Before preserving any statement in the artifact, classify it as one of the following:
+- "Do not use advanced terms" becomes suitable definitions and familiar wording.
+- "Avoid CLI black boxes" becomes clear, concrete steps.
+- "Use Google Drive, not Git" becomes instructions for sharing the folder through Drive.
+- "Beginner-friendly" becomes suitable pacing and examples.
 
-1. User-facing content that the artifact's audience genuinely needs
-2. Production guidance that should influence the artifact but should not be visible
-3. Incidental conversation residue that should be removed
+For example, a reader who only needs sharing instructions can use "Share the project folder using Google Drive." A declaration about excluded tools adds value only if it affects that reader's choices.
 
-Only category 1 should appear directly in the artifact.
+## Review Criteria
 
-Category 2 should be reflected indirectly through structure, tone, scope, assumptions, defaults, examples, naming, or design choices.
+- A reader unfamiliar with the conversation can follow the artifact.
+- Tool choices, exclusions, assumptions, and caveats appear where they affect the reader's actions or understanding.
+- Prompt examples serve the subject rather than accidentally replacing it.
+- Tone, terminology, headings, and assumptions remain consistent across revisions.
+- Production commentary has become useful content or has been removed.
 
-Category 3 should be removed.
+## Delivery
 
-## What to Remove or Rewrite
+For inline revisions, return the revised artifact directly. When editing a file, provide the file link and a brief completion statement. Add a change summary when requested or when a material change affects the user's next step. Keep process commentary outside the artifact.
 
-Look for and remove or rewrite content that unnecessarily says or implies:
-
-- "As requested..."
-- "Based on your instruction..."
-- "We will not use..."
-- "This avoids..."
-- "Unlike the previous version..."
-- "The user wanted..."
-- "This document assumes..."
-- "Because of the constraint..."
-- "No Git/Homebrew/CLI/etc. is used..."
-- "This was changed to..."
-- "The prompt says..."
-- "The conversation so far..."
-- "This section was added because..."
-- "To satisfy the requirement..."
-
-Do not remove such content mechanically. Keep it only when the intended audience genuinely needs to know it.
-
-## Examples vs. Intent
-
-If the user gave an example to communicate intent, do not copy that example into the artifact unless the artifact itself specifically needs it.
-
-Examples from the conversation are usually diagnostic material, not final content.
-
-Use examples to infer:
-
-- the desired level of abstraction
-- the audience
-- the tone
-- what kinds of leakage to avoid
-- what kinds of unnatural wording to remove
-- what design constraints matter
-
-Do not let examples accidentally become the topic of the artifact.
-
-## Constraints Are Usually Invisible
-
-User constraints should normally affect the artifact's design, not appear as explicit disclaimers.
-
-For example:
-
-Bad:
-
-> This guide does not use Git, Homebrew, or additional CLI tools.
-
-Better:
-
-> Share the project folder using Google Drive.
-
-The better version applies the constraint without exposing it as a production rule.
-
-## Inspection Checklist
-
-When sanitizing an artifact, check:
-
-1. Does the artifact read naturally to someone who never saw the conversation?
-2. Are there any sentences that explain why the artifact was written this way?
-3. Are there any unnecessary mentions of tools, exclusions, constraints, or avoided alternatives?
-4. Did a prompt example accidentally become part of the deliverable?
-5. Are there signs of patchwork from multiple rounds of feedback?
-6. Are tone, terminology, and assumptions consistent throughout?
-7. Are headings and notes written for the artifact's audience rather than for the creator?
-8. Is any meta-commentary present that belongs only in the production process?
-9. Are disclaimers or caveats included only when the audience truly needs them?
-10. Does the artifact have a single coherent voice?
-
-## Revision Strategy
-
-Prefer rewriting over explaining.
-
-Do not add a report about what you sanitized unless the user asks for one.
-
-When editing, preserve the artifact's intended purpose, technical correctness, and necessary user-facing requirements.
-
-Remove production residue by converting it into natural artifact design.
-
-For example:
-
-- Convert "Do not use advanced terms" into simpler wording.
-- Convert "Avoid CLI black boxes" into clear, concrete steps.
-- Convert "Use Google Drive, not Git" into Drive-based workflow instructions.
-- Convert "Beginner-friendly" into pacing, definitions, and examples.
-- Convert "Do not mention X" into omission of X, not a statement that X is omitted.
-
-## Output Rules
-
-When asked to sanitize an artifact, output the revised artifact itself.
-
-Do not preface the artifact with process commentary such as:
-
-- "I removed the meta instructions."
-- "I cleaned up the prompt leakage."
-- "Here is the sanitized version."
-
-A brief label is acceptable only if needed for clarity.
-
-If the user asks for both the sanitized artifact and a change summary, put the artifact first and the summary after it.
-
-## Quality Bar
-
-The sanitized artifact should feel intentional, unified, and audience-native.
-
-A reader should not be able to infer the prompting history, internal constraints, or corrective conversation unless those details are genuinely part of the deliverable.
+This presentation rule concerns the deliverable; it does not suppress necessary progress updates or blocker explanations in the conversation.

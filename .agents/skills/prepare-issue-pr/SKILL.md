@@ -1,152 +1,48 @@
 ---
 name: prepare-issue-pr
-description: Prepare repository-ready Issue or Pull Request drafts using local templates and git/GitHub context. Use this whenever the user wants to create or refine an Issue or PR, especially when they need title/body help, template-aware drafting, related document URLs, or stacked PR base branch guidance for chained branches.
-allowed-tools: Read, Grep, Glob, Edit, Bash(fd:*), Bash(git diff-ancestor-commit:*), Bash(git rev-parse:*), Bash(git branch:*), Bash(git status:*), Bash(git merge-base:*), Bash(gh pr view:*), Bash(gh pr list:*)
+description: Draft or refine issue and PR titles and bodies using repository templates, related evidence, and PR base relationships.
 ---
 
-You are an Issue/PR Preparation Specialist. Prepare clear Issue and Pull Request drafts that fit repository templates, capture why the change exists, and avoid unnecessary process.
+# Prepare Issues and Pull Requests
 
-Always use `japanese-tech-writing` skill when writing in Japanese.
+Prepare a complete title and body for the requested artifact. Follow `git-workflow`
+for Git/GitHub operations. A drafting request ends with the draft; a creation or update
+request continues to the authorized publication step in the calling workflow.
 
-## Responsibilities
+## Procedure
 
-1. Detect whether the user wants an Issue or Pull Request draft.
-   - Ask only if the intent is genuinely unclear.
-   - Use repository context and git state as supporting signals, not hard rules.
+1. Identify issue versus PR from the request and context. Locate templates using
+   `rg --files --hidden`, including issue-form YAML and repository-level Markdown.
+   Choose the template matching the task; ask only if the alternatives encode a
+   material product decision.
+2. Read the selected template and preserve required headings, fields, and checkboxes.
+   Use a compact problem/outcome/verification structure when no template exists.
+3. For a PR, inspect the final diff against its resolved base and the relevant code.
+   Use `adjust-pr-base` discovery for an unmanaged branch; use `gh-stack` metadata
+   for a managed stack. Discovery can run before an open PR exists and does not edit it.
+   Resolve genuine ancestry ties before publication, while completing the body.
+4. Write one recommended title and a body explaining the problem, resulting behavior,
+   and verification. Scale implementation detail to what a reviewer needs to judge
+   the change. Include concrete links supplied by the task or found in relevant evidence.
+5. Follow an explicitly requested language, then the template or repository language,
+   otherwise English. Use `japanese-tech-writing` and `natural-japanese` for a Japanese technical deliverable.
+6. For an update, rewrite the title and body around the final change. Preserve useful
+   review context. Resolving threads or posting replies is a separate operation requiring
+   authorization; use `github-pr-review-operation` when requested.
+7. Return the finished draft and relevant base choice, or hand it to the authorized
+   publication workflow. Multiline CLI bodies use `--body-file`.
 
-2. Find the relevant template.
-   - For Pull Requests: `fd -H -e md --ignore-case -p 'pull_request_template'`
-   - For Issues: `fd -H -e md --ignore-case -p 'issue_template'`
-   - If multiple templates exist, summarize the differences and ask the user to choose.
-   - If no template exists, draft a sensible structure instead of blocking.
+## Description Rules
 
-3. Fill the template faithfully.
-   - Preserve the overall structure, headings, checkboxes, and required prompts.
-   - It is fine to leave optional sections marked as not applicable.
-   - Adapt wording when needed to make the final draft read naturally.
+- Explain each PR on its own terms. Mention another PR only when that context is
+  needed to understand its purpose, or when stack tooling/base metadata requires it.
+- Include observed validation and its limits. Leave unchecked checkboxes unchecked.
+- Keep non-obvious tradeoffs in the description when reviewers need them. A drafting
+  task does not authorize source-code comments or unrelated code edits.
+- For an issue, describe observed and expected behavior, impact, and reproducible evidence.
+  Separate a proposed implementation from the diagnosed problem.
+- Refine routine wording directly. Offer alternatives only when they represent a
+  consequential choice; completion does not depend on a title-selection interview.
 
-4. Generate content appropriate to the artifact.
-   - For Pull Requests:
-     - Use `git --no-pager diff-ancestor-commit` to understand the change.
-     - Determine the most likely base branch before finalizing the draft.
-     - Explain what the change solves, who benefits, and how the approach addresses the problem.
-     - Do not spend the PR description on code-level detail that reviewers can learn by reading the implementation.
-     - When implementation nuance needs reviewer attention, prefer precise inline code comments near the relevant logic.
-     - Recommend relevant reference URLs when the change clearly points to them.
-   - For Issues:
-     - Focus on the problem, motivation, desired outcome, and impact.
-     - Avoid speculative implementation detail unless the user asks for it.
-   - For both:
-     - Follow the template's language when it is clear.
-     - If unclear, prefer the repository's dominant writing style; otherwise default to English.
-
-5. Suggest a title.
-   - Provide 2-3 concise options when that helps decision-making.
-   - If the user already has a strong direction, refine it instead of forcing multiple rounds.
-   - After presenting candidates, use `AskUserQuestion` to narrow wording with the user until the title and draft are settled.
-
-6. Handle stacked PRs sanely.
-   - Treat chained branches as first-class workflow, not an edge case.
-   - Prefer the branch that already has an open parent PR over defaulting everything to the default branch.
-   - If the parent branch is ambiguous, ask interactively instead of guessing.
-
-## Pull Request Guidance
-
-### Description Content
-
-Treat the PR description as change intent, not as a second copy of the diff.
-
-- Focus on what problem the PR solves, who it is for, and how the change resolves that problem.
-- Prefer reviewer-oriented context such as user impact, product intent, operational motivation, or architectural direction.
-- Avoid low-level implementation walkthroughs, line-by-line summaries, or code facts that are already obvious from the diff.
-- If the template asks for implementation notes, keep them brief and only include information that would be hard to infer from the code alone.
-
-### Keep It Minimal And Independent Of Sibling PRs
-
-Write the smallest explanation that lets a reviewer understand and judge this diff on its own.
-
-- **Default to a standalone description.** If the PR can be reviewed independently — its what, why, and user-facing impact are understandable without opening other PRs — describe it on its own terms and do not mention sibling, parent, or child PRs. Being part of a stack, or having been split out only to keep each diff small, is not by itself a reason to reference other PRs.
-- **Reference another PR only when this PR's purpose genuinely cannot be explained or justified without that context** (e.g. the diff looks like dead code until a parent PR is considered). Then include exactly the context needed and nothing more.
-- Gratuitous cross-PR references — "bottom of the stack", "the next PR needs this", "sets up PR #N", "prep for the migration", or a standing "stack note" — make review harder and add no information a reviewer of this diff needs. Omit them when the PR stands on its own.
-- If the only "why" you can state is "a later PR needs it", that usually means the change's own rationale has not been articulated yet. Reframe the why on the change's own terms — what it does and why that is correct or valuable by itself (the user-facing behavior it produces, the convention it aligns to, the risk it removes). Only when no standalone rationale truly exists is surrounding-stack context genuinely required; then state it concisely.
-- Stack order is already conveyed by the PR's base branch, which GitHub displays. You do not need to narrate the stack in prose to signal ordering.
-
-### Implementation Notes Live In Code
-
-When the implementation needs extra reviewer guidance, put that guidance in the code where it will stay accurate.
-
-- Add succinct inline comments only where the reasoning would otherwise be hard to recover from the code itself.
-- Use those comments for invariants, tricky constraints, non-obvious tradeoffs, or compatibility assumptions.
-- If the user wants to leave PR diff comments on specific lines instead of source comments, follow the inline comment workflow in `github-pr-review-operation` rather than restating the mechanics here.
-- Do not move that kind of explanation into the PR description unless the template explicitly requires it.
-
-### Base Branch Inference
-
-When preparing a PR draft, infer the base branch before you present the final output.
-
-The canonical procedure for finding the nearest open parent PR lives in the `adjust-pr-base` skill. Follow its ancestry-based algorithm (Steps 1–3) to identify the target base branch. This keeps the logic consistent whether you're drafting a new PR or correcting an existing one.
-
-If the current branch already has an existing PR, treat that PR's base branch as the strongest signal — only suggest changing it when the ancestry check clearly disagrees.
-
-### Ambiguous Base Branch Handling
-
-When the `adjust-pr-base` procedure returns a clear result, use it. When multiple candidates are equally plausible or confidence is low:
-
-- Use `AskUserQuestion`.
-- Present 1-2 likely parent choices plus the default branch as a fallback choice.
-- Each choice must include both:
-  - the branch name
-  - the related PR URL when one exists
-- Include a short reason for each candidate so the user can decide quickly.
-- Do not silently pick a non-default stacked base when the evidence is weak.
-
-### Reference URLs
-
-Recommend reference URLs for PRs when they are clearly relevant and easy to justify from the repo or task context.
-
-- Good candidates:
-  - linked Issue or discussion URLs
-  - design docs, ADRs, specs, or internal docs explicitly tied to the change
-  - official documentation for the dependency, API, CLI, or feature being changed
-  - migration guides or release notes directly motivating the implementation
-- Do not invent URLs or force a documentation hunt when nothing obvious is available.
-- If the template already has a section such as `References`, `Related`, `Docs`, or similar, place the URLs there.
-- Otherwise, add a short `References` section only when there is at least one concrete URL worth attaching.
-- Keep the list short and high-signal.
-
-### Updating Existing PRs
-
-When revising an existing PR after review, keep the discussion state clean.
-
-- If a code change makes an older inline review comment obsolete or detached from the current diff, resolve the related conversation so stale comments are hidden.
-- If the user needs to add or reply to PR inline comments during that cleanup, delegate the line-targeting mechanics to `github-pr-review-operation`.
-- Do not leave clearly outdated inline discussions open when they no longer reflect the current implementation.
-- If a prior comment is still relevant after the edit, keep it visible and address it in code or follow-up discussion instead of hiding it.
-
-## Workflow
-
-1. Determine Issue vs Pull Request.
-2. Locate and read the best matching template.
-3. Gather the minimum context needed to complete it well.
-4. For Pull Requests, inspect the diff and infer the best base branch.
-5. Collect obvious high-value reference URLs when they exist.
-6. Draft the title and body in the template's structure.
-7. If base branch or wording is still ambiguous, use `AskUserQuestion` to converge with the user.
-8. Return the finalized draft in a form the user can reuse directly, and include a `gh pr create` command example only when it helps.
-
-## Boundaries
-
-- This skill is for preparing the draft, not forcing PR creation or memo storage.
-- The default deliverable is a ready-to-use title/body draft. If the user also wants to create the PR, provide the appropriate command with the inferred base branch, but do not create the PR unless explicitly asked in the host environment.
-- Prefer lightweight interaction, but once candidates are on the table, continue the discussion until the user has converged on the wording they want.
-- For interactive clarification, use `AskUserQuestion` rather than burying the decision inside a long free-form response.
-- Be complete, but avoid turning the process into a checklist ceremony.
-
-## Output
-
-- Return a ready-to-use title and body.
-- For Pull Requests, mention the inferred base branch when it matters, especially for stacked PRs.
-- Include reference URLs when they materially help reviewers and you have concrete sources.
-- If useful, include a `gh pr create --base <branch> --title ... --body-file ...` style example command.
-- If multiple candidates were presented, converge to the user's preferred wording before treating the draft as complete.
-- If useful, add a short note about assumptions or sections that may need confirmation.
+Completion: the title and body satisfy the selected template, factual claims have
+support, and the base is resolved or its exact ambiguity is stated.

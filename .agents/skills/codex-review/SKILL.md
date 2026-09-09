@@ -1,6 +1,6 @@
 ---
 name: codex-review
-description: Run automated code review using Codex CLI. Use when the user wants an automated code review of uncommitted changes, a specific commit, or changes against a base branch. This skill runs `codex review` non-interactively and returns structured feedback — it does not post comments on PRs or interact with GitHub.
+description: Review uncommitted changes, a commit, or a branch diff with Codex CLI when the user requests automated code review.
 allowed-tools: Bash(codex review:*)
 ---
 
@@ -45,15 +45,15 @@ codex review "Focus on error handling and edge cases"
 
 ## Workflow
 
-1. **Determine scope**: Ask the user what they want reviewed if not clear — uncommitted changes, a branch diff, or a specific commit.
-2. **Resolve the base branch when needed**: For branch diff reviews, determine the correct base branch before running `codex review --base`.
-3. **Run the review**: Execute `codex review` with the appropriate flags.
-4. **Present findings**: Share the review output with the user. Highlight critical issues separately from suggestions.
-5. **Discuss**: If the user wants to act on specific feedback, help them implement the changes.
+1. **Determine scope**: Reuse the requested commit or branch from the conversation. Interpret "review my changes" as `--uncommitted`. Ask only if multiple plausible targets remain and choosing one would change the review.
+2. **Resolve the base when needed**: Follow `git-workflow` for repository discovery, then use the branch procedure below. This step is complete when the exact commit, uncommitted scope, or base is known.
+3. **Run the review**: Check `codex review --help` for supported options and execute the scoped review. Wait for its result; report a failed invocation as a failed check rather than a clean review.
+4. **Present findings**: Check actionable findings against the relevant code and report their impact with file references. Treat suggestions as advisory. State when there are no supported findings and disclose any unreviewed scope.
+5. **Apply authorized fixes**: A review-only request ends with findings. If the user has also requested fixes, implement supported findings and run checks appropriate to those changes without asking again.
 
 ## Resolving the Base Branch
 
-When reviewing a branch diff, do not assume the base branch is `main`.
+Resolve the branch relationship from repository evidence:
 
 - If the user explicitly names a base branch, use it.
 - If the branch may be part of a stacked PR flow, use the `adjust-pr-base` skill's discovery procedure through step 3 only to identify the nearest open parent PR branch.
@@ -67,14 +67,4 @@ After resolving the base branch, run:
 codex review --base <resolved-base-branch>
 ```
 
-## Important Guidelines
-
-- Default to `--uncommitted` when the user says "review my changes" without further detail
-- For branch diff reviews, resolve the correct base branch first instead of assuming `main`
-- In a stacked PR workflow, prefer the nearest open parent PR branch as the review base
-- The review runs non-interactively and returns structured feedback
-- Treat the review as advisory — not all suggestions need to be applied
-
-## Help
-
-!`codex review --help`
+Review output belongs in the conversation. Posting GitHub comments requires the user's authorization and the corresponding GitHub workflow.

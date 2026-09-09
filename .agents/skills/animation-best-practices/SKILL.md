@@ -1,13 +1,27 @@
 ---
 name: animation-best-practices
-description: CSS and UI animation patterns for responsive, polished interfaces. Practical implementation patterns and troubleshooting for common animation issues. Use when implementing hover effects, tooltips, button feedback, transitions, or fixing animation issues like flicker and shakiness.
+description: "UI animation: use when implementing button feedback, hover effects, tooltip or popover transitions, or diagnosing flicker and shakiness."
 version: 1.0.0
 # source: https://github.com/millionco/react-doctor/blob/2b46f99b505b03c47d321a311db892e9438a80c1/.ami/skills/animation-best-practices/SKILL.md
 ---
 
 # Practical Animation Tips
 
-Detailed reference guide for common animation scenarios. Use this as a checklist when implementing animations.
+Apply the sections relevant to the requested interaction. These are design defaults;
+the product's established motion language and the user's requirements guide the result.
+
+## Workflow
+
+1. Identify the affected interaction and its expected feedback. For a bug, reproduce
+   the reported behavior before choosing a pattern below.
+2. Read the relevant pattern and make the smallest change that achieves that feedback.
+   Use `modern-web-guidance` before changing HTML, CSS, or client-side JavaScript.
+3. Verify the affected states in the available browser, including repeated interaction,
+   keyboard use, and reduced-motion behavior where applicable. Use `agent-browser` for
+   browser interaction. Record frame by frame only when normal playback leaves a defect unclear.
+
+Completion: the requested feedback works, the reported defect no longer reproduces,
+and relevant interaction checks pass. State any check the environment prevented.
 
 ## Recording & Debugging
 
@@ -28,10 +42,6 @@ Elements may shift by 1px at the start/end of CSS transform animations due to GP
 ```
 
 This tells the browser to keep the element on the GPU throughout the animation.
-
-### Take Breaks
-
-Don't code and ship animations in one sitting. Step away, return with fresh eyes. The best animations are reviewed and refined over days, not hours.
 
 ## Button & Click Feedback
 
@@ -159,7 +169,8 @@ Arrow key navigation, keyboard shortcuts—these are repeated hundreds of times 
 
 A hover effect is nice, but if triggered multiple times a day, it may benefit from no animation at all.
 
-**Guideline:** Use your own product daily. You'll discover which animations become annoying through repeated use.
+**Check:** Repeat the affected interaction during verification and assess whether its
+animation delays feedback or interrupts the user's task.
 
 ## Hover States
 
@@ -301,10 +312,3 @@ When easing and timing adjustments don't solve the problem, add subtle blur to m
 Blur bridges visual gaps between states, tricking the eye into seeing smoother transitions. The two states blend instead of appearing as distinct objects.
 
 **Performance note:** Keep blur under 20px, especially on Safari.
-
-## Why Details Matter
-
-> "All those unseen details combine to produce something that's just stunning, like a thousand barely audible voices all singing in tune."
-> — Paul Graham, Hackers and Painters
-
-Details that go unnoticed are good—users complete tasks without friction. Great interfaces enable users to achieve goals with ease, not to admire animations.

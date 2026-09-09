@@ -1,108 +1,54 @@
 ---
 name: fix-github-actions-ci
-description: GitHub Actions CI の失敗を調査して修正するためのスキルです。CI ログを分析して失敗箇所・原因を特定し、そのまま修正作業まで行います。
-allowed-tools: Bash(gh pr view:*) Bash(gh pr checks:*) Bash(gh run view:*) Bash(gh run list:*) Bash(gh run watch:*) Bash(gh workflow view:*) Bash(gh workflow list:*)
+description: Investigate GitHub Actions failures and implement requested CI repairs using failed logs and workflow definitions.
 ---
 
-# fix-github-actions-ci
+# Fix GitHub Actions CI
 
-## Tips
+Use `git-workflow` for repository operations. An investigation request ends with
+the diagnosis; a repair request continues through the supported fix and verification.
+Reuse publication authority from the requested PR workflow.
 
-- `gh pr checks --watch` や `gh run watch <run-id>` を使うと、CI の再実行後の状況をリアルタイムで確認できますが、
-  結構時間がかかるので background に移譲して非同期実行してください。
-- すべての gh コマンドについて、`--repo` でリポジトリを明確にすることをおすすめします
-  - 現在いるリポジトリの owner/repo 形式: !`gh repo view --json owner,name --jq '.owner.login+"/"+.name'`
-- 調査完了後は、そのまま修正作業まで続けて、完了条件を満たしたら push して PR に反映させるところまで行うことを目指してください。
+## Procedure
 
-## Steps
+1. Resolve the PR or branch from the conversation and repository. Query current PR
+   metadata and checks; distinguish no PR from a failed query. A branch without a PR
+   can be investigated through its workflow runs.
+2. Identify failed checks and their revision:
 
-### Step 1: PR コンテキストの確認
+   ```bash
+   gh pr checks <PR> --repo <owner/repo> --json name,state,bucket,workflow,link
+   gh run list --repo <owner/repo> --branch <branch> --commit <SHA> \
+     --json databaseId,headSha,status,conclusion,workflowName,url
+   ```
 
-現在のブランチに関連する PR を確認する:
+   Use the check link or matching revision to choose the run. Investigate upstream
+   lint or build failures before downstream jobs that depend on them.
 
-!`gh pr view --json url,number 2>/dev/null || echo "No PR found for current branch"`
+3. Read the failed logs and the relevant workflow:
 
-PR が見つからない場合はユーザーにどの PR を修正するか確認し、以降の操作でその PR を指定する。
-PR コンテキストとして受け付けられる形式: PR 番号、URL、ブランチ名
+   ```bash
+   gh run view <run-id> --repo <owner/repo> --log-failed
+   gh workflow view "<workflow-name>" --repo <owner/repo> --yaml
+   ```
 
-### Step 2: Check ステータスの確認
+   Match the error to source and configuration. Record affected files, the observed
+   failure, its supported cause or remaining hypothesis, and the check that would
+   demonstrate resolution.
 
-失敗している check と workflow name を特定し、失敗した run の ID をメモする:
+4. For a requested repair, make the smallest change addressing the cause. Run the
+   relevant workflow commands locally, including focused tests when the failure is
+   behavioral. Inspect `needs` dependencies for checks hidden by the initial failure.
+   Choose checks by their coverage, rather than excluding commands named `test`.
+5. Commit and publish using the applicable `git-workflow` steps when authorized.
+   If called by `watch-ci`, that caller owns monitoring: return the new revision
+   and local results without starting a nested watch. Otherwise use `watch-ci`
+   to verify published checks.
 
-```bash
-gh pr checks <PR> --json name,state,bucket,workflow --jq '[.[] | select(.bucket == "fail")]'
-```
+## Completion
 
-複数の workflow が失敗している場合は、静的解析系（lint, type-check など）の workflow を優先して調査する。静的解析系 workflow の Step 3〜5 を完了後、その他の failing workflow（E2E など）についても同様に Step 3〜5 を実施する。
-
-### Step 3: 失敗ログの取得
-
-`gh pr checks` の出力には run ID が含まれないため、まず run ID を取得する:
-
-```bash
-gh run list --branch <branch> --workflow "<workflow-name>"
-```
-
-取得した run ID でログを確認する:
-
-```bash
-gh run view <run-id> --log-failed
-```
-
-ログからファイル名・行番号・エラーメッセージを特定する。
-
-### Step 4: workflow からローカル確認コマンドを特定する
-
-Step 2 で取得した workflow name から workflow の YAML ファイルを取得する。
-なお、workflow name は space を含む可能性があるので quote すること。
-
-```bash
-gh workflow view "<workflow-name>" --yaml
-```
-
-ログと照合しながら、`needs:` による job 間依存により実行されなかった可能性のある job を特定する。
-**自動テスト系の時間がかかるチェック以外**の静的解析 step をすべてリストアップし、そのコマンドを Step 5 の "How to verify locally" に記載する。
-
-テストと判断する基準: step 名やコマンドに `test`, `spec`, `e2e`, `coverage`, `vrt` などのキーワードが含まれるもの。
-テスト系はローカル確認コマンドとして列挙しないが、Step 3 のログで確認したテスト系のエラーは Step 5 の Error location に記録する。
-
-### Step 5: 修正方針をまとめる
-
-次の形式で簡潔に整理して返す。
-修正方針は「どのようなエラーが出ており、どのコードや設定を修正すべきか」を明記すること。
-
-```markdown
-## CI failure summary
-
-- PR context: <PR number/url/branch>
-- Failed check: <check name>
-- Workflow: <workflow name>
-- Run ID: <run id>
-
-## Error location
-
-<!-- 複数ある場合はこのブロックを繰り返す -->
-
-- File: <path or unknown>
-- Line: <line or unknown>
-- Message: <error message>
-- Why it is failing: <root cause hypothesis based on log>
-
-## How to verify locally
-
-- <command 1>
-- <command 2>
-
-## Suggested fix location
-
-- <file or component to modify based on error location and workflow steps>
-- <additional risk or fail-fast note if relevant>
-
-## Done condition
-
-- <what output or command result should indicate the error is resolved>
-```
-
-### Step 6: 修正を実施する
-
-Step 5 のサマリをもとに、実際にコードを修正する。修正後は Done condition に記載したコマンドでローカル確認を行い、エラーが解消されたことを確認し、修正内容を commit して PR に push する。
+A diagnosis includes the failing run, evidence, cause or precise evidence gap, and
+the proposed fix. A repair includes the change and observed verification result.
+Claim remote CI is fixed only after checks pass on the repaired revision. When
+publication or external access is blocked, preserve the verified local fix and identify
+the remaining action.

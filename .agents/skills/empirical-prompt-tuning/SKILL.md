@@ -1,6 +1,6 @@
 ---
 name: empirical-prompt-tuning
-description: agent 向けテキスト指示（skill / slash command / task プロンプト / CLAUDE.md 節 / コード生成プロンプト）を、バイアスを排した実行者に動かしてもらい、両面（実行者の自己申告 + 指示側メトリクス）で評価して反復改善する手法。改善が頭打ちになるまで回す。プロンプトや skill を新規作成・大幅改訂した直後、またはエージェントの挙動が期待通りにならない原因を指示側の曖昧さに求めたいときに使う。
+description: Evaluate reusable agent instructions with independent execution scenarios when behavior is unreliable or an empirical prompt comparison is requested.
 ---
 
 # Empirical Prompt Tuning
@@ -19,6 +19,11 @@ description: agent 向けテキスト指示（skill / slash command / task プ�
 - 成功率の改善が目的ではなく、書き手の主観的好みを反映したいだけのとき
 
 ## ワークフロー
+
+Set a proportionate iteration or time budget before execution. Use isolated fixtures:
+live publication, notifications, and destructive actions require authorization beyond
+testing the wording of their prompts. Give fresh executors the target and scenario
+without prior tuning history. Collect observable actions and concise issue reasons.
 
 0. **Iteration 0 — description と body の整合チェック**（静的、dispatch 不要）
    - frontmatter `description` が謳う trigger / 用途を読む
@@ -129,24 +134,30 @@ description: agent 向けテキスト指示（skill / slash command / task プ�
 
 ## 環境制約
 
-新規 subagent を dispatch できない環境（既に subagent として動作している、Agent tool が無効化されている等）では、本 skill は **適用しない**。
-
-- 代替案 1: 親セッションのユーザーに別 Claude Code セッションを起動して依頼してもらう
-- 代替案 2: 評価を諦め、ユーザーに「empirical evaluation skipped: dispatch unavailable」と明示報告する
-- **NG**: 自己再読で代替する（バイアスが入るので評価結果を信じてはいけない）
+When fresh independent execution is unavailable, complete the static description/body
+check and prepare scenarios and the fixed checklist. Report
+`empirical evaluation skipped: independent execution unavailable`.
+A subagent role alone is not a blocker if further delegation is available.
+Self-review supplies structural findings, not empirical execution evidence.
+Preserve the prepared evaluation and continue other authorized work.
 
 **構造審査モード**: empirical 評価ではなく、skill / プロンプトの **記述の整合性・明瞭性だけ** をチェックしたい場合は、構造審査モードとして明示的に切り分ける。subagent への依頼プロンプトに「今回は構造審査モード: 実行ではなくテキスト整合性チェック」と明記する。これにより subagent は環境制約節の skip 動作に引っかからず、静的レビューを返せる。構造審査は empirical の代替ではなく補助（連続クリア判定には使えない）。
 
 ## 反復の打ち切り基準
 
-- **収束（停止）**: 連続 2 回で次を **全て** 満たす:
+- **Convergence:** all critical requirements pass and two consecutive iterations
+  meet these criteria (three for a high-impact prompt, chosen before evaluation):
   - 新規不明瞭点: 0 件
   - 精度の前回比改善: +3 ポイント以下（5% → 8% のような飽和）
   - ステップ数の前回比変動: ±10% 以内
   - duration の前回比変動: ±15% 以内
+  - When usage metrics are unavailable, record that fact and use observed outcomes.
+    Report reduced measurement coverage rather than inventing metrics.
   - **過適合チェック**: 収束判定時に、これまで使っていない hold-out シナリオ 1 本を追加して評価。精度が直近平均から 15 ポイント以上落ちたら過適合。baseline シナリオ設計に戻って edge を足す。
 - **発散（設計を疑う）**: 3 回以上イテレーションしても新規不明瞭点が減らない → プロンプトの設計方針自体が間違っている可能性。修正パッチで直すのをやめ、構造を書き直す
-- **リソース打ち切り**: 重要度と改善コストが釣り合わなくなったら止める（80 点で出す判断）
+- **Resource limit:** at the chosen budget, report completed scenarios, failed critical
+  requirements, and remaining uncertainty. A plateau with failing critical requirements
+  is not successful convergence.
 
 ## 失敗パターン台帳
 

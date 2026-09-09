@@ -1,11 +1,23 @@
 ---
 name: github-pr-review-operation
-description: GitHub Pull Request上でのレビュー操作を行うスキル。ghコマンドでPR情報取得、差分確認、コメント投稿・取得、インラインコメント、コメント返信を実行する。PRにコメントを投稿したい、差分を行番号付きで確認したい、レビューコメントに返信したいときに使用。
+description: Inspect PR diffs and comments, or publish authorized review comments and replies with exact diff locations.
 ---
 
 # GitHub PR Review Operation
 
-GitHub CLI (`gh`) を使ったPRレビュー操作。
+Use `git-workflow` to resolve the PR and inspect its current diff and relevant code.
+
+## Workflow and Authority
+
+1. For a review request, return evidence-backed findings in the conversation.
+   Publish comments or replies when the user requests that operation.
+2. For an authorized comment, prepare its exact text, path, side, and line.
+   Recheck the head SHA if it may have changed during review.
+3. Verify the returned comment URL and target. Inspect existing comments before
+   retrying an ambiguous failure to avoid duplicate posts.
+
+Completion: findings are reported, or each authorized comment is verified on the
+intended PR. State any missing evidence or failed publication.
 
 ## Inline Comment First
 
@@ -30,13 +42,17 @@ PR 上で code-specific な指摘や補足を残したい場合は、まずこ�
 ```bash
 gh pr diff NUMBER --repo OWNER/REPO | awk '
 /^@@/ {
-  match($0, /-([0-9]+)/, old)
-  match($0, /\+([0-9]+)/, new)
-  old_line = old[1]
-  new_line = new[1]
+  old_line = $2
+  sub(/^-/, "", old_line)
+  sub(/,.*/, "", old_line)
+  new_line = $3
+  sub(/^\+/, "", new_line)
+  sub(/,.*/, "", new_line)
   print $0
   next
 }
+/^diff --git/ { old_line = new_line = 0; print; next }
+/^(---|\+\+\+)/ { print; next }
 /^-/ { printf "L%-4d     | %s\n", old_line++, $0; next }
 /^\+/ { printf "     R%-4d| %s\n", new_line++, $0; next }
 /^ / { printf "L%-4d R%-4d| %s\n", old_line++, new_line++, $0; next }
@@ -60,7 +76,7 @@ gh api repos/OWNER/REPO/pulls/NUMBER --jq '.head.sha'
 ```bash
 gh api repos/OWNER/REPO/pulls/NUMBER/comments \
   --method POST \
-  -f body="コメント内容" \
+  -F body=@/absolute/path/to/comment.md \
   -f commit_id="COMMIT_SHA" \
   -f path="src/example.py" \
   -F line=15 \
@@ -72,7 +88,7 @@ gh api repos/OWNER/REPO/pulls/NUMBER/comments \
 ```bash
 gh api repos/OWNER/REPO/pulls/NUMBER/comments \
   --method POST \
-  -f body="コメント内容" \
+  -F body=@/absolute/path/to/comment.md \
   -f commit_id="COMMIT_SHA" \
   -f path="src/example.py" \
   -F line=15 \
@@ -132,19 +148,19 @@ L50   R50  |              # レビューガイドライン
 Issue Comments（PR全体へのコメント）:
 
 ```bash
-gh api repos/OWNER/REPO/issues/NUMBER/comments --jq '.[] | {id, user: .user.login, created_at, body}'
+gh api --paginate repos/OWNER/REPO/issues/NUMBER/comments --jq '.[] | {id, user: .user.login, created_at, body}'
 ```
 
 Review Comments（コード行へのコメント）:
 
 ```bash
-gh api repos/OWNER/REPO/pulls/NUMBER/comments --jq '.[] | {id, user: .user.login, path, line, created_at, body, in_reply_to_id}'
+gh api --paginate repos/OWNER/REPO/pulls/NUMBER/comments --jq '.[] | {id, user: .user.login, path, line, created_at, body, in_reply_to_id}'
 ```
 
 ### 4. PRにコメント
 
 ```bash
-gh pr comment NUMBER --repo OWNER/REPO --body "コメント内容"
+gh pr comment NUMBER --repo OWNER/REPO --body-file /absolute/path/to/comment.md
 ```
 
 ### 5. インラインコメント（コード行指定）
@@ -156,7 +172,7 @@ gh pr comment NUMBER --repo OWNER/REPO --body "コメント内容"
 ```bash
 gh api repos/OWNER/REPO/pulls/NUMBER/comments/COMMENT_ID/replies \
   --method POST \
-  -f body="返信内容"
+  -F body=@/absolute/path/to/reply.md
 ```
 
 `COMMENT_ID`はコメント取得で得た`id`を使用。

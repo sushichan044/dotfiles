@@ -1,270 +1,104 @@
 ---
 name: git-workflow
-description: >-
-  あらゆる git/GitHub 操作のエントリーポイント。commit する、PR を作る・更新する、rebase する、スタックを整理する、PR をレビューする、CI を直す — git や GitHub に関係する作業が発生したら、個別スキルを探す前に必ずこのスキルを参照すること。このスキルに従えば、どのスキルを使うか意識しなくても操作が完結する。「コミットして」「PR 出して」「最新に追いついて」「スタック整理して」「CI 直して」など、ユーザーの発言に git/GitHub のにおいがあればこのスキルを使う。
-allowed-tools: Bash(git status:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git branch:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr create:*), Bash(gh run list:*), Bash(gh run watch:*), Bash(gh repo view:*)
+description: "Git/GitHub entry point: use for repository inspection, commits, PR creation or updates, rebases, stacked PRs, reviews, and CI."
 ---
 
-# git-workflow
+# Git Workflow
 
-git/GitHub 操作のオーケストレーター。ユーザーの intent から操作タイプを判断し、必要なサブスキルを正しい順序で呼び出して完走させる。
+Route the requested operation to the skill that owns it. Carry the user's scope,
+prior authorization, and completed actions through each handoff.
+When a caller already owns a phase such as CI monitoring, return results to it
+instead of recursively starting that phase.
 
-## State Probes And Global Rules
+## Scope and Discovery
 
-操作タイプを選ぶ前に、必要な状態を明示的に確認する。推測で分岐しない。
+Inspection and review requests produce findings. Posting comments, changing PRs,
+or publishing branches requires authorization from the task. A request to commit
+or publish the task's changes covers staging those changes; preserve unrelated
+changes and ask only if ownership or the intended selection remains ambiguous.
 
-### Current worktree
+Run only the probes needed for the current operation:
 
-```bash
-git status --short
-```
+- Local changes: `git status --short` and the relevant staged or unstaged diff.
+- Current branch: `git branch --show-current`.
+- Current PR: `gh pr view --json number,url,state,baseRefName,headRefName,headRefOid`.
+  If unavailable, query open PRs for the resolved head branch. Distinguish an empty
+  successful query from authentication, network, or repository errors.
+- Default branch: `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`.
+- Before rebase, push, or PR creation: inspect `gh stack view --json` using
+  [stacked-pr](../stacked-pr/SKILL.md). A failed probe leaves membership unknown;
+  resolve the failure before applying single-branch operations.
 
-- 出力あり: local changes がある
-- 出力なし: working tree は clean
+Reuse observations until a relevant write or concurrent update invalidates them.
+For history-rewriting pushes, establish affected branches, remote tips, and PRs.
+Proceed when existing authorization covers that impact; otherwise prepare and verify
+the local result before requesting approval for the concrete push.
 
-### Current branch open PR
+## Routing
 
-```bash
-gh pr view --json number,title,body,baseRefName,headRefName,url,state 2>/dev/null
-```
-
-`gh pr view` が失敗したら、現在ブランチ名を取り直して open PR を再確認する:
-
-```bash
-branch=$(git branch --show-current)
-gh pr list --head "$branch" --state open \
-  --json number,title,body,baseRefName,headRefName,url,state
-```
-
-- PR が 1 件返る: current branch に open PR がある
-- PR が返らない: current branch に open PR はない
-
-### Default branch
-
-PR を新規作成するときだけ取得する。
-
-```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
-```
-
-### Stack membership
-
-current branch が stacked PR の一部かを判定する。PR を作る前、rebase する前に必ず取る。
-
-```bash
-gh stack view --json 2>/dev/null | jq -r '.currentBranch as $c | .branches[] | select(.name == $c) | .name'
-```
-
-- ブランチ名が返る: current branch は stack の一部。[Create PR](#create-pr) と [Rebase](#rebase) は stack 用の分岐に入る
-- 何も返らない / コマンドが失敗する: stack ではない単独ブランチとして扱う
-
-### Global rules
-
-1. **Read-only override が最優先**: ユーザーが「見るだけ」「確認だけ」「コメントしない」のように write を抑止したら、各操作節より優先して write 系操作を止める。サブスキルに委譲するときも read-only 制約を明示して渡す。
-2. **状態確認はこの節の probe を使う**: open PR の有無、local changes の有無、default branch を本文外の独自 heuristics で決めない。
-3. **前段で済んだ write は繰り返さない**: たとえば `Rebase` は `git push --force-with-lease` まで含む。`Rebase -> Push to PR` では追加の `git push` をスキップし、PR metadata 確認と CI 監視だけを後段で行う。
-4. **staged 変更がないまま commit が必要なら、`git add` の前にユーザー確認を取る**: 何を stage するかは暗黙に決めない。
-5. **委譲先の責務を上書きしない**: base branch の確定は `prepare-issue-pr` の初期推定と `adjust-pr-base` の最終検証に従う。`git-workflow` 自身で別の base 選定ロジックを足さない。
-6. **state probe は routing 前に 1 回実行する**: その後に state を変える write（commit, PR create, rebase, push）を行った場合だけ、次の分岐や確認の前に必要な probe を取り直す。
-7. **stack のブランチを単独で扱わない**: `Stack membership` probe が stack の一部だと示したら、rebase も PR 作成も [Stacked PR Sync](#stacked-pr-sync) 経由にする。1 ブランチだけ rebase して push すると下流が壊れる。
-8. **履歴を書き換える push は承認を取る**: `git push --force-with-lease` と `gh stack push` / `gh stack sync` は、対象ブランチと影響する PR を提示してからユーザーの承認を得て実行する。
-
-## 操作マップ（クイックリファレンス）
-
-| ユーザーの intent                                       | 操作タイプ                                                           |
-| ------------------------------------------------------- | -------------------------------------------------------------------- |
-| commit して、変更を保存、コミット                       | → [Commit](#commit)                                                  |
-| PR 作って、PR 出して、PR を開く                         | → [Create PR](#create-pr)                                            |
-| push して、PR に反映して                                | → [Push to PR](#push-to-pr)                                          |
-| rebase して、最新に追いついて、ベースを更新             | → [Rebase](#rebase)（stack なら Stacked PR Sync）                    |
-| スタック整理して、cascade rebase、全 PR を同期          | → [Stacked PR Sync](#stacked-pr-sync)                                |
-| gh stack が止まった、スタックが壊れた、下段がマージ済み | → [Stacked PR Sync](#stacked-pr-sync)                                |
-| diff 整理して、コミット整えて、PR 分割して、大きすぎる  | → [Reorganize Diff](#reorganize-diff) (Create PR からも自動呼び出し) |
-| PR レビューして、コメントして、差分を見て               | → [Review PR](#review-pr)                                            |
-| CI 直して、テスト落ちてる、ビルドが失敗                 | → [Fix CI](#fix-ci)                                                  |
-
-操作タイプが複数に見えるときは、依存関係の順（例: commit → push → PR 作成）に処理する。
-
----
+| Intent                                  | Workflow                                                             |
+| --------------------------------------- | -------------------------------------------------------------------- |
+| Inspect local state or diff             | Run relevant read-only probes and report evidence                    |
+| Commit                                  | Follow Commit below                                                  |
+| Create a PR                             | Follow Create PR below                                               |
+| Push or update a PR                     | Follow Push below                                                    |
+| Rebase                                  | Follow Rebase below                                                  |
+| Synchronize or repair a stack           | [stacked-pr](../stacked-pr/SKILL.md)                                 |
+| Split a PR or organize commits          | [reorganize-diff](../reorganize-diff/SKILL.md)                       |
+| Draft an issue or PR                    | [prepare-issue-pr](../prepare-issue-pr/SKILL.md)                     |
+| Review a PR or post authorized feedback | [github-pr-review-operation](../github-pr-review-operation/SKILL.md) |
+| Inspect chronological issue/PR events   | [gh-timeline](../gh-timeline/SKILL.md)                               |
+| Investigate or repair CI                | [fix-github-actions-ci](../fix-github-actions-ci/SKILL.md)           |
+| Wait for CI                             | [watch-ci](../watch-ci/SKILL.md)                                     |
 
 ## Commit
 
-**Entry**: ユーザーが明示的に commit を求めたとき、または後続の操作の前提として commit が必要で、local changes があるとき。
+1. Inspect the diff and select the changes covered by the request.
+2. Stage the selected paths or hunks and inspect the staged diff.
+3. Use [contextual-commit](../contextual-commit/SKILL.md) for the message.
+4. Commit and verify the resulting commit and remaining worktree state. Hook failures
+   are failed checks to resolve, not evidence that a commit succeeded.
 
-**Steps**:
-
-1. `git status --short` で変更範囲を把握する。
-2. staged 変更がなければ、何をステージするかユーザーに確認してから `git add` する。
-3. **`contextual-commit` スキルを呼び出して** commit message を作る。
-4. `git commit` でコミットを作る。
-
-**完了条件**:
-
-- コミットが存在する
-- `contextual-commit` スキルに従ったメッセージが付いている
-
----
+Completion: the intended changes exist in a verified commit and unrelated work remains preserved.
 
 ## Create PR
 
-**Entry**: current branch に open PR がなく、「PR を作って」「PR 出して」などの指示がある。
+1. Commit the intended pending changes when needed.
+2. Use `reorganize-diff` Phase 1 to check review boundaries. If no split is needed,
+   continue. If execution would materially expand the requested PR structure, present
+   the concrete split before requesting direction.
+3. For an existing or newly created stack, use `stacked-pr` and `gh-stack` for
+   publication. Reuse PRs or pushes already completed by reorganization.
+4. For a single PR, use `prepare-issue-pr` to finalize title, body, and base, then
+   push the branch and create a draft PR. Use `--body-file` for multiline text.
+   Make it ready for review only when requested.
+5. For a single PR, use `adjust-pr-base` to verify its base. Use `watch-ci` after
+   publication and pass any observation-only constraint.
 
-**Steps**:
+Completion: report the verified PR URL, base, and CI outcome. Pending, absent, or
+blocked checks remain explicit; PR creation alone does not establish CI success.
 
-1. コミットされていない変更があれば [Commit](#commit) を先に完走させる。
-2. push 前に [Reorganize Diff](#reorganize-diff) を実行する。reorganize-diff の判定結果で本フローの残ステップが分岐する:
-   - **「分割不要」**: そのまま step 3 へ進む。
-   - **「コミット整理のみ」モード**: reorganize-diff が現ブランチのコミットを整理して `git push --force-with-lease` まで完走する。step 4 (push) はスキップして step 5 へ進む。
-   - **「スタック PR」モード**: reorganize-diff が複数の PR を作成し、`stacked-pr` スキルへハンドオフして完走する。本フローはここで終了。step 3 以降はスキップ。
-3. `Stack membership` probe が current branch を stack の一部だと示した場合、以降は **[Stacked PR Sync](#stacked-pr-sync) に委譲する**。`stacked-pr` 経由で `gh stack submit --auto`（draft で作る。ready for review にするときだけ `--open`）を使い、単独の `git push` と `gh pr create` は行わない。stack の base 連結は gh stack が張るので step 6 の `adjust-pr-base` も不要。
-4. stack でない場合は `git push -u origin HEAD` でブランチを push する。
-5. **`prepare-issue-pr` スキルを呼び出して** PR title、body、初期 base branch を決める。base の初期推定はこのスキルに従う。
-6. デフォルトでは `gh pr create --draft --base <base-from-prepare-issue-pr> --title "<title>" --body "<body>"` で draft PR を作る。ユーザーが ready for review / non-draft を明示したときだけ `--draft` を外す。
-7. **`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
-8. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
+## Push
 
-**完了条件**:
+1. Commit authorized changes if needed. For a stack, route to `stacked-pr`.
+2. Push only if the current commits have not already been published.
+3. Inspect the PR title and body; use `prepare-issue-pr` to update stale metadata
+   within the requested PR update.
+4. Use `watch-ci` for the published revision.
 
-- PR が存在する（`gh pr view` または `stacked-pr` の完了報告で確認できる）
-- single PR の場合: base branch が `adjust-pr-base` によって検証済み、`watch-ci` スキルが CI パスを確認済み
-- スタック PR の場合: `stacked-pr` スキルが完了報告を出している
-
----
-
-## Push to PR
-
-**Entry**: current branch に open PR が既にあり、「push して」「PR に反映して」などの指示がある。
-
-**Steps**:
-
-1. コミットされていない変更があれば [Commit](#commit) を先に完走させる。
-2. 直前に [Rebase](#rebase) を実行していない場合だけ `git push` する。`Rebase -> Push to PR` の流れではこの step をスキップする。current branch が stack の一部なら単独 push はせず、[Stacked PR Sync](#stacked-pr-sync) に委譲する。
-3. PR のタイトル・説明がブランチの最新状態を反映しているか確認する:
-
-   ```bash
-   gh pr view --json title,body,baseRefName
-   ```
-
-4. タイトルまたは説明が古い場合は **`prepare-issue-pr` スキルを呼び出して**更新する。
-5. **`watch-ci` スキルを呼び出して** CI を監視・修正する。
-
-**完了条件**:
-
-- push 完了
-- PR のタイトル・説明が最新の変更を正しく反映している
-- `watch-ci` スキルが CI パスを確認済み
-
----
+Completion: the remote revision matches the intended local revision, metadata describes
+the current change, and the CI outcome is reported.
 
 ## Rebase
 
-**Entry**: 「rebase して」「最新に追いついて」「ベース更新して」などの指示があり、current branch が stack の一部**ではない**とき。
+1. Resolve the target base and stack membership. Route stacks to `stacked-pr`.
+2. For a single branch, preserve existing work and record the original tip, fetch the
+   target, and rebase. Use [resolving-merge-conflicts](../resolving-merge-conflicts/SKILL.md)
+   for an in-progress conflict; that skill does not initiate or publish the rebase.
+3. Inspect the resulting diff and run checks appropriate to conflict resolutions.
+4. Publish only within the requested scope, using `--force-with-lease` when rewriting
+   an existing remote branch. Verify the PR base with `adjust-pr-base` when relevant.
+5. After publication, use `watch-ci`.
 
-`Stack membership` probe が stack の一部だと示したら、この節は使わず [Stacked PR Sync](#stacked-pr-sync) に回す。1 ブランチだけ rebase して push すると下流のブランチが必ず壊れる。
-
-**Steps**:
-
-1. **`resolve-merge-conflict` スキルを呼び出す**。このスキルが fetch → rebase → conflict 解消 → `git push --force-with-lease` を完走させる。
-2. rebase 完了後、**`adjust-pr-base` スキルを呼び出して** base branch が正しいか確認・修正する。
-
-**完了条件**:
-
-- rebase 完了、conflict なし
-- `git push --force-with-lease` 済み
-- `adjust-pr-base` が base branch を検証済み
-
----
-
-## Stacked PR Sync
-
-**Entry**:
-
-- 「スタックを整理して」「cascade rebase して」「全 PR を同期して」など、複数の依存 PR のメンテナンスが必要な状況
-- `Stack membership` probe が current branch を stack の一部だと示した状態での rebase / push / PR 作成
-- `gh stack` のコマンドが conflict や中断で止まっているとき
-
-**Steps**:
-
-1. **`stacked-pr` スキルに完全に委譲する**。GitHub の repo なら `stacked-pr` が `gh-stack` skill（`gh stack` コマンド）へ委譲し、preflight・復旧・検証・CI を自分で担当する。GitHub 以外では手動カスケードに切り替わる。この振り分けを `git-workflow` 側で先取りしない。
-
-**完了条件**:
-
-- `stacked-pr` スキルが完了報告を出している
-
----
-
-## Reorganize Diff
-
-**Entry**:
-
-- [Create PR](#create-pr) の step 2 から呼ばれたとき (push 前の自動チェック)
-- 「diff 整理して」「コミットを整えて」「PR が大きすぎる」「PR を分割して」など、diff の粒度を整える指示があるとき
-
-**Steps**:
-
-1. **`reorganize-diff` スキルに完全に委譲する**。Phase 1 (分析) は副作用なし、Phase 2 (実行) はユーザー承認が必要。
-2. Phase 1 が「分割不要」を返した場合、Phase 2 は実行されない。呼び出し元のフロー (例: [Create PR](#create-pr) の step 3 以降) をそのまま継続する。stack の一部なら step 3 で [Stacked PR Sync](#stacked-pr-sync) に入る。
-3. reorganize-diff が Phase 2 で `git push` / `gh pr create` まで完走した場合、その先のステップ (元の呼び出し元フローでの push / PR 作成) は再実行しない。
-
-**完了条件**:
-
-- `reorganize-diff` が次のいずれかを返している:
-  - **「分割不要」**: 既存の commit / PR 構造が論理変更と一致しているので Phase 2 は走らない。呼び出し元が後続フローを継続する。
-  - **「コミット整理のみ」**: 同一ブランチ上で Tier 2 コミットを再構成して `git push --force-with-lease` 済み。呼び出し元は push を再実行せず、PR 作成側の step に進む。
-  - **「スタック PR」**: Tier 1 単位で複数の draft PR を作成し、`stacked-pr` へハンドオフ済み。呼び出し元 (Create PR) はここで終了する。
-
----
-
-## Review PR
-
-**Entry**: 「PR をレビューして」「コメントして」「差分を見て」などの指示がある。
-
-**Steps**:
-
-1. 対象 PR を特定する（指示がなければ current branch の open PR）。PR の時系列イベント（コミット順序・レビュー投稿タイミング・force push 履歴）が必要な場合は `gh-timeline` スキルを先に呼び出す。
-2. read-only 指示がある場合は「diff と、対象 PR を特定するための最小 metadata の確認だけ。コメント投稿、返信、インラインコメントはしない」と明示してから **`github-pr-review-operation` スキルを呼び出す**。
-3. read-only 指示がない場合は **`github-pr-review-operation` スキルを呼び出す**。
-
-**完了条件**:
-
-- `github-pr-review-operation` スキルが必要な操作（コメント投稿、差分確認など）を完走している
-
----
-
-## Fix CI
-
-**Entry**: 「CI が落ちてる」「CI を直して」「テストが失敗してる」「ビルドが通らない」などの状況。
-
-**Steps**:
-
-1. **`fix-github-actions-ci` スキルに完全に委譲する**。
-
-**完了条件**:
-
-- `fix-github-actions-ci` スキルが CI の解消を確認している
-
----
-
-## 操作の組み合わせ
-
-複数の操作が同時に必要な場合は、依存関係の順に実行する。
-
-### 例: 「変更を PR に出して」
-
-1. [Commit](#commit) → 2. [Create PR](#create-pr)
-
-### 例: 「rebase して PR を更新して」
-
-1. [Rebase](#rebase) → 2. [Push to PR](#push-to-pr)
-
-### 例: 「スタックを整理して CI も直して」
-
-1. [Stacked PR Sync](#stacked-pr-sync)（`stacked-pr` スキルが CI 修正も含む）
-
----
-
-## Notes
-
-- 操作タイプが不明な場合は、この skill 冒頭の state probe を実行してから判断する。
-- `Rebase -> Push to PR` は `git push` を 2 回行うフローではない。Rebase 側の push を再利用し、後段は PR metadata と CI を更新する。
-- stack のブランチでは [Push to PR](#push-to-pr) の単独 push も使わない。`stacked-pr` 経由の `gh stack push` で全ブランチをまとめて更新する。
+Completion: the branch contains the intended base and changes without unresolved
+conflicts; report whether publication was requested and performed.

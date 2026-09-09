@@ -1,6 +1,6 @@
 ---
 name: review-plan
-description: "Diagnostically review an implementation plan against the current codebase. Focuses on problem framing, expected behavior, and architecture decisions. This skill is read-only — it does not edit files or rewrite the plan."
+description: Diagnose an implementation plan against repository evidence and return a JSON verdict.
 disable-model-invocation: true
 ---
 
@@ -13,20 +13,14 @@ Hook-driven invocations may reuse a Claude-session-specific Codex thread via `co
 When invoked from a hook, `$ARGUMENTS` should be treated as the current full plan.
 If the same Codex thread includes a previous review of an older plan revision, you may use that thread context to understand what changed, but you must still review the current full plan.
 
-This command is diagnostic only.
-
-- Do not edit files.
-- Do not rewrite the plan.
-- Do not drift into implementation details unless they expose a missing architectural decision.
-
-Start with repository exploration, then review the plan.
+The review is read-only: inspect the repository and return findings. Implementation details matter when they expose an architectural decision. If the user separately requests revisions or implementation, complete this diagnostic phase first and continue that authorized work outside the review response contract.
 
 ## Workflow
 
 1. Treat `$ARGUMENTS` as the current full plan to review.
-2. If argument is empty, warn and exit with no findings.
-3. Explore the repository to find the code, configuration, docs, and conventions that the plan touches.
-4. Review the plan using the priorities below.
+2. If the plan is missing, return `{"decision":"deny","reason":"No plan was supplied; review could not run.","findings":[]}`. This is a missing-input result, not a verdict on plan quality.
+3. Explore the repository until each material component and proposed integration has supporting evidence or an explicit evidence gap.
+4. Review the full current plan using the priorities below, including sections unchanged since an earlier review.
 5. Return exactly one JSON object matching the configured output schema.
 
 ## Review Priorities
@@ -53,15 +47,9 @@ Only flag implementation-detail gaps when they make the plan unsafe, contradicto
 - Ignore style nits, wording polish, and task-granularity preferences unless they obscure a decision.
 - Do not limit the verdict to changes since the last review. Review the current full plan.
 
-## Asking Questions
+## Missing Information
 
-Do not start an interview by default.
-
-Use `AskUserQuestion` only when:
-
-- one critical ambiguity prevents any meaningful verdict even after repository exploration.
-
-Otherwise, reflect missing information through findings or `reason`.
+Resolve discoverable facts from repository evidence and the supplied context. Represent remaining ambiguities in findings or `reason`, including the decision that needs clarification. Hook-driven runs always return the JSON response so the caller can handle any required question.
 
 ## Severity
 

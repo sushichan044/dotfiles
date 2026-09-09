@@ -1,18 +1,27 @@
 ---
 name: vue-style-guide
-description: "Vue を書くときは基本的に参考にしてください。 個人的に気に入っている ubgeeei 氏の Vue.js のスタイルガイドです。"
+description: "Vue conventions: use when writing or reviewing Vue components, composables, reactive state, or component APIs."
 # thanks to: https://github.com/ubugeeei/style-guide.vue/blob/8a37d151f2c38640c6aa2f51805d8821476c15bd/README.md
 ---
 
 # ubugeeei/style-guide.vue
 
-One of Vue.js's greatest strengths is that it lets you write code the way _you_ want to. There is no single correct style — and that flexibility is a feature, not a bug.
+Project preferences adapted from [@ubugeeei](https://github.com/ubugeeei), rather than
+official Vue requirements. Apply them to the requested change within the repository's
+existing architecture, dependencies, and tooling.
 
-This guide is purely **[@ubugeeei](https://github.com/ubugeeei)'s personal preference**. It does not represent the consensus of the Vue.js core team or the official recommendation of the project.
+## Application
 
-Take what resonates, ignore what doesn't.
+1. Inspect the affected component, its consumers, and the local conventions. For an
+   implementation request, use `modern-web-guidance` before producing frontend code.
+2. Apply the relevant sections below. Keep package-manager changes, framework upgrades,
+   and repository-wide migrations within explicit task scope; use the installed toolchain
+   for routine component changes.
+3. Verify the changed behavior with existing project checks at the affected scope.
+   For a review request, report findings with file locations and their behavioral impact.
 
----
+Completion: the requested behavior is implemented and checked, or the review findings
+are reported. Identify any verification that could not run and why.
 
 ## General
 
@@ -28,7 +37,7 @@ Take what resonates, ignore what doesn't.
 - Do not use JavaScript classes. Prefer plain objects and functions
 - Prefer controlled components. Avoid uncontrolled components that manage their own state internally
 - When handling URLs, always read `baseUrl` from configuration. Never hardcode it
-- Use pnpm, oxlint, oxfmt, tsdown, and Vitest as the standard toolchain
+- For new projects without an established toolchain, prefer pnpm, oxlint, oxfmt, tsdown, and Vitest
 - Minimize third-party dependencies. Apart from Pinia, Pinia Colada, and Vue Router, implement it yourself whenever possible
 - Do not introduce layered architecture until truly necessary. Use msw or similar for API mocking instead of abstracting layers for testability
 - Consolidate navigation guards into a single `router.ts` file for a bird's-eye view of routing behavior
@@ -318,10 +327,13 @@ When using global state, always document the state lifecycle: transitions and sc
 
 ## Testing
 
-- Write unit / integration tests in Vitest for TypeScript logic
-- **Do not write component tests**
-- Use E2E tests and VRT (Visual Regression Testing) instead
-- Testing is easy because logic lives in the Pure TS layer
+- Prefer unit or integration tests for behavior in pure TypeScript logic.
+- Cover UI interactions with focused E2E tests; use visual regression checks for
+  appearance changes when the project has that infrastructure.
+- The local preference is to test logic separately from components. Maintain existing
+  component tests when they already cover the changed behavior.
+- Add coverage for a meaningful behavior or regression. A small change does not require
+  new test infrastructure or tests that simply repeat the implementation.
 
 ```ts
 // todo.test.ts

@@ -1,6 +1,6 @@
 ---
 name: plan-stacked-pr
-description: 大きな機能開発を stacked PR で進めるための計画を立案するスキル。Design doc やPlan から、各 PR の scope・What solves Why・Goal/Acceptance Criteria を定義した計画ドキュメント群を生成する。大きな機能を stacked PR で開発したい、feature 開発の PR 分割計画を立てたい、design doc から実装計画を作りたいときに使う。
+description: Plan a feature as ordered PRs from a design, specification, or partial implementation, with scope, rationale, dependencies, and acceptance criteria.
 allowed-tools: Read, Grep, Glob, Edit, MultiEdit, Bash(git status:*), Bash(git branch:*), Bash(git log:*), Bash(git diff:*), Bash(gh pr list:*), Bash(gh pr view:*), Bash(gh repo view:*)
 ---
 
@@ -37,7 +37,9 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 git --no-pager log --oneline -20
 ```
 
-Ask the user clarifying questions if the scope or requirements are ambiguous. Focus on understanding the feature well enough to identify the major areas of work and their dependencies.
+Complete this step when each major requirement maps to an existing or proposed component
+and scope boundaries are recorded. Resolve facts from the repository and conversation;
+ask only about remaining choices that would materially change the plan.
 
 ### 2. Draw the Big Picture
 
@@ -65,7 +67,8 @@ Do not go deeper into "how" — implementation details are left to the developer
 
 ### 4. Determine Output Location
 
-Ask the user where to place the plan files. Propose a sensible default:
+Reuse the requested location or the repository's existing plan convention. Otherwise
+use `docs/plans/<topic>/` and state that choice. Alternative locations include:
 
 - For repository-level plans: `docs/plans/<topic>/` or `.plans/<topic>/`
 - For session-level plans: within the session workspace
@@ -90,7 +93,7 @@ Create the following structure:
 
 The overview serves as the entry point for the entire plan.
 
-```markdown
+````markdown
 # <Feature Name> — Stacked PR Plan
 
 ## Background
@@ -105,9 +108,9 @@ The overview serves as the entry point for the entire plan.
 ## Stack Structure
 
 <Dependency tree showing the PR order>
-```
 
-main
+```text
+<default-branch>
 ├─ 01-<slug> — <one-line summary>
 │ └─ 02-<slug> — <one-line summary>
 ├─ 03-<slug> — <one-line summary>
@@ -117,11 +120,11 @@ main
 
 ## PR Plans
 
-| # | Plan | Summary |
-|---|------|---------|
-| 1 | [01-<slug>](plans/01-<slug>.md) | <one-line summary> |
-| 2 | [02-<slug>](plans/02-<slug>.md) | <one-line summary> |
-| ... | ... | ... |
+| #   | Plan                            | Summary            |
+| --- | ------------------------------- | ------------------ |
+| 1   | [01-<slug>](plans/01-<slug>.md) | <one-line summary> |
+| 2   | [02-<slug>](plans/02-<slug>.md) | <one-line summary> |
+| ... | ...                             | ...                |
 
 ## Workflow
 
@@ -131,9 +134,10 @@ monitoring, and stack synchronization. On GitHub, `stacked-pr` drives the
 native `gh stack` commands via the `gh-stack` skill.
 
 When starting work on any PR in this plan:
+
 1. Use the `prepare-issue-pr` skill to draft the PR with correct base branch and template compliance
 2. Use the `stacked-pr` skill for managing the PR stack lifecycle
-```
+````
 
 #### Individual PR Plan (plans/NN-slug.md)
 
@@ -172,11 +176,6 @@ This PR is part of a stacked PR workflow.
 - Use the `stacked-pr` skill for cascade rebase, CI monitoring, and stack sync (it delegates to `gh stack` on GitHub)
 - Use the `reorganize-diff` skill if this PR itself grows too large and needs further splitting
 - Base branch: `<parent-branch-name>` (on GitHub, `gh stack submit` wires this automatically)
-
-When implementing this PR:
-
-1. Use `prepare-issue-pr` to draft the PR title/body with correct base branch and template compliance
-2. Use `stacked-pr` to manage the branch lifecycle and coordinate with other PRs in the stack
 ```
 
 ### 6. Present and Iterate
@@ -187,14 +186,16 @@ Show the user the generated plan:
 - Highlight any decisions you made about scope boundaries
 - Note any areas where you're uncertain about the split
 
-Wait for the user's feedback. Common adjustments:
+The plan is complete when every requirement is covered, dependencies are acyclic,
+acceptance criteria are verifiable, and links resolve. Apply feedback when supplied;
+completion does not require an additional approval round. Common adjustments:
 
 - Merging two PRs that are too small
 - Splitting a PR that covers too much
 - Reordering PRs based on priority or risk
 - Adjusting scope boundaries
 
-Update the plan documents based on feedback. Iterate until the user is satisfied.
+Update the plan documents when feedback changes scope, order, or acceptance criteria.
 
 ## Edge Cases
 
@@ -221,4 +222,4 @@ If some of the work is already done (e.g., a branch exists with partial changes)
 - For executing the split (creating branches and PRs from an existing diff), use `reorganize-diff` Phase 2.
 - For ongoing stack maintenance (rebase, CI, sync), use the `stacked-pr` skill.
 - The plan stays at the "what and why" level. Implementation details ("how") are out of scope.
-- The `<topic>` directory location is determined in consultation with the user, not prescribed by this skill.
+- Preserve an established output location; make the routine default choice in step 4 when none exists.

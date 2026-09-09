@@ -1,6 +1,6 @@
 ---
 name: adjust-pr-base
-description: Use when a pull request base might be wrong after `git rebase`, `gh pr create`, or stacked PR work and the agent needs a fixed procedure to inspect the current PR and correct its base branch.
+description: Resolve the nearest open ancestor PR for drafting, or verify and correct an unmanaged PR base after creation, rebase, or a parent merge.
 allowed-tools: Bash(git branch:*) Bash(git merge-base:*) Bash(git rev-list:*) Bash(git rev-parse:*) Bash(git cat-file:*) Bash(git fetch:*) Bash(gh pr view:*) Bash(gh pr list:*) Bash(gh repo view:*) Bash(gh pr edit:*)
 ---
 
@@ -17,7 +17,9 @@ This skill is a fixed procedure:
 5. If the base changes to a parent PR branch, update the PR description to include that parent PR URL.
 6. Otherwise set or keep the PR base as the default branch without adding a base PR link.
 
-Do not add extra policy or heuristics.
+For inspection or drafting, run discovery only (steps 0–3) and report the target.
+For an authorized PR correction, continue through readback. Reuse the user's
+authorization from the calling workflow.
 
 ## When To Use
 
@@ -31,7 +33,9 @@ Do not add extra policy or heuristics.
 
 Skip this skill when the PR belongs to a `gh stack` stack. `gh stack submit` / `gh stack link` set each PR's base to its parent branch, and GitHub re-targets a PR to the default branch when its base branch is merged. Running this procedure there is a no-op at best, and it can fight the tool when the stack is mid-repair. The `stacked-pr` skill decides when a base actually needs fixing.
 
-Check with `gh stack view --json` before starting: if the current branch appears in `.branches[]`, stop and report that the stack owns the base.
+Check with `gh stack view --json` before starting: if the current branch appears in
+`.branches[]`, return `stack-owned` to the caller so it can continue through
+`stacked-pr`. A failed probe leaves membership unknown; diagnose its error.
 
 ## Rules
 
@@ -39,13 +43,15 @@ Follow these rules in order:
 
 1. If the current branch belongs to a `gh stack` stack, stop and report `stack-owned`. Do not edit the base.
 2. Only inspect the PR for the current branch.
-3. Only consider open PRs as parent candidates. Merged or closed PRs are never parent candidates — if the parent PR was merged, it is no longer a valid base and the default branch must be used instead.
+3. Only consider open PRs as parent candidates. A merged or closed PR is excluded;
+   another open ancestor can still be the target.
 4. A parent candidate must be an ancestor of `HEAD`.
 5. If multiple parent candidates exist, choose the one with the smallest `git rev-list <candidate>..HEAD --count`.
 6. If no parent candidate exists (including when the only candidate was a now-merged/closed PR), use the default branch.
 7. If the current base already matches the target base, do nothing.
 8. Only update the PR description when the target base comes from an open parent PR and `gh pr edit --base` is run.
-9. If the current branch has no open PR, stop and report that nothing was changed.
+9. If the current branch has no open PR, discovery can still resolve a draft's base;
+   skip mutation and report `no-open-pr` for a correction request.
 
 ## Procedure
 
@@ -71,7 +77,8 @@ branch=$(git branch --show-current)
 gh pr list --head "$branch" --state open --json number,title,url,baseRefName,headRefName,state
 ```
 
-If there is no open PR for the current branch, stop.
+Treat an empty successful query as no open PR. Treat query errors as missing evidence.
+When drafting a new PR, continue discovery without a current PR.
 
 ### 2. Read default branch
 
@@ -81,7 +88,10 @@ gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
 
 ### 3. Find the nearest open parent PR
 
-Use git ancestry only. Ignore reflog and subjective reasoning.
+Use git ancestry. Inspect open PR candidates and fetch missing commit objects before
+comparison. The command below illustrates the distance calculation for an initial
+page; expand the candidate query when truncated and include other authors when relevant.
+Failed fetches leave unresolved candidates, not evidence that no parent exists.
 
 ```bash
 head_oid=$(git rev-parse HEAD)
@@ -104,7 +114,10 @@ Interpretation:
 
 - If this command returns one line, the third column is the target base branch.
 - If this command returns one line, the fourth column is the parent PR URL to add to the description when the base changes.
-- If this command returns nothing, the target base branch is the default branch and no base PR link is added.
+- Use the default branch only after a successful, complete candidate search finds no
+  open ancestor. If distinct candidates tie at the nearest distance, use an explicitly
+  supplied parent or established PR relationship; otherwise report the exact ambiguity
+  before changing the base.
 
 ### 4. Update the PR base if needed
 
@@ -112,7 +125,8 @@ Interpretation:
 gh pr edit <number> --base <target-branch>
 ```
 
-Run this only when the current base and target base differ.
+Run this only for an authorized correction when the bases differ and discovery has
+resolved all candidates. Inspection and drafting return the target without mutation.
 
 ### 5. Update the PR description when the base changed to a parent PR
 
@@ -132,12 +146,12 @@ Base PR: <parent-pr-url>
 
 If an existing `Base PR:` line is present, replace it. Otherwise append it on its own line near the end of the body.
 
-Apply the body update with `gh pr edit <number>`.
+Apply the body update with `gh pr edit <number> --body-file <prepared-body-file>`.
 If the target base is the default branch, do not add, replace, or remove any `Base PR:` line.
 
 ### 6. Report the result
 
-Always report:
+Read back the PR base and body after a mutation. Report:
 
 - current branch
 - current PR URL
@@ -158,10 +172,5 @@ Reason: nearest open ancestor PR | no open ancestor PR, so default branch | pare
 Description: updated-base-pr-link | unchanged
 ```
 
-## Don'ts
-
-- Do not ask the user to choose between multiple bases.
-- Do not inspect closed PRs.
-- Do not use reflog as a source of truth.
-- Do not keep extra fallback branches in the procedure.
-- Do not leave the target base ambiguous.
+Completion: discovery returns an evidence-backed target or a precise unresolved
+relationship; a correction also verifies the requested base and body on readback.

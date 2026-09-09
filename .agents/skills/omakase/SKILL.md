@@ -1,26 +1,27 @@
 ---
 name: omakase
-description: "cwd において、全ての意思決定を Claude と SubAgent に任せる Omakase Mode の ON / OFF を管理する Skill です."
+description: Toggle or inspect Omakase mode for the current worktree.
 disable-model-invocation: true
-argument-hint: [on | off | status]
+argument-hint: "[on|off|status]"
 ---
 
-# Omakse Mode Management
+# Omakase Mode
 
-## Get current status
+Manage the user's opt-in to autonomous decisions in the current worktree. Enabling
+the mode preserves the task's scope and runtime permissions.
 
-```bash
-${CLAUDE_SKILL_DIR}/scripts/omakase.sh status
-```
+## Procedure
 
-## Enable Omakase Mode
+1. Resolve the requested action: `on`, `off`, or `status`. With no action, use `status`.
+2. Run the bundled script from the target working directory, passing that action.
+   Use the directory containing this `SKILL.md` if `CLAUDE_SKILL_DIR` is unavailable.
 
-```bash
-${CLAUDE_SKILL_DIR}/scripts/omakase.sh on
-```
+   ```bash
+   "${CLAUDE_SKILL_DIR}/scripts/omakase.sh" status
+   ```
 
-## Disable Omakase Mode
+3. For `on` or `off`, read back `status` to verify the change. Report the mode and
+   worktree path from the output. A failed command is a blocker, not a successful toggle.
 
-```bash
-${CLAUDE_SKILL_DIR}/scripts/omakase.sh off
-```
+Completion: the reported mode is observed for the intended worktree and, for a toggle,
+matches the requested state.
