@@ -23,7 +23,7 @@
         "valibot": "1.4.2",
       },
       "devDependencies": {
-        "@opencode-ai/plugin": "1.18.29",
+        "@opencode-ai/plugin": "1.18.30",
         "@types/bun": "1.3.14",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -93,9 +93,9 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.5", "", { "dependencies": { "@tybys/wasm-util": "^0.10.2" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q=="],
 
-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.18.29", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.18.29", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-IhF83EU4I/ASgWwvm0FIh1O3a8ZVuCLqPrCbmSHdSYq7GHxIYe773i6dHqcbrzCzvlG/lP2H+dyTQ+xPAwFpbw=="],
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.18.30", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.18.30", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-bXWcA2VD478PXXke1qAYANTq58fCcbgY0GAUqZIFZqPpo48FoG8RH37nNZ78eHtz+ddiKIhFTBZJRaHF3IgFqw=="],
 
-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.18.29", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-4CS+FoLPkymTlcga8jxivGDDb2AbWMIIl3b8+myoe2wtv/1ANYCErslgz1xy5hTVHymWE6CtVNKzRuPU0ED57A=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.18.30", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-uviJ+PZLc/D1szt33WGzzt/rqJ+IaNmRGBb+UcOXrcQANl8XXKJrp4CNQQ2UAnUJ3Ek+VqcamIwjtKHUW/OjOQ=="],
 
     "@oxc-project/runtime": ["@oxc-project/runtime@0.146.0", "", {}, "sha512-lbXHIpZ1MmK6zuw5txlMdIZ2waLVUIU5Gnm3sEuwJOiqDfQfbtjeHscatmeBoxbv8+If9LFM6PGh/3DcDWYIYw=="],
 
