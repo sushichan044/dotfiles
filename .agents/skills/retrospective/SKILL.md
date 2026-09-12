@@ -52,7 +52,7 @@ For each true cause and opportunity from Phase 2, **design** a fix at the stage 
 
 Knowledge or tool access was deficient. No downstream rule compensates for bad input.
 
-- **Knowledge**: invoke `kb-ingest` to create missing pages, revise stale pages, or reorganize. If a wiki page was consulted but inaccurate, update it now. If needed knowledge was absent, ingest it now.
+- **Knowledge**: run the knowledge base's ingest procedure to create missing pages, revise stale pages, or reorganize. If a wiki page was consulted but inaccurate, update it now. If needed knowledge was absent, ingest it now.
 - **Project documentation**: if the project has a docs layer that feeds agent context (design docs, ADRs, architecture notes), create or update the relevant document there. Project-specific context belongs in the project, not in the KB.
 - **Tools**: configure MCP servers, hooks, or access.
 

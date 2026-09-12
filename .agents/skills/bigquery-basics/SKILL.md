@@ -16,11 +16,45 @@ separates compute and storage, allowing them to scale independently while
 providing built-in machine learning, geospatial analysis, and business
 intelligence capabilities.
 
+## Attribution
+
+Tag every BigQuery command you execute directly in the terminal while using
+this skill, so usage can be attributed. The tag identifies only the skill and
+its version; it carries no user data.
+
+- Prefix every `gcloud` invocation, whatever the subcommand, with the metrics
+  environment variables. Set them inline on each command; shell state may not
+  persist between commands:
+
+  ```bash
+  CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:bigquery-basics)" \
+  gcloud <command> [flags]
+  ```
+
+  Do not use `gcloud config set` for this: it would persist beyond the current
+  task and mislabel unrelated usage.
+
+- On direct HTTP calls to the BigQuery APIs (for example with `curl`)
+  or HTTP requests to the MCP server, append this exact string to the
+  end of the existing User-Agent header — the collection pipeline parses
+  the `agent-skills/<version>` and `skill:<name>` tokens, so any
+  rewording breaks attribution:
+
+  ```
+  User-Agent: <existing_user_agent> agent-skills/1.0 (skill:bigquery-basics)
+  ```
+
+- **Constraint for Generated Code**: The tracking prefix is strictly for
+  commands you execute directly in the terminal. Do NOT include this tracking
+  prefix in generated scripts, Terraform templates, or code provided to the
+  user for their own repositories.
+
 ## Setup and Basic Usage
 
 1.  **Enable the BigQuery API:**
 
     ```bash
+    CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:bigquery-basics)" \
     gcloud services enable bigquery.googleapis.com --quiet
     ```
 

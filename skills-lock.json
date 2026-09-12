@@ -5,7 +5,7 @@
       "source": "vercel-labs/agent-browser",
       "sourceType": "github",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "computedHash": "a674b7d81066e3cc471a7512ddb4ae724418cbfefa75cbb050b0dc430e4d57a0"
+      "computedHash": "80161e6836b3b40f4e83730a290deb40ac14d877d38c97ad5f6d71be37ce74c3"
     },
     "alloydb-basics": {
       "source": "google/skills",
@@ -22,13 +22,13 @@
       "source": "ast-grep/agent-skill",
       "sourceType": "github",
       "skillPath": "ast-grep/skills/ast-grep/SKILL.md",
-      "computedHash": "3bca45167617f547e97454ae16d271ba3aeb2550d89e6ef1942057bd122c0061"
+      "computedHash": "472c7cd092f9fad72e0ad0c58b5f6af627844730ecc420c009e25a835a5d6e81"
     },
     "bigquery-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/bigquery-basics/SKILL.md",
-      "computedHash": "9c8d2da2183133785bc41603cd8712414c3b3b2259022413649af503d91b3bf3"
+      "computedHash": "376ab18c22323bc3d035bb3aec96c6cc9544b9827355ec1c0beabbb77230cb80"
     },
     "cloud-logging-configuration-basics": {
       "source": "google/skills",
@@ -65,11 +65,6 @@
       "sourceType": "github",
       "skillPath": "skills/contextual-commit/SKILL.md",
       "computedHash": "3ec7893fcabb2f1a3ab2e6cdf001354982aade9ed539047f44cb21858879eff0"
-    },
-    "dogfood": {
-      "source": "vercel-labs/agent-browser",
-      "sourceType": "github",
-      "computedHash": "c1b1133e43d087a9f97de44c2b8abdd4b6c59364d3ac9c0456b01916d58a55b2"
     },
     "frontend-design": {
       "source": "anthropics/skills",
@@ -257,12 +252,6 @@
       "skillPath": "skills/cloud/google-cloud-waf-sustainability/SKILL.md",
       "computedHash": "7d0a6921cb59d92f19876f037e2106a4cd28f11b65dc25f6441b177f1e819b4f"
     },
-    "grill-me": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "computedHash": "9cdbb4b8f7a3aeaef82e6230c9e823500d4a8a1214c726cf342cf9829d34fc7d"
-    },
     "grilling": {
       "source": "mattpocock/skills",
       "sourceType": "github",
@@ -273,7 +262,7 @@
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "c75f98ef13e63bcf0c074f6e7651ecb567ffcd78f2527d085a7cddd530073c4f"
+      "computedHash": "da9b9c833351f0575ca7482f3c8decc8e24b02b76dea71f138738283c701b4c5"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -315,7 +304,7 @@
       "source": "lacolaco/claude-plugins",
       "sourceType": "github",
       "skillPath": "retrospective/skills/retrospective/SKILL.md",
-      "computedHash": "526c773aeaf70b9aaab3416e82dec0a53c7b0fd1c6897df5fc60300e70aa04c6"
+      "computedHash": "0ec1a6477f18e9d272064b01f96f1f84248c4875542934dbb3800648d97e6c85"
     },
     "semgrep": {
       "source": "semgrep/skills",
@@ -328,11 +317,6 @@
       "sourceType": "github",
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
-    },
-    "teach-impeccable": {
-      "source": "pbakaus/impeccable",
-      "sourceType": "github",
-      "computedHash": "31756fe090814f06b81a4fe5220f69f8d7885f9f4a0ad10de240c6c6082fe743"
     },
     "triage-pr-reviews": {
       "source": "k1LoW/gh-pr-reviews",
