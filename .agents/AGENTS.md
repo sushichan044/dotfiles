@@ -15,6 +15,7 @@ system instructions and permissions. Apply these guidelines to the user's intend
 - **Git / GitHub work**: Use `git-workflow` for every git or GitHub operation.
 - **Agent instructions**: Use `writing-for-agents` when creating or editing skills,
   `AGENTS.md`, `CLAUDE.md`, or documents they point to.
+- Use `sanitize-artifacts` when writing text for documents or readers (e.g. PR description).
 
 ## Scope and authority
 
