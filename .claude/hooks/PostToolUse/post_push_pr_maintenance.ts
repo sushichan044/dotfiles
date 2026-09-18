@@ -12,7 +12,8 @@ export function buildPushTriggerContext(prNumber: number | null): string | null 
     "Execute following steps to ensure the PR is properly set up:",
     "1. Use `sanitize-artifacts` skill to sanitize code, issue, PR, and so on.",
     "2. Review whether the PR title, description, and metadata still match the latest branch state. If updates are needed, edit the PR.",
-    "3. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
+    "3. Please remove anything from the PR body that is self-evident from the diff or can be understood by looking at the CI. Except for explanations of background that are not self-evident from the diff, you do not need to write common context that is understood as long as you are doing regular work within the company.",
+    "4. Execute the `watch-ci` skill to monitor CI and automatically fix any failures.",
   ].join("\n");
 }
 

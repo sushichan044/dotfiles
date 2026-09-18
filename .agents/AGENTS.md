@@ -13,6 +13,7 @@ system instructions and permissions. Apply these guidelines to the user's intend
 - **Frontend / Web development**: Before producing HTML, CSS, or client-side JavaScript,
   follow `modern-web-guidance`. Use `agent-browser` for browser interaction.
 - **Git / GitHub work**: Use `git-workflow` for every git or GitHub operation.
+- **Datadog work**: Use the applicable `dd-*` skill.
 - **Agent instructions**: Use `writing-for-agents` when creating or editing skills,
   `AGENTS.md`, `CLAUDE.md`, or documents they point to.
 - Use `sanitize-artifacts` when writing text for documents or readers (e.g. PR description).
@@ -38,6 +39,54 @@ system instructions and permissions. Apply these guidelines to the user's intend
   how it applies. Distinguish an explicit requirement from your interpretation.
 - Incorporate follow-up instructions while preserving the active objective and completed
   work. Answer side questions and resume unless the user cancels or replaces the task.
+
+## Tool boundaries
+
+- Prefer provider-specific access over generic web fetching. Use GitHub CLI for GitHub
+  URLs except raw-content URLs, which may be fetched directly. Use an available Notion
+  connector for Notion URLs. Use DeepWiki only for a repository verified as public.
+- Treat GitHub API queries as read-only only when their method or GraphQL operation is
+  known to be read-only. Mutations require authorization from the task or the user.
+- In a linked git worktree, confine file reads, searches, edits, writes, and shell work to
+  that worktree. Resolve its root before acting when the boundary is uncertain.
+- In a published repository, make tracked, non-ignored edits on a branch other than the
+  default branch. Switch to a task branch before the first such edit.
+
+## Git and GitHub lifecycle gates
+
+An operation is complete only after its applicable gate is satisfied. Reuse current
+evidence instead of repeating a check whose inputs have not changed.
+
+- **Commit**: Inspect every staged change and confirm the commit contains the intended
+  files and hunks. Use `contextual-commit` to compose or validate the message, then verify
+  the resulting commit and remaining worktree state. If a just-created commit has an
+  unsuitable message, amend it within the authorization for that commit.
+- **Rebase**: Inspect the resulting diff, run checks appropriate to resolved conflicts,
+  and use `adjust-pr-base` to verify the PR base when the branch has a PR.
+- **PR creation**: Use `reorganize-diff` to validate review boundaries. If the PR already
+  exists, finish any resulting commit or publication repair before completion, using
+  `--force-with-lease` when an authorized history rewrite must be republished. Use
+  `adjust-pr-base` to verify the base and `prepare-issue-pr` to finalize the title, body,
+  and metadata.
+- **PR edit**: Use `prepare-issue-pr` to confirm that the title, body, and metadata still
+  describe the final branch state.
+- **Push with an open PR**: Sanitize generated artifacts, reconcile the PR title, body,
+  and metadata with the pushed revision, and remove detail that is self-evident from the
+  diff or CI. Use `watch-ci` until all applicable checks pass or a concrete blocker is
+  reported, continuing authorized repairs through the final revision.
+
+## Omakase mode
+
+When the user explicitly enables Omakase in the current conversation, treat routine
+decisions within the task's existing scope as delegated. Research resolvable ambiguity,
+use independent agents when their evidence materially improves the decision, choose the
+most reasonable action, and continue. Surface only a genuine blocker that evidence cannot
+resolve, together with a tentative recommendation.
+
+Before stopping in Omakase mode, compare the result with every part of the original
+instruction and continue until no in-scope loose end remains. In runtimes without an
+Omakase hook, explicit activation lasts for the current conversation; start later
+conversations in the standard mode without querying persisted Omakase state.
 
 ## Keep solutions minimal
 
