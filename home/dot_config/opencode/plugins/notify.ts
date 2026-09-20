@@ -1,31 +1,50 @@
-import type { Plugin, PluginInput } from "@opencode-ai/plugin";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 
-type OpenCodeShell = PluginInput["$"];
+import { Plugin } from "@opencode/plugin";
 
-function createNotifier(shell: OpenCodeShell): (message: string) => Promise<void> {
+const execFileAsync = promisify(execFile);
+
+function createNotifier(): (message: string) => Promise<void> {
   return async (message: string) => {
-    await shell`terminal-notifier -sound Funk -title "Opencode" -message ${message}`;
+    await execFileAsync("terminal-notifier", [
+      "-sound",
+      "Funk",
+      "-title",
+      "Opencode",
+      "-message",
+      message,
+    ]);
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
-export const notifierPlugin: Plugin = async ({ $ }) => {
-  const notify = createNotifier($);
+export default Plugin.define({
+  id: "notify",
+  async setup(ctx) {
+    const notify = createNotifier();
+    const controller = new AbortController();
 
-  return {
-    event: async ({ event }) => {
-      if (event.type === "session.idle") {
-        await notify("OpenCode process has completed.");
+    void (async () => {
+      for await (const event of ctx.event.subscribe({ signal: controller.signal })) {
+        if (event.type === "session.idle") {
+          await notify("OpenCode process has completed.");
+        }
+      }
+    })();
+
+    await ctx.permission.hook("evaluate", async (event) => {
+      if (event.effect !== "ask") {
         return;
       }
-    },
-    "permission.ask": async () => {
       await notify("Opencode is requesting some permissions.");
-    },
-    "tool.execute.before": async ({ tool }) => {
-      if (tool === "question") {
+    });
+
+    await ctx.tool.hook("execute.before", async (event) => {
+      if (event.tool === "question") {
         await notify("Opencode is asking a question.");
       }
-    },
-  };
-};
+    });
+
+    return () => controller.abort();
+  },
+});

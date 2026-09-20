@@ -29,7 +29,7 @@
     },
     {
       "groupName": "opencode",
-      "matchPackageNames": ["@opencode-ai/plugin", "opencode"],
+      "matchPackageNames": ["@opencode/cli", "@opencode/plugin"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
