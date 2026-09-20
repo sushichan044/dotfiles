@@ -4,22 +4,26 @@
   "default_agent": "plan",
   "lsp": true,
   "mcp": {
-    "aws-knowledge": {
-      "url": "https://knowledge-mcp.global.api.aws",
-      "type": "remote"
-    },
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp"
-    },
-    "deepwiki": {
-      "type": "remote",
-      "url": "https://mcp.deepwiki.com/mcp"
+    "servers": {
+      "aws-knowledge": {
+        "type": "remote",
+        "url": "https://knowledge-mcp.global.api.aws"
+      },
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      },
+      "deepwiki": {
+        "type": "remote",
+        "url": "https://mcp.deepwiki.com/mcp"
+      }
     }
   },
-  "permission": {
-    "external_directory": {
-      "/tmp/**": "allow"
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "/tmp/**",
+      "effect": "allow"
     }
-  }
+  ]
 }
