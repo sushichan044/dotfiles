@@ -7,11 +7,11 @@
 python = ["3.14.7", "3.12.10"]
 java = "26.0.0"
 uv = "latest"
-go = "1.27.0"
+go = "1.27.1"
 node = "26.4.0"
 bun = "latest"
 deno = "latest"
-ruby = ["4.0.6", "3.4.8"]
+ruby = ["4.0.7", "3.4.8"]
 
 # tools
 gh = "latest"
