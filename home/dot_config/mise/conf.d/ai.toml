@@ -6,7 +6,7 @@
 "npm:@modelcontextprotocol/inspector" = "latest"
 # mise's npm backend blocks lifecycle scripts, so run the package's postinstall
 # (which selects the native binary for the platform) explicitly.
-"npm:@opencode/cli" = { version = "2.0.14", postinstall = 'node "$MISE_TOOL_INSTALL_PATH/node_modules/@opencode/cli/postinstall.mjs"' }
+"npm:@opencode/cli" = { version = "2.0.15", postinstall = 'node "$MISE_TOOL_INSTALL_PATH/node_modules/@opencode/cli/postinstall.mjs"' }
 "npm:agent-browser" = { version = "latest", postinstall = "agent-browser install" }
 "npm:ccusage" = "latest"
 "npm:chrome-devtools-mcp" = "latest"
