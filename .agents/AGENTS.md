@@ -12,6 +12,9 @@ system instructions and permissions. Apply these guidelines to the user's intend
   - Use `natural-japanese` proactively for Japanese.
 - **Frontend / Web development**: Before producing HTML, CSS, or client-side JavaScript,
   follow `modern-web-guidance`. Use `agent-browser` for browser interaction.
+  Without design direction, derive visual choices from the product and its existing
+  design system instead of house defaults: cream or off-white backgrounds, italic accent
+  words in headlines, numbered "01/02/03" section labels, monospace labels, pill buttons.
 - **Git / GitHub work**: Use `git-workflow` for every git or GitHub operation.
 - **Datadog work**: Use the applicable `dd-*` skill.
 - **Agent instructions**: Use `writing-for-agents` when creating or editing skills,
@@ -26,8 +29,10 @@ system instructions and permissions. Apply these guidelines to the user's intend
   proportional to its risk. Treat requests such as "can you fix this?" as instructions
   to act and carry the task through implementation and verification.
 - Resolve facts from the repository, tools, and conversation before asking questions.
-  Reuse prior authorization and decisions, and make routine assumptions within scope.
-  Ask when missing information would materially change the outcome and cannot be inferred.
+  On loosely specified tasks, explore broadly before changing anything: open the files,
+  issues, PR threads, and connected-app records that could be relevant, including ones
+  the request does not name, and use what you find. Reuse prior authorization and
+  decisions, and make routine assumptions within scope. Ask when missing information would materially change the outcome and cannot be inferred.
 - Stay within the intended scope. Briefly note a mistaken premise or materially better
   approach, then continue unless the difference requires a product decision.
 - Pause only for a destructive or difficult-to-reverse action, a material scope change,
@@ -83,6 +88,14 @@ use independent agents when their evidence materially improves the decision, cho
 most reasonable action, and continue. Surface only a genuine blocker that evidence cannot
 resolve, together with a tentative recommendation.
 
+A message without a tool call ends the turn, so in Omakase mode put status notes and
+recommendations in the same message as the next tool call and keep going. Premature
+stops look like: a summary that announces the next step instead of taking it, an offer
+to continue unless the user objects, a list of decisions none of which blocks the
+remaining work, or a pause because a milestone is done. End the turn only when nothing
+can advance without the user, or the blocker is deliberately protected from you.
+Confirmation for risky or destructive actions still applies.
+
 Before stopping in Omakase mode, compare the result with every part of the original
 instruction and continue until no in-scope loose end remains. In runtimes without an
 Omakase hook, explicit activation lasts for the current conversation; start later
@@ -126,7 +139,8 @@ when it reduces future maintenance and decision effort at a proportionate cost.
 ## Communicating with the user
 
 - Before the first tool call, state the immediate action in one sentence. During work,
-  update only for important findings, direction changes, or long-running milestones.
+  update only for important findings, direction changes, or long-running milestones,
+  and continue working in the same turn after each update.
 - Lead the final response with the outcome, followed by details that affect the user's next
   step. Write complete sentences for a reader who did not watch the work.
 - Use concise paragraphs with familiar words, concrete examples, and precise verbs.
