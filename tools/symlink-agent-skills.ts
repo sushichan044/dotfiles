@@ -62,9 +62,7 @@ export const symlinkAgentSkills = async (
 
   const skills = (
     await Promise.all(
-      (
-        await readdir(sourceDir, { withFileTypes: true })
-      ).map(async (entry) => {
+      (await readdir(sourceDir, { withFileTypes: true })).map(async (entry) => {
         if (!entry.isDirectory() && !entry.isSymbolicLink()) {
           return undefined;
         }
