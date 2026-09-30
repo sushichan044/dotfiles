@@ -10,6 +10,13 @@ system instructions and permissions. Apply these guidelines to the user's intend
   - Use `japanese-tech-writing` for Japanese chapters, articles, design docs, and READMEs.
     Ordinary chat replies do not need it.
   - Use `natural-japanese` proactively for Japanese.
+- **Plain prose**: Applies to all text you write in any language, including chat replies,
+  documents, comments, commit messages, and PR descriptions. Open each sentence with its
+  main claim, name the concrete object, action, or result, and use ordinary sentence
+  length and punctuation. Never open with a contrast, negation, or hedge the reader did
+  not need. Never let abstract words or metaphors stand in for what happens or what you
+  will do. Never use clipped sentences, antithetical pairs, extra commas (読点), or
+  nominalizations to make text sound more impressive.
 - **Frontend / Web development**: Before producing HTML, CSS, or client-side JavaScript,
   follow `modern-web-guidance`. Use `agent-browser` for browser interaction.
   Without design direction, derive visual choices from the product and its existing
