@@ -1,6 +1,7 @@
 ---
 name: bigquery-basics
 metadata:
+  version: "1.0.0"
   category: BigDataAndAnalytics
 description: >-
   Manages datasets, tables, and jobs in BigQuery. Use when you need to interact

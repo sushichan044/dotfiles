@@ -1,6 +1,7 @@
 ---
 name: cloud-run-basics
 metadata:
+  version: "1.0.0"
   category: Serverless
 description: >-
   Manages Cloud Run services, jobs, and worker pools. Use when you need to deploy applications

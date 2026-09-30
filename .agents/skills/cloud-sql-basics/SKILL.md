@@ -1,6 +1,7 @@
 ---
 name: cloud-sql-basics
 metadata:
+  version: "1.0.0"
   category: Databases
 description: >-
   This file generates or explains Cloud SQL resources. Use this file when the

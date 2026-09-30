@@ -1,6 +1,7 @@
 ---
 name: alloydb-basics
 metadata:
+  version: "1.0.0"
   category: Databases
 description: >-
   Manages clusters, instances, and backups for AlloyDB for PostgreSQL, and

@@ -11,7 +11,7 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/alloydb-basics/SKILL.md",
-      "computedHash": "cdffc21db9bf761a0147e07e8778f47716cbab884a05557de2e6de57f6674edd"
+      "computedHash": "49c4fd69aaf221ef1cf8684541d63847eacce7556f42f03e3eff1393205246a8"
     },
     "animate": {
       "source": "pbakaus/impeccable",
@@ -28,31 +28,31 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/bigquery-basics/SKILL.md",
-      "computedHash": "376ab18c22323bc3d035bb3aec96c6cc9544b9827355ec1c0beabbb77230cb80"
+      "computedHash": "a4b9c317d8bc354f2e08ad768c061f22fde08025d2d7063d7f728946f0d49698"
     },
     "cloud-logging-configuration-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-configuration-basics/SKILL.md",
-      "computedHash": "4a5f9622f8a9e6a680d97c071900b3c438896fb84684bdc7b716fb1c9d58c5bd"
+      "computedHash": "486bbaa1ba146f539ef2edeee4b6f982f49a4dc5fbd1a8b80d113bc6d8458946"
     },
     "cloud-logging-query-generation": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-query-generation/SKILL.md",
-      "computedHash": "5b62d785de1e101ef4c5aa8c1b83e67801d6f83cd6ba958fdfa27156495d0be1"
+      "computedHash": "0ff4a253c1ace2f5d73dfc84453a364b669a201acf4e8b2b7bb21819a08dfb05"
     },
     "cloud-run-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-run-basics/SKILL.md",
-      "computedHash": "2bd6f9b3e39f1fee8ced4decdcbc1337e47bfd4af54bb2a4aee64fb595973386"
+      "computedHash": "a0446f5d1ce8edcb6413b34b7ee5f9a50941f7813dc12a650b258dd6f5435c50"
     },
     "cloud-sql-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-sql-basics/SKILL.md",
-      "computedHash": "7108becb6aa2e926e8294049ad641b266a2dbf86835ec3de8065c9d69ba68111"
+      "computedHash": "8ecb5a62339b8a9f1474ed98f78a35c3071a450c03ddb90096aa18fa45b447b9"
     },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
@@ -214,37 +214,37 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/analytics/google-analytics-data-api-basics/SKILL.md",
-      "computedHash": "e51c117a53f3bcba3a332b043a070688562cb5c45a651d0eb8dc8489e8b5df91"
+      "computedHash": "8fc87cddba9e36cbb16f3dc9a3b2c82818420f98ea3272274ed9a3176b02cdc3"
     },
     "google-cloud-waf-cost-optimization": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-cost-optimization/SKILL.md",
-      "computedHash": "b3febbf52e5c5fab8f0a04e3cbd4236c5251658882342cc805a7ae66d195514d"
+      "computedHash": "a5b30c0478b7147c0b090e997c67cc011cfa0f24aed6229c6f1aa1bfd367121c"
     },
     "google-cloud-waf-performance-optimization": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-performance-optimization/SKILL.md",
-      "computedHash": "89a4947438cff9e1fe7cabb7dd4e639b4c1c70fd2335b64f7fb35501535da624"
+      "computedHash": "4382e388937dbe9f77942158e850a6ef8ca0b04e65b72d2cb340e8796164f9bd"
     },
     "google-cloud-waf-reliability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-reliability/SKILL.md",
-      "computedHash": "9baf33bd5b7576be4655d47c78d015f1256808e1666aef1edd682761e1a4b1c8"
+      "computedHash": "9881cb7be2be2556635c87daa280ac1df652a430997b113c7a1b630ff0c07e14"
     },
     "google-cloud-waf-security": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-security/SKILL.md",
-      "computedHash": "e791a44cda991912c66cd2ec20e505886722eeb174e85fbd92cd42561653e443"
+      "computedHash": "ab0c355c033001b7ec182705a1c0c5a1255a22c3fb0ef269ce53c3e16f63bcf3"
     },
     "google-cloud-waf-sustainability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-sustainability/SKILL.md",
-      "computedHash": "7d0a6921cb59d92f19876f037e2106a4cd28f11b65dc25f6441b177f1e819b4f"
+      "computedHash": "9c234b8e25ec53bce5ac9cb248a192b0fead2206dacc103e6556dbc1b6731b99"
     },
     "grilling": {
       "source": "mattpocock/skills",
@@ -256,7 +256,7 @@
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "da9b9c833351f0575ca7482f3c8decc8e24b02b76dea71f138738283c701b4c5"
+      "computedHash": "7350ef15ed8febd35f1a15750e57418eac6656b7e86259e7796aa5e7972af60c"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -286,7 +286,7 @@
       "source": "k1LoW/gh-copilot-review",
       "sourceType": "github",
       "skillPath": "skills/request-copilot-review/SKILL.md",
-      "computedHash": "6e13daaddd639693a0a9a8fda39a3db445b9cda736a6ac8303ad7c6ed03b7d0e"
+      "computedHash": "bdd19ec728b5868c1dcdc8f8c24c4ffde6532de111651434ad14b8df27bcfecf"
     },
     "resolving-merge-conflicts": {
       "source": "mattpocock/skills",
@@ -317,12 +317,6 @@
       "sourceType": "github",
       "skillPath": "skills/triage-pr-reviews/SKILL.md",
       "computedHash": "7650c58b8b4d4057758555f69d1fdd1e8a451eaa7f8642673ee7ccba19c3c1bd"
-    },
-    "wait-what": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "skillPath": "skills/productivity/wait-what/SKILL.md",
-      "computedHash": "71a9a1f1773d4b1ff70a9d496db63855ef83a7fe906c72b70cdebf4815a2c4c1"
     },
     "writing-for-agents": {
       "source": "mattpocock/skills",

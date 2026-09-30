@@ -1,6 +1,7 @@
 ---
 name: google-cloud-waf-reliability
 metadata:
+  version: "1.0.0"
   category: WellArchitectedFramework
 description: >-
   Generates guidance for reliability, resilience, availability, redundancy,

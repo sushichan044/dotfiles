@@ -1,6 +1,7 @@
 ---
 name: google-cloud-waf-performance-optimization
 metadata:
+  version: "1.0.0"
   category: WellArchitectedFramework
 description: >-
   Generates performance-focused guidance for Google Cloud workloads based on the

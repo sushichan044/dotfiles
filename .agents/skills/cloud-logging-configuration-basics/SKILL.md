@@ -5,6 +5,7 @@ description: >-
   IAM permissions for views (Logs View Accessor, IAM conditions), logs-based metrics, log exclusions, and sampling.
   Don't use for cross-project logging or multi-project setups.
 metadata:
+  version: "1.0.0"
   category: CloudObservabilityAndMonitoring
 ---
 
