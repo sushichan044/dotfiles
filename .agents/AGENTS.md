@@ -9,7 +9,7 @@ system instructions and permissions. Apply these guidelines to the user's intend
   unless the user requests another language for the deliverable.
   - Use `japanese-tech-writing` for Japanese chapters, articles, design docs, and READMEs.
     Ordinary chat replies do not need it.
-  - Use `natural-japanese` proactively for Japanese.
+  - Use `natural-japanese` and `yomiyasu` proactively for Japanese.
 - **Plain prose**: Applies to all text you write in any language, including chat replies,
   documents, comments, commit messages, and PR descriptions. Open each sentence with its
   main claim, name the concrete object, action, or result, and use ordinary sentence
