@@ -199,7 +199,3 @@ if OS.mac?
   cask "slack"
 {{ end }}
 end
-
-{{ if not .for_personal }}
-{{ (onepasswordDetailsFields "j42vpfiovjdirqy6xq6hlax34m").notesPlain.value }}
-{{ end }}
