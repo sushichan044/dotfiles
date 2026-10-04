@@ -8,7 +8,7 @@
   "dependencies": {
     "ansis": "4.4.0",
     "args-tokens": "0.30.0",
-    "arkregex": "0.0.11",
+    "arkregex": "0.0.12",
     "cc-hooks-ts": "2.1.281",
     "css-color-names": "1.0.1",
     "get-stdin": "10.0.0",
