@@ -312,6 +312,12 @@
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
     },
+    "stop-describing-ui": {
+      "source": "artouc/stop-describing-ui",
+      "sourceType": "github",
+      "skillPath": "skills/stop-describing-ui/SKILL.md",
+      "computedHash": "ad8da9645ed5b9f01398582e1b9388250f900b73a8960be3a4bd1be183761005"
+    },
     "triage-pr-reviews": {
       "source": "k1LoW/gh-pr-reviews",
       "sourceType": "github",
