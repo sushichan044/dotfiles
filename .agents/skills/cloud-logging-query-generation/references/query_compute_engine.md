@@ -78,7 +78,7 @@ When a VM is unbootable, crashing on startup, or experiencing kernel panics:
 - Target `resource.type="gce_instance"`.
 - Filter by `log_id("serialconsole.googleapis.com/serial_port_1_output")`.
 - Search within `textPayload` (for example, `"kernel panic"`, `"Out of
-memory"`).
+  memory"`).
 
 ### Google infrastructure system events
 

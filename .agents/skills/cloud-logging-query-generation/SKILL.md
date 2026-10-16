@@ -107,7 +107,7 @@ above, write the LQL query based on your general knowledge.
 1.  **Resource Types:** Explicitly define the `resource.type` in your queries
     when focusing on specific services. For some queries, you may need to search
     across multiple types (for example, `resource.type=("bigquery_project" OR
-"bigquery_dataset")`).
+    "bigquery_dataset")`).
 2.  **Audit and Admin Logs:** If the user asks for audit logs, admin logs, API
     logs, or logs about who created, updated, deleted, read, or accessed a
     resource:
@@ -117,7 +117,7 @@ above, write the LQL query based on your general knowledge.
     - If a specific example is not listed, guess the `protoPayload.methodName`
       by combining the service and verb. When guessing, you MUST use the
       scoped `SEARCH()` function (e.g., `SEARCH(protoPayload.methodName,
-"compute.instances.insert")`) instead of the exact match operator (`=`)
+      "compute.instances.insert")`) instead of the exact match operator (`=`)
       to avoid version prefix mismatches. Do NOT use the colon operator (`:`)
       as it may cause substring false positives.
     - For generic API enable/disable events (e.g., a service was disabled),

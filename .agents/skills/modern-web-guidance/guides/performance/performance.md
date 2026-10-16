@@ -297,10 +297,10 @@ Client-side caching via Service Workers allows applications to bypass the networ
 **JS: Service Worker Caching via Workbox**
 
 ```javascript
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute } from "workbox-routing";
 import { CacheFirst, StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
-import { ExpirationPlugin } from "workbox-expiration";
-import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
 // 1. HTML Documents: Network First
 registerRoute(

@@ -28,7 +28,8 @@ Instead, query `navigator.permissions.query()` for `'local-network'` or `'loopba
 ```javascript
 /**
  * Queries the granular Local Network Access permission for the target space.
- * @param {'local-network' | 'loopback-network'} permissionName
+ *
+ * @param {"local-network" | "loopback-network"} permissionName
  */
 export async function checkNetworkPermission(permissionName) {
   const status = await navigator.permissions.query({ name: permissionName });
@@ -66,8 +67,8 @@ Explicitly setting `targetAddressSpace` does two critical things:
 
 ```javascript
 /**
- * Connects to a local network device (e.g., LAN printer or IoT hub) over HTTP.
- * Example endpoint URL is illustrative; replace with your device's address.
+ * Connects to a local network device (e.g., LAN printer or IoT hub) over HTTP. Example endpoint URL
+ * is illustrative; replace with your device's address.
  */
 export async function fetchLocalDeviceStatus(deviceUrl = "http://192.168.1.100:8080/api/status") {
   const request = new Request(deviceUrl, {
@@ -85,8 +86,8 @@ export async function fetchLocalDeviceStatus(deviceUrl = "http://192.168.1.100:8
 }
 
 /**
- * Connects to a local companion daemon running on the user's loopback interface.
- * Example loopback port is illustrative; replace with your service's port.
+ * Connects to a local companion daemon running on the user's loopback interface. Example loopback
+ * port is illustrative; replace with your service's port.
  */
 export async function fetchLoopbackDaemon(daemonUrl = "http://127.0.0.1:45678/health") {
   const request = new Request(daemonUrl, {
@@ -112,9 +113,7 @@ Local Network Access restrictions also govern `WebSocket` and `WebTransport` con
 - **`WebTransport`**: Because `WebTransport` strictly requires `https://` (HTTP/3 over QUIC with TLS or `serverCertificateHashes` for local self-signed certificates), it never triggers Mixed Content blocks and does not accept a `targetAddressSpace` option. Instead, the browser automatically verifies the resolved IP address space and gates the `transport.ready` promise behind the `local-network` or `loopback-network` permission prompt.
 
 ```javascript
-/**
- * Opens a WebSocket connection to a local network device (IP literal, .local, or localhost).
- */
+/** Opens a WebSocket connection to a local network device (IP literal, .local, or localhost). */
 export function openLocalWebSocket(wsUrl = "ws://192.168.1.100:8080/stream") {
   // Pass only subprotocol string(s) as the second argument (never an options object).
   // Browsers exempt ws:// from Mixed Content when the host is a local/loopback IP literal,
@@ -124,7 +123,8 @@ export function openLocalWebSocket(wsUrl = "ws://192.168.1.100:8080/stream") {
 }
 
 /**
- * Opens a WebTransport session to a local network endpoint using a pinned self-signed certificate hash.
+ * Opens a WebTransport session to a local network endpoint using a pinned self-signed certificate
+ * hash.
  */
 export async function openLocalWebTransport(
   wtUrl = "https://192.168.1.100:4433/wt",
@@ -180,9 +180,10 @@ If your Baseline target does not support Local Network Access permissions and `t
 
 ```javascript
 /**
- * Cross-browser permission check for the granular LNA permissions.
- * Never falls back to querying 'local-network-access', which crashes older Chrome versions.
- * @param {'local-network' | 'loopback-network'} permissionName
+ * Cross-browser permission check for the granular LNA permissions. Never falls back to querying
+ * 'local-network-access', which crashes older Chrome versions.
+ *
+ * @param {"local-network" | "loopback-network"} permissionName
  */
 export async function queryLnaPermissionSafe(permissionName) {
   if (!navigator.permissions?.query) {

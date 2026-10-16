@@ -84,9 +84,7 @@ For production use in browsers that do not support it natively, you must use a p
 The recommended approach is to progressively enhance by checking for native support and dynamically loading a polyfill like `@js-temporal/polyfill` if needed.
 
 ```javascript
-/**
- * Progressive Enhancement Fallback
- */
+/** Progressive Enhancement Fallback */
 async function getTemporal() {
   if (typeof Temporal !== "undefined") {
     return Temporal;

@@ -17,7 +17,7 @@
 - **Implicit comparisons and minus sign:** `AND` can be omitted between
   space-separated expressions. `NOT` can be replaced with `-`.
   - _Example:_ `a="b" AND c="d" AND NOT e="f"` is identical to `a="b" c="d"
--e="f"`.
+    -e="f"`.
 
 ## Comparison operators and matching patterns
 
@@ -48,7 +48,7 @@
 - If a field path contains special characters (like slashes or periods), it
   must be inside double quotes: `labels."compute.googleapis.com/resource_id"`.
 - Embedded double quotes must be backslash-escaped: `jsonPayload.message =~
-"location=\"europe-west.*\""`.
+  "location=\"europe-west.*\""`.
 
 ## Built-in SEARCH function
 
@@ -86,10 +86,10 @@
 
 - Regular expressions use RE2 syntax, are case sensitive, and are unanchored.
   - _Example (Anchored matching):_ `logName =~ "^foo"` or `logName =~
-"foo$"`
+    "foo$"`
   - _Example (OR condition inside regex):_ `labels.pod_name =~ "(foo|bar)"`
   - _Example (Combined OR on the right side):_ `labels.env =~
-("^prod.*server" OR "^staging.*server")`
+    ("^prod.*server" OR "^staging.*server")`
   - _Example (Case-insensitive flag):_ `labels.subnetwork_name =~ "(?i)foo"`
 
 ## Timestamps and ranges
@@ -109,10 +109,10 @@
   - _Example:_ `sample(insertId, 0.01)`
 - **`cast`**: Converts a field into another data type.
   - _Example:_ `cast(timestamp, STRING, TIME_ZONE("America/New_York")) =~
-"^2025-04-02.*"`
+    "^2025-04-02.*"`
 - **`regexp_extract`**: Extracts part of a field using an RE2 capture group.
   - _Example:_ `CAST(REGEXP_EXTRACT(CAST(timestamp, STRING),
-"\\d+:\\d+:(\\d+)"), INT64) < 30`
+    "\\d+:\\d+:(\\d+)"), INT64) < 30`
 - **`ip_in_net`**: Determines if an IP address belongs to a subnet block.
   - _Example:_ `ip_in_net(jsonPayload.realClientIP, "10.1.2.0/24")`
 

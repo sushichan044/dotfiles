@@ -40,9 +40,7 @@ Unsupported in: Firefox and Safari.
 For browsers that do not yet support the API, use a JavaScript fallback. Use the `DOMContentLoaded` event to ensure the browser scrolls the element into view as soon as the HTML parsing completes, providing a faster experience than waiting for all images and resources to load. Alternatively, placing the script at the end of the `<body>` element is also acceptable and avoids the need for an event listener.
 
 ```javascript
-/**
- * Progressive Enhancement Fallback
- */
+/** Progressive Enhancement Fallback */
 document.addEventListener("DOMContentLoaded", () => {
   // Check for native CSS support
   if (!CSS.supports("scroll-initial-target", "nearest")) {

@@ -87,6 +87,7 @@ After consuming the single-use `expectedNonce` from server-side session storage,
 
 ```javascript
 import { createHash } from "node:crypto";
+
 import { decodeSdJwtSync } from "@sd-jwt/core";
 
 const hasher = (data, alg) =>
@@ -115,6 +116,7 @@ Before making any network request to `iss`, verify that the submitted email's do
 
 ```javascript
 import dns from "node:dns/promises";
+
 import { createRemoteJWKSet } from "jose";
 
 const domain = submittedEmail.split("@")[1];

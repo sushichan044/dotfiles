@@ -126,6 +126,7 @@ Encrypt payload data with an AEAD algorithm (`'ChaCha20-Poly1305'` or `'AES-GCM'
 ```javascript
 /**
  * Encrypts UTF-8 text with an AEAD CryptoKey ('ChaCha20-Poly1305' or 'AES-GCM').
+ *
  * @param {CryptoKey} key
  * @param {string} plaintext
  * @param {Uint8Array} [additionalData]
@@ -150,6 +151,7 @@ export async function encryptMessage(key, plaintext, additionalData = new Uint8A
 
 /**
  * Decrypts and authenticates an AEAD payload. Throws OperationError if tampered.
+ *
  * @param {CryptoKey} key
  * @param {Uint8Array} iv
  * @param {Uint8Array} ciphertext

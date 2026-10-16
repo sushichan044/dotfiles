@@ -84,7 +84,7 @@ Calls to `run_gcloud_command` accept the following parameters:
 
 - **`command`** (string, required): The full `gcloud` command line string to
   execute (e.g., `"gcloud compute instances list --project={resource_project}
---format=json"`).
+  --format=json"`).
 - **`project`** (string, required): The resource name of the Google Cloud
   project hosting the Cloud CLI Execution API in the format
   `"projects/{api_project}"` (e.g., `"projects/my-api-project"`).

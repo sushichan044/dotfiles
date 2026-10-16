@@ -110,8 +110,8 @@ Browsers that support `mask-image` but not `@property` will still show the spotl
 .reveal-layer {
   mask-image: radial-gradient(
     circle at var(--mouse-x) var(--mouse-y),
-    /* Use fallback values when using the `var()` function for browsers that don't get an initial value from the @property registration. */
-    black var(--inner-size, 0%),
+    /* Use fallback values when using the `var()` function for browsers that don't get an initial value from the @property registration. */ black
+      var(--inner-size, 0%),
     transparent var(--outer-size, 0%)
   );
 }

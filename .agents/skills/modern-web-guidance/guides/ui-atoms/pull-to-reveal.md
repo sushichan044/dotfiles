@@ -66,9 +66,7 @@ Unsupported in: Firefox and Safari.
 For browsers that do not yet support the API, use a JavaScript fallback. Note that for pulling content to reveal, you want the main content to be bound to the `start` (top) of the container.
 
 ```javascript
-/**
- * Progressive Enhancement Fallback
- */
+/** Progressive Enhancement Fallback */
 document.addEventListener("DOMContentLoaded", () => {
   // Check for native CSS support
   if (!CSS.supports("scroll-initial-target", "nearest")) {

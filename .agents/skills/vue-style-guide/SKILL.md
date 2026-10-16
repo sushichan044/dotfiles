@@ -152,6 +152,7 @@ export const remaining: remaining = (todos) => todos.filter((t) => !t.done).leng
 // useTodo.ts — Reactivity Binding
 import type { Ref } from "vue";
 import { ref, computed } from "vue";
+
 import type { Todo } from "./todo";
 import { toggleTodo, remaining } from "./todo";
 
@@ -338,6 +339,7 @@ When using global state, always document the state lifecycle: transitions and sc
 ```ts
 // todo.test.ts
 import { describe, it, expect } from "vitest";
+
 import { toggleTodo, remaining } from "./todo";
 
 describe("toggleTodo", () => {

@@ -7,15 +7,15 @@
   },
   "dependencies": {
     "ansis": "4.4.0",
-    "args-tokens": "0.30.0",
-    "arkregex": "0.0.12",
+    "args-tokens": "1.0.0",
+    "arkregex": "0.0.13",
     "cc-hooks-ts": "2.1.281",
     "css-color-names": "1.0.1",
     "get-stdin": "10.0.0",
     "github-reserved-names": "2.2.0",
     "local-pkg": "1.2.1",
     "mdast-util-from-markdown": "2.1.0",
-    "package-manager-detector": "1.8.0",
+    "package-manager-detector": "1.9.0",
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
     "shell-quote": "1.12.0",
@@ -25,13 +25,13 @@
   },
   "devDependencies": {
     "@opencode/plugin": "2.0.28",
-    "@types/bun": "1.4.2",
+    "@types/bun": "1.4.3",
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
     "@virtual-live-lab/tsconfig": "2.1.23",
-    "oxfmt": "0.71.0",
+    "oxfmt": "0.73.0",
     "typescript": "7.0.2",
-    "vite-plus": "1.0.0"
+    "vite-plus": "1.3.0"
   },
   "packageManager": "bun@1.4.2"
 }

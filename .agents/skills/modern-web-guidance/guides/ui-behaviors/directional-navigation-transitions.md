@@ -116,6 +116,7 @@ The View Transitions API is a progressive enhancement. In unsupported browsers, 
 ```javascript
 /**
  * Navigates to a new view with a directional transition.
+ *
  * @param {Function} updateDOM - Callback to update the DOM state.
  * @param {string} direction - Either 'forward' or 'backward'.
  */

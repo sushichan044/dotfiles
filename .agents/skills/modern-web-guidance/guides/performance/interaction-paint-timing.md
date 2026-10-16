@@ -24,8 +24,8 @@ Each `InteractionContentfulPaint` entry provides:
 
 ```javascript
 /**
- * Observes contentful paints caused by user interactions and invokes a callback
- * whenever an interaction produces a larger contentful paint.
+ * Observes contentful paints caused by user interactions and invokes a callback whenever an
+ * interaction produces a larger contentful paint.
  *
  * @param {(entry: PerformanceEntry) => void} onInteractionPaint
  */
@@ -64,17 +64,17 @@ A soft navigation is emitted by the browser when a trusted user interaction caus
 
 ```javascript
 /**
- * Tracks FCP and LCP for each client-side soft navigation and reports finalized
- * route metrics when the user navigates to a new route or hides the page.
+ * Tracks FCP and LCP for each client-side soft navigation and reports finalized route metrics when
+ * the user navigates to a new route or hides the page.
  *
  * @param {(report: {
- *   url: string,
- *   navigationId: number,
- *   interactionId: number,
- *   fcpDuration: number,
- *   lcpDuration: number | null,
- *   lcpElement: Element | null,
- *   lcpSize: number | null
+ *   url: string;
+ *   navigationId: number;
+ *   interactionId: number;
+ *   fcpDuration: number;
+ *   lcpDuration: number | null;
+ *   lcpElement: Element | null;
+ *   lcpSize: number | null;
  * }) => void} onSoftNavReport
  */
 export function trackSoftNavigationLCP(onSoftNavReport) {

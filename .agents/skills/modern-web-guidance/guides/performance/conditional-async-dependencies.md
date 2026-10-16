@@ -55,7 +55,6 @@ if (myPopover) {
 // INSTEAD, guarantee a single entry point:
 // Import the top-level await module ONCE at the very top of your application tree.
 import "./conditionally-load-polyfill.js";
-
 // Then import the rest of your application code, ensuring the await resolves first.
 import "./app.js";
 ```

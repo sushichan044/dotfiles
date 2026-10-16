@@ -9,9 +9,7 @@ The most accurate way to measure this is by using the `VisibilityStateEntry` API
 MANDATORY: Use `performance.getEntriesByType('visibility-state')` to access the exact visibility history. Do not rely solely on checking `document.visibilityState` at execution time, as it is susceptible to race conditions.
 
 ```javascript
-/**
- * Accurately determines visibility state history using the Performance API.
- */
+/** Accurately determines visibility state history using the Performance API. */
 function getVisibilityInfo() {
   // Retrieve VisibilityStateEntry members:
   const entries = performance.getEntriesByType("visibility-state");
@@ -55,8 +53,8 @@ For unsupported environments, you may fall back to checking the `document.visibi
 
 ```javascript
 /**
- * Fallback implementation using document.visibilityState.
- * This approach is prone to race conditions if the script loads asynchronously.
+ * Fallback implementation using document.visibilityState. This approach is prone to race conditions
+ * if the script loads asynchronously.
  */
 function getFallbackVisibilityInfo() {
   // Check the state exactly when this script executes.

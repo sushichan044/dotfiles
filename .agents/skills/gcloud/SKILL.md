@@ -29,23 +29,23 @@ description: >-
 > **Mandatory Action Rules**:
 >
 > 1.  **Direct Execution & Code Generation**: **ALWAYS** invoke `gcloud help
-<leaf_command>` (e.g. `gcloud help compute instances create` or `gcloud
-help sql instances create`) before proposing or executing the final
+>     <leaf_command>` (e.g. `gcloud help compute instances create` or `gcloud
+>     help sql instances create`) before proposing or executing the final
 >     command syntax.
 >
 > 2.  **Planning & Strategy Queries**: When asked for a plan, strategy, or next
 >     steps to achieve a user goal (e.g., _"What is your plan to accomplish
 >     X..."_), the response **MUST explicitly include running `gcloud help
-<leaf_command>`** as Step 1 of the plan before proposing flags or
+>     <leaf_command>`** as Step 1 of the plan before proposing flags or
 >     executing commands.
 >
 > 3.  **Non-Transitive Validation**: Parent command group help (e.g. `gcloud
-help compute`) is not sufficient for leaf-level syntax validation.
+>     help compute`) is not sufficient for leaf-level syntax validation.
 >     Validation must occur at the specific leaf subcommand level.
 >
 > 4.  **FORBIDDEN Web Search Fallback**: NEVER use `search_web`, web search, or
 >     external documentation search tools for gcloud CLI syntax. `gcloud help
-<leaf_command>` is the **EXCLUSIVE** authorized authority for command
+>     <leaf_command>` is the **EXCLUSIVE** authorized authority for command
 >     syntax.
 >
 > 5.  **User Flag & Project Preservation**: When proposing intermediate command
@@ -104,7 +104,7 @@ one data reduction flag (`--limit`, `--filter`, or `--format`).
 - **Projection**: Use `--format="json(key1, key2, ...)"` to select only the
   specific fields needed for the task. To understand the advanced projection
   and formatting syntax, refer to `gcloud topic projections` and `gcloud topic
-formats`.
+  formats`.
 
 - **Limiting**: Use `--limit=N` to cap the number of resources returned.
 
@@ -112,7 +112,7 @@ formats`.
   `:` for pattern matching and never quote the right side of the colon. Treat
   the entire filter flag as a singular string without quoting or escaping
   characters. To study the filter expression syntax, refer to `gcloud topic
-filters`.
+  filters`.
 
 - **Schema Discovery**: Unconstrained resource lists can quickly exhaust the
   context window with redundant data. To prevent this, discover a resource's
@@ -136,7 +136,7 @@ filters`.
   and ensure commands are more easily understandable and reviewable by users.
 - **Non-Interactive Execution (`--quiet` / `-q`)**: Pass the `--quiet` (or
   `-q`) global flag on all execution commands (e.g., `gcloud pubsub topics
-delete temp-topic --quiet --project=test-project`). AI agents run in
+  delete temp-topic --quiet --project=test-project`). AI agents run in
   headless, non-interactive environments without a TTY or `stdin` input
   handler. Without `--quiet`, commands that prompt for user confirmation (such
   as deleting resources, approving defaults, or selecting unspecified regions)
@@ -177,7 +177,7 @@ environment, they must explicitly provide project and location scoping.
 
     - `gcloud <GROUP> locations list --project=<PROJECT_ID>`
     - _Examples_: `gcloud artifacts locations list`, `gcloud kms locations
-list`, `gcloud secrets locations list`.
+      list`, `gcloud secrets locations list`.
 
 ## Safety & Guardrails
 
@@ -232,10 +232,10 @@ When asked to perform a task on a service that is unfamiliar:
 1.  **Invoke Help**: Call `gcloud help <COMMAND>` on the target leaf command
     prior to execution.
 2.  **Traverse Command Tree**: Run help on command groups (e.g., `gcloud help
-compute` or `gcloud help`) to discover available subgroups and commands if
+    compute` or `gcloud help`) to discover available subgroups and commands if
     the exact command is unknown.
 3.  **Discover Schema**: Run `gcloud <GROUP> <RESOURCE> list --limit=1
---format=json` to inspect JSON keys before constructing filters or
+    --format=json` to inspect JSON keys before constructing filters or
     projections. DO NOT execute unconstrained `list` commands without scoping
     flags (e.g., `--limit=1`) to prevent context window exhaustion.
 4.  **Enforce Data Reduction**: Include data reduction flags (`--limit`,
