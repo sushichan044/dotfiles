@@ -88,7 +88,7 @@ h1 {
 
 ### Fallback strategies
 
-text-box has limited availability.
+Browser support for text-box: Limited availability.
 Supported by: Chrome 133 (Feb 2025), Edge 133 (Feb 2025), and Safari 18.2 (Dec 2024).
 Unsupported in: Firefox.
 

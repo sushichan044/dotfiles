@@ -163,7 +163,7 @@ The API supports a wide range of BCP 47 language codes: Here are the languages s
 
 ## Fallback Strategy
 
-Translator has limited availability.
+Browser support for Translator: Limited availability.
 Supported by: Chrome 138 (Jun 2025) and Edge 148 (May 2026).
 Unsupported in: Firefox and Safari.
 

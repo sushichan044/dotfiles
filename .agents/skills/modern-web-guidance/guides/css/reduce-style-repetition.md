@@ -69,7 +69,7 @@ main {
 
 ### Fallback strategies
 
-@function has limited availability.
+Browser support for @function: Limited availability.
 Supported by: Chrome 139 (Aug 2025) and Edge 139 (Aug 2025).
 Unsupported in: Firefox and Safari.
 

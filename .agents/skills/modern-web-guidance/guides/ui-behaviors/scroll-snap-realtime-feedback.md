@@ -100,7 +100,7 @@ if (document.readyState === "complete") {
 
 ### Fallback strategies
 
-Scroll snap events has limited availability.
+Browser support for Scroll snap events: Limited availability.
 Supported by: Chrome 129 (Sep 2024) and Edge 129 (Sep 2024).
 Unsupported in: Firefox and Safari.
 

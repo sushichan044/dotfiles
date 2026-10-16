@@ -87,7 +87,7 @@ By default, a migration is suggested to users. To make the transition mandatory,
 
 ## Fallbacks & browser support
 
-Web app origin migration has limited availability.
+Browser support for Web app origin migration: Limited availability.
 Supported by: Chrome 149 (Jun 2026) and Edge 149 (Jun 2026).
 Unsupported in: Firefox and Safari.
 

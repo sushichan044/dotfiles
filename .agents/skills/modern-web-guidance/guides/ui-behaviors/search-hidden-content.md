@@ -118,7 +118,7 @@ accordion.addEventListener("beforematch", (e) => {
 Baseline status for <details>: Widely available. It's been Baseline since 2020-01-15.
 Supported by: Chrome 12 (Jun 2011), Edge 79 (Jan 2020), Firefox 49 (Sep 2016), and Safari 6 (Jul 2012).
 
-hidden="until-found" has limited availability.
+Browser support for hidden="until-found": Limited availability.
 Supported by: Chrome 102 (May 2022), Edge 102 (May 2022), and Firefox 148 (Feb 2026).
 Unsupported in: Safari.
 

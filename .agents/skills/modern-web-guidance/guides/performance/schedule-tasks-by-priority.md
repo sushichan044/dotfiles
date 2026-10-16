@@ -38,7 +38,7 @@ scheduler.postTask(
 
 ### Fallback strategies
 
-Scheduler API has limited availability.
+Browser support for Scheduler API: Limited availability.
 Supported by: Chrome 129 (Sep 2024), Edge 129 (Sep 2024), and Firefox 142 (Aug 2025).
 Unsupported in: Safari.
 

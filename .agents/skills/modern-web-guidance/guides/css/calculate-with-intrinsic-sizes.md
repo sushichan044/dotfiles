@@ -164,11 +164,11 @@ You can use `calc-size()` with any CSS math function—such as `min()`, `max()`,
 
 ## Fallback strategies
 
-calc-size() has limited availability.
+Browser support for calc-size(): Limited availability.
 Supported by: Chrome 129 (Sep 2024) and Edge 129 (Sep 2024).
 Unsupported in: Firefox and Safari.
 
-interpolate-size has limited availability.
+Browser support for interpolate-size: Limited availability.
 Supported by: Chrome 129 (Sep 2024) and Edge 129 (Sep 2024).
 Unsupported in: Firefox and Safari.
 

@@ -1,6 +1,7 @@
 ---
 name: gcloud
 metadata:
+  version: "1.0.0"
   category: CloudInfrastructureAndServices
 description: >-
   Provides safety-critical validation, guardrails, and data reduction for gcloud

@@ -69,7 +69,7 @@ Avoid using the detector on very short phrases or single words, as accuracy drop
 
 ## Fallback Strategy
 
-Language detector has limited availability.
+Browser support for Language detector: Limited availability.
 Supported by: Chrome 138 (Jun 2025) and Edge 148 (May 2026).
 Unsupported in: Firefox and Safari.
 

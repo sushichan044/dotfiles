@@ -67,7 +67,7 @@ setInterval(queueBeacon, 10000);
 
 ## Browser support and fallback strategies
 
-fetchLater has limited availability.
+Browser support for fetchLater: Limited availability.
 Supported by: Chrome 135 (Apr 2025) and Edge 135 (Apr 2025).
 Unsupported in: Firefox and Safari.
 

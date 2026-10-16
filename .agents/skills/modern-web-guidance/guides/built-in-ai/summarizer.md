@@ -131,7 +131,7 @@ for await (const chunk of stream) {
 
 ## Fallback Strategy
 
-Summarizer has limited availability.
+Browser support for Summarizer: Limited availability.
 Supported by: Chrome 138 (Jun 2025) and Edge 138 (Jun 2025).
 Unsupported in: Firefox and Safari.
 

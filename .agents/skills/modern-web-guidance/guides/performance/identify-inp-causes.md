@@ -66,7 +66,7 @@ Supported by: Chrome 76 (Jul 2019), Edge 79 (Jan 2020), Firefox 89 (Jun 2021), a
 
 The Event Timing API is available in most modern browsers and is necessary to calculate INP and the INP subparts. For browsers that do not support this API INP cannot be measured.
 
-Long animation frames performance entries has limited availability.
+Browser support for Long animation frames performance entries: Limited availability.
 Supported by: Chrome 123 (Mar 2024) and Edge 123 (Mar 2024).
 Unsupported in: Firefox and Safari.
 

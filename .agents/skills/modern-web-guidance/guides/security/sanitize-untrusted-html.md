@@ -64,7 +64,7 @@ preview.replaceChildren(...doc.body.childNodes);
 
 ## Fallbacks & browser support for Sanitizer API
 
-Sanitizer API has limited availability.
+Browser support for Sanitizer API: Limited availability.
 Supported by: Chrome 146 (Mar 2026), Edge 146 (Mar 2026), and Firefox 148 (Feb 2026).
 Unsupported in: Safari.
 
@@ -91,13 +91,15 @@ export async function safeSetHTML(el, html) {
     el.innerHTML = DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [...elements, "#text"],
       ALLOWED_ATTR: attributes,
-      // Match the native Sanitizer: remove disallowed elements with their content
+      // Match the native Sanitizer: strip aria-*/data-* and disallowed element content
+      ALLOW_ARIA_ATTR: false,
+      ALLOW_DATA_ATTR: false,
       KEEP_CONTENT: false,
     });
   }
 }
 ```
 
-By default, DOMPurify keeps the text content of elements it removes, while the native Sanitizer removes disallowed elements together with their content. Setting `KEEP_CONTENT: false` and allowing `#text` makes DOMPurify match the native behavior. DOMPurify has no built-in option equivalent to `replaceWithChildrenElements`, so avoid that option in configurations that need a matching fallback.
+By default, DOMPurify keeps `aria-*` and `data-*` attributes (even when `ALLOWED_ATTR` is specified) as well as the text content of elements it removes, while the native Sanitizer strips `aria-*` and `data-*` attributes and removes disallowed elements together with their content. Setting `ALLOW_ARIA_ATTR: false`, `ALLOW_DATA_ATTR: false`, `KEEP_CONTENT: false`, and allowing `#text` makes DOMPurify match the native behavior. DOMPurify has no built-in option equivalent to `replaceWithChildrenElements`, so avoid that option in configurations that need a matching fallback.
 
 If the page enforces Trusted Types (`require-trusted-types-for 'script'`), assigning a string to `innerHTML` throws. `setHTML()` does not need a Trusted Types policy, but the fallback does: pass `RETURN_TRUSTED_TYPE: true` to `DOMPurify.sanitize()` and allow its `dompurify` policy name in your `trusted-types` CSP directive.

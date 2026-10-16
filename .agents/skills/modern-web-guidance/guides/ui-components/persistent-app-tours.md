@@ -97,7 +97,7 @@ Alternatively, for a legacy fallback without a polyfill, use `position: fixed` a
 
 #### anchor-positioning
 
-Anchor positioning has limited availability.
+Browser support for Anchor positioning: Limited availability.
 Supported by: Safari 27.
 Unsupported in: Chrome, Edge, and Firefox.
 

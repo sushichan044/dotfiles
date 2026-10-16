@@ -182,7 +182,7 @@ import "webauthn-polyfills";
 
 ### Signal API Synchronization Fallback
 
-Web authentication signal methods has limited availability.
+Browser support for Web authentication signal methods: Limited availability.
 Supported by: Chrome 132 (Jan 2025), Edge 132 (Jan 2025), and Safari 26 (Sep 2025).
 Unsupported in: Firefox.
 

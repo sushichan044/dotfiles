@@ -82,7 +82,7 @@ nav a:target-current {
 
 ## Fallback strategies
 
-scroll-target-group has limited availability.
+Browser support for scroll-target-group: Limited availability.
 Supported by: Chrome 140 (Sep 2025) and Edge 140 (Sep 2025).
 Unsupported in: Firefox and Safari.
 

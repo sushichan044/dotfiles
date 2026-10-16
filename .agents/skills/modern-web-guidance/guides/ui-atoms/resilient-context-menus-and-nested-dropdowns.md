@@ -53,8 +53,12 @@ To prevent the panel from being cut off at the edge of the screen, define "try t
   /* 
      If the panel overflows the bottom, flip it to the top (flip-block).
      If it overflows the inline edges, flip it horizontally (flip-inline).
+     If it overflows both (e.g., in a corner), flip on both axes (flip-block flip-inline).
   */
-  position-try-fallbacks: flip-block, flip-inline;
+  position-try-fallbacks:
+    flip-block,
+    flip-inline,
+    flip-block flip-inline;
 }
 ```
 
@@ -98,7 +102,7 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 
 Alternatively, for a legacy fallback without a polyfill, use `position: fixed` and manually calculate coordinates via `getBoundingClientRect()` or rely on default positioning with `inset: auto` if that's acceptable for the use case.
 
-Anchor positioning has limited availability.
+Browser support for Anchor positioning: Limited availability.
 Supported by: Safari 27.
 Unsupported in: Chrome, Edge, and Firefox.
 
@@ -119,7 +123,7 @@ For some use cases, you may be able to use the `@oddbird/css-anchor-positioning`
 .panel {
   /* Mandatory: use explicit anchor name */
   position-anchor: --kebab-anchor;
-  /* Mandatory: use insets rather that position-area for positioning */
+  /* Mandatory: use insets rather than position-area for positioning */
   bottom: auto;
   right: auto;
   top: anchor(bottom);

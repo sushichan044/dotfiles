@@ -303,7 +303,7 @@ The popover API, the scroll-driven animation that fades the backdrop, and `scrol
 
 #### Backdrop fade fallback (no `animation-timeline` support):
 
-Scroll-driven animations has limited availability.
+Browser support for Scroll-driven animations: Limited availability.
 Supported by: Chrome 115 (Jul 2023), Edge 115 (Jul 2023), and Safari 26 (Sep 2025).
 Unsupported in: Firefox.
 
@@ -322,7 +322,7 @@ if (!CSS.supports("animation-timeline: scroll()")) {
 
 #### Initial scroll position fallback (no `scroll-initial-target` support):
 
-scroll-initial-target has limited availability.
+Browser support for scroll-initial-target: Limited availability.
 Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
 Unsupported in: Firefox and Safari.
 

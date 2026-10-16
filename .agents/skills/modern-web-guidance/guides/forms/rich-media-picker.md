@@ -130,7 +130,7 @@ select.custom-select option:checked .option-title {
 
 ### Fallbacks & browser support for Customizable <select>
 
-Customizable <select> has limited availability.
+Browser support for Customizable <select>: Limited availability.
 Supported by: Chrome 135 (Apr 2025), Edge 135 (Apr 2025), and Safari 27.
 Unsupported in: Firefox.
 

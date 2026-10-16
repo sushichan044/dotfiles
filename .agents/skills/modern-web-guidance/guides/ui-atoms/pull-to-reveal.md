@@ -59,7 +59,7 @@ To implement a pull-to-reveal pattern:
 
 ## Fallback Strategy
 
-scroll-initial-target has limited availability.
+Browser support for scroll-initial-target: Limited availability.
 Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
 Unsupported in: Firefox and Safari.
 

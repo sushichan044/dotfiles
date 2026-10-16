@@ -1,7 +1,7 @@
 ---
 name: bigquery-basics
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
   category: BigDataAndAnalytics
 description: >-
   Manages datasets, tables, and jobs in BigQuery. Use when you need to interact
@@ -19,36 +19,9 @@ intelligence capabilities.
 
 ## Attribution
 
-Tag every BigQuery command you execute directly in the terminal while using
-this skill, so usage can be attributed. The tag identifies only the skill and
-its version; it carries no user data.
-
-- Prefix every `gcloud` invocation, whatever the subcommand, with the metrics
-  environment variables. Set them inline on each command; shell state may not
-  persist between commands:
-
-  ```bash
-  CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:bigquery-basics)" \
-  gcloud <command> [flags]
-  ```
-
-  Do not use `gcloud config set` for this: it would persist beyond the current
-  task and mislabel unrelated usage.
-
-- On direct HTTP calls to the BigQuery APIs (for example with `curl`)
-  or HTTP requests to the MCP server, append this exact string to the
-  end of the existing User-Agent header — the collection pipeline parses
-  the `agent-skills/<version>` and `skill:<name>` tokens, so any
-  rewording breaks attribution:
-
-  ```
-  User-Agent: <existing_user_agent> agent-skills/1.0 (skill:bigquery-basics)
-  ```
-
-- **Constraint for Generated Code**: The tracking prefix is strictly for
-  commands you execute directly in the terminal. Do NOT include this tracking
-  prefix in generated scripts, Terraform templates, or code provided to the
-  user for their own repositories.
+For all `gcloud` CLI, REST API, and MCP attribution requirements when executing
+commands with this skill, follow the instructions in
+[Usage Attribution](references/attribution.md).
 
 ## Setup and Basic Usage
 
@@ -123,6 +96,9 @@ its version; it carries no user data.
 
 - [IAM & Security](references/iam-security.md): Roles, permissions, and data
   governance best practices.
+
+- [Usage Attribution](references/attribution.md): Standardized usage attribution
+  tags for `gcloud` CLI, REST API, and MCP requests.
 
 _If you need product information not found in these references, use the
 Developer Knowledge MCP server `search_documents` tool._

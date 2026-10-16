@@ -35,7 +35,7 @@ To animate an element when toggling its visibility via an attribute (e.g., `hidd
 }
 
 /* Exit animation: transition TO these values when hidden */
-.card:where(.hidden, [hidden]) {
+.card[hidden] {
   display: none;
   opacity: 0;
   translate: 0 -20px;
@@ -55,7 +55,7 @@ To animate an element when toggling its visibility via an attribute (e.g., `hidd
     }
   }
 
-  .card:where(.hidden, [hidden]) {
+  .card[hidden] {
     translate: none;
   }
 }
@@ -66,11 +66,11 @@ To animate an element when toggling its visibility via an attribute (e.g., `hidd
 For elements added via `appendChild()` or removed via `remove()`:
 
 - **Entry**: Use `@starting-style` as shown above. The browser will automatically detect the style change from "nothing" to the element's initial styles and trigger the transition from the `@starting-style` values.
-- **Removal**: Since `element.remove()` is instantaneous and doesn't trigger a CSS transition on its own, you must trigger the exit transition first (e.g., by adding a class) and wait for it to finish before removing the node from the DOM.
+- **Removal**: Since `element.remove()` is instantaneous and doesn't trigger a CSS transition on its own, you must trigger the exit transition first and wait for it to finish before removing the node from the DOM.
 
 ```javascript
-// Trigger exit transition
-element.setAttribute("hidden", true);
+// 1. Trigger exit transition
+element.hidden = true;
 
 // 2. Wait for all active transitions/animations to finish,
 //    with a failsafe timeout in case an animation never ends (e.g. for looping animations)
@@ -101,36 +101,92 @@ element.remove();
 Baseline status for @starting-style: Newly available. It's been Baseline since 2024-08-06.
 Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), Firefox 129 (Aug 2024), and Safari 17.5 (May 2024).
 
-For browsers that do not support these features, elements will toggle `display: none` instantly. You can detect support in JavaScript using `CSS.supports()` to conditionally apply manual animation logic.
+### Fallbacks & browser support for transition-behavior
+
+Baseline status for transition-behavior: Newly available. It's been Baseline since 2024-08-06.
+Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), Firefox 129 (Aug 2024), and Safari 17.4 (Mar 2024).
+
+Browser support for the css.properties.transition-behavior.transitionable_display capability: Limited availability.
+Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), and Safari 18 (Sep 2024).
+Unsupported in: Firefox.
+
+Firefox 129+ parses `transition-behavior: allow-discrete` (`CSS.supports('transition-behavior', 'allow-discrete')` returns `true`) without actually transitioning the `display` property (Firefox bug 1882408), causing elements to disappear immediately on exit.
+
+To reliably detect discrete `display` transition support, probe whether a temporary element's computed `display` remains visible when transitioned to `none` rather than relying solely on `CSS.supports('transition-behavior', 'allow-discrete')`:
 
 ```javascript
-// Detect support for discrete transitions and starting-style
-const supportsModernTransitions =
-  window.CSS && CSS.supports("transition-behavior", "allow-discrete");
-
-if (!supportsModernTransitions) {
-  // Implement manual JS-based fallback for entry/exit
+let supportsDisplayTransition;
+function canTransitionDisplay() {
+  if (supportsDisplayTransition !== undefined) return supportsDisplayTransition;
+  if (!window.CSS?.supports?.("transition-behavior", "allow-discrete") || !document.body) {
+    return false;
+  }
+  const probe = document.createElement("div");
+  // The shorthand is intentional here: browsers that don't parse allow-discrete
+  // drop the whole declaration, so display: none applies instantly and the probe
+  // correctly returns false. !important guards against global reduced-motion
+  // resets like `* { transition: none !important }`.
+  probe.style.cssText = "transition: display 1s allow-discrete !important; display: block;";
+  document.body.appendChild(probe);
+  getComputedStyle(probe).display;
+  probe.style.display = "none";
+  supportsDisplayTransition = getComputedStyle(probe).display === "block";
+  probe.remove();
+  return supportsDisplayTransition;
 }
 ```
 
-### Manual Entry Animation (JS Fallback)
+### Exit fallback when discrete `display` transitions are unsupported
+
+Entry animations using `@starting-style` work across all modern browsers without JavaScript. When discrete `display` transitions are unsupported (`!canTransitionDisplay()`), setting `hidden` applies `display: none` immediately and skips the exit animation (both when hiding and before `element.remove()`). Separate the visual exit state (`[data-closing]`) from `display: none` (`[hidden]`) so `opacity` and `translate` finish animating before hiding or removing the element. Replace the `.card[hidden]` rules from step 1 (including the `prefers-reduced-motion` override) with:
+
+```css
+.card:where([hidden], [data-closing]) {
+  opacity: 0;
+  translate: 0 -20px;
+}
+
+.card[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:where([hidden], [data-closing]) {
+    translate: none;
+  }
+}
+```
 
 ```javascript
-// To show:
-el.style.display = "";
-requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    el.classList.remove("hidden");
-  });
-});
+async function hideElement(el) {
+  if (canTransitionDisplay()) {
+    el.hidden = true;
+  } else {
+    el.setAttribute("data-closing", "");
+  }
 
-// To hide:
-el.setAttribute("hidden", true);
-el.addEventListener(
-  "transitionend",
-  () => {
-    if (el.classList.contains("hidden")) el.style.display = "none";
-  },
-  { once: true },
-);
+  const animations = el.getAnimations();
+  if (animations.length > 0) {
+    await Promise.race([
+      Promise.allSettled(animations.map((a) => a.finished)),
+      new Promise((r) => setTimeout(r, 2000)),
+    ]);
+  }
+
+  // Skipped if showElement() cancelled the close mid-animation.
+  if (el.hasAttribute("data-closing")) {
+    el.removeAttribute("data-closing");
+    el.hidden = true;
+  }
+}
+
+function showElement(el) {
+  el.removeAttribute("data-closing");
+  el.hidden = false;
+}
+
+async function removeElement(el) {
+  await hideElement(el);
+  el.remove();
+}
 ```

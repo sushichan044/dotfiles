@@ -101,7 +101,7 @@ If you need to change properties on the container itself (like `margin` or `back
 
 ## Fallback strategies
 
-Anchor position container queries has limited availability.
+Browser support for Anchor position container queries: Limited availability.
 Supported by: Chrome 143 (Dec 2025) and Edge 143 (Dec 2025).
 Unsupported in: Firefox and Safari.
 

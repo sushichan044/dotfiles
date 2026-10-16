@@ -39,7 +39,7 @@ MANDATORY: Use `:autofill` as this is the correct pseudo-class name.
 
 ### Fallback strategies
 
-:autofill has limited availability.
+Browser support for :autofill: Limited availability.
 Supported by: Chrome 110 (Feb 2023), Edge 110 (Feb 2023), and Safari 15 (Sep 2021).
 Unsupported in: Firefox.
 

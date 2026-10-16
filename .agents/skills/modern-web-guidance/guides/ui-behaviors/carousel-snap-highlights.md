@@ -98,7 +98,7 @@ Snapping occurs due to scrolling, which does not move keyboard focus. However, k
 
 ## Fallback strategies
 
-Container scroll-state queries has limited availability.
+Browser support for Container scroll-state queries: Limited availability.
 Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
 Unsupported in: Firefox and Safari.
 

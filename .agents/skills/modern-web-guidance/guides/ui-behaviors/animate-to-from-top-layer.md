@@ -54,11 +54,10 @@ dialog,
 dialog::backdrop,
 [popover]::backdrop {
   background-color: rgba(0, 0, 0, 0);
-  /* The transition shorthand can also be used with allow-discrete */
-  transition:
-    display 0.3s allow-discrete,
-    overlay 0.3s allow-discrete,
-    background-color 0.3s ease-out;
+  transition-property: background-color, display, overlay;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
 }
 
 dialog[open]::backdrop,
@@ -98,33 +97,109 @@ dialog[open]::backdrop,
 
 ## Fallback strategies
 
-### Top-layer animation features
-
 Baseline status for @starting-style: Newly available. It's been Baseline since 2024-08-06.
 Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), Firefox 129 (Aug 2024), and Safari 17.5 (May 2024).
+
+Browser support for overlay: Limited availability.
+Supported by: Chrome 117 (Sep 2023) and Edge 117 (Sep 2023).
+Unsupported in: Firefox and Safari.
+
+### Fallbacks & browser support for transition-behavior
 
 Baseline status for transition-behavior: Newly available. It's been Baseline since 2024-08-06.
 Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), Firefox 129 (Aug 2024), and Safari 17.4 (Mar 2024).
 
-overlay has limited availability.
-Supported by: Chrome 117 (Sep 2023) and Edge 117 (Sep 2023).
-Unsupported in: Firefox and Safari.
+Browser support for the css.properties.transition-behavior.transitionable_display capability: Limited availability.
+Supported by: Chrome 117 (Sep 2023), Edge 117 (Sep 2023), and Safari 18 (Sep 2024).
+Unsupported in: Firefox.
 
-For browsers that do not support these features, top-layer elements will appear and disappear instantly. To provide animations in older browsers, you must use JavaScript to coordinate classes and wait for `transitionend` events or use the Web Animations API.
+Firefox 129+ parses `transition-behavior: allow-discrete` (`CSS.supports('transition-behavior', 'allow-discrete')` returns `true`) without actually transitioning the `display` property (Firefox bug 1882408), causing elements to disappear immediately on exit.
+
+To reliably detect discrete `display` transition support, probe whether a temporary element's computed `display` remains visible when transitioned to `none` rather than relying solely on `CSS.supports('transition-behavior', 'allow-discrete')`:
 
 ```javascript
-// Feature detection for top-layer animations
-const supportsTopLayerAnimation =
-  window.CSS &&
-  CSS.supports("transition-behavior", "allow-discrete") &&
-  CSS.supports("overlay", "auto");
-
-if (!supportsTopLayerAnimation) {
-  // Manual JS fallback for entry/exit animations:
-  // 1. Add an `.is-opening` class for entry.
-  // 2. On close, add an `.is-closing` class, wait for the `transitionend` event, then call .close() or hide the popover.
+let supportsDisplayTransition;
+function canTransitionDisplay() {
+  if (supportsDisplayTransition !== undefined) return supportsDisplayTransition;
+  if (!window.CSS?.supports?.("transition-behavior", "allow-discrete") || !document.body) {
+    return false;
+  }
+  const probe = document.createElement("div");
+  // The shorthand is intentional here: browsers that don't parse allow-discrete
+  // drop the whole declaration, so display: none applies instantly and the probe
+  // correctly returns false. !important guards against global reduced-motion
+  // resets like `* { transition: none !important }`.
+  probe.style.cssText = "transition: display 1s allow-discrete !important; display: block;";
+  document.body.appendChild(probe);
+  getComputedStyle(probe).display;
+  probe.style.display = "none";
+  supportsDisplayTransition = getComputedStyle(probe).display === "block";
+  probe.remove();
+  return supportsDisplayTransition;
 }
 ```
+
+### Top-layer exit fallback
+
+Entry animations work in pure CSS across all browsers that support `@starting-style`—no `.is-opening` class is needed because entry transitions do not depend on `overlay` or discrete `display` transitions.
+
+Exit animations require both `overlay` and discrete `display` transition support. When either is unsupported (such as in Firefox and Safari), wrap the open-state selectors in `:is()` and append `:where(:not([data-closing]))` (nesting `&::backdrop` and `@starting-style`) so setting `data-closing` triggers the exit transition while the element remains in the top layer, then wait for `getAnimations()` to settle before calling `.close()` or `.hidePopover()`:
+
+```css
+:is(dialog[open], [popover]:popover-open):where(:not([data-closing])) {
+  opacity: 1;
+  transform: scale(1);
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
+
+    @starting-style {
+      background-color: transparent;
+    }
+  }
+}
+```
+
+```javascript
+// Evaluate lazily: canTransitionDisplay() needs document.body, so a top-level
+// const would be permanently false if this script runs in <head>.
+function supportsTopLayerExit() {
+  return window.CSS?.supports?.("overlay", "auto") && canTransitionDisplay();
+}
+
+async function closeTopLayer(element) {
+  if (!supportsTopLayerExit()) {
+    element.setAttribute("data-closing", "");
+    const animations = element.getAnimations({ subtree: true });
+    if (animations.length > 0) {
+      await Promise.race([
+        Promise.allSettled(animations.map((a) => a.finished)),
+        new Promise((r) => setTimeout(r, 2000)),
+      ]);
+    }
+    if (!element.hasAttribute("data-closing")) return;
+    element.removeAttribute("data-closing");
+  }
+
+  element.close();
+  // Or for popover:
+  // element.hidePopover();
+}
+
+// Route native close requests (Esc, closedby light dismiss) through the same
+// helper so they animate too, instead of closing instantly.
+dialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeTopLayer(dialog);
+});
+```
+
+Popover light dismiss and `popovertarget` toggles cannot be intercepted (`beforetoggle` is only cancelable when opening), so in browsers that need the fallback those exits are instant. Provide an explicit close control that calls `closeTopLayer()` if the exit animation matters.
 
 ### Fallbacks & browser support for Popover
 

@@ -122,7 +122,7 @@ This example shows a rule set that prefetches all links eagerly, and then goes f
 
 ## Browser support and fallback strategies
 
-Speculation rules has limited availability.
+Browser support for Speculation rules: Limited availability.
 Supported by: Chrome 109 (Jan 2023) and Edge 109 (Jan 2023).
 Unsupported in: Firefox and Safari.
 

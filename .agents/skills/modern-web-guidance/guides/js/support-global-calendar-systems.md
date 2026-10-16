@@ -75,7 +75,7 @@ const localizedDisplay = targetDate.toLocaleString("en-u-ca-hebrew", {
 
 ## Fallback Strategy
 
-Temporal has limited availability.
+Browser support for Temporal: Limited availability.
 Supported by: Chrome 144 (Jan 2026), Edge 144 (Jan 2026), and Firefox 139 (May 2025).
 Unsupported in: Safari.
 

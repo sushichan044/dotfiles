@@ -68,7 +68,7 @@ Use the `@container` rule with the `scroll-state` function. Check if the contain
 
 ## Fallback strategies
 
-Container scroll-state queries has limited availability.
+Browser support for Container scroll-state queries: Limited availability.
 Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
 Unsupported in: Firefox and Safari.
 

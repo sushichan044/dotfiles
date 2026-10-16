@@ -11,7 +11,7 @@ Use the `sibling-index()` property on the `animation-delay` property so that the
   --stagger-time: 0.1s;
   /* Define the animation first */
   animation: fade-in 0.4s;
-  /* Set the `animation-delay` to a time multipled by the `sibling-index()` */
+  /* Set the `animation-delay` to a time multiplied by the `sibling-index()` */
   animation-delay: calc(sibling-index() * var(--stagger-time));
 }
 ```
@@ -30,7 +30,7 @@ Use the `sibling-index()` property on the `animation-delay` property so that the
 ## Fallback strategies
 
 Baseline status for sibling-count() and sibling-index(): Newly available. It's been Baseline since 2026-08-18.
-Supported by: Chrome 138 (Jun 2025), Edge 138 (Jun 2025), Firefox 154, and Safari 26.2 (Dec 2025).
+Supported by: Chrome 138 (Jun 2025), Edge 138 (Jun 2025), Firefox 154 (Aug 2026), and Safari 26.2 (Dec 2025).
 
 Test for support for `sibling-index()` using CSS with `@supports (animation-delay: calc(sibling-index() * 0.1s)){}` or JavaScript with `!CSS.supports('animation-delay: calc(sibling-index() * 0.1s)')`.
 

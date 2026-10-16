@@ -38,7 +38,7 @@ class MyCustomElement extends HTMLElement {
 
 ### Fallback strategies
 
-moveBefore() has limited availability.
+Browser support for moveBefore(): Limited availability.
 Supported by: Chrome 133 (Feb 2025), Edge 133 (Feb 2025), and Firefox 144 (Oct 2025).
 Unsupported in: Safari.
 

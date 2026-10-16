@@ -28,19 +28,19 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/bigquery-basics/SKILL.md",
-      "computedHash": "a4b9c317d8bc354f2e08ad768c061f22fde08025d2d7063d7f728946f0d49698"
+      "computedHash": "623d55b71e5ada1a3bc2fea2ec2856bf7ab2933c9110d72ad0739261a7b764e8"
     },
     "cloud-logging-configuration-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-configuration-basics/SKILL.md",
-      "computedHash": "486bbaa1ba146f539ef2edeee4b6f982f49a4dc5fbd1a8b80d113bc6d8458946"
+      "computedHash": "7c317c0ed9506b62b1a361aba6640917cf7ff575fbb84d0e624a7705a643ba65"
     },
     "cloud-logging-query-generation": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-query-generation/SKILL.md",
-      "computedHash": "0ff4a253c1ace2f5d73dfc84453a364b669a201acf4e8b2b7bb21819a08dfb05"
+      "computedHash": "dffc5cda98a3025db64f8d60c5d0ec1b0d379b29638ec3d39aa947a2072b9ca1"
     },
     "cloud-run-basics": {
       "source": "google/skills",
@@ -70,13 +70,13 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/gcloud/SKILL.md",
-      "computedHash": "d51f9a8502005dbf43db2e84db6832a14195196accd22790d03401248a2e85cb"
+      "computedHash": "8c6ef3bac2e79d70a48010c9637eef9b7a0c871361a2ded9b2bdc97c9047a83f"
     },
     "gh-stack": {
       "source": "github/gh-stack",
       "sourceType": "github",
       "skillPath": "skills/gh-stack/SKILL.md",
-      "computedHash": "28d42250d52f33424b807add6fbdec75736e835f98752311db321ab51733fea6"
+      "computedHash": "6a5289601eedbeedc2d79c2d8627277afb9b9a3fbd78b4da3399a46dd788ae0a"
     },
     "golang-benchmark": {
       "source": "samber/cc-skills-golang",
@@ -220,7 +220,7 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-cost-optimization/SKILL.md",
-      "computedHash": "a5b30c0478b7147c0b090e997c67cc011cfa0f24aed6229c6f1aa1bfd367121c"
+      "computedHash": "694ea3303304057ce1ca3f1ef0821b681d25a7f56120715dd0cb0e94297dc25c"
     },
     "google-cloud-waf-performance-optimization": {
       "source": "google/skills",
@@ -250,13 +250,13 @@
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/grilling/SKILL.md",
-      "computedHash": "4dd886b0196bf43729d954ae326016f2bd9f5f79d892500b407c33a753362f14"
+      "computedHash": "ef1641a2047b71b60f1942cd35efb47d3afc9d584dff5a0b01f8c7db923aaa08"
     },
     "modern-web-guidance": {
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "7350ef15ed8febd35f1a15750e57418eac6656b7e86259e7796aa5e7972af60c"
+      "computedHash": "813274e05233f139ad0bc5f67ce7c4c524b4c81c672f9ff7905957b3a09b46b4"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -268,13 +268,13 @@
       "source": "coji/natural-japanese",
       "sourceType": "github",
       "skillPath": "skills/natural-japanese/SKILL.md",
-      "computedHash": "2cbc03e78e7533e2baa502b37b58db5dae91dcdb3fa991e02f57d3c6c6805964"
+      "computedHash": "c8b7a88666cb9ca03e0b3d63441b3b2f60826df5a1a7cf058bc26a23ee2c58ee"
     },
     "neki": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
       "skillPath": "skills/neki/SKILL.md",
-      "computedHash": "0b082f18bf7492ee0abb055233c173af9dffd41b0703b2fc9404add679ba1169"
+      "computedHash": "917ffd07cd75336d806669de66201c3614eb61ab4164a7bd16d9f1411edc1f9c"
     },
     "postgres": {
       "source": "planetscale/database-skills",
@@ -339,8 +339,8 @@
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
       "sourceType": "github",
-      "skillPath": "SKILL.md",
-      "computedHash": "030428b1065553d7110e16e73dd0310919dee39649c06228e4c498d7c6209003"
+      "skillPath": "skills/yomiyasu/SKILL.md",
+      "computedHash": "6cc4c41247ae5bfdb0d542cfd381a3522fc7555ba5c4ecbb570f4511ec6793ae"
     }
   }
 }

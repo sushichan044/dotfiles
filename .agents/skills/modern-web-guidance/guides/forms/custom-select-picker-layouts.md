@@ -145,7 +145,7 @@ Otherwise, it may be ultimately necessary to switch to a custom solution using t
 
 ### Fallbacks & browser support for Customizable <select>
 
-Customizable <select> has limited availability.
+Browser support for Customizable <select>: Limited availability.
 Supported by: Chrome 135 (Apr 2025), Edge 135 (Apr 2025), and Safari 27.
 Unsupported in: Firefox.
 

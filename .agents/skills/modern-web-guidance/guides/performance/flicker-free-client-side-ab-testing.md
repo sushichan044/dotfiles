@@ -97,7 +97,7 @@ If the experiment logic is lightweight enough to inline, use an inline module sc
 
 ## Fallback Strategies
 
-blocking="render" has limited availability.
+Browser support for blocking="render": Limited availability.
 Supported by: Chrome 105 (Sep 2022), Edge 105 (Sep 2022), and Safari 18.2 (Dec 2024).
 Unsupported in: Firefox.
 

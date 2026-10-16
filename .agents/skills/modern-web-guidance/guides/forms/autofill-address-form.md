@@ -68,7 +68,7 @@ Add the `required` attribute to mandatory fields.
 
 ### Fallback strategies
 
-:autofill has limited availability.
+Browser support for :autofill: Limited availability.
 Supported by: Chrome 110 (Feb 2023), Edge 110 (Feb 2023), and Safari 15 (Sep 2021).
 Unsupported in: Firefox.
 

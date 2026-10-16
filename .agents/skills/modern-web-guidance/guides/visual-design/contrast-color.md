@@ -101,7 +101,7 @@ Supported by: Chrome 4 (Jan 2010), Edge 15 (Apr 2017), Firefox 49 (Sep 2016), Sa
 
 #### Option 2: Text Stroke with `paint-order` to preserve letterforms
 
-Baseline status for paint-order: Newly available. It's been Baseline since 2024-03-22.
+Baseline status for paint-order: Widely available. It's been Baseline since 2024-03-22.
 Supported by: Chrome 123 (Mar 2024), Edge 123 (Mar 2024), Firefox ≤66, and Safari ≤12.
 
 ```css

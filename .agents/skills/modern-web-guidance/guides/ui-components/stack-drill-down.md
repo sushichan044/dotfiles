@@ -625,7 +625,7 @@ The features that may require fallbacks are scroll-snap-events and scroll-driven
 
 #### Scroll snap events
 
-Scroll snap events has limited availability.
+Browser support for Scroll snap events: Limited availability.
 Supported by: Chrome 129 (Sep 2024) and Edge 129 (Sep 2024).
 Unsupported in: Firefox and Safari.
 
@@ -675,7 +675,7 @@ if (!("onscrollsnapchange" in HTMLElement.prototype)) {
 
 #### Scroll-driven animations
 
-Scroll-driven animations has limited availability.
+Browser support for Scroll-driven animations: Limited availability.
 Supported by: Chrome 115 (Jul 2023), Edge 115 (Jul 2023), and Safari 26 (Sep 2025).
 Unsupported in: Firefox.
 

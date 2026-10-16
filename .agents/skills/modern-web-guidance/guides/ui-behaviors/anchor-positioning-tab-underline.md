@@ -83,7 +83,7 @@ This is only a visual indicator, and must not be a replacement for setting the a
 
 ## Fallback strategies
 
-Anchor positioning has limited availability.
+Browser support for Anchor positioning: Limited availability.
 Supported by: Safari 27.
 Unsupported in: Chrome, Edge, and Firefox.
 

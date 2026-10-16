@@ -347,7 +347,7 @@ This optimizes responsiveness and efficient use of local compute.
 
 ## 6. Fallback strategies
 
-LanguageModel has limited availability.
+Browser support for LanguageModel: Limited availability.
 Supported by: Chrome 148 (May 2026).
 Unsupported in: Edge, Firefox, and Safari.
 

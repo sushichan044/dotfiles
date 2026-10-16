@@ -4,6 +4,8 @@ Swipe-to-remove patterns are common in mobile applications but can be challengin
 
 The same pattern works for any single-action swipe (remove, archive, mark as read, snooze). The action visuals change; the mechanics do not.
 
+> If you instead want a horizontal swipe to snap open a set of action buttons or a side menu **without** automatically committing an action during the swipe, see `swipe-to-reveal` (via `npx -y modern-web-guidance@latest retrieve "swipe-to-reveal"`).
+
 ## How to implement
 
 The component has two layers: a **list** (the `<ul>`) and the **items** inside it. Each item is structured as an outer `<li>`, an inner scroll **track** (the scroll container with the snap points), and a **content** element (the visible row). The action's revealed UI (trash icon, archive label, etc.) lives on either side of the content. The list owns shared wiring (lazy item setup, picking up newly added items); each item owns its own swipe detection.
@@ -468,7 +470,7 @@ All newer features that are used are either not core to the experience or have r
 
 ### Fallback for `overscroll-behavior`
 
-overscroll-behavior has limited availability.
+Browser support for overscroll-behavior: Limited availability.
 Supported by: Chrome 144 (Jan 2026), Edge 144 (Jan 2026), and Firefox 150 (Apr 2026).
 Unsupported in: Safari.
 
@@ -483,7 +485,7 @@ Hidden scrollbars are a visual enhancement, not the mechanism that makes swipe-t
 
 ### Fallback for `scroll-initial-target`
 
-scroll-initial-target has limited availability.
+Browser support for scroll-initial-target: Limited availability.
 Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
 Unsupported in: Firefox and Safari.
 
