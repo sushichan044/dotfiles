@@ -23,7 +23,7 @@
         "valibot": "1.5.0",
       },
       "devDependencies": {
-        "@opencode/plugin": "2.1.2",
+        "@opencode/plugin": "2.1.3",
         "@types/bun": "1.4.3",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -177,17 +177,17 @@
 
     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "https://npm.flatt.tech/@npmcli/run-script/-/run-script-10.0.4.tgz", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
 
-    "@opencode/ai": ["@opencode/ai@2.1.2", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.1.2", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-I2LeTbMRDmVtSWaIF2B0mwQitEHHg89fL28LdWQVec6z9SeFrx7WpEry5rxvYGKPvut8Mz7Kz+XCnVX/xhhcKg=="],
+    "@opencode/ai": ["@opencode/ai@2.1.3", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.1.3", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RAfVsO0RoPrUlx8b5jeafPWPvFpM1oJBq1lXVo0JNyGjb9r6+IJhTQDNanQcADsFoMhnx5Kk7VWn6VUgfzOCEQ=="],
 
-    "@opencode/client": ["@opencode/client@2.1.2", "", { "dependencies": { "@opencode/protocol": "2.1.2", "@opencode/schema": "2.1.2" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-c7FqI/zMy6HrdVGHynzouiz3y1smokGuimh2+Is2iVWz8I8VzJEty9eTrvQkQzXG1Hj5K2FL1K5fytQ7yJEd9w=="],
+    "@opencode/client": ["@opencode/client@2.1.3", "", { "dependencies": { "@opencode/protocol": "2.1.3", "@opencode/schema": "2.1.3" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-7hj4Z4TtszUTmpM7BSIssAYMO3dfcu9c5mHwpC0nDGQImkdSo6mTcNnjtSt0I9v6yjiz3vuQNCOChg0z7Ccyyw=="],
 
-    "@opencode/plugin": ["@opencode/plugin@2.1.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.1.2", "@opencode/client": "2.1.2", "@opencode/protocol": "2.1.2", "@opencode/schema": "2.1.2", "@opencode/util": "2.1.2", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.1.2", "@opentui/core": ">=0.6.6", "@opentui/solid": ">=0.6.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-vgGoLF/Kb7uyOsRmAHViN7BRPrAl0c3UVqvKQ/ZDl42IKzqsxedpAyoVpwxQHt+3LF6non2sOvi6Y+kKzDHheg=="],
+    "@opencode/plugin": ["@opencode/plugin@2.1.3", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.1.3", "@opencode/client": "2.1.3", "@opencode/protocol": "2.1.3", "@opencode/schema": "2.1.3", "@opencode/util": "2.1.3", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.1.3", "@opentui/core": ">=0.6.6", "@opentui/solid": ">=0.6.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-b4TcGruVXrcmxQjdBieMCw0i+GOe/+0xUnNPLKbLOSq0PEwMjBsif/W73FsdZVo5O0LJq//s1+JbKhz8RpGSFA=="],
 
-    "@opencode/protocol": ["@opencode/protocol@2.1.2", "", { "dependencies": { "@opencode/schema": "2.1.2", "effect": "4.0.1" } }, "sha512-dNJuZrJlcUnc3mP7GFoawXECpUoUA+1TEbXvXkFKteq9tpZbO5Qsi1AWqocRJH2cIfG8v5rddyBTyX4+0ax9Yw=="],
+    "@opencode/protocol": ["@opencode/protocol@2.1.3", "", { "dependencies": { "@opencode/schema": "2.1.3", "effect": "4.0.1" } }, "sha512-OAaP6aaemBJVda3gYSgMPxmOmlMvlDtqCfUYtS1KN7pMAGb973qZ6a3u4ATg9LJuiIyR96ydBdbwB+c9JbB0gQ=="],
 
-    "@opencode/schema": ["@opencode/schema@2.1.2", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "sha512-gYbneOINd0Tt41krlC79OWjcXMPlW9EjIR+tmG3EYD8SEA4xCdZh0WhZLrFDlLMKDcb6d9xeHTFwhqGACt0IRg=="],
+    "@opencode/schema": ["@opencode/schema@2.1.3", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "sha512-TsAKqJvdyGgYR8XlbGBu2SAl23Czf92z1U2RD95O72lf78qUCBYbaHoN0gNZz5K6RdKiv7yI1h1zk2nk4nWSPw=="],
 
-    "@opencode/util": ["@opencode/util@2.1.2", "", { "dependencies": { "@effect/opentelemetry": "4.0.1", "@effect/platform-node": "4.0.1", "@effect/platform-node-shared": "4.0.1", "@npmcli/arborist": "9.4.0", "@npmcli/config": "10.8.1", "@opentelemetry/api": "1.9.0", "@opentelemetry/api-logs": "0.219.0", "@opentelemetry/context-async-hooks": "2.8.0", "@opentelemetry/exporter-trace-otlp-http": "0.219.0", "@opentelemetry/resources": "2.8.0", "@opentelemetry/sdk-logs": "0.219.0", "@opentelemetry/sdk-metrics": "2.8.0", "@opentelemetry/sdk-trace-base": "2.8.0", "@opentelemetry/sdk-trace-node": "2.8.0", "cross-spawn": "7.0.6", "effect": "4.0.1", "glob": "13.0.5", "mime-types": "3.0.2", "minimatch": "10.2.5", "npm-package-arg": "13.0.2", "open": "11.0.4", "pacote": "21.5.1" } }, "sha512-9uyLAnOSgVRN6NLWEMcwXDmLl+n3FKbXxmAaZVC1l5zBPKEGvc9PKa8KG9Kar7n3iGSPRk6R/JhW/j9s0ciNEQ=="],
+    "@opencode/util": ["@opencode/util@2.1.3", "", { "dependencies": { "@effect/opentelemetry": "4.0.1", "@effect/platform-node": "4.0.1", "@effect/platform-node-shared": "4.0.1", "@npmcli/arborist": "9.4.0", "@npmcli/config": "10.8.1", "@opentelemetry/api": "1.9.0", "@opentelemetry/api-logs": "0.219.0", "@opentelemetry/context-async-hooks": "2.8.0", "@opentelemetry/exporter-trace-otlp-http": "0.219.0", "@opentelemetry/resources": "2.8.0", "@opentelemetry/sdk-logs": "0.219.0", "@opentelemetry/sdk-metrics": "2.8.0", "@opentelemetry/sdk-trace-base": "2.8.0", "@opentelemetry/sdk-trace-node": "2.8.0", "cross-spawn": "7.0.6", "effect": "4.0.1", "glob": "13.0.5", "mime-types": "3.0.2", "minimatch": "10.2.5", "npm-package-arg": "13.0.2", "open": "11.0.4", "pacote": "21.5.1" } }, "sha512-aFygelb1I2CvtMQsYlPf0GqC8Z7KVv36J8TmAr2tqp2IA06k3umfYSncaNyvGClPTnHkUh/SrW6JxYonisNAFg=="],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.9.0", "https://npm.flatt.tech/@opentelemetry/api/-/api-1.9.0.tgz", {}, "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg=="],
 
