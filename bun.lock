@@ -18,7 +18,7 @@
         "pathe": "2.0.3",
         "picocolors": "1.1.1",
         "shell-quote": "1.12.0",
-        "temporal-polyfill-lite": "0.4.3",
+        "temporal-polyfill-lite": "1.0.0",
         "unist-util-visit": "5.1.0",
         "valibot": "1.5.0",
       },
@@ -1109,7 +1109,7 @@
 
     "tar": ["tar@7.5.22", "https://npm.flatt.tech/tar/-/tar-7.5.22.tgz", { "dependencies": { "@isaacs/fs-minipass": "^4.0.0", "chownr": "^3.0.0", "minipass": "^7.1.2", "minizlib": "^3.1.0", "yallist": "^5.0.0" } }, "sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA=="],
 
-    "temporal-polyfill-lite": ["temporal-polyfill-lite@0.4.3", "https://npm.flatt.tech/temporal-polyfill-lite/-/temporal-polyfill-lite-0.4.3.tgz", {}, "sha512-Lw/de9tydKmrU0icQy6Z+abX5mzDk4iqyt6Xp2iDDxY6SGISiuhuP3TcfWlYveM1FN1I7FjT5nG+Kh9eCiSnVg=="],
+    "temporal-polyfill-lite": ["temporal-polyfill-lite@1.0.0", "", {}, "sha512-dC6ITb3X/JgPN+kbhi4MFsVHMgWPBIE5BS9GlwF8cTlGyXaW229HKQxjOfdBI2tE8f2VcbyUAFwS6TzVmR1Wqw=="],
 
     "tinybench": ["tinybench@6.2.2", "https://npm.flatt.tech/tinybench/-/tinybench-6.2.2.tgz", {}, "sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA=="],
 
