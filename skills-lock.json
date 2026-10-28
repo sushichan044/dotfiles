@@ -11,7 +11,7 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/alloydb-basics/SKILL.md",
-      "computedHash": "49c4fd69aaf221ef1cf8684541d63847eacce7556f42f03e3eff1393205246a8"
+      "computedHash": "b96d800fbf8a5d9c5321a089c5fcb5bbaad460a92aab6a5714847674e7c9ebdb"
     },
     "animate": {
       "source": "pbakaus/impeccable",
@@ -28,31 +28,31 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/bigquery-basics/SKILL.md",
-      "computedHash": "623d55b71e5ada1a3bc2fea2ec2856bf7ab2933c9110d72ad0739261a7b764e8"
+      "computedHash": "e891bf45a3ec599a6652170d6d0443369c609f891dca39237627727ab738b983"
     },
     "cloud-logging-configuration-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-configuration-basics/SKILL.md",
-      "computedHash": "7c317c0ed9506b62b1a361aba6640917cf7ff575fbb84d0e624a7705a643ba65"
+      "computedHash": "1a84d08787c8ac1e549e7736a831cabef366695351b84c6f76ca343682cbcd02"
     },
     "cloud-logging-query-generation": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-query-generation/SKILL.md",
-      "computedHash": "dffc5cda98a3025db64f8d60c5d0ec1b0d379b29638ec3d39aa947a2072b9ca1"
+      "computedHash": "bbcd604f8667db9e4cf77f6057fa91ad937513ba4af1e7e41d4f2cfe652196d1"
     },
     "cloud-run-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-run-basics/SKILL.md",
-      "computedHash": "a0446f5d1ce8edcb6413b34b7ee5f9a50941f7813dc12a650b258dd6f5435c50"
+      "computedHash": "0c1323791e24cc34e977e7b4f41b016863c0faec9dc855a590db402dfb3ab7c5"
     },
     "cloud-sql-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-sql-basics/SKILL.md",
-      "computedHash": "8ecb5a62339b8a9f1474ed98f78a35c3071a450c03ddb90096aa18fa45b447b9"
+      "computedHash": "7e9e276b9c12acbfe0126c118d73082a4e5d248b91d488a302757d1dea2edd32"
     },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
@@ -70,13 +70,13 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/gcloud/SKILL.md",
-      "computedHash": "8c6ef3bac2e79d70a48010c9637eef9b7a0c871361a2ded9b2bdc97c9047a83f"
+      "computedHash": "f9bedf763490d4c446c315cc988c38fd6f2aed8a3b17d797adf99dbca48442f1"
     },
     "gh-stack": {
       "source": "github/gh-stack",
       "sourceType": "github",
       "skillPath": "skills/gh-stack/SKILL.md",
-      "computedHash": "6a5289601eedbeedc2d79c2d8627277afb9b9a3fbd78b4da3399a46dd788ae0a"
+      "computedHash": "e54bf50370987f13ca2803b3be829f36350b68a79dc36ffd3b27350bc6d2fde1"
     },
     "golang-benchmark": {
       "source": "samber/cc-skills-golang",
@@ -88,7 +88,7 @@
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-cli/SKILL.md",
-      "computedHash": "96b9f4023920ad11434d2e75895371bd583baf7e149fe1a02d45a083013313e1"
+      "computedHash": "24db08f64df0fba352d24ebd23188ce6a697cd22387081f618bf170f67931808"
     },
     "golang-code-style": {
       "source": "samber/cc-skills-golang",
@@ -220,31 +220,31 @@
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-cost-optimization/SKILL.md",
-      "computedHash": "694ea3303304057ce1ca3f1ef0821b681d25a7f56120715dd0cb0e94297dc25c"
+      "computedHash": "741225d89091acd165cbd421ae43b9aee8d1086a84002aeb15ac7569a61ab002"
     },
     "google-cloud-waf-performance-optimization": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-performance-optimization/SKILL.md",
-      "computedHash": "4382e388937dbe9f77942158e850a6ef8ca0b04e65b72d2cb340e8796164f9bd"
+      "computedHash": "22f122556c1f2b9c81bb0e86ca01aee10002a58345cee407f171ac400566d335"
     },
     "google-cloud-waf-reliability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-reliability/SKILL.md",
-      "computedHash": "9881cb7be2be2556635c87daa280ac1df652a430997b113c7a1b630ff0c07e14"
+      "computedHash": "559973663110e2f12feef00f7c4d32038ae65637ac39c2e425a934210698df0f"
     },
     "google-cloud-waf-security": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-security/SKILL.md",
-      "computedHash": "ab0c355c033001b7ec182705a1c0c5a1255a22c3fb0ef269ce53c3e16f63bcf3"
+      "computedHash": "718c219336d4c390c45168b3624fb5946cc5a85040d02ad95fdf33878d0690d3"
     },
     "google-cloud-waf-sustainability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-sustainability/SKILL.md",
-      "computedHash": "9c234b8e25ec53bce5ac9cb248a192b0fead2206dacc103e6556dbc1b6731b99"
+      "computedHash": "c35ff26b1f6ab3257ae9d42be69625cd0c6136f3874a115473447a50c7f93130"
     },
     "grilling": {
       "source": "mattpocock/skills",
@@ -256,7 +256,7 @@
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "813274e05233f139ad0bc5f67ce7c4c524b4c81c672f9ff7905957b3a09b46b4"
+      "computedHash": "8e91867cc20dda14251c78c8d905847314c8c196557e1181d586a456cddcb5dc"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -268,7 +268,7 @@
       "source": "coji/natural-japanese",
       "sourceType": "github",
       "skillPath": "skills/natural-japanese/SKILL.md",
-      "computedHash": "c8b7a88666cb9ca03e0b3d63441b3b2f60826df5a1a7cf058bc26a23ee2c58ee"
+      "computedHash": "9e8f063bb21017858a56047962fada4c007f9a166c349acbc88b15e6131a870d"
     },
     "neki": {
       "source": "planetscale/database-skills",
@@ -340,7 +340,7 @@
       "source": "nanaism/yomiyasu",
       "sourceType": "github",
       "skillPath": "skills/yomiyasu/SKILL.md",
-      "computedHash": "6cc4c41247ae5bfdb0d542cfd381a3522fc7555ba5c4ecbb570f4511ec6793ae"
+      "computedHash": "d339749e69e67a3979a902a1ffb481f93492bf1ab9375557e26fbf7102af9463"
     }
   }
 }

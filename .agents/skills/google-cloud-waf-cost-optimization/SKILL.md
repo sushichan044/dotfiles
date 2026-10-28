@@ -1,12 +1,18 @@
 ---
 name: google-cloud-waf-cost-optimization
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   category: WellArchitectedFramework
 description: Evaluates Google Cloud workloads for cost efficiency and FinOps alignment using the Google Cloud Well-Architected Framework Cost Optimization pillar. Use when the user asks to analyze Google Cloud spend, reduce cloud bills, rightsize resources (for example, Compute, GKE, Storage, Databases), evaluate discount options (for example, CUDs, SUDs, Spot VMs), or eliminate idle capacity. Do not use for standalone product pricing lookups or non-cost architecture design.
 ---
 
 # Google Cloud Well-Architected Framework skill for the Cost Optimization pillar
+
+## Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read and follow the instructions in
+[Usage Attribution](references/attribution.md).
 
 ## Overview
 

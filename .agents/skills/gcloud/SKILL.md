@@ -1,7 +1,7 @@
 ---
 name: gcloud
 metadata:
-  version: "1.0.0"
+  version: "1.0.3"
   category: CloudInfrastructureAndServices
 description: >-
   Provides safety-critical validation, guardrails, and data reduction for gcloud
@@ -72,6 +72,19 @@ This document provides essential guidelines and best practices for AI agents
 interacting with the Google Cloud SDK (`gcloud` CLI). Following these rules is
 critical to avoid hallucinated commands, flags, flag values, and positional
 argument syntax, prevent destructive actions, and minimize context window usage.
+
+## Usage Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read and follow the instructions in
+[Usage Attribution](references/attribution.md). If a more specific product or
+domain skill (e.g., `cloud-run-basics`, `bigquery-basics`, `gke-basics`) is
+also loaded or active for the current task, **ALWAYS** use that specific
+skill's `skill:<name>` attribution tag instead of `skill:gcloud`. For commands
+executed directly in the terminal when no product-specific skill applies (never
+in generated scripts, Terraform, or user code), prefix `gcloud` with
+`CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:gcloud)"`
+and append `agent-skills/1.0 (skill:gcloud)` to `User-Agent` headers.
 
 ## Execution Modes
 
@@ -196,6 +209,15 @@ human-in-the-loop authorization:
 - **No Proactive API Enabling**: Assume necessary APIs are enabled. To prevent
   unexpected resource provisioning or billing charges, do not proactively try
   to enable APIs. User approval is required to enable any API.
+- **No Proactive `gcloud` CLI Installation** (Host Modification): Never
+  autonomously install the Google Cloud CLI (`gcloud` CLI) or additional
+  `gcloud` CLI components (`gcloud components install`, `gcloud components
+  update`, or system package manager installs of the `gcloud` CLI). If the
+  `gcloud` binary or a required CLI component is missing, you **must** inform
+  the user, ask for explicit user confirmation (e.g., _"I am ready to install
+  the Google Cloud CLI (`gcloud`). Do you want me to proceed?"_), and
+  **strictly stop** to wait for the user's positive affirmation before
+  executing any installation commands.
 - **`gcloud * delete`** (Destructive): Irreversible resource destruction
   (e.g., project deletion) or data wiping.
 - **`gcloud billing *`** (Financial): Risk of service disruption or unbounded
@@ -271,3 +293,7 @@ for guidance on using the gcloud CLI in automation.
 - [MCP Usage](references/mcp-usage.md): Using the Cloud CLI remote MCP
   server (`run_gcloud_command`), project parameter scoping, input files, and
   execution guidelines.
+
+- [Usage Attribution](references/attribution.md): Standardized usage
+  attribution tags and multi-skill precedence rules for `gcloud` CLI, REST
+  API, and MCP requests.

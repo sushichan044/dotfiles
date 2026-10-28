@@ -1,4 +1,4 @@
-# Resilient Context Menus And Nested Dropdowns
+# Viewport-Aware Dropdowns
 
 A revealed action panel or popover button group is a useful pattern for users to access additional functionality while taking up minimal space. This overlay pattern comes with layout complexity, as the panel must remain tethered to a trigger element while adapting to viewport constraints. Traditionally, this required complex JavaScript libraries (like Popper.js or Floating UI) to calculate positions and handle collisions.
 
@@ -21,7 +21,7 @@ The first step is to create a trigger button that opens the overlay container us
 </div>
 ```
 
-This creates an _implicit_ anchor association between the button and the panel, so that the panel can be positioned relative to the button.
+This creates an _implicit_ anchor association between the button and the panel, so that the panel can be positioned relative to the button natively without needing `anchor-name` on the button or `position-anchor` on the panel.
 
 ### 2. Positioning with `position-area`
 
@@ -61,6 +61,8 @@ To prevent the panel from being cut off at the edge of the screen, define "try t
     flip-block flip-inline;
 }
 ```
+
+If your dropdown or flyout includes a directional arrow or border that needs to change style depending on which fallback position was chosen, see `position-aware-tooltips` (via `npx -y modern-web-guidance@latest retrieve "position-aware-tooltips"`). For declarative invocation of dialogs and popovers without JavaScript, see `declarative-dialog-popover-control` (via `npx -y modern-web-guidance@latest retrieve "declarative-dialog-popover-control"`).
 
 ## Fallback strategies
 
@@ -103,7 +105,7 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 Alternatively, for a legacy fallback without a polyfill, use `position: fixed` and manually calculate coordinates via `getBoundingClientRect()` or rely on default positioning with `inset: auto` if that's acceptable for the use case.
 
 Browser support for Anchor positioning: Limited availability.
-Supported by: Safari 27.
+Supported by: Safari 27 (Sep 2026).
 Unsupported in: Chrome, Edge, and Firefox.
 
 To support browsers without anchor positioning, you must set a reasonable position. By default popovers are centered in the middle of the screen, which may work for your use case.

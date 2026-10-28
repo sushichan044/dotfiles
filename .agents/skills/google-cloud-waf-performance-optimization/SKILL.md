@@ -1,7 +1,7 @@
 ---
 name: google-cloud-waf-performance-optimization
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
   category: WellArchitectedFramework
 description: >-
   Generates performance-focused guidance for Google Cloud workloads based on the
@@ -13,6 +13,12 @@ description: >-
 ---
 
 # Google Cloud Well-Architected Framework skill for the Performance Optimization pillar
+
+## Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read and follow the instructions in
+[Usage Attribution](references/attribution.md).
 
 ## Overview
 

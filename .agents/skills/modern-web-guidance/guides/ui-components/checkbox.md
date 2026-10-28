@@ -118,6 +118,14 @@ selectAll.indeterminate = true;
   ```
 - **DO** provide a `:disabled` style variant that lowers opacity and sets `cursor: not-allowed` to convey inactive states clearly.
 
+### Issues to be aware of when using accent-color
+
+Browser rendering of `accent-color` varies.
+For indicators generally painted over an accent color background, such as checkbox marks and radio-button dots, browsers may apply different treatments:
+
+- **Chromium** and **Firefox** generally select a contrasting indicator color.
+- **Safari** may instead preserve a white indicator in light mode or a black indicator in dark mode, while modifying the accent color behind it. This adjustment does not always provide sufficient contrast for every supplied color, so test important combinations in Safari, including both light and dark color schemes. Do not assume that Safari will automatically choose whichever indicator color provides the best contrast.
+
 ## Fallback strategies
 
 ### Fallbacks & browser support for accent-color

@@ -81,7 +81,11 @@ html {
 
 ### Issues to be aware of when using accent-color
 
-- When placing visual elements over the accent color (e.g. a checkbox checkmark), Chrome and Safari will automatically select a contrasting color, whereas Safari will modify the accent color, and may not maintain adequate contrast.
+Browser rendering of `accent-color` varies.
+For indicators generally painted over an accent color background, such as checkbox marks and radio-button dots, browsers may apply different treatments:
+
+- **Chromium** and **Firefox** generally select a contrasting indicator color.
+- **Safari** may instead preserve a white indicator in light mode or a black indicator in dark mode, while modifying the accent color behind it. This adjustment does not always provide sufficient contrast for every supplied color, so test important combinations in Safari, including both light and dark color schemes. Do not assume that Safari will automatically choose whichever indicator color provides the best contrast.
 
 ### Scrollbar colors
 
@@ -229,7 +233,7 @@ code {
 ### Fallbacks & browser support for light-dark() image values
 
 Baseline status for light-dark() image values: Newly available. It's been Baseline since 2026-09-14.
-Supported by: Chrome 150 (Jun 2026), Edge 150 (Jul 2026), Firefox 150 (Apr 2026), and Safari 27.
+Supported by: Chrome 150 (Jun 2026), Edge 150 (Jul 2026), Firefox 150 (Apr 2026), and Safari 27 (Sep 2026).
 
 For browsers that do not support `light-dark()` for images, use `image-set()` as a switch:
 give each option a `type()` from a custom property, and set the inactive one to an unsupported MIME type so the browser discards that option.

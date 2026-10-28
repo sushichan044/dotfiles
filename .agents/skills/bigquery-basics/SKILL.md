@@ -1,7 +1,7 @@
 ---
 name: bigquery-basics
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   category: BigDataAndAnalytics
 description: >-
   Manages datasets, tables, and jobs in BigQuery. Use when you need to interact
@@ -19,9 +19,12 @@ intelligence capabilities.
 
 ## Attribution
 
-For all `gcloud` CLI, REST API, and MCP attribution requirements when executing
-commands with this skill, follow the instructions in
-[Usage Attribution](references/attribution.md).
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read [Usage Attribution](references/attribution.md). For commands executed
+directly in the terminal (never in generated scripts, Terraform, or user code),
+prefix `gcloud` with
+`CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:bigquery-basics)"`
+and append `agent-skills/1.0 (skill:bigquery-basics)` to `User-Agent` headers.
 
 ## Setup and Basic Usage
 

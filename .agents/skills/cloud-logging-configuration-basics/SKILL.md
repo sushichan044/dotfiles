@@ -5,7 +5,7 @@ description: >-
   IAM permissions for views (Logs View Accessor, IAM conditions), logs-based metrics, log exclusions, and sampling.
   Don't use for cross-project logging or multi-project setups.
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   category: CloudObservabilityAndMonitoring
 ---
 
@@ -22,6 +22,15 @@ views, or log sinks.
 > example, `{project_id}`. Assume these resources exist and proceed directly
 > with configuration commands. Running these discovery commands will cause the
 > execution to hang and timeout.
+
+## Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read [Usage Attribution](references/attribution.md). For commands executed
+directly in the terminal (never in generated scripts, Terraform, or user code),
+prefix `gcloud` with
+`CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:cloud-logging-configuration-basics)"`
+and append `agent-skills/1.0 (skill:cloud-logging-configuration-basics)` to `User-Agent` headers.
 
 ## Safety and Confirmation Tiers (CRITICAL)
 

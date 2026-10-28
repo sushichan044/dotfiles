@@ -1,7 +1,7 @@
 ---
 name: cloud-logging-query-generation
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   category: CloudObservabilityAndMonitoring
 description: >-
   Generates Logging Query Language (LQL) queries for Cloud Logging on Google Cloud from natural language. Use this skill when you need to query log data or when you are debugging issues. You can filter log data by Google Cloud service. Don't use this skill to query other databases, such as SQL or Cloud Spanner.
@@ -11,6 +11,15 @@ description: >-
 
 Use this skill to generate correct Logging Query Language (LQL) queries for
 Cloud Logging.
+
+## Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read [Usage Attribution](references/attribution.md). For commands executed
+directly in the terminal (never in generated scripts, Terraform, or user code),
+prefix `gcloud` with
+`CLOUDSDK_METRICS_REQUEST_ATTRIBUTION="agent-skills/1.0 (skill:cloud-logging-query-generation)"`
+and append `agent-skills/1.0 (skill:cloud-logging-query-generation)` to `User-Agent` headers.
 
 ## Core rules
 

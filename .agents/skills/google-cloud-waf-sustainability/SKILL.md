@@ -1,7 +1,7 @@
 ---
 name: google-cloud-waf-sustainability
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   category: WellArchitectedFramework
 description: >-
   Provides recommendations for environmental sustainability, carbon footprint
@@ -17,6 +17,12 @@ description: >-
 ---
 
 # Google Cloud Well-Architected Framework skill for the Sustainability pillar
+
+## Attribution
+
+**MUST READ**: Before executing any `gcloud`, REST API, or MCP command, you
+MUST read and follow the instructions in
+[Usage Attribution](references/attribution.md).
 
 ## Overview
 
