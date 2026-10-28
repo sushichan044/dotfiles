@@ -318,6 +318,12 @@
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
     },
+    "spark-recipe-label-organize": {
+      "source": "readdle/spark-cli-skills",
+      "sourceType": "github",
+      "skillPath": "skills/recipe-label-organize/SKILL.md",
+      "computedHash": "20bf16db7c2af2c609173bbd2f0e59a1e3ffae457e06428a4c9185df9d578966"
+    },
     "stop-describing-ui": {
       "source": "artouc/stop-describing-ui",
       "sourceType": "github",
@@ -329,6 +335,12 @@
       "sourceType": "github",
       "skillPath": "skills/triage-pr-reviews/SKILL.md",
       "computedHash": "7650c58b8b4d4057758555f69d1fdd1e8a451eaa7f8642673ee7ccba19c3c1bd"
+    },
+    "use-spark": {
+      "source": "readdle/spark-cli-skills",
+      "sourceType": "github",
+      "skillPath": "skills/use-spark/SKILL.md",
+      "computedHash": "435a3060c490184e03cb6e3e1a34c54ba28517489d7c7b505452536e763f966d"
     },
     "writing-for-agents": {
       "source": "mattpocock/skills",
