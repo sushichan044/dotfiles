@@ -23,7 +23,7 @@
         "valibot": "1.5.0",
       },
       "devDependencies": {
-        "@opencode/plugin": "2.2.3",
+        "@opencode/plugin": "2.2.4",
         "@types/bun": "1.4.4",
         "@types/mdast": "4.0.4",
         "@types/shell-quote": "1.7.5",
@@ -177,17 +177,17 @@
 
     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "https://npm.flatt.tech/@npmcli/run-script/-/run-script-10.0.4.tgz", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
 
-    "@opencode/ai": ["@opencode/ai@2.2.3", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.3", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.6", "google-auth-library": "10.5.0" } }, "sha512-fUMZmeRCK/lqjKtYlWu+3JvQ46U7x3kNwgyhB1wfR0GhXRX5KeXf/vfYupjS4IkOHWay/zBTP1ZUsRDmOGmlOA=="],
+    "@opencode/ai": ["@opencode/ai@2.2.4", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.4", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.6", "google-auth-library": "10.5.0" } }, "sha512-8dNRKmcAWwR0zqypMfGe5Z+HAhSvmIkzKAjYVCiYORxffdYjvun4Uttw7wSRY50Bp3pEpQ5+9FgPbPVV8OzoXw=="],
 
-    "@opencode/client": ["@opencode/client@2.2.3", "", { "dependencies": { "@opencode/protocol": "2.2.3", "@opencode/schema": "2.2.3" }, "peerDependencies": { "effect": "4.0.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-ph1uIGrQl1bO6jZ9RCVfa/aBsz0nCq3pnpikExQ0W8oKUwS9mH5tQfpwG0e85V6W4KPeOQCwGUWB0WTzXnYO/Q=="],
+    "@opencode/client": ["@opencode/client@2.2.4", "", { "dependencies": { "@opencode/protocol": "2.2.4", "@opencode/schema": "2.2.4" }, "peerDependencies": { "effect": "4.0.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-JZvQPHnW9oIT3fzgSFP0R32WLiA05yTXVC1FsQR5bWP0YCRy2R5e4kbMsr/kNYdu69cu49/96XEm2NzzDnZFtA=="],
 
-    "@opencode/plugin": ["@opencode/plugin@2.2.3", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.2.3", "@opencode/client": "2.2.3", "@opencode/protocol": "2.2.3", "@opencode/schema": "2.2.3", "@opencode/util": "2.2.3", "effect": "4.0.6" }, "peerDependencies": { "@opencode/theme": "2.2.3", "@opentui/core": ">=0.8.0", "@opentui/solid": ">=0.8.0", "electron": "*", "solid-js": ">=1.9.0", "vite": ">=6", "vite-plugin-solid": ">=2.11" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "electron", "solid-js", "vite", "vite-plugin-solid"] }, "sha512-JK8FW4VHPHkQKgKi9m7kKdx9L1CRSNYpxNR1DtXC9SAe7f8huWoXEN+LH2vv38KEanOfY5OdcUhBUHKAwidyeg=="],
+    "@opencode/plugin": ["@opencode/plugin@2.2.4", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.2.4", "@opencode/client": "2.2.4", "@opencode/protocol": "2.2.4", "@opencode/schema": "2.2.4", "@opencode/util": "2.2.4", "effect": "4.0.6" }, "peerDependencies": { "@opencode/theme": "2.2.4", "@opentui/core": ">=0.8.0", "@opentui/solid": ">=0.8.0", "electron": "*", "solid-js": ">=1.9.0", "vite": ">=6", "vite-plugin-solid": ">=2.11" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "electron", "solid-js", "vite", "vite-plugin-solid"] }, "sha512-nI/wUn2r+PT+uL8teVJjjG9vwiA9KgEk5AIkRISwc0kbRVjNDJFJyKZ5JOFVQsLamGYKE2YKHxy314y5zbwh6A=="],
 
-    "@opencode/protocol": ["@opencode/protocol@2.2.3", "", { "dependencies": { "@opencode/schema": "2.2.3", "effect": "4.0.6" } }, "sha512-4SBCchbfwMb2AK27vH+Qlwrnnbzw4tMT7LsFJRNwO/H7LPKbsMJJsAlRYjcyxQYEPDNYVXyFCF1rCkrA3OeCJg=="],
+    "@opencode/protocol": ["@opencode/protocol@2.2.4", "", { "dependencies": { "@opencode/schema": "2.2.4", "effect": "4.0.6" } }, "sha512-/orZsdiYU8/fOabEZJhmKXJWNvdYd1zj9YrVIK+4uVgJD6lipKBBsl9DakfME/OnL5QSx64BYywSs3OYxDqblQ=="],
 
-    "@opencode/schema": ["@opencode/schema@2.2.3", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.6" } }, "sha512-5Lm6Aw6E3nHigLJcSOteontUKv/9fzjfEXaBvaIHAageNvq0hYBgWSBv0ZikaAj1pJr5e1y9TSW6cbWqQcjMjg=="],
+    "@opencode/schema": ["@opencode/schema@2.2.4", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.6" } }, "sha512-9mqHtUdA6/rMe7qRqEcY4FZTT0xz96hXG1Adcxx2O1riwOJlTyU4tYstUYaU67jtLnjQFxSlG+rk+bUWlsspyg=="],
 
-    "@opencode/util": ["@opencode/util@2.2.3", "", { "dependencies": { "@effect/opentelemetry": "4.0.6", "@effect/platform-node": "4.0.6", "@effect/platform-node-shared": "4.0.6", "@npmcli/arborist": "9.4.0", "@npmcli/config": "10.8.1", "@opentelemetry/api": "1.9.0", "@opentelemetry/api-logs": "0.219.0", "@opentelemetry/context-async-hooks": "2.8.0", "@opentelemetry/exporter-trace-otlp-http": "0.219.0", "@opentelemetry/resources": "2.8.0", "@opentelemetry/sdk-logs": "0.219.0", "@opentelemetry/sdk-metrics": "2.8.0", "@opentelemetry/sdk-trace-base": "2.8.0", "@opentelemetry/sdk-trace-node": "2.8.0", "cross-spawn": "7.0.6", "effect": "4.0.6", "glob": "13.0.5", "mime-types": "3.0.2", "minimatch": "10.2.5", "npm-package-arg": "13.0.2", "open": "11.0.4", "pacote": "21.5.1" } }, "sha512-Xp9hb909LaYJ667Yzg5LkCBrj9h44umOiH9WF7Mj4ZZlOKQDr5H3a3LEw0r7a8ED8yfnXMrN8xFMeL6EojBmGQ=="],
+    "@opencode/util": ["@opencode/util@2.2.4", "", { "dependencies": { "@effect/opentelemetry": "4.0.6", "@effect/platform-node": "4.0.6", "@effect/platform-node-shared": "4.0.6", "@npmcli/arborist": "9.4.0", "@npmcli/config": "10.8.1", "@opentelemetry/api": "1.9.0", "@opentelemetry/api-logs": "0.219.0", "@opentelemetry/context-async-hooks": "2.8.0", "@opentelemetry/exporter-trace-otlp-http": "0.219.0", "@opentelemetry/resources": "2.8.0", "@opentelemetry/sdk-logs": "0.219.0", "@opentelemetry/sdk-metrics": "2.8.0", "@opentelemetry/sdk-trace-base": "2.8.0", "@opentelemetry/sdk-trace-node": "2.8.0", "cross-spawn": "7.0.6", "effect": "4.0.6", "glob": "13.0.5", "mime-types": "3.0.2", "minimatch": "10.2.5", "npm-package-arg": "13.0.2", "open": "11.0.4", "pacote": "21.5.1" } }, "sha512-h4x8nns4Y/yIuEVI0F+lGc4DPC8GGpwxNUwQsxx9tOAp2TRWQarWCli2lBSpM1otxHtbIlXdl2S7YMHt2FuU4A=="],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.9.0", "https://npm.flatt.tech/@opentelemetry/api/-/api-1.9.0.tgz", {}, "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg=="],
 
