@@ -5,7 +5,7 @@
     "": {
       "name": "@sushichan044/dotfiles",
       "dependencies": {
-        "ansis": "4.4.0",
+        "ansis": "4.5.0",
         "args-tokens": "1.0.0",
         "arkregex": "0.0.14",
         "cc-hooks-ts": "2.1.281",
@@ -543,7 +543,7 @@
 
     "ansi-styles": ["ansi-styles@5.2.0", "https://npm.flatt.tech/ansi-styles/-/ansi-styles-5.2.0.tgz", {}, "sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA=="],
 
-    "ansis": ["ansis@4.4.0", "https://npm.flatt.tech/ansis/-/ansis-4.4.0.tgz", {}, "sha512-9k3v7xcHwgdO/DruxGIg4HtjvlAZlcnsX/mzqUb1t3NkYnl9kK2UJ+Gq0io+vQf7iT//BD/HB/NBkUR1LWxoeA=="],
+    "ansis": ["ansis@4.5.0", "", {}, "sha512-KwIVkfFfJSSzBmZhDGuTmkhWqTdyB5oNVzzznBJbBZ5bZtHiqSrcugRF0RKJKT4Ss3d7ZrcjnlFVDlQNmtWfWw=="],
 
     "args-tokens": ["args-tokens@1.0.0", "https://npm.flatt.tech/args-tokens/-/args-tokens-1.0.0.tgz", {}, "sha512-Y66kJfJWAwldtu7PNDNKgyhgSIPidvZJGQ/sm723gDe1uT9NzEMISlTl2ZkG187o+vx1oM7ImpxV924n1V9gCw=="],
 
