@@ -5,7 +5,7 @@
       "source": "vercel-labs/agent-browser",
       "sourceType": "github",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "computedHash": "80161e6836b3b40f4e83730a290deb40ac14d877d38c97ad5f6d71be37ce74c3"
+      "computedHash": "60a9cbe5af176150582c019e16e5d3703a41bb02d88438e881349876120d7944"
     },
     "alloydb-basics": {
       "source": "google/skills",
@@ -22,7 +22,7 @@
       "source": "ast-grep/agent-skill",
       "sourceType": "github",
       "skillPath": "ast-grep/skills/ast-grep/SKILL.md",
-      "computedHash": "472c7cd092f9fad72e0ad0c58b5f6af627844730ecc420c009e25a835a5d6e81"
+      "computedHash": "55ab409e6afd238ebab8f29d9a5230d513b6d0102e0eb9f71c554a95d1344bd6"
     },
     "bigquery-basics": {
       "source": "google/skills",
@@ -256,7 +256,7 @@
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "8e91867cc20dda14251c78c8d905847314c8c196557e1181d586a456cddcb5dc"
+      "computedHash": "c614730bccf763448d84ed2b5c71164b0ad7410a0823da3639e62e9d9bf2b641"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -268,7 +268,7 @@
       "source": "coji/natural-japanese",
       "sourceType": "github",
       "skillPath": "skills/natural-japanese/SKILL.md",
-      "computedHash": "9e8f063bb21017858a56047962fada4c007f9a166c349acbc88b15e6131a870d"
+      "computedHash": "cc03ed3294dbaf4744de05e078c197b6e42340e32945e653f2c5cdd5eebede7d"
     },
     "neki": {
       "source": "planetscale/database-skills",
@@ -334,7 +334,7 @@
       "source": "k1LoW/gh-pr-reviews",
       "sourceType": "github",
       "skillPath": "skills/triage-pr-reviews/SKILL.md",
-      "computedHash": "7650c58b8b4d4057758555f69d1fdd1e8a451eaa7f8642673ee7ccba19c3c1bd"
+      "computedHash": "f7edd623a3ef253e96fc50df2a0237fda64e7b5de2b4604b7d1ce6c085caed6f"
     },
     "use-spark": {
       "source": "readdle/spark-cli-skills",
