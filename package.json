@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "ansis": "4.5.0",
-    "args-tokens": "1.0.0",
+    "args-tokens": "1.0.2",
     "arkregex": "0.0.14",
     "cc-hooks-ts": "2.1.281",
     "css-color-names": "1.0.1",
@@ -29,9 +29,9 @@
     "@types/mdast": "4.0.4",
     "@types/shell-quote": "1.7.5",
     "@virtual-live-lab/tsconfig": "2.1.23",
-    "oxfmt": "0.75.0",
+    "oxfmt": "0.77.0",
     "typescript": "7.0.2",
-    "vite-plus": "1.4.0"
+    "vite-plus": "1.5.0"
   },
   "packageManager": "bun@1.4.4"
 }
