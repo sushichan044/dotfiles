@@ -141,6 +141,7 @@ type StatusShape = {
       }
     | undefined;
   remainingContextPercentage: string | undefined;
+  sessionId: string;
 
   username: string;
   version: {
@@ -236,6 +237,7 @@ async function buildStatus(input: InputShape): Promise<StatusShape> {
     },
     rateLimit: input.rate_limits ? buildRateLimitStatus(input.rate_limits) : undefined,
     remainingContextPercentage: input.context_window.remaining_percentage?.toLocaleString("ja-JP"),
+    sessionId: input.session_id,
     username: userInfo.username,
     version: {
       current: input.version,
@@ -378,8 +380,12 @@ function prettyPrint(status: StatusShape): string {
     return `omakase: ${label}`;
   };
 
+  const session = () => {
+    return `session: ${status.sessionId}`;
+  };
+
   return [
-    makeLineFromParts(version(), status.model, context(), omakase()),
+    makeLineFromParts(version(), status.model, context(), omakase(), session()),
     makeLineFromParts(fiveHourLimit(), weeklyLimit()),
     makeLineFromParts(repository(), branch(), aheadBehind(), worktree()),
   ].join("\n");
