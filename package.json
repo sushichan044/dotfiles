@@ -19,7 +19,7 @@
     "pathe": "2.0.3",
     "picocolors": "1.1.1",
     "shell-quote": "1.12.0",
-    "temporal-polyfill-lite": "1.0.0",
+    "temporal-polyfill-lite": "1.0.1",
     "unist-util-visit": "5.2.0",
     "valibot": "1.5.0"
   },
