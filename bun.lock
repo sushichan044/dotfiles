@@ -6,7 +6,7 @@
       "name": "@sushichan044/dotfiles",
       "dependencies": {
         "ansis": "4.5.0",
-        "args-tokens": "1.0.2",
+        "args-tokens": "1.1.0",
         "arkregex": "0.0.14",
         "cc-hooks-ts": "2.1.281",
         "css-color-names": "1.0.1",
@@ -545,7 +545,7 @@
 
     "ansis": ["ansis@4.5.0", "", {}, "sha512-KwIVkfFfJSSzBmZhDGuTmkhWqTdyB5oNVzzznBJbBZ5bZtHiqSrcugRF0RKJKT4Ss3d7ZrcjnlFVDlQNmtWfWw=="],
 
-    "args-tokens": ["args-tokens@1.0.2", "", {}, "sha512-6Ocv+qD5WY+8gIicrBgGWZiPIzM5WQ/CJEYm9KvcmUuYGU40cfVvVYePeT0prhWndcwATKZzJkKv4FavyvJkvA=="],
+    "args-tokens": ["args-tokens@1.1.0", "", {}, "sha512-eNBs9kbIy/X4dVvW9elNXFeGXlfLM0xq8UOrQ8/vaOFDFoLYwwX5liC72G3sP98tT7esHJSbr2Fh6eDaN1hp7Q=="],
 
     "aria-query": ["aria-query@5.3.0", "https://npm.flatt.tech/aria-query/-/aria-query-5.3.0.tgz", { "dependencies": { "dequal": "^2.0.3" } }, "sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A=="],
 
