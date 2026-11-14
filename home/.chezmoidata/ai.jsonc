@@ -49,6 +49,7 @@
       "approval_policy": "on-request",
       "approvals_reviewer": "guardian_subagent",
       "features": {
+        "apps": true,
         "collaboration_modes": true,
         "steer": true,
         "codex_hooks": true,
