@@ -1,5 +1,5 @@
 import { defineHook } from "cc-hooks-ts";
-import { format } from "oxfmt";
+import { format } from "vite-plus/fmt";
 
 import type { Shell } from "../../../tools/utils/bun-sh";
 import { createShell } from "../../../tools/utils/bun-sh";
