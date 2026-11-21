@@ -146,6 +146,7 @@ if OS.mac?
   cask "figma"
   cask "gcloud-cli", greedy: true
   cask "ghostty"
+  cask "google-chrome"
   cask "google-drive"
   cask "hhkb"
   cask "httpie-desktop"
@@ -183,18 +184,14 @@ if OS.mac?
   mas "Gifski", id: 1351639930
 {{ if .for_personal }}
   # for personal mac only
-  cask "adobe-acrobat-reader"
   cask "anydesk"
   cask "cyberduck"
   cask "discord"
-  cask "google-chrome"
-  cask "prismlauncher"
   cask "readdle-spark"
   cask "tailscale-app"
   cask "zotero"
 {{ else }}
   cask "claude"
-  cask "ollama-app" # needs high machine resource, expected to have 32GB+ RAM
   cask "slack"
 {{ end }}
 end
