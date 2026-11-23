@@ -49,8 +49,8 @@ Apply the `mask-image` to the element you want to reveal. Use a `radial-gradient
   pointer-events: none;
 }
 
-/* Update the gradients stops on interaction */
-.reveal-layer:hover {
+/* Update the gradient stops when hovering the interactive container (inherits into .reveal-layer; .reveal-layer itself has pointer-events: none) */
+.container:hover {
   --inner-size: 100px;
   --outer-size: 120px;
 }
@@ -58,7 +58,7 @@ Apply the `mask-image` to the element you want to reveal. Use a `radial-gradient
 
 ### 3. Update Coordinates with JavaScript
 
-Track the pointer position and update the CSS variables. Because the properties are registered and have a `transition` defined, the spotlight will move smoothly even if the pointer events are infrequent.
+Track the pointer position and update the CSS variables on pointermove events. Because position variables update immediately without transition, the spotlight follows the pointer directly while the size properties expand or contract smoothly.
 
 ```javascript
 const container = document.querySelector(".container");
@@ -75,7 +75,7 @@ container.addEventListener("pointermove", (e) => {
   const x = ((e.clientX - rect.left) / rect.width) * 100;
   const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-  // Update the registered properties
+  // Update the position properties
   container.style.setProperty("--mouse-x", `${x}%`);
   container.style.setProperty("--mouse-y", `${y}%`);
 });
@@ -96,6 +96,13 @@ container.addEventListener("pointermove", (e) => {
   }
 }
 ```
+
+Make sure that all underlying content can still be reached even at very high zoom levels. In particular, make sure that all content that uses this pattern:
+
+- Can be scaled up to 200% using a browser's built-in zoom without loss of functionality
+- Is visible and operable without requiring two-dimensional scrolling when scaled up to 400% in a starting viewport size of 1280 CSS pixels by 1024 CSS pixels
+
+Make sure that transitions do not flash more than three times in any one second period.
 
 ## Fallback strategies
 

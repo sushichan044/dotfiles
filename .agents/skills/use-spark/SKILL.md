@@ -6,7 +6,7 @@ description: >-
   look up contacts, and view team info. Use when the user asks about their
   emails, calendar, contacts, meetings, or scheduling.
 metadata:
-  version: 1.4.1
+  version: 1.4.3
   requires:
     bins:
       - spark
@@ -28,28 +28,28 @@ spark <command> [options]
 
 ## Commands
 
-| Command          | Description                                                                                             |
-| ---------------- | ------------------------------------------------------------------------------------------------------- |
-| `accounts`       | List accounts, calendars, teams, shared inboxes, and access levels                                      |
-| `folders`        | List folders/labels with message counts                                                                 |
-| `emails`         | List emails with filters and pagination                                                                 |
-| `search`         | Hybrid keyword + semantic search with full bodies                                                       |
-| `thread`         | Read full thread - headers, bodies, attachments                                                         |
-| `attachment`     | Read a single email attachment by its ID (auto-downloads)                                               |
-| `draft`          | Create, edit, or delete an email draft (new, reply, forward, from template), or list account signatures |
-| `templates`      | List saved message templates (personal and team)                                                        |
-| `template`       | Show a single template by ID or name with its placeholders                                              |
-| `comment`        | Post a team comment on a thread                                                                         |
-| `events`         | List calendar events for a time range                                                                   |
-| `event`          | Create, update, delete, or RSVP to a calendar event, including managing attendees / invitations         |
-| `availability`   | Find free time slots, optionally with attendees                                                         |
-| `contacts`       | Search contacts by name or email, or list the most-used ones                                            |
-| `contact`        | Show one contact's details and settings                                                                 |
-| `team`           | Show team info, members, shared inboxes, assignments                                                    |
-| `meetings`       | List meeting transcripts                                                                                |
-| `meeting`        | Read a single meeting transcript                                                                        |
-| `action`         | Perform actions on emails (archive, pin, snooze, assign, etc.)                                          |
-| `contact-action` | Perform actions on contacts (block, accept, categorize, etc.)                                           |
+| Command          | Description                                                                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accounts`       | List accounts, calendars, teams, shared inboxes, and access levels                                                                                                                    |
+| `folders`        | List folders/labels with message counts                                                                                                                                               |
+| `emails`         | List emails with filters and pagination                                                                                                                                               |
+| `search`         | Hybrid keyword + semantic search with full bodies                                                                                                                                     |
+| `thread`         | Read full thread - headers, bodies, attachments                                                                                                                                       |
+| `attachment`     | Read a single email attachment by its ID (auto-downloads)                                                                                                                             |
+| `draft`          | Create, edit, send, schedule, or delete email drafts (new, reply, forward, from template), or list account signatures or the drafting context (Spark Profile and Custom Instructions) |
+| `templates`      | List saved message templates (personal and team)                                                                                                                                      |
+| `template`       | Show a single template by ID or name with its placeholders                                                                                                                            |
+| `comment`        | Post a team comment on a thread                                                                                                                                                       |
+| `events`         | List calendar events for a time range                                                                                                                                                 |
+| `event`          | Create, update, delete, or RSVP to a calendar event, including managing attendees / invitations                                                                                       |
+| `availability`   | Find free time slots, optionally with attendees                                                                                                                                       |
+| `contacts`       | Search contacts by name or email, or list the most-used ones                                                                                                                          |
+| `contact`        | Show one contact's details and settings                                                                                                                                               |
+| `team`           | Show team info, members, shared inboxes, assignments                                                                                                                                  |
+| `meetings`       | List meeting transcripts                                                                                                                                                              |
+| `meeting`        | Read a single meeting transcript                                                                                                                                                      |
+| `action`         | Perform actions on emails (archive, pin, snooze, assign, etc.)                                                                                                                        |
+| `contact-action` | Perform actions on contacts (block, accept, categorize, etc.)                                                                                                                         |
 
 ### accounts
 
@@ -63,11 +63,11 @@ Run this first to discover what accounts, calendars, and teams are available, an
 
 **Access levels:**
 
-| Level         | Allowed operations                                                                                                                                                                                                                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **read-only** | List, search, and read emails, threads, folders, events, contacts, meetings, teams                                                                                                                                                                                                                                                                                  |
-| **triage**    | Everything in read-only plus all write operations: drafts, team comments, email actions (archive, move, pin, snooze, assign, etc.), contact actions (block, accept, categorize, etc.)                                                                                                                                                                               |
-| **send**      | Everything in triage plus mail-emitting operations: sending drafts (`action send`, including scheduled "Send Later"), and the entire `event` command: `event create` / `event update` / `event delete` / `event rsvp`, including attaching or detaching attendees via `--add` / `--remove` and the iTIP REQUEST / UPDATE / CANCEL / REPLY mail that goes with them. |
+| Level         | Allowed operations                                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **read-only** | List, search, and read emails, threads, folders, events, contacts, meetings, teams                                                                                                                                                                                                                                                                                   |
+| **triage**    | Everything in read-only plus all write operations: drafts (including unscheduling a scheduled one and setting its follow-up reminder), team comments, email actions (archive, move, pin, snooze, assign, etc.), contact actions (block, accept, categorize, etc.)                                                                                                    |
+| **send**      | Everything in triage plus mail-emitting operations: sending drafts (`draft --send`, including scheduled "Send Later"), and the entire `event` command: `event create` / `event update` / `event delete` / `event rsvp`, including attaching or detaching attendees via `--add` / `--remove` and the iTIP REQUEST / UPDATE / CANCEL / REPLY mail that goes with them. |
 
 Access levels are configured separately for each account and each shared inbox in Spark Desktop under Settings -> AI Agents. Shared inboxes can have a different access level than the parent account - for example, a personal account may have triage access while a shared inbox under the same team is read-only or disabled.
 
@@ -75,7 +75,7 @@ If a command requires a higher access level than the account or shared inbox has
 
 ### folders
 
-List folders with message counts. Output includes folder identifiers in parentheses - use these as arguments to `emails` and `search`. Mailboxes backed by a Google account show `(Gmail labels)` on the **Email Account** or **Shared Inbox** header. Teams show the team name as a usable identifier for `emails`.
+List folders with message counts. Output includes folder identifiers in parentheses - use these as arguments to `emails` and `search`. Mailboxes backed by a Google account show `(Gmail labels)` on the **Email Account** or **Shared Inbox** header. Teams show the team name as a usable identifier for `emails`. Every account, and the unified section, also lists **Outbox** - the scheduled and unsent mail (see `emails` below).
 
 ```bash
 spark folders                        # all accounts
@@ -90,6 +90,7 @@ List emails with metadata (ID, From, Date, Subject, Flags). Supports pagination 
 spark emails                                                   # Unified Inbox
 spark emails user@example.com:Archive                          # specific folder
 spark emails "My Team"                                         # all shared threads in a team
+spark emails Outbox                                            # scheduled and unsent mail, soonest send first
 spark emails --filter "from:alice@co.com is:unread"             # filtered
 spark emails --filter "newer_than:7d has:attachment"            # recent with attachments
 spark emails --page 2 --page-size 20                           # pagination
@@ -101,15 +102,18 @@ spark emails --new-senders                                     # show only new s
 
 **Folder identifier formats** (run `folders` to see available ones):
 
-| Format                 | Example                    | Meaning                                                      |
-| ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| Bare name              | `Inbox`, `Archive`         | Unified folder (cross-account)                               |
-| `email`                | `user@example.com`         | Account inbox shorthand                                      |
-| `email:Folder`         | `user@example.com:Archive` | Specific account folder                                      |
-| `"Team Name"`          | `"My Team"`                | All shared threads in a team (quote if spaces)               |
-| `shared@email:Inbox`   | `shared@co.com:Inbox`      | Shared inbox open items (conversation view, matches Desktop) |
-| `shared@email:Archive` | `shared@co.com:Archive`    | Shared inbox done/archived items (conversation view)         |
-| `shared@email:Folder`  | `shared@co.com:Label`      | Other shared inbox folder / label                            |
+| Format                    | Example                    | Meaning                                                      |
+| ------------------------- | -------------------------- | ------------------------------------------------------------ |
+| Bare name                 | `Inbox`, `Archive`         | Unified folder (cross-account)                               |
+| `email`                   | `user@example.com`         | Account inbox shorthand                                      |
+| `email:Folder`            | `user@example.com:Archive` | Specific account folder                                      |
+| `"Team Name"`             | `"My Team"`                | All shared threads in a team (quote if spaces)               |
+| `shared@email:Inbox`      | `shared@co.com:Inbox`      | Shared inbox open items (conversation view, matches Desktop) |
+| `shared@email:Archive`    | `shared@co.com:Archive`    | Shared inbox done/archived items (conversation view)         |
+| `shared@email:Folder`     | `shared@co.com:Label`      | Other shared inbox folder / label                            |
+| `Outbox` / `email:Outbox` | `user@example.com:Outbox`  | Scheduled ("Send Later") and unsent mail                     |
+
+**Outbox.** Scheduled ("Send Later") mail and mail still on its way out live in Spark's Outbox, not in a folder on the mail server - a mail folder named "Send Later" (some other mail apps create one) is unrelated and usually empty. `spark emails Outbox` (or `<account>:Outbox`) lists them with a **To** column instead of From, the send time in the Date column, and a `scheduled`, `sending` or `send failed` flag; `--json` adds `to` and `send_at`. List it on its own: it can't be combined with other folders, `--filter` or `--new-senders`. Check it before and after you schedule or unschedule mail, so you know what is still queued.
 
 **Filter operators** (combinable, Gmail-style):
 
@@ -206,6 +210,8 @@ Use `thread` to find attachment IDs (the `ID` column in the `Attachments:` table
 
 Create a new email draft or edit an existing one. The body is written in markdown and converted to HTML.
 
+**Before writing any draft body, run `spark draft context`.** Write in line with the user's Spark Profile when one is shown, and follow the Custom Instructions; one that names one of the user's accounts applies only to drafts sent from that account. Instructions the user gives you in the conversation take priority over both, and text they dictate word for word is used as is.
+
 ```bash
 spark draft --to "alice@example.com" --subject "Hello" --body "Hi Alice, ..."
 spark draft --to "alice@co.com" --to "bob@co.com" --cc "carol@co.com" --subject "Meeting" --body "..."
@@ -215,6 +221,7 @@ spark draft --reply-all 5678 --body "Thanks everyone!"   # keeps the other recip
 spark draft --forward 5678 --to "manager@co.com" --body "FYI"
 spark draft --account "john@gmail.com" --to "alice@co.com" --subject "Hi" --body "..."
 spark draft signatures                                                                # the signature each account appends
+spark draft context                                                                   # the Spark Profile and Custom Instructions to write with
 spark draft --to "alice@co.com" --subject "Quick note" --body "..." --no-signature   # send without a signature
 spark draft --edit 1234 --no-signature                                                # strip the signature from an existing draft
 spark draft --to "alice@co.com" --subject "Report" --body "See attached" --attach /path/to/report.pdf
@@ -231,36 +238,48 @@ spark draft --edit 1234 --remove-user alice@co.com    # kick alice from a shared
 spark draft --edit 1234 --remove-user alice@co.com --user dave@co.com  # swap collaborators: remove alice, invite dave
 spark draft --edit 1234 --unshare
 spark draft --delete 1234                             # remove the draft for good (no Trash, no undo)
+spark draft --delete 1234 2345 3456                   # remove several drafts at once
+spark draft --send 1234                               # send the draft now
+spark draft --send 1234 --date 2026-04-10T09:00       # schedule it ("Send Later")
+spark draft --unschedule 5678                         # cancel a schedule; back to Drafts under a new ID
+spark draft --change-reminder 1234 --date 2026-04-15  # remind the user if nobody replies by then
+spark draft --clear-reminder 1234                     # remove that reminder
 spark draft --template "Cold outbound v3" --to "alice@co.com" --placeholder "Project name=Acme Q3" --placeholder "Deadline=Friday EOD"
 spark draft --template 124 --edit 9821 --placeholder "Project name=Acme Q3" --placeholder "Deadline=Friday EOD"
 ```
 
-| Parameter         | Required                              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ----------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--to`            | No                                    | Recipient address (RFC822). Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `--cc`            | No                                    | CC address. Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `--bcc`           | No                                    | BCC address. Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `--subject`       | No                                    | Subject line.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `--body`          | Yes (new, no `--template`)            | Body content in markdown. Required for new drafts unless a template provides one. `![alt](file name)` shows an attached image in the text - see **Images in the body** below.                                                                                                                                                                                                                                                                                                                                                                         |
-| `--edit`          | No                                    | Message ID of an existing draft to update.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `--reply-to`      | No                                    | Message ID to reply to. Addresses the sender alone (or the `Reply-To:` address when the message carries one).                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `--reply-all`     | No                                    | Message ID to reply to, keeping everyone else on the thread: the other `To:` recipients land in To, the original `Cc:` in CC, minus your own address. Mutually exclusive with `--reply-to`; `--to` / `--cc` override the lists it builds.                                                                                                                                                                                                                                                                                                             |
-| `--forward`       | No                                    | Message ID to forward.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `--delete`        | No                                    | Message ID of a draft to delete **permanently**. Must be the only option on the command. Drafts have no Trash, so the deletion cannot be undone. A scheduled draft and a draft shared with teammates are both refused - `action unschedule` or `draft --edit <pk> --unshare` first.                                                                                                                                                                                                                                                                   |
-| `--account`       | No                                    | Account email to send from. Accepts a regular mail account, an alias, or a shared inbox email.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `--attach`        | No                                    | Absolute path to a file to attach. Repeat for multiple. The Spark app must be able to read the path; in the sandboxed App Store build a path outside the app's container can't be read and is rejected with a clear error - pipe the file with `--attach-stream` instead. Max 25 MB per file.                                                                                                                                                                                                                                                         |
-| `--attach-id`     | No                                    | ID of an attachment on an existing email to copy onto this draft, from the Attachments table of `thread <message-id>`. Repeat for multiple. Use this to re-send a file the user received - replies don't inherit attachments (only `--forward` does).                                                                                                                                                                                                                                                                                                 |
-| `--attach-stream` | No                                    | Attach a single file whose bytes are read from stdin, shown to recipients as `<name>`. Use this when the file is outside the app's sandbox (the App Store build can't read arbitrary paths) - it's the inbound twin of `attachment --stream`. One streamed file per command; combine with `--attach` for paths the app can read. Max 25 MB. Example: `cat report.pdf \| spark draft --edit 123 --attach-stream report.pdf`. Needs a real stdin, so it only works when you run the `spark` binary yourself - otherwise use `--attach-id` / `--attach`. |
-| `--team`          | No                                    | Team name. Required when you belong to multiple teams. When editing a draft that's already shared, must match the team that owns the share.                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `--user`          | No                                    | Teammate email to share with. Repeat for multiple. On an already-shared draft this **adds** collaborators without removing existing ones - use `--remove-user` to remove someone.                                                                                                                                                                                                                                                                                                                                                                     |
-| `--remove-user`   | No                                    | Teammate email to **remove** from an already-shared draft. Repeat for multiple. The shared draft, its comments, and the remaining collaborators are preserved (unlike `--unshare`, which tears the whole share down). Requires `--edit <shared-pk>`. Cannot remove yourself - use `--unshare` for that. Can be combined with `--user` in one command to swap collaborators; removals run before invites.                                                                                                                                              |
-| `--allow-send`    | No                                    | Grant teammates permission to send the shared draft on your behalf. New share: defaults to off when omitted. Edit of a shared draft: leaves the current value alone when omitted. Mutually exclusive with `--no-allow-send`.                                                                                                                                                                                                                                                                                                                          |
-| `--no-allow-send` | No                                    | Revoke teammates' permission to send the shared draft on your behalf. Useful when editing a shared draft whose allow-send is currently on. Mutually exclusive with `--allow-send`.                                                                                                                                                                                                                                                                                                                                                                    |
-| `--unshare`       | No                                    | Revert an already-shared draft back to a personal draft. Requires `--edit` and is mutually exclusive with `--team` / `--user` / `--remove-user` / `--allow-send` / `--no-allow-send` **and** with content edits (`--to` / `--cc` / `--bcc` / `--subject` / `--body` / `--attach` / `--attach-id` / `--attach-stream`) - issue the edit (or per-user removal) and the unshare as separate commands.                                                                                                                                                    |
-| `--template`      | No                                    | Apply a saved template by ID or name. Combine with `--edit` to overlay onto an existing draft.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `--placeholder`   | When template has manual placeholders | Fill a manual template placeholder, format `"<name>=<value>"`. Repeat for each. Auto-fillable placeholders (recipient/self names) are not addressable here - control them via `--to` and `--account`.                                                                                                                                                                                                                                                                                                                                                 |
-| `--no-signature`  | No                                    | Send without a signature. Suppresses the account's per-mailbox default signature for this draft. On `--edit` it strips a signature already on the draft (the body and quoted thread are kept). Omit the flag to keep using the account default.                                                                                                                                                                                                                                                                                                       |
-| `signatures`      | No                                    | Positional, not a flag: prints every mailbox you can draft from with the signature it appends. Must be the only argument.                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Parameter           | Required                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--to`              | No                                               | Recipient address (RFC822). Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `--cc`              | No                                               | CC address. Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `--bcc`             | No                                               | BCC address. Repeat for multiple.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `--subject`         | No                                               | Subject line.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `--body`            | Yes (new, no `--template`)                       | Body content in markdown. Required for new drafts unless a template provides one. `![alt](file name)` shows an attached image in the text - see **Images in the body** below.                                                                                                                                                                                                                                                                                                                                                                         |
+| `--edit`            | No                                               | Message ID of an existing draft to update.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `--reply-to`        | No                                               | Message ID to reply to. Addresses the sender alone (or the `Reply-To:` address when the message carries one).                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `--reply-all`       | No                                               | Message ID to reply to, keeping everyone else on the thread: the other `To:` recipients land in To, the original `Cc:` in CC, minus your own address. Mutually exclusive with `--reply-to`; `--to` / `--cc` override the lists it builds.                                                                                                                                                                                                                                                                                                             |
+| `--forward`         | No                                               | Message ID to forward.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `--delete`          | No                                               | Message IDs of drafts to delete **permanently** - one or several (`--delete 1 2 3`). Must be the only option on the command. Drafts have no Trash, so the deletion cannot be undone. A scheduled draft and a draft shared with teammates are both refused - `draft --unschedule <pk>` or `draft --edit <pk> --unshare` first. With several IDs, the valid drafts are deleted even when others are refused.                                                                                                                                            |
+| `--send`            | No                                               | Message IDs of drafts to send, or with `--date` to schedule. On an already-scheduled message, `--date` reschedules it and no `--date` sends it now. Takes several IDs. Only `--date` may come with it. Requires **send** access. See **Sending and scheduling** below.                                                                                                                                                                                                                                                                                |
+| `--unschedule`      | No                                               | Message IDs of scheduled messages to unschedule; each returns to Drafts under a **new** ID. Takes several IDs. Must be the only option.                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `--change-reminder` | No                                               | Message IDs of drafts or scheduled messages to set a follow-up reminder on - it fires if nobody has replied by `--date`, and stays with the message when it is sent. Takes several IDs. Only `--date` may come with it.                                                                                                                                                                                                                                                                                                                               |
+| `--clear-reminder`  | No                                               | Message IDs of drafts or scheduled messages to remove the follow-up reminder from. Takes several IDs. Must be the only option.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `--date`            | With `--change-reminder`; optional with `--send` | The send time or reminder date (`yyyy-MM-dd`, `dd/MM/yyyy`, `yyyy-MM-ddTHH:mm`). Must be in the future.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `--account`         | No                                               | Account email to send from. Accepts a regular mail account, an alias, or a shared inbox email.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `--attach`          | No                                               | Absolute path to a file to attach. Repeat for multiple. The Spark app must be able to read the path; in the sandboxed App Store build a path outside the app's container can't be read and is rejected with a clear error - pipe the file with `--attach-stream` instead. Max 25 MB per file.                                                                                                                                                                                                                                                         |
+| `--attach-id`       | No                                               | ID of an attachment on an existing email to copy onto this draft, from the Attachments table of `thread <message-id>`. Repeat for multiple. Use this to re-send a file the user received - replies don't inherit attachments (only `--forward` does).                                                                                                                                                                                                                                                                                                 |
+| `--attach-stream`   | No                                               | Attach a single file whose bytes are read from stdin, shown to recipients as `<name>`. Use this when the file is outside the app's sandbox (the App Store build can't read arbitrary paths) - it's the inbound twin of `attachment --stream`. One streamed file per command; combine with `--attach` for paths the app can read. Max 25 MB. Example: `cat report.pdf \| spark draft --edit 123 --attach-stream report.pdf`. Needs a real stdin, so it only works when you run the `spark` binary yourself - otherwise use `--attach-id` / `--attach`. |
+| `--team`            | No                                               | Team name. Required when you belong to multiple teams. When editing a draft that's already shared, must match the team that owns the share.                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `--user`            | No                                               | Teammate email to share with. Repeat for multiple. On an already-shared draft this **adds** collaborators without removing existing ones - use `--remove-user` to remove someone.                                                                                                                                                                                                                                                                                                                                                                     |
+| `--remove-user`     | No                                               | Teammate email to **remove** from an already-shared draft. Repeat for multiple. The shared draft, its comments, and the remaining collaborators are preserved (unlike `--unshare`, which tears the whole share down). Requires `--edit <shared-pk>`. Cannot remove yourself - use `--unshare` for that. Can be combined with `--user` in one command to swap collaborators; removals run before invites.                                                                                                                                              |
+| `--allow-send`      | No                                               | Grant teammates permission to send the shared draft on your behalf. New share: defaults to off when omitted. Edit of a shared draft: leaves the current value alone when omitted. Mutually exclusive with `--no-allow-send`.                                                                                                                                                                                                                                                                                                                          |
+| `--no-allow-send`   | No                                               | Revoke teammates' permission to send the shared draft on your behalf. Useful when editing a shared draft whose allow-send is currently on. Mutually exclusive with `--allow-send`.                                                                                                                                                                                                                                                                                                                                                                    |
+| `--unshare`         | No                                               | Revert an already-shared draft back to a personal draft. Requires `--edit` and is mutually exclusive with `--team` / `--user` / `--remove-user` / `--allow-send` / `--no-allow-send` **and** with content edits (`--to` / `--cc` / `--bcc` / `--subject` / `--body` / `--attach` / `--attach-id` / `--attach-stream`) - issue the edit (or per-user removal) and the unshare as separate commands.                                                                                                                                                    |
+| `--template`        | No                                               | Apply a saved template by ID or name. Combine with `--edit` to overlay onto an existing draft.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `--placeholder`     | When template has manual placeholders            | Fill a manual template placeholder, format `"<name>=<value>"`. Repeat for each. Auto-fillable placeholders (recipient/self names) are not addressable here - control them via `--to` and `--account`.                                                                                                                                                                                                                                                                                                                                                 |
+| `--no-signature`    | No                                               | Send without a signature. Suppresses the account's per-mailbox default signature for this draft. On `--edit` it strips a signature already on the draft (the body and quoted thread are kept). Omit the flag to keep using the account default.                                                                                                                                                                                                                                                                                                       |
+| `signatures`        | No                                               | Positional, not a flag: prints every mailbox you can draft from with the signature it appends. Must be the only argument.                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `context`           | No                                               | Positional, not a flag: prints the user's Spark Profile and Custom Instructions. Must be the only argument.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 Explicit flags always win over template fields. Use `template <id|name>` to discover the template's manual placeholders before calling `draft --template` - missing manual placeholders cause a hard error before any draft is created. Auto-fillable placeholders that fail to resolve (e.g. recipient name with multiple `--to`) leave a localized label in the body and surface in the response as a warning.
 
@@ -270,7 +289,32 @@ Explicit flags always win over template fields. Use `template <id|name>` to disc
 
 When the user asks for a closing that differs from their signature, pass `--no-signature` and write the whole closing yourself.
 
-On success the output includes the draft's `ID:` (use it with `--edit` and `action send`) and a `Link:` line with a Spark deep link (`https://sparkmailapp.com/dpl/bl?token=...`) that opens the draft directly in Spark. It also echoes the composed body under `Body:` - the whole message as the recipient will read it, signature included and quoted thread left out. Read it back to confirm the draft says what you meant, and to catch a sign-off of your own standing next to the account's.
+**Drafting context (Spark Personalization).** `spark draft context` prints what to write a draft body with, named as Spark Settings names it:
+
+- **Spark Profile** - what Spark has learned about who the user is and how they communicate (Settings → Spark +AI → Personalization).
+- **Custom Instructions** - rules the user recorded in Spark: the profile's own (Personalization → Custom Instructions) and the Auto-Drafts ones (Settings → Spark +AI → Inbox Automation → Auto-Drafts → Custom Instructions). An instruction that names one of the user's accounts applies only to drafts sent from that account.
+
+**Read-only**, takes no other arguments, and needs read-only access on at least one account. Instructions for an account the CLI cannot access are left out. When the user turns Personalization off, both the profile and its Custom Instructions are left out.
+
+```bash
+spark draft context
+spark draft context --json
+```
+
+Text output starts with the Spark Profile, one of:
+
+| Output                                                  | Meaning                                                                                           |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `# Spark Profile` followed by a blank line and markdown | Profile available - write in line with it                                                         |
+| `Spark Profile: off`                                    | The user turned Personalization off - draft without it                                            |
+| `Spark Profile: not generated yet`                      | Personalization is on but the profile is not generated yet, or is regenerating - draft without it |
+| `Spark Profile: unavailable`                            | The profile could not be read - draft without it                                                  |
+
+After a blank line come the Custom Instructions: `# Custom Instructions`, a blank line, then one instruction per line, `- <text>`; with none recorded it prints `Custom Instructions: none`.
+
+JSON: `{"profile": {"state": "available" | "off" | "notGenerated" | "unavailable", "markdown": "…"}, "custom_instructions": [{"text": "…"}]}`. `markdown` is present only when `state` is `available`.
+
+On success the output includes the draft's `ID:` (use it with `--edit` and `--send`) and a `Link:` line with a Spark deep link (`https://sparkmailapp.com/dpl/bl?token=...`) that opens the draft directly in Spark. It also echoes the composed body under `Body:` - the whole message as the recipient will read it, signature included and quoted thread left out. Read it back to confirm the draft says what you meant, and to catch a sign-off of your own standing next to the account's.
 
 **Always give the user the deep link.** After creating or updating a draft, include the `Link:` URL in your response as a clickable markdown link (e.g. `[Open draft in Spark](https://sparkmailapp.com/dpl/bl?token=...)`) so the user can jump straight to the draft to review or send it. Do not tell the user to open Spark and hunt for the draft manually.
 
@@ -288,7 +332,62 @@ To toggle allow-send off, pass `--no-allow-send`.
 To remove a specific collaborator without tearing the share down, pass `--remove-user <email>`; the shared draft, its comments, and the remaining collaborators stay intact. Combine `--user` and `--remove-user` in one command to swap collaborators in a single operation - removals run before invites.
 Content edits (`--to`, `--cc`, `--bcc`, `--subject`, `--body`, `--attach`) and sharing updates (`--team`, `--user`, `--remove-user`, `--allow-send`, `--no-allow-send`) must be issued as separate `draft` commands.
 
-**Deleting a draft is final.** `--delete <pk>` removes the draft outright - unlike a received email there is no Trash to recover it from, and neither `history --undo` nor Spark's own undo can bring it back. Only delete a draft the user asked you to discard, and say so plainly in your response rather than implying it can be restored. To throw away just the _text_ of a draft while keeping the draft itself, edit it (`draft --edit <pk> --body "..."`) instead.
+**Deleting a draft is final.** `--delete <pk>` removes the draft outright - unlike a received email there is no Trash to recover it from, and neither `history --undo` nor Spark's own undo can bring it back. Only delete a draft the user asked you to discard, and say so plainly in your response rather than implying it can be restored. To throw away just the _text_ of a draft while keeping the draft itself, edit it (`draft --edit <pk> --body "..."`) instead. `action moveToTrash` does not work on a draft.
+
+**Deleting several drafts.** `--delete 1234 2345 3456` checks each ID and deletes every valid draft in one go, even when others are refused. If any ID was not deleted (scheduled, shared, not a draft, not found), the command exits non-zero; its first line names those IDs, and the rest lists what was deleted and why the others were not. `--json` gives one entry per ID with `status` `deleted`, `refused` or `not_found`.
+
+#### Sending and scheduling
+
+`--send` sends an existing draft (created with `spark draft` or in Spark Desktop) through the owning account's outbound mail pipeline. Same validation as the desktop composer: the draft must live on an account whose access level is **send** (Settings -> AI Agents), have at least one recipient, a non-empty subject, all attachments uploaded, and no unresolved manual template placeholders.
+
+**Sending waits for the user.** So the user can stop it, every `--send` is held for 60 seconds before it runs: the command answers right away with `Queued: …` and nothing has been sent yet. The user can undo it in Spark Desktop during that time. Check the outcome afterwards with `spark history` - an entry with status `error` did not go out. The other verbs below run at once.
+
+```bash
+spark draft --send 1234
+```
+
+When it runs, the result reports the original draft ID and the ID of the sent message: `Draft 1234 sent. Sent message ID: 5678.`
+
+Typical flow: `spark draft ...` to compose, review the draft, then `spark draft --send <pk>` to send it. Splitting the two operations means you (or the user) can edit the draft before any external mail is emitted - creating or editing a draft never sends.
+
+**Scheduled send ("Send Later"):** add `--date` to schedule the draft instead of sending it now. The date must be in the future (formats: `yyyy-MM-dd`, `dd/MM/yyyy`, `yyyy-MM-ddTHH:mm`); a past or malformed date is rejected before anything is sent.
+
+```bash
+spark draft --send 1234 --date 2026-04-10T09:00
+```
+
+Result: `Draft 1234 scheduled to send on 2026-04-10 09:00. Message ID: 5678.` The message moves to the Outbox (`spark emails Outbox`) under that new ID and goes out at that time.
+
+**Manage an already-scheduled message** by its Outbox ID:
+
+- **Reschedule:** `--send` with a new `--date` updates the schedule; the ID stays the same.
+
+```bash
+spark draft --send 5678 --date 2026-04-12T15:00
+```
+
+- **Send now:** `--send` with no `--date` drops the schedule and sends it immediately.
+
+```bash
+spark draft --send 5678
+```
+
+- **Unschedule:** `--unschedule` cancels the schedule and returns the message to Drafts, so you can edit it or send it later. It needs only triage access and runs at once.
+
+```bash
+spark draft --unschedule 5678
+```
+
+Output: `Message 5678 unscheduled - returned to drafts. Find it in the Drafts folder.` Unscheduling creates a fresh draft, so the old ID (5678) no longer resolves - list `emails Drafts` (or `thread` on the conversation) to get the new draft ID before editing or sending it. Run `spark emails Outbox` afterwards to confirm nothing you unscheduled is still queued.
+
+**Follow-up reminder on a draft:** `--change-reminder <pk> --date <date>` sets a reminder on a draft or a scheduled message; if nobody has replied by then, the thread comes back to the user's Inbox. The reminder stays with the message when it is sent. `--clear-reminder <pk>` removes it.
+
+```bash
+spark draft --change-reminder 1234 --date 2026-04-15
+spark draft --clear-reminder 1234
+```
+
+**Several messages at once:** `--send`, `--unschedule`, `--change-reminder` and `--clear-reminder` each take several IDs (`--send 1234 2345`), with one verb per command. If any ID fails, the command exits non-zero; the first line names the failed IDs, and the rest of the output shows which ones went through. Act on what the output says, not on the command alone.
 
 ### templates
 
@@ -325,8 +424,11 @@ If a name matches more than one template, you'll get an error listing the matchi
 
 Post a team comment (chat message) on a thread. If the thread is not yet shared, it will be shared automatically. Supports text comments, file attachments, or both. Use `--edit` to update an existing comment.
 
+To mention (tag) a teammate, write `@` followed by their email in `--body`, e.g. `@alice@co.com`. It becomes a real mention: the teammate is notified and added to the conversation, and the comment shows `@Full Name`. Get emails from `spark team "<Team Name>"`. An `@email` that isn't an active member of the team is rejected with the member list; `@Name` without an email is posted as plain text and notifies nobody.
+
 ```bash
 spark comment 1234 --body "Looks good, let's proceed."
+spark comment 1234 --body "@alice@co.com can you take this one?"
 spark comment 1234 --body "Please review this" --team "Engineering"
 spark comment 1234 --body "FYI" --team "Engineering" --user alice@co.com --user bob@co.com
 spark comment 1234 --attach /path/to/screenshot.png
@@ -338,12 +440,12 @@ spark comment --edit 5678 --body "Updated comment text"
 | Parameter         | Required             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ----------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `<message-id>`    | Yes (post)           | Message ID of a message in the thread to comment on.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `--body`          | When no `--attach`   | Comment text to post. Required when using `--edit`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `--body`          | When no `--attach`   | Comment text to post. `@<email>` mentions a teammate. Required when using `--edit`.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `--attach`        | When no `--body`     | Absolute path to a file to attach. Repeat for multiple files. Each file is sent as a separate message. Cannot be used with `--edit`. The Spark app must be able to read the path; in the sandboxed App Store build a path outside the app's container can't be read and is rejected with a clear error - pipe the file with `--attach-stream` instead. Max 25 MB per file.                                                                                                                                                                     |
 | `--attach-stream` | When no `--body`     | Attach a single file whose bytes are read from stdin, shown as `<name>`, sent as its own comment message. Use this when the file is outside the app's sandbox (the App Store build can't read arbitrary paths) - it's the inbound twin of `attachment --stream`. One streamed file per command; cannot be used with `--edit`. Max 25 MB. Example: `cat shot.png \| spark comment 456 --attach-stream shot.png --team "Engineering"`. Needs a real stdin, so it only works when you run the `spark` binary yourself - otherwise use `--attach`. |
 | `--edit`          | No                   | Message ID of an existing comment to edit. Requires `--body`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `--team`          | When >1 team         | Team name. Required when you belong to multiple teams.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `--user`          | When team >2 members | Teammate email to share with. Repeat for multiple. Only used when auto-sharing an unshared thread. For teams with 2 or fewer members, the whole team is shared with automatically.                                                                                                                                                                                                                                                                                                                                                             |
+| `--user`          | When team >2 members | Teammate email to share with. Repeat for multiple. Only used when auto-sharing an unshared thread; it doesn't mention anyone (use `@<email>` in `--body`). For teams with 2 or fewer members, the whole team is shared with automatically.                                                                                                                                                                                                                                                                                                     |
 
 Use `emails` to find message IDs. Use `thread` to see comment IDs in a conversation. Use `team` to list teams and their members.
 
@@ -558,57 +660,7 @@ Supported actions:
 - `delegationComplete` - Mark the delegation as complete
 - `delegationReopen` - Reopen a completed delegation
 
-**`send` verb (requires send access):**
-
-Sends an existing draft (created with `spark draft` or in Spark Desktop) through the owning account's outbound mail pipeline. Same validation as the desktop composer: the draft must live on an account whose access level is **send** (Settings -> AI Agents), have at least one recipient, a non-empty subject, all attachments uploaded, and no unresolved manual template placeholders.
-
-```bash
-spark action send 1234
-```
-
-Output reports the original draft ID and the PK of the sent message:
-
-`Draft 1234 sent. Sent message ID: 5678.`
-
-Typical flow: `spark draft ...` to compose, review the draft, then `spark action send <pk>` to commit. Splitting the two operations means you (or the user) can edit the draft before any external mail is emitted - `spark draft` alone never sends.
-
-`send` accepts multiple draft IDs in one call (each runs through validation independently and the response reports per-draft success/failure), but the common case is a single id.
-
-**Scheduled send ("Send Later"):** pass an optional `--date` to schedule the draft instead of sending it now. The date must be in the future (formats: `yyyy-MM-dd`, `dd/MM/yyyy`, `yyyy-MM-ddTHH:mm`); a past or malformed date is rejected before anything is sent.
-
-```bash
-spark action send 1234 --date 2026-04-10T09:00
-```
-
-Output confirms the schedule: `Draft 1234 scheduled to send on 2026-04-10 09:00. Message ID: 5678.` The message sits in the outbox and is delivered at that time.
-
-**Manage an already-scheduled ("Send Later") message** by targeting its message ID with `send`:
-
-- **Reschedule:** `send` with a new `--date` updates the existing schedule (it is no longer a plain draft, so this does not create a new message):
-
-```bash
-spark action send 5678 --date 2026-04-12T15:00
-```
-
-Output: `Message 5678 rescheduled to send on 2026-04-12 15:00. Message ID: 5678.`
-
-- **Send now:** `send` with no `--date` drops the schedule and sends it immediately:
-
-```bash
-spark action send 5678
-```
-
-Output: `Scheduled message 5678 sent now. Message ID: 5678.`
-
-- **Unschedule:** `unschedule` cancels the schedule and returns the message to drafts (so you can edit it or send it later):
-
-```bash
-spark action unschedule 5678
-```
-
-Output: `Message 5678 unscheduled - returned to drafts. Find it in the Drafts folder.` Clearing the schedule mints a fresh draft, so the original ID (5678) no longer resolves - re-list the Drafts folder to get the new draft ID before editing or sending it.
-
-Both `send` (with or without `--date`) on a scheduled message and `unschedule` require send access on the owning account.
+**Several messages at once:** pass several IDs (`spark action archive 100 200 300`). If any of them fails or is refused, the command exits non-zero and its first line names those IDs; the rest of the output lists what went through. Check that line rather than assuming the whole batch succeeded.
 
 Options:
 
@@ -742,8 +794,9 @@ spark contact-action enableAutosummaryForContact newsletter@example.com # AI sum
 **Draft a reply:**
 
 1. `spark emails --filter "from:sender"` - find the email
-2. `spark draft --reply-to <ID> --body "Thanks for the update!"`
-3. Give the user the `Link:` from the output as a clickable markdown link so they can review the draft in Spark
+2. `spark draft context` - read the Spark Profile and Custom Instructions to write with
+3. `spark draft --reply-to <ID> --body "Thanks for the update!"`
+4. Give the user the `Link:` from the output as a clickable markdown link so they can review the draft in Spark
 
 **Send an email from a saved template:**
 
@@ -841,8 +894,11 @@ Do not check on every session or before every command - this skill is the source
 - The `search` command is best for topic-based queries; `emails` is best for browsing/filtering by metadata
 - `thread` returns the full conversation - use it when you need the complete email text, not just metadata
 - Use `draft` to compose emails - it supports new drafts, replies, forwards, and editing existing drafts
+- Before writing any draft body, run `draft context` and write in line with the Spark Profile and Custom Instructions it shows; the user's own instructions in the conversation take priority
 - After creating a draft, always share its `Link:` deep link with the user as a clickable markdown link instead of asking them to open Spark
-- `draft --delete <pk>` discards a draft permanently - there is no Trash and no undo, so use it only when the user asked for it
+- `draft --delete <pk>` discards a draft permanently - there is no Trash and no undo, so use it only when the user asked for it; it takes several IDs at once
+- Send or schedule a draft with `draft --send <pk> [--date <date>]`; sending waits 60 seconds for the user to undo it, so confirm the outcome with `history`
+- Scheduled and unsent mail is in `emails Outbox`, not in any mail folder - check it before and after scheduling or unscheduling
 - Never end a draft body with a sign-off: Spark appends the account's signature itself (`draft signatures` shows it)
 - Use `comment` to post team chat messages on threads - it auto-shares the thread if needed
 - Use `action` to perform email actions like pin, archive, snooze, move to folder, and more

@@ -61,9 +61,11 @@ Avoid using the detector on very short phrases or single words, as accuracy drop
 ## Security and Environment
 
 - **Iframes:** Cross-origin iframes require an explicit Permissions Policy to access the API.
+
   ```html
   <iframe src="https://cross-origin.example.com/" allow="language-detector"></iframe>
   ```
+
 - **Web Workers:** The API is **not** currently available in Web Workers due to Permission Policy complexities.
 - **Privacy:** No data is sent to Google or third parties during the detection process.
 

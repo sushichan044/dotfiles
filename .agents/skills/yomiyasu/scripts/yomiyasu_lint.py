@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 yomiyasu_lint.py - 日本語の表現とMarkdownの書式を、設定されたルールで点検する。
 
@@ -7,9 +8,13 @@ Python標準ライブラリだけで動作する。
 mail は絵文字と meta_filler の返信・結びの5型を外す。宛名・挨拶・署名・クッション言葉を削る専用規則はない。
 paper は慎重表現をぼかしとして削る規則がないので、外す規則はない。
 """
-__version__ = "2.5.0"
+
+from __future__ import annotations
+__version__ = "3.3.0"
 
 import os
+from pathlib import Path
+from collections.abc import Callable, Collection, Iterable, Sequence
 import errno
 import functools
 import sys
@@ -21,7 +26,11 @@ import unicodedata
 from bisect import bisect_right
 from itertools import chain, compress
 from operator import is_
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, NoReturn, Protocol, cast
+
+
+class _TextWriter(Protocol):
+    def write(self, value: str, /) -> object: ...
 
 # スクリプトとして動かしたときは、markdown_visibility を読み込む前に .pyc を書かないようにする
 # （スキルのフォルダに __pycache__ を作らない。yomiyasu_check.py と同じ）。モジュールとして読み込まれたときは、
@@ -31,17 +40,20 @@ if __name__ == "__main__":
 _VISIBILITY_NAMES = ("analyze_markdown", "line_visible_text", "range_overlaps_protected",
                      "inline_protected_spans", "unicode_whitespace", "decode_source",
                      "DOC_TYPES", "READER_LEVELS", "normalize_doc_type", "normalize_reader", "context_label",
-                     "WordsError", "resolve_words", "current_directory", "words_context", "words_label")
+                     "WordsError", "resolve_words", "current_directory", "words_context", "words_label",
+                     "input_path_problem")
 try:
     try:
         if __package__:
             from .markdown_visibility import analyze_markdown, line_visible_text, range_overlaps_protected, inline_protected_spans, unicode_whitespace, decode_source
             from .markdown_visibility import DOC_TYPES, READER_LEVELS, normalize_doc_type, normalize_reader, context_label
             from .markdown_visibility import WordsError, resolve_words, current_directory, words_context, words_label
+            from .markdown_visibility import input_path_problem
         else:
             from markdown_visibility import analyze_markdown, line_visible_text, range_overlaps_protected, inline_protected_spans, unicode_whitespace, decode_source
             from markdown_visibility import DOC_TYPES, READER_LEVELS, normalize_doc_type, normalize_reader, context_label
             from markdown_visibility import WordsError, resolve_words, current_directory, words_context, words_label
+            from markdown_visibility import input_path_problem
     except SyntaxError as error:
         # 隣の markdown_visibility.py が壊れている。ほかの読めないときと同じく ImportError にする（スクリプトでは終了コード3）。
         raise ImportError(
@@ -60,6 +72,8 @@ try:
         from pathlib import Path
         _visibility_spec = importlib.util.spec_from_file_location(
             "_yomiyasu_markdown_visibility", Path(__file__).with_name("markdown_visibility.py"))
+        if _visibility_spec is None or _visibility_spec.loader is None:
+            raise ImportError('cannot load markdown_visibility.py', name=expected)
         _visibility_module = importlib.util.module_from_spec(_visibility_spec)
         try:
             _visibility_spec.loader.exec_module(_visibility_module)
@@ -90,6 +104,7 @@ try:
         WordsError = _visibility_module.WordsError
         resolve_words = _visibility_module.resolve_words
         current_directory = _visibility_module.current_directory
+        input_path_problem = _visibility_module.input_path_problem
         words_context = _visibility_module.words_context
         words_label = _visibility_module.words_label
 except ImportError as _import_error:
@@ -103,6 +118,35 @@ else:
     _IMPORT_ERROR = None
 
 
+# 読み込みのときに組む正規表現は、初めて使うときに組む（_lazy_compile）。1回の実行で使うのは一部だけなので、lint と
+# diff を CLI で動かすときや、check が子プロセスとして動かすときの起動の時間を延ばさないため。関数の中で組む正規表現
+# （利用者が書く語の一覧の正規表現を含む）は、今までどおりその場で組み、書き誤りをすぐに知らせる。
+_PATTERN_ATTRIBUTES = ("search", "match", "fullmatch", "finditer", "findall", "sub", "subn", "split", "scanner",
+                       "flags", "groups", "groupindex")
+
+
+class _LazyPattern:
+    """初めて属性を読まれたときに組む正規表現。組んだあとは re.Pattern の関数と属性をそのまま持つ。
+    pattern は組まずに読める（ほかの正規表現を組み立てるときに使う）。"""
+
+    def __init__(self, pattern: str, flags: int) -> None:
+        self.pattern = pattern
+        self._flags = flags
+
+    def __getattr__(self, name: str) -> object:
+        if name.startswith("__"):
+            raise AttributeError(name)
+        compiled = re.compile(self.pattern, self._flags)
+        for attribute in _PATTERN_ATTRIBUTES:
+            setattr(self, attribute, getattr(compiled, attribute))
+        return getattr(compiled, name)
+
+
+def _lazy_compile(pattern: str, flags: int = 0) -> re.Pattern[str]:
+    """re.compile(pattern, flags) と同じ正規表現を、初めて使うときに組む形で返す（_LazyPattern）。"""
+    return cast("re.Pattern[str]", _LazyPattern(pattern, flags))
+
+
 # --json の出力の形式のバージョン。キーを足すだけなら上げない。キーの意味や型を変えたときに上げる。
 # v1.1.2 までの形（score、is_clean、metrics、findings）を1とみなす。
 # 公開前の形式2の中の変更（2.0.0 の rule_penalty_score の式）では上げない。
@@ -110,7 +154,7 @@ LINT_FORMAT_VERSION = 2
 
 # 文書の種類ごとに外す規則（種類ごとに決めた組。formal と promo はあとから足した）。
 # その種類で普通な書き方を候補にしてしまう規則のうち、根拠のある組だけ。規則ID の順に並べる。検出はそのまま行い、
-# 件数と点数を数える前に候補から除く（種類を限って当てる規則を除けば、種類なしの候補からこの規則を除いたものと同じ）。
+# 件数と点数を数える前に候補から除く（種類を限って当てる規則と種類によって出さない規則を除けば、種類なしの候補からこの規則を除いたものと同じ）。
 # 公開の名前として読むだけにし、書き換えて使う使い方は約束しない。
 DOC_TYPE_SKIP_RULES = {
     "pr": ("excess_list",),
@@ -147,13 +191,25 @@ DOC_TYPE_SKIP_PATTERNS = {"mail": {"meta_filler": (
 # paper: 慎重表現そのものを削る規則はない。誇張の「過言ではない」や文末反復まで一括で外さない。
 # 種類を限って当てる規則（規則ID から、当てる種類のタプルへ）。種類を指定しないときと、ほかの種類では除く。
 DOC_TYPE_ONLY_RULES = {
-    "pause_comma": ("pr", "article", "incident", "proposal", "minutes", "manual", "slides", "essay", "formal", "mail", "paper"),
     # 2.2.0: 台詞の句点は script だけ、読み物の一人称と数字は essay だけ
     "dialogue_period": ("script",),
     "narrative_density": ("essay",),
     # 2.4.0: スライドの見出しと1行の箇条の読点は slides だけ
     "slide_comma": ("slides",),
 }
+# 3.3.0: 種類を指定しないときも当て、ここに並べた種類でだけ出さない規則（規則ID から、出さない種類のタプルへ）。
+# 種類を限って当てる規則と同じく、出さない種類では検出を行わず、外した候補にも数えない。
+# pause_comma は 3.2.3 まで種類を指定したときだけ当てていた（promo と script では出さないのは前から同じ）。
+DOC_TYPE_OFF_RULES = {
+    "pause_comma": ("promo", "script"),
+}
+
+
+def _rule_applies(rule: str, doc_type: str | None) -> bool:
+    """種類を限って当てる規則と、種類によって出さない規則の表から、doc_type でその規則を当てるか。"""
+    if rule in DOC_TYPE_ONLY_RULES and doc_type not in DOC_TYPE_ONLY_RULES[rule]:
+        return False
+    return doc_type not in DOC_TYPE_OFF_RULES.get(rule, ())
 
 
 # Emoji facts are pinned to Unicode 18.0, not broad Unicode block membership.
@@ -611,15 +667,15 @@ _EMOJI_FLAG_REGION_CODES = (
     "UN US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW "
 ).split()
 
-def _emoji_character_class(ranges):
+def _emoji_character_class(ranges: Sequence[tuple[int, int]]) -> str:
     """Build a compact stdlib regex class from pinned scalar intervals."""
-    def escaped(cp):
+    def escaped(cp: int) -> str:
         return "\\u%04x" % cp if cp <= 0xFFFF else "\\U%08x" % cp
     return "[" + "".join(escaped(lo) if lo == hi else escaped(lo) + "-" + escaped(hi)
                          for lo, hi in ranges) + "]"
 
 
-def _emoji_flag_pattern():
+def _emoji_flag_pattern() -> str:
     """Recognize only flag pairs in the pinned registered-region data."""
     seconds = {}
     for code in _EMOJI_FLAG_REGION_CODES:
@@ -633,10 +689,12 @@ def _emoji_flag_pattern():
     return "(?:" + "|".join(groups) + ")"
 
 
-# Preserve the public compiled Pattern interface and noncapturing findall.
+# Preserve the public pattern's interface (findall, search and the other
+# re.Pattern methods) and noncapturing findall. Since 3.0.1 the object is a
+# _LazyPattern compiled on first use, not an re.Pattern instance.
 # Legacy Emoji=Yes/default-emoji bases remain style candidates. Registered
 # VS15 is text; qualified keycaps/flags and explicit VS16 are emoji candidates.
-EMOJI_PATTERN = re.compile(
+EMOJI_PATTERN = _lazy_compile(
     "(?:" + _emoji_flag_pattern() +
     r"|[0-9#*]\ufe0f\u20e3" +
     "|" + _emoji_character_class(_EMOJI_EXPLICIT_VARIATION_BASES) + r"\ufe0f" +
@@ -646,17 +704,17 @@ EMOJI_PATTERN = re.compile(
 
 # Every default branch begins with one of these scalar classes. Enumerating
 # only those starts avoids retrying the flag/variation alternation at each
-# Japanese character, while the original Pattern remains the public object.
+# Japanese character, while the original pattern remains the public object.
 _EMOJI_DEFAULT_PATTERN = EMOJI_PATTERN
 # A small conservative superset is faster than hundreds of duplicate scalar
 # intervals. All pinned default-branch starts are inside these intervals;
-# extra symbols remain candidates only and the original Pattern rejects them.
-_EMOJI_START_PATTERN = re.compile(
+# extra symbols remain candidates only and the original pattern rejects them.
+_EMOJI_START_PATTERN = _lazy_compile(
     r"[0-9#*](?=\ufe0f\u20e3)|[\u00a9-\u2fff\u3030\u303d\u3297\u3299\U0001f000-\U0001faff]"
 )
 
 
-def _emoji_matches(text):
+def _emoji_matches(text: str) -> list[str]:
     """Preserve findall order/non-overlap, and custom public-pattern behavior."""
     if EMOJI_PATTERN is not _EMOJI_DEFAULT_PATTERN:
         return EMOJI_PATTERN.findall(text)
@@ -683,7 +741,7 @@ def _emoji_matches(text):
 # （「（見ていきましょう）」「〜まとめました（後半で見ていきましょう）」）だけ除く。目次の副題（「実践編（〜）」）は除かない。
 # 閉じかぎと引用符（」』”’"'）は、同じ段落のその行までに対の開きがない行でだけ除く（_end_quote_closers）。
 # リンクの文字列の終わりになる ASCII の ] は、どの規則でも飾りに数えない。
-def _merged_ranges(ranges):
+def _merged_ranges(ranges: Iterable[tuple[int, int]]) -> tuple[tuple[int, int], ...]:
     merged = []
     for low, high in sorted(ranges):
         if merged and low <= merged[-1][1] + 1:
@@ -704,7 +762,7 @@ _END_VISIBLE_RANGES = _merged_ranges(_END_SYMBOL_RANGES + _EMOJI_EXPLICIT_VARIAT
 _END_VISIBLE_CHARS = _emoji_character_class(_END_VISIBLE_RANGES)[1:-1]
 _END_JOINER_CHARS = _emoji_character_class(_END_JOINER_RANGES)[1:-1]
 _END_DECORATION_CHARS = _END_VISIBLE_CHARS + _END_JOINER_CHARS
-_END_DECORATION_CHAR = re.compile("[" + _END_DECORATION_CHARS + "]")
+_END_DECORATION_CHAR = _lazy_compile("[" + _END_DECORATION_CHARS + "]")
 _END_KEYCAP = r"[0-9#*]\ufe0f?\u20e3"
 # 正規表現の中で、文末の前に置ける飾りの並び（空でもよい）
 _END_DECORATION_RUN = r"(?:" + _END_KEYCAP + r"|[\s" + _END_DECORATION_CHARS + r"])*"
@@ -712,10 +770,10 @@ _END_BRACKETS = {"）": "（", ")": "(", "】": "【", "〕": "〔", "〉": "〈
 _END_CLOSERS = "".join(_END_BRACKETS) + "←↑→↓〜～"
 _END_QUOTES = {"」": "「", "』": "『", "”": "“", "’": "‘", '"': '"', "'": "'"}
 _END_MARKS = "。．！？!?"
-_END_BRACKET_AFTER_PREDICATE = re.compile(r"(?:です|ます|でした|ました|ません|ない|だ|た|る)$")
+_END_BRACKET_AFTER_PREDICATE = _lazy_compile(r"(?:です|ます|でした|ました|ません|ない|だ|た|る)$")
 
 
-def _bracket_opens_sentence(text, position, closer):
+def _bracket_opens_sentence(text: str, position: int, closer: str) -> bool:
     """text[position] の閉じかっこと対の開きかっこが、文頭か、句点か述語の直後にあるか。
 
     見るのは閉じかっこの前の256字まで。そこで分からなければ除かない（長い行でも手間を抑える）。"""
@@ -742,7 +800,7 @@ def _bracket_opens_sentence(text, position, closer):
     return False
 
 
-def _strip_end_decoration(text, closers=""):
+def _strip_end_decoration(text: str, closers: str = "") -> str:
     """文の終わりの後ろの飾りを除いた文を返す。飾りがなければ text をそのまま返す。
 
     句点、感嘆符、疑問符は残し、飾りとの並びの順も保つ。closers の字（閉じかっこ、矢印、波線と、
@@ -777,11 +835,11 @@ def _strip_end_decoration(text, closers=""):
 
 
 # 文の途中で、句点の代わりに置いた絵文字の並び（「いかがでしたか😊 次回も…」）。並びは見える飾りの字で始まる。
-_END_BREAK_RUN = re.compile(r"(?:" + _END_KEYCAP + r"|[" + _END_VISIBLE_CHARS + r"])"
-                            r"(?:" + _END_KEYCAP + r"|[\s" + _END_DECORATION_CHARS + r"])*")
+_END_BREAK_RUN = _lazy_compile(r"(?:" + _END_KEYCAP + r"|[" + _END_VISIBLE_CHARS + r"])"
+                               r"(?:" + _END_KEYCAP + r"|[\s" + _END_DECORATION_CHARS + r"])*")
 # 並びのあとが助詞なら、文が続いている（「いかがでしたか🚀という結び」「🍎を買う」）。
 # 並びのあとが字（かな、漢字、英数字）でなく、かっこや記号のときも分けない（「〜です♪（笑）」）
-_END_BREAK_CONTINUES = re.compile(
+_END_BREAK_CONTINUES = _lazy_compile(
     r"(?:と|って|の|を|が|は|に|へ|や|か|から|まで|より|など|だけ|で(?![はも])|も(?!ちろん|し|っと|う)|ー)")
 # 並びの前が助詞や読点なら、絵文字が語の代わりになっている（「設定は⚙ボタンから」）
 _END_BREAK_HEAD_CHARS = "はがをのにでとへやも、，,：:"
@@ -789,7 +847,7 @@ _END_BREAK_PAIRS = (("「", "」"), ("『", "』"), ("（", "）"), ("(", ")"), 
                     ("［", "］"), ("[", "]"))
 
 
-def _decoration_breaks(sentence):
+def _decoration_breaks(sentence: str) -> list[str] | None:
     """句点の代わりに絵文字の並びを置いて次の文を続けた所で分けた文の並びを返す。分けられなければ None。
 
     分けた文は後ろに絵文字の並びを残す（呼び出し側が _strip_end_decoration で除く）。
@@ -831,7 +889,7 @@ def _decoration_breaks(sentence):
     return pieces
 
 
-def _with_undecorated(sentences, closers=_END_CLOSERS):
+def _with_undecorated(sentences: Sequence[str], closers: str = _END_CLOSERS) -> list[str]:
     """文の並びに、文末の飾りを除いた文と、句点の代わりの絵文字で分けた文を足す（飾りのない文はそのまま）。"""
     result = list(sentences)
     for sentence in sentences:
@@ -843,7 +901,7 @@ def _with_undecorated(sentences, closers=_END_CLOSERS):
     return result
 
 
-def _end_quote_closers(analysis):
+def _end_quote_closers(analysis: dict) -> dict[int, str]:
     """行ごとに、文末の飾りとして除いてよい閉じ引用符を返す。
 
     同じ段落（箇条書きは項目ごと）のその行までに対の開き（「『“‘）がない閉じかぎと閉じ引用符だけを除く。
@@ -864,7 +922,7 @@ def _end_quote_closers(analysis):
     return allowed
 
 
-def _end_closers_for(analysis, line_no):
+def _end_closers_for(analysis: dict, line_no: int) -> str:
     """文の型を見る規則が、その行の文末で飾りとして除く字（閉じかっこ、矢印、波線と、対のない閉じ引用符）。"""
     allowed = analysis.get("_end_quote_closers")
     if allowed is None:
@@ -904,11 +962,14 @@ _DEVICE_LITERAL_PREFIXES = (
 )
 # 前が漢字か平仮名か文頭で、上の語でないときだけ拾う。カタカナと英数字の語のあと（レーザー装置、X線装置）は機器の名前として除く。
 # 機器の操作や状態の語が同じ文で後ろに続く単独の「装置」（「この装置は、毎朝自動で起動します」）も除く。
+# 3.2.0: すぐあとが「の中で動」「内で動」「に組み込」「を制御」「の制御」の「装置」（装置の中で動くソフトウェア）も、
+# 文字どおりの機器として除く
 _DEVICE_PATTERN = (r"(?:(?<![ァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ線])|(?<=イデオロギー))"
                    + "".join("(?<!" + "|".join(group) + ")" for group in (
                        sorted(w for w in _DEVICE_LITERAL_PREFIXES if len(w) == 2),
                        sorted(w for w in _DEVICE_LITERAL_PREFIXES if len(w) == 3)))
-                   + r"装置(?![^。！？!?]{0,20}?(?:電源|起動|停止|配線|ケーブル|スイッチ|ボタン|ランプ|点検|修理|故障|稼働"
+                   + r"装置(?!の中で動|内で動|に組み込|を制御|の制御)"
+                     r"(?![^。！？!?]{0,20}?(?:電源|起動|停止|配線|ケーブル|スイッチ|ボタン|ランプ|点検|修理|故障|稼働"
                      r"|作動|設置|取扱|取り扱|保守|校正|電池|電圧|電流))")
 SLOP_WORD_PATTERNS = [
     # ナビゲート、デリゲートなど -gate で終わる外来語は、直前のカタカナで除く（レビューゲートなどは拾う）。
@@ -951,22 +1012,22 @@ TRANSLATED_TERM_PATTERNS = [
 
 # ダッシュ類。em dash（—）、horizontal bar（―）、罫線（─ ━）。en dash（–）、長音（ー）、波ダッシュ（〜）は含めない。
 DASH_CHARS = "—―─━"
-_DASH_RUN = re.compile("[" + DASH_CHARS + "]+")
+_DASH_RUN = _lazy_compile("[" + DASH_CHARS + "]+")
 # 木構造やASCII図に使う罫線。これを含む行は図とみなし、ダッシュの検査をしない。
-_DIAGRAM_CHARS = re.compile(r"[│┃├┣└┗┌┏┐┓┘┛┬┳┴┻┼╋╭╮╰╯]")
+_DIAGRAM_CHARS = _lazy_compile(r"[│┃├┣└┗┌┏┐┓┘┛┬┳┴┻┼╋╭╮╰╯]")
 # 短い語を読点で3つ以上並べ、ダッシュで閉じて文を終える形（「速さ、軽さ、静けさ──。」）。文ごとに見る。
 _LIST_ITEM = r"[^、。！？!?\s" + DASH_CHARS + "]{1,12}"
-_DASH_LIST_ENDING = re.compile(
+_DASH_LIST_ENDING = _lazy_compile(
     r"(?:^|(?<=[。！？!?]))\s*" + _LIST_ITEM + "(?:、[ \t　]*" + _LIST_ITEM + "){2,}[ \t　]*[" + DASH_CHARS + "]+" + _END_DECORATION_RUN + "(?:[。．.]|$)")
 # 出典ラベル、著者と書名、英語の著者名と書誌情報を手掛かりにする。短い行というだけでは除外しない。
-_ATTRIBUTION_LABEL = re.compile(r"^(?:出典|引用元|著者|Source|Author)\s*[:：]", re.IGNORECASE)
-_ATTRIBUTION_BOOK = re.compile(r"^[一-龥々ァ-ヴーA-Za-z .・'’-]+『[^』]+』(?:[ \t　]*(?:（[^）]*）|\([^)]*\)))*[。.]?$")
-_ATTRIBUTION_ENGLISH = re.compile(r"^[A-Z][A-Za-z.'’−-]*(?:[ \t]+[A-Z][A-Za-z.'’−-]*)+,[ \t]+\S")
+_ATTRIBUTION_LABEL = _lazy_compile(r"^(?:出典|引用元|著者|Source|Author)\s*[:：]", re.IGNORECASE)
+_ATTRIBUTION_BOOK = _lazy_compile(r"^[一-龥々ァ-ヴーA-Za-z .・'’-]+『[^』]+』(?:[ \t　]*(?:（[^）]*）|\([^)]*\)))*[。.]?$")
+_ATTRIBUTION_ENGLISH = _lazy_compile(r"^[A-Z][A-Za-z.'’−-]*(?:[ \t]+[A-Z][A-Za-z.'’−-]*)+,[ \t]+\S")
 # 「人間」「作業時間」「目線」などの普通名詞は、区間を表す接尾辞と取り違えない。
 _NON_ROUTE_ENDINGS = ("人間", "時間", "期間", "空間", "世間", "仲間", "手間", "目線", "視線", "動線", "光線", "伏線", "生命線", "方便", "利便", "不便")
 
 
-def _is_dash_attribution(text):
+def _is_dash_attribution(text: str) -> bool:
     text = text.strip()
     if not text or text[0] not in DASH_CHARS:
         return False
@@ -975,7 +1036,7 @@ def _is_dash_attribution(text):
                 or _ATTRIBUTION_ENGLISH.match(credit))
 
 
-def _mask_quoted_segments(text):
+def _mask_quoted_segments(text: str) -> str:
     """Mask balanced quotes, including nesting, in one pass plus a prefix sum."""
     closing = {"「": "」", "『": "』", "[": "]"}
     stacks = {closer: [] for closer in closing.values()}
@@ -995,10 +1056,10 @@ def _mask_quoted_segments(text):
     return "".join(result)
 
 
-_QUOTE_MARKS = re.compile(r"[「」『』\[\]]")
+_QUOTE_MARKS = _lazy_compile(r"[「」『』\[\]]")
 
 
-def _mask_quoted_segments_sparse(text):
+def _mask_quoted_segments_sparse(text: str) -> str:
     """Same output as _mask_quoted_segments, but visits only the bracket marks.
 
     Used for whole documents, where the per-character loop is the main cost.
@@ -1030,9 +1091,9 @@ def _mask_quoted_segments_sparse(text):
     return "".join(pieces)
 
 
-def _mask_route_dashes(text):
+def _mask_route_dashes(text: str) -> str:
     """Scan the adjacent noun runs once per dash, avoiding regex backtracking."""
-    def noun_char(char):
+    def noun_char(char: str) -> bool:
         return "一" <= char <= "龥" or "ァ" <= char <= "ヴ" or char in "ー々"
 
     result = list(text)
@@ -1058,27 +1119,27 @@ def _mask_route_dashes(text):
 
 
 # ダッシュで補足や言い換えを挟む形（「今日——正確には昨日——連絡しました。」）
-_DASH_INSERTION = re.compile("[" + DASH_CHARS + "]{1,2}[^" + DASH_CHARS + "。\n]{1,40}[" + DASH_CHARS + "]{1,2}")
+_DASH_INSERTION = _lazy_compile("[" + DASH_CHARS + "]{1,2}[^" + DASH_CHARS + "。\n]{1,40}[" + DASH_CHARS + "]{1,2}")
 # 小説などで、同じ文書に同じ指摘を出しすぎないよう、ダッシュの指摘は1文書あたりこの件数までにする。
 # 上限は種類で外した候補を除いたあとに当て、点数には上限の前の数（当たった行の数）を使う。
 DASH_FINDING_LIMIT = 3
 
 # 「」『』の中は会話文や記号への言及、リンクの文字列は引用した題名として扱う。
-_QUOTED_SEGMENT = re.compile(r"「[^「」]*」|『[^『』]*』|\[[^\[\]]*\]")
+_QUOTED_SEGMENT = _lazy_compile(r"「[^「」]*」|『[^『』]*』|\[[^\[\]]*\]")
 # リンクの直後に著者などを添える区切り（「[記事](URL) — 著者氏」）。表示上のテキストではURLが空白になる。
-_LINK_ATTRIBUTION = re.compile(r"\][ \t]*[" + DASH_CHARS + "]+")
+_LINK_ATTRIBUTION = _lazy_compile(r"\][ \t]*[" + DASH_CHARS + "]+")
 
 
 _QUESTION_CLOSERS = "」』）)\"'*_"
 _QUESTION_SUFFIXES = ("ですか", "ますか", "ませんか", "でしょうか", "だろうか", "のか", "ないか",
                       "うか", "くか", "ぐか", "すか", "つか", "ぬか", "ぶか", "むか", "るか", "たか", "いいか", "よいか")
-_WH_QUESTION = re.compile(
+_WH_QUESTION = _lazy_compile(
     r"なぜ|どうして(?!も)|どのよう(?:に|な)|いつ(?!でも|も|か(?!ら))|どこ(?!でも|も|か(?!ら))|"
     r"誰(?!でも|も|か(?!ら))|何(?!でも|も|か(?!ら))|どれ(?!でも|も|か(?!ら))|どの(?![^。！？!?、]{1,12}でも)"
 )
 
 
-def _question_content_end(sentence):
+def _question_content_end(sentence: str) -> int:
     end = len(sentence)
     while end and (sentence[end - 1].isspace() or sentence[end - 1] in _QUESTION_CLOSERS
                    or _END_DECORATION_CHAR.match(sentence[end - 1])):
@@ -1086,7 +1147,7 @@ def _question_content_end(sentence):
     return end
 
 
-def _last_context_sentence(text):
+def _last_context_sentence(text: str) -> str:
     end = _question_content_end(text)
     if not end:
         return ""
@@ -1094,7 +1155,7 @@ def _last_context_sentence(text):
     return text[start:end]
 
 
-def _ends_with_question(sentence):
+def _ends_with_question(sentence: str) -> bool:
     """Recognize an adjacent yes/no question, not an arbitrary word ending in か."""
     end = _question_content_end(sentence)
     if not end:
@@ -1108,7 +1169,7 @@ def _ends_with_question(sentence):
     return _WH_QUESTION.search(sentence, 0, end) is None
 
 
-def _dash_finding(text, line_no, snippet):
+def _dash_finding(text: str, line_no: int, snippet: str) -> dict | None:
     """Flag decorative dashes once per line; diagrams, dividers and attributions are not prose."""
     if not _DASH_RUN.search(text):
         return None
@@ -1206,33 +1267,33 @@ _KIKU_ABSTRACT = (r"(?:見直し|工夫|改善|施策|対策|習慣|仕組み|�
                   r"|取り組み|取組み|修正|調整|改修|方針|戦略|準備|練習|勉強|投資|配慮)")
 _KIKU_STOP = "、，," + _KIKU_END
 _KIKU_RE = {
-    "literal_subject": re.compile(r"(?:" + _KIKU_LITERAL + r")(?:(?:が|は|も|こそ|の|に|って|として)[、，,]?|[、，,])"
-                                  r"[^" + _KIKU_STOP + r"を]{0,10}$"),
-    "idiom": re.compile(r"(?:融通|小回り|応用|機転|睨み|にらみ|潰し|つぶし|保存|無理|ごまかし|誤魔化し|押し|抑え|見通し|見晴らし"
-                        r"|保険|割引|学割|(?<![一-龥々])(?:気|目|鼻|口|顔|腕|足))[がのはもを](?:よく|地味に|じわじわ)?$"),
-    "v210": re.compile(r"(?:地味に|よく|じわじわ)$"),
-    "negation": re.compile(r"か|きませ|けな|けませ|いて(?:い)?な|いていませ|いてませ|いてこ|いてきませ|いてくれ(?:な|ませ)"
-                           r"|き(?:始め|はじめ)(?:な|ませ)|き出さ"),
-    "abstract_subject": re.compile(_KIKU_ABSTRACT + r"(?:し?(?:た|ておいた|ていた)(?:の|こと))?(?:が|は|も|こそ|から)[、，,]?"
-                                   r"[^" + _KIKU_STOP + r"]{0,12}$"),
-    "verb": re.compile(r"く|き(?!目)|け|い[てた]"),
-    "effect_owner": re.compile(_KIKU_ABSTRACT + r"の$"),
-    "effect": re.compile(r"き目(?:が|は|も)(?:出|表れ|現れ|あらわれ)"),
-    "gradual": re.compile(r"いて(?:く[るれ]|き[たてまそ])|き(?:始め|はじめ|出[しすせ])"),
-    "adverb": re.compile(r"(?:後から|あとから|後々|あとあと|徐々に|次第に|じわりと|じんわりと?|じわじわと|ジワジワと?|じわっと"
-                         r"|後で|あとで|後になって|あとになって)$"),
-    "context": re.compile(r"(?:" + _KIKU_LITERAL + r"|" + _KIKU_CONTEXT + r")(?![一-龥々ァ-ヴーA-Za-z])"),
+    "literal_subject": _lazy_compile(r"(?:" + _KIKU_LITERAL + r")(?:(?:が|は|も|こそ|の|に|って|として)[、，,]?|[、，,])"
+                                     r"[^" + _KIKU_STOP + r"を]{0,10}$"),
+    "idiom": _lazy_compile(r"(?:融通|小回り|応用|機転|睨み|にらみ|潰し|つぶし|保存|無理|ごまかし|誤魔化し|押し|抑え|見通し|見晴らし"
+                           r"|保険|割引|学割|(?<![一-龥々])(?:気|目|鼻|口|顔|腕|足))[がのはもを](?:よく|地味に|じわじわ)?$"),
+    "v210": _lazy_compile(r"(?:地味に|よく|じわじわ)$"),
+    "negation": _lazy_compile(r"か|きませ|けな|けませ|いて(?:い)?な|いていませ|いてませ|いてこ|いてきませ|いてくれ(?:な|ませ)"
+                              r"|き(?:始め|はじめ)(?:な|ませ)|き出さ"),
+    "abstract_subject": _lazy_compile(_KIKU_ABSTRACT + r"(?:し?(?:た|ておいた|ていた)(?:の|こと))?(?:が|は|も|こそ|から)[、，,]?"
+                                      r"[^" + _KIKU_STOP + r"]{0,12}$"),
+    "verb": _lazy_compile(r"く|き(?!目)|け|い[てた]"),
+    "effect_owner": _lazy_compile(_KIKU_ABSTRACT + r"の$"),
+    "effect": _lazy_compile(r"き目(?:が|は|も)(?:出|表れ|現れ|あらわれ)"),
+    "gradual": _lazy_compile(r"いて(?:く[るれ]|き[たてまそ])|き(?:始め|はじめ|出[しすせ])"),
+    "adverb": _lazy_compile(r"(?:後から|あとから|後々|あとあと|徐々に|次第に|じわりと|じんわりと?|じわじわと|ジワジワと?|じわっと"
+                            r"|後で|あとで|後になって|あとになって)$"),
+    "context": _lazy_compile(r"(?:" + _KIKU_LITERAL + r"|" + _KIKU_CONTEXT + r")(?![一-龥々ァ-ヴーA-Za-z])"),
     # 2.5.0: 3つ目の形の、同じ文と前の3行で見る語（ソフトウェアの語を除く）
-    "context_near": re.compile(r"(?:" + _KIKU_LITERAL_NEAR + r"|" + _KIKU_CONTEXT + r")(?![一-龥々ァ-ヴーA-Za-z])"),
-    "timing": re.compile(r"(?:[0-9０-９]+|数|半)\s*(?:分|時間)(?:間)?"
-                         r"(?=ほど|くらい|ぐらい|程度|後|以内|経|たつ|たっ|で|もすると|もしないうち)"),
-    "sentence": re.compile(r"[^" + _KIKU_END + r"]+[" + _KIKU_END + r"]*|[" + _KIKU_END + r"]+"),
+    "context_near": _lazy_compile(r"(?:" + _KIKU_LITERAL_NEAR + r"|" + _KIKU_CONTEXT + r")(?![一-龥々ァ-ヴーA-Za-z])"),
+    "timing": _lazy_compile(r"(?:[0-9０-９]+|数|半)\s*(?:分|時間)(?:間)?"
+                            r"(?=ほど|くらい|ぐらい|程度|後|以内|経|たつ|たっ|で|もすると|もしないうち)"),
+    "sentence": _lazy_compile(r"[^" + _KIKU_END + r"]+[" + _KIKU_END + r"]*|[" + _KIKU_END + r"]+"),
 }
-_KIKU_CANDIDATE = re.compile(_KIKU_PATTERN)
+_KIKU_CANDIDATE = _lazy_compile(_KIKU_PATTERN)
 _KIKU_WINDOW_LINES = 3
 
 
-def _kiku_metaphor_in_line(text, before_lines=()):
+def _kiku_metaphor_in_line(text: str, before_lines: Sequence[str] = ()) -> bool:
     """行の中に比喩の「効く」として拾う文があれば True。before_lines は同じ文書の前の行（新しい行が後ろ）。"""
     patterns = _KIKU_RE
     earlier = []
@@ -1285,11 +1346,21 @@ METAPHOR_VERB_PATTERNS = [
     (r"代わりに添え[るた]", "比喩動詞「添える」"),
     (r"(議論|意見|結論|方向性|価格|話題|検討)が[^。！？!?]*?収斂", "比喩動詞「収斂する」"),
     (_MOMENT_PATTERN, "英語直訳「〜した瞬間 (the moment ...)」"),
-    (r"(前提|基盤)が崩れ[るた]", "抽象比喩「前提が崩れる」"),
+    (r"(前提|基盤)(?:が|も)崩れ[るた]?", "抽象比喩「前提が崩れる」"),
     (r"文化が醸成", "非生物主語「文化が醸成される」"),
     (r"プロセスが定着", "非生物主語「プロセスが定着する」"),
     (r"事例が残した", "非生物主語「事例が残した」"),
 ]
+
+# 3.0.0: 規則の正規表現ごとに、指摘の文の「（desc）が検出されました。」のあとを差し替える表（ほかの規則の文は変えない）。
+# 「前提が崩れる」は、言い換えを促すと中身のない行に中身を足しやすいので、前後の文に中身があるかを見る手順の文にする
+_METAPHOR_VERB_MESSAGE_TAILS = {
+    r"(前提|基盤)(?:が|も)崩れ[るた]?": "前提の中身が前後の文にあれば、その中身で書いてください。なければ本文を残し、何が成り立たなくなったかを"
+                                 "尋ねてください（references/slop-catalog.md 10章）。文字どおりの地盤や土台のことなら、直さずに"
+                                 "残してください。",
+}
+_METAPHOR_VERB_MESSAGE_TAIL = ("不自然な比喩動詞であれば、ふだん使う動詞や客観的な表現に書き直してください。ただし、文字どおりの動作や"
+                               "状態変化を表している場合は無理に言い換える必要はありません。")
 
 # メタフィラー・定型句
 # 文ごとに当てる（^ と $ は文頭と文末）。
@@ -1354,7 +1425,7 @@ _PATTERN_LITERAL_HINTS = {
     r"代わりに添え[るた]": ("代わりに添え",),
     r"(議論|意見|結論|方向性|価格|話題|検討)が[^。！？!?]*?収斂": ("収斂",),
     _MOMENT_PATTERN: ("した瞬間",),
-    r"(前提|基盤)が崩れ[るた]": ("が崩れ",),
+    r"(前提|基盤)(?:が|も)崩れ[るた]?": ("崩れ",),
     r"文化が醸成": ("文化が醸成",),
     r"プロセスが定着": ("プロセスが定着",),
     r"事例が残した": ("事例が残した",),
@@ -1387,10 +1458,10 @@ _PATTERN_LITERAL_HINTS = {
     r"(?<!原点)(?<!への)(?<!先祖)(?<!平均)回帰(が|を)(出|発生|起こ|起き|生じ|防)": ("回帰",),
 }
 _ALWAYS_SCAN = object()
-_DOCUMENT_TABLES_CACHE = []
+_DOCUMENT_TABLES_CACHE: list[tuple] = []
 
 
-def _literal_can_cover(literal, other):
+def _literal_can_cover(literal: str, other: str) -> bool:
     return other != literal and any(
         other[index:].startswith(literal)
         or (index and literal.startswith(other[index:]))
@@ -1398,8 +1469,8 @@ def _literal_can_cover(literal, other):
     )
 
 
-def _document_tables():
-    tables = (SLOP_WORDS, SLOP_WORD_PATTERNS, METAPHOR_VERB_PATTERNS,
+def _document_tables() -> tuple | None:
+    tables: tuple[Sequence, ...] = (SLOP_WORDS, SLOP_WORD_PATTERNS, METAPHOR_VERB_PATTERNS,
               TRANSLATED_TERM_PATTERNS, FILLER_PATTERNS, INFO_SENTENCE_PATTERNS)
     if any(type(table) not in (list, tuple) for table in tables):
         return None
@@ -1416,12 +1487,12 @@ def _document_tables():
                and all(type(item) is str for item in row)
                for table, width in zip(families, (2, 2, 2, 2, 3)) for row in table):
         return None
-    saved = tuple(tuple(table) for table in tables)
+    saved: tuple[tuple, ...] = tuple(tuple(table) for table in tables)
     words, slop, metaphor, translated, filler, info = saved
-    literals = []
+    literals: list[str] = []
     alternatives = []
 
-    def keyed(rows, sources):
+    def keyed(rows: list | tuple, sources: Sequence[str]) -> tuple[list, list]:
         keys = []
         out = []
         for row, source in zip(rows, sources):
@@ -1447,7 +1518,7 @@ def _document_tables():
     word_keys = [word if word and len(word) <= 64
                  and not any(char in "*_" or char.isspace() for char in word)
                  else _ALWAYS_SCAN for word in words]
-    literals.extend(word for word in word_keys if word is not _ALWAYS_SCAN)
+    literals.extend(word for word in word_keys if isinstance(word, str))
     literals = list(dict.fromkeys(literals))
     if len(literals) > 128:
         return None
@@ -1461,7 +1532,7 @@ def _document_tables():
     return result
 
 
-def _narrowed_document_rows(text):
+def _narrowed_document_rows(text: str) -> list[list] | None:
     tables = _document_tables()
     if tables is None:
         return None
@@ -1494,7 +1565,7 @@ def _narrowed_document_rows(text):
             + [list(compress(rows, map(contains, keys))) for rows, keys in families])
 
 
-def _may_match_literals(literals, text):
+def _may_match_literals(literals: Sequence[str] | None, text: str) -> bool:
     if literals is None:
         return True
     for literal in literals:
@@ -1503,7 +1574,7 @@ def _may_match_literals(literals, text):
     return False
 
 # 評価の語だけの短い文を3つ以上並べる型（「効く。重い。安い。」）
-_FRAGMENT_RUN = re.compile(r"(?:^|(?<=[。！？]))(?:[^。！？、\s「」『』]{1,4}[。！]){3,}")
+_FRAGMENT_RUN = _lazy_compile(r"(?:^|(?<=[。！？]))(?:[^。！？、\s「」『』]{1,4}[。！]){3,}")
 # 否定を重ねてから言い切る型（「車でも、家でもない。有頂天だ。」「これは努力じゃない、仕組みです。」）
 # 二度否定してから言い切る文が続く形だけを見る（「何でもない」「とんでもない」、接続詞の「それでも、」は除く）。
 _NOT_IDIOM = r"(?<!何)(?<!なん)(?<!まんざら)(?<!とん)"
@@ -1512,21 +1583,21 @@ _NEGATION_NEGATIVE_END = (
     r"(?:[な無]い|[な無]かった|ません(?:でした)?)"
     r"(?:(?:の|ん)(?:だ|です|だった|でした|である|であった)|です|でした|でしょう|だろう|であろう)?(?:よね|よ|ね)?"
 )
-_NEGATION_EXTRA = re.compile(
+_NEGATION_EXTRA = _lazy_compile(
     r"(?:[^。、]{1,15}(?:では|じゃ)ない。[^。]{0,15}|[^。、]{1,15}(?<!それ)(?<!今)(?<!いつ)(?<!誰)(?<!何)でも、[^。、]{1,15})"
     + _NOT_IDIOM + r"でもない。"
     + r"(?![^。！？!?]{0,40}" + _NEGATION_NEGATIVE_END + _END_DECORATION_RUN + r"[。！!])"
     + r"[^。！？!?]{1,40}" + _NEGATION_CONCLUSION_END + _END_DECORATION_RUN + r"[。！!]")
 # 「これは努力じゃない、仕組みです。」（文ごとに見る）
-_NEGATION_JANAI = re.compile(
+_NEGATION_JANAI = _lazy_compile(
     r"^(?:(?:でも|しかし|つまり|ただ|ただし|けれども?|けど|だが|それでも|だから)、)?"
     r"(?![い良]いじゃない、|すごいじゃない、|凄いじゃない、)"
     r"[^。、]{1,15}じゃない、[^。]{1,30}(?:です|だ)(?:よ|ね|よね)?[。！!]?$"
 )
 # 文頭の「もちろん、」のあとに数語だけが続いて終わる短い文（「もちろん、失敗もする。」）
-_SHORT_MOCHIRON = re.compile(r"^(もちろん|勿論)、[^。！？!?、「」『』]{1,10}[。！!]$")
+_SHORT_MOCHIRON = _lazy_compile(r"^(もちろん|勿論)、[^。！？!?、「」『』]{1,10}[。！!]$")
 # 問いや依頼への答えの定型（「もちろん、大丈夫です。」）は先回りの認めではない
-_MOCHIRON_ANSWER = re.compile(r"^(もちろん|勿論)、(大丈夫|構いません|かまいません|いいですよ|いいよ|できます|可能です|です|だ)")
+_MOCHIRON_ANSWER = _lazy_compile(r"^(もちろん|勿論)、(大丈夫|構いません|かまいません|いいですよ|いいよ|できます|可能です|です|だ)")
 # 文頭の「〜(連体形)のは、」のあとに名詞を並べ、述語を書かずに終える文（「今回の改修で増えたのは、画面、帳票、通知。」）。
 # 項目は格助詞（を・が・は・に・で・へ・から・まで・より）を含まず、名詞らしい字で終わる。読点（、，・）だけで並べるなら
 # 3つ以上、「と・や・および」を交えるなら2つ以上。「〜など。」「〜の3つ。」「〜の3点。」で終わる形も当てる。
@@ -1542,22 +1613,22 @@ _CLEFT_LIST_COMMA_ITEM = (r"(?:(?!から|より)[^、，,・。！？!?「」『
 _CLEFT_LIST_MIXED_ITEM = (r"(?:(?!から|より|および)[^、，,・。！？!?「」『』（）()\[\]\sをがはにでへとや]){0,14}"
                           r"(?:" + _CLEFT_LIST_NOUN_END + r"|もの)")
 _CLEFT_LIST_TAIL = r"(?:など|の[0-9０-９一二三四五六七八九十]+[つ点])?[。！!]?$"
-_CLEFT_LIST_COMMA = re.compile(_CLEFT_LIST_HEAD + _CLEFT_LIST_COMMA_ITEM
-                               + r"(?:[、，・]" + _CLEFT_LIST_COMMA_ITEM + r"){2,}" + _CLEFT_LIST_TAIL)
-_CLEFT_LIST_MIXED = re.compile(_CLEFT_LIST_HEAD + r"(?P<items>" + _CLEFT_LIST_MIXED_ITEM
-                               + r"(?:(?:[、，・]|と|や|および)" + _CLEFT_LIST_MIXED_ITEM + r")+)" + _CLEFT_LIST_TAIL)
-_CLEFT_LIST_JOINER = re.compile(r"[とや]|および")
-_CLEFT_LIST_COMMA_MARK = re.compile(r"[、，・]")
+_CLEFT_LIST_COMMA = _lazy_compile(_CLEFT_LIST_HEAD + _CLEFT_LIST_COMMA_ITEM
+                                  + r"(?:[、，・]" + _CLEFT_LIST_COMMA_ITEM + r"){2,}" + _CLEFT_LIST_TAIL)
+_CLEFT_LIST_MIXED = _lazy_compile(_CLEFT_LIST_HEAD + r"(?P<items>" + _CLEFT_LIST_MIXED_ITEM
+                                  + r"(?:(?:[、，・]|と|や|および)" + _CLEFT_LIST_MIXED_ITEM + r")+)" + _CLEFT_LIST_TAIL)
+_CLEFT_LIST_JOINER = _lazy_compile(r"[とや]|および")
+_CLEFT_LIST_COMMA_MARK = _lazy_compile(r"[、，・]")
 # コード、リンク、脚注は空白に伏せてあるので、2字以上の空白の並びを名詞の仮の字に置き換え、ほかの空白は除いてから照合する
-_CLEFT_LIST_MASKED_RUN = re.compile(r"\s{2,}")
-_CLEFT_LIST_SPACE = re.compile(r"\s")
+_CLEFT_LIST_MASKED_RUN = _lazy_compile(r"\s{2,}")
+_CLEFT_LIST_SPACE = _lazy_compile(r"\s")
 # 「のは」の前の動詞の語幹の漢字の並び（「変動したのは」なら「変動」）
-_CLEFT_LIST_STEM = re.compile(r"[一-龥々〆ヵヶ]+(?=[ぁ-ん]*$)")
+_CLEFT_LIST_STEM = _lazy_compile(r"[一-龥々〆ヵヶ]+(?=[ぁ-ん]*$)")
 # 直前の文を探すときの文の終わりの字
 _CLEFT_LIST_STOPS = "。！？!?"
 
 
-def _cleft_list_head(sentence):
+def _cleft_list_head(sentence: str) -> str | None:
     """「〜のは、A、B、C。」の形なら「のは」の前までを返す。当たらなければ None。"""
     if "のは、" not in sentence:
         return None
@@ -1574,13 +1645,14 @@ def _cleft_list_head(sentence):
     if not joiners:
         return None
     # 読点がなく「と・や」で1回つなぎ、最後の項目に「の」がある形（「父と母の笑顔」）は、1つの名詞句として当てない
+    joiner = _CLEFT_LIST_JOINER.search(items)
     if (joiners == 1 and not _CLEFT_LIST_COMMA_MARK.search(items)
-            and "の" in items[_CLEFT_LIST_JOINER.search(items).end():]):
+            and joiner is not None and "の" in items[joiner.end():]):
         return None
     return mixed.group("head")
 
 
-def _cleft_list_premise(head, previous):
+def _cleft_list_premise(head: str, previous: str) -> bool:
     """直前の文が問いか、「のは」の前の動詞の語幹の漢字を含めば、前提を書いてあるとみる。"""
     end = _question_content_end(previous)
     if end and (previous[end - 1] in "？?" or previous.endswith(("か。", "か"), 0, end)):
@@ -1589,7 +1661,7 @@ def _cleft_list_premise(head, previous):
     return bool(stem) and any(char in previous for char in stem.group())
 
 
-def _cleft_list_join(analysis, rows, position, text):
+def _cleft_list_join(analysis: dict, rows: list[dict], position: int, text: str) -> str:
     """rows[:position] の行を後ろから text の前につなぐ（改行で折り返した文を1つの文として読む）。
     最後の文が分かるだけ（句点などが2つになるまで）つなぐ。"""
     marks = sum(map(text.count, _CLEFT_LIST_STOPS))
@@ -1601,7 +1673,7 @@ def _cleft_list_join(analysis, rows, position, text):
     return text
 
 
-def _cleft_list_previous(analysis, line_no, before):
+def _cleft_list_previous(analysis: dict, line_no: int, before: str) -> str:
     """「〜のは、」の文の直前の文。同じ段落の前の文、なければ前の段落の最後の文、なければ直前の見出し。
 
     before はその行で「〜のは、」の文より前にある字。表、コード、引用などを挟んだときは前の文はないとみる。"""
@@ -1622,7 +1694,7 @@ def _cleft_list_previous(analysis, line_no, before):
     return _last_context_sentence(_cleft_list_join(analysis, rows, len(rows), ""))
 
 
-def _has_cleft_list_ending(analysis, line_no, contexts, line_sentences, filler_patterns):
+def _has_cleft_list_ending(analysis: dict, line_no: int, contexts: Sequence[tuple[str, str]], line_sentences: list[str], filler_patterns: Sequence[tuple]) -> bool:
     """行の文のどれかが、前提を書かずに「〜のは、A、B、C。」で終えていれば True。
 
     contexts は _rule9_context の行の文（引用を伏せた文と、同じブロックの次の文）。引用を伏せた文と伏せていない文の
@@ -1647,14 +1719,14 @@ def _has_cleft_list_ending(analysis, line_no, contexts, line_sentences, filler_p
 
 
 # 否定のあとに「でもある」と続ける文（「AではなくBでもある」）は、元の言い方のまま残す
-_NEGATION_ALSO = re.compile(r"ではなく、?[^。]{1,40}?(?<!どこに)(?<!誰に)(?<!だれに)(?<!何)(?<!なん)(?<!いつ)でも(ある|あります|あった|ありました)")
+_NEGATION_ALSO = _lazy_compile(r"ではなく、?[^。]{1,40}?(?<!どこに)(?<!誰に)(?<!だれに)(?<!何)(?<!なん)(?<!いつ)でも(ある|あります|あった|ありました)")
 # 「- **特徴**: 説明」のように、太字の見出し語とコロンで始まる箇条書き
 # 「- **特徴：** 説明」（コロンが太字の内側）や番号付きリストも同じ型として数える。
-_BOLD_LABEL_ITEM = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+\*\*[^*]+?(?:\*\*\s*[:：]|[:：]\s*\*\*)")
-_SUMMARY_HEADING = re.compile(r"^#{1,6}\s*(まとめ|おわりに)\s*$")
+_BOLD_LABEL_ITEM = _lazy_compile(r"^\s*(?:[-*+]|\d+[.)])\s+\*\*[^*]+?(?:\*\*\s*[:：]|[:：]\s*\*\*)")
+_SUMMARY_HEADING = _lazy_compile(r"^#{1,6}\s*(まとめ|おわりに)\s*$")
 
 # ネガティブパラレリズム（AではなくB）
-NEGATIVE_PARALLELISM_PATTERN = re.compile(r"([^。、]+)ではなく、?([^。、]+)")
+NEGATIVE_PARALLELISM_PATTERN = _lazy_compile(r"([^。、]+)ではなく、?([^。、]+)")
 _NEGATIVE_PARALLELISM_DEFAULT = NEGATIVE_PARALLELISM_PATTERN
 
 
@@ -1694,13 +1766,13 @@ def get_frontmatter_line_count(lines: List[str]) -> int:
     return 0
 
 
-_SENTENCE_END_POSITION = re.compile(r"(?<=[。！？])")
-_LIST_MARKER_LINE = re.compile(r"^\s*([-*+]|\d+\.)\s+")
-_LIST_LINK_LINE = re.compile(r"[-*+]\s+\[.*?\]\(https?://")
-_LINE_SENTENCE_BREAK = re.compile(r"(?<=[。！？!?])")
+_SENTENCE_END_POSITION = _lazy_compile(r"(?<=[。！？])")
+_LIST_MARKER_LINE = _lazy_compile(r"^\s*([-*+]|\d+\.)\s+")
+_LIST_LINK_LINE = _lazy_compile(r"[-*+]\s+\[.*?\]\(https?://")
+_LINE_SENTENCE_BREAK = _lazy_compile(r"(?<=[。！？!?])")
 
 
-def _plain_sentence_records(analysis):
+def _plain_sentence_records(analysis: dict) -> list[tuple[int, str, str, tuple[int, int]]]:
     """Visible prose plus original source slices from the same scan boundary."""
     records = []
     for block_id, block in enumerate(analysis["blocks"]):
@@ -1742,7 +1814,7 @@ def check_sentence_end_repetitions(sentences: List[Tuple[int, str]]) -> List[Dic
     return _sentence_end_findings(sentences)
 
 
-def _sentence_end_type(s):
+def _sentence_end_type(s: str) -> str:
     """sentence_end_repetition が数える語尾の種類。数えない文は「その他」。"""
     # Scan ordinary short suffixes directly. Bound Python-level work for
     # long removable suffixes; the guarded regex starts only at run edges.
@@ -1783,7 +1855,7 @@ def _sentence_end_type(s):
     return end_type
 
 
-def _split_decoration_breaks(sentences, source_sentences, paragraph_groups):
+def _split_decoration_breaks(sentences: list[tuple[int, str]], source_sentences: list[tuple[int, str]], paragraph_groups: Sequence[object]) -> tuple[list[tuple[int, str]], list[tuple[int, str]], Sequence[object]]:
     """句点の代わりに絵文字を置いて続けた文（「これはAです🚀これはBです🚀」）を、句点で分けたときと同じように分ける。
 
     分けるのは、前後とも4字以上あるときだけ（句点で分けた文と同じく、3字以下の文は数えない）。
@@ -1818,7 +1890,7 @@ def _split_decoration_breaks(sentences, source_sentences, paragraph_groups):
     return split_sentences, split_sources, split_groups
 
 
-def _sentence_end_findings(sentences, source_sentences=None, paragraph_groups=None):
+def _sentence_end_findings(sentences: list[tuple[int, str]], source_sentences: list[tuple[int, str]] | None = None, paragraph_groups: Sequence[object] | None = None) -> list[dict]:
     """Keep visible ending decisions and original finding snippets separate."""
     findings = []
     end_types = [(line_no, s, _sentence_end_type(s)) for line_no, s in sentences]
@@ -1855,7 +1927,7 @@ _METRIC_OPAQUE_KINDS = frozenset((
 _PROSE_SCAN_KINDS = _METRIC_OPAQUE_KINDS | frozenset(("container_prefix",))
 
 
-def _prose_visible_text(analysis, line_no):
+def _prose_visible_text(analysis: dict, line_no: int) -> str:
     """Reuse the same immutable raw-source view for sentences and lexical scan."""
     cache = analysis.setdefault("_prose_line_cache", {})
     if line_no not in cache:
@@ -1863,7 +1935,7 @@ def _prose_visible_text(analysis, line_no):
     return cache[line_no]
 
 
-def _image_only_row(analysis, row, visible):
+def _image_only_row(analysis: dict, row: dict, visible: str) -> bool:
     """A real image with no visible prose; never skip prose after an image."""
     if not visible.strip():
         return range_overlaps_protected(analysis, row["start"], row["start"] + len(row["raw"]),
@@ -1895,11 +1967,11 @@ _IMAGE_ONLY_ROW_DEFAULT = _image_only_row
 
 # HTML のブロックの行で、<details> の開きと閉じを探すときの印。コメントと、中身をタグとして読まない要素
 # （script、style、textarea）の中は飛ばす。
-_DETAILS_HINT = re.compile(r"<details", re.I)
-_DETAILS_TOKEN = re.compile(r"<!--|<(/?)(details|script|style|textarea)(?=[\s/>]|$)", re.I)
+_DETAILS_HINT = _lazy_compile(r"<details", re.I)
+_DETAILS_TOKEN = _lazy_compile(r"<!--|<(/?)(details|script|style|textarea)(?=[\s/>]|$)", re.I)
 
 
-def _details_inner_lines(analysis):
+def _details_inner_lines(analysis: dict) -> set[int] | None:
     """組になった <details> と </details> の間にある行の番号の集合。組が1つもなければ None。
 
     開きと閉じは、HTML のブロックの行（引用の外）でだけ見る。段落の中、インラインのコード、コードの囲みとインデントした
@@ -1949,12 +2021,12 @@ def _details_inner_lines(analysis):
     return inside
 
 
-def _metrics_from_analysis(analysis):
+def _metrics_from_analysis(analysis: dict) -> dict[str, int | float]:
     """Use the same protected data boundary as lexical and sentence checks."""
     return _metrics_and_list_gate(analysis)[0]
 
 
-def _metrics_and_list_gate(analysis):
+def _metrics_and_list_gate(analysis: dict) -> tuple[dict[str, int | float], int, int]:
     """metrics、箇条書きの判定用字数（<details> 内の箇条書きを除く）、点数用の地の文字数を返す。"""
     plain_rows = []
     prose_chars = 0
@@ -2046,30 +2118,30 @@ def _bold_can_close(prev: str, nxt: str) -> bool:
     return all(not _bold_ws(prev) and (not p(prev) or _bold_ws(nxt) or p(nxt)) for p in (_bold_punct_gfm, _bold_punct_new))
 
 
-def _bold_code_spans(text: str):
+def _bold_code_spans(text: str) -> list[tuple[int, int]]:
     """Inline code ranges, with escapes recognized outside code only."""
     return [(left, right) for left, right, kind in inline_protected_spans(text)
             if kind == "inline_code"]
 
 
-def _bold_pairs(text: str):
+def _bold_pairs(text: str) -> list[tuple[int, int]]:
     """後方互換用: テキスト内の太字ペアを返す"""
     return _bold_pairs_in_block(text)
 
 
-def _direct_escape(text, position):
+def _direct_escape(text: str, position: int) -> bool:
     start = position
     while start > 0 and text[start - 1] == "\\":
         start -= 1
     return (position - start) % 2 == 1
 
 
-def _star_runs(text):
+def _star_runs(text: str) -> list[tuple[int, int]]:
     analysis = analyze_markdown(text, skip_frontmatter=False)
     return _runs_from_masks(text, analysis["mask_spans"])
 
 
-def _runs_from_masks(text, masked):
+def _runs_from_masks(text: str, masked: list[tuple[int, int]]) -> list[tuple[int, int]]:
     runs = []
     mask_index = 0
     for match in re.finditer(r"\*+", text):
@@ -2089,7 +2161,7 @@ def _runs_from_masks(text, masked):
     return runs
 
 
-def _roles(text, start, end, punct):
+def _roles(text: str, start: int, end: int, punct: Callable[[str], bool]) -> tuple[bool, bool]:
     prev = text[start - 1] if start else ""
     nxt = text[end] if end < len(text) else ""
     can_open = not _bold_ws(nxt) and (not punct(nxt) or _bold_ws(prev) or punct(prev))
@@ -2097,13 +2169,13 @@ def _roles(text, start, end, punct):
     return can_open, can_close
 
 
-def _strong_parse(text, punct, runs=None):
+def _strong_parse(text: str, punct: Callable[[str], bool], runs: list[tuple[int, int]] | None = None) -> tuple[list[tuple[int, int]], set[int]]:
     """Asterisk delimiter-stack matching with the multiple-of-three condition."""
     pairs, consumed, _ = _delimiter_parse(text, punct, runs)
     return pairs, consumed
 
 
-def _delimiter_parse(text, punct, runs=None, state=None, stop=None):
+def _delimiter_parse(text: str, punct: Callable[[str], bool], runs: list[tuple[int, int]] | None = None, state: _DelimiterStack | None = None, stop: int | None = None) -> tuple[list[tuple[int, int]], set[int], list[tuple[int, int, int]]]:
     """Same nearest-compatible opener, indexed by the six rule-3 classes.
 
     state（_DelimiterStack）を渡すと、その状態の続きから runs[state.index:stop] だけを処理し、state を書き換える。
@@ -2124,6 +2196,7 @@ def _delimiter_parse(text, punct, runs=None, state=None, stop=None):
     else:
         openers, buckets, gfm_bounds, bottoms = state.openers, state.buckets, state.gfm_bounds, state.bottoms
         pairs, emphasis, consumed = state.pairs, state.emphasis, state.consumed
+        assert stop is not None
         runs, state.index = runs[state.index:stop], stop
     for start, end in runs:
         can_open, can_close = _roles(text, start, end, punct)
@@ -2180,12 +2253,12 @@ class _DelimiterStack:
     __slots__ = ("text", "punct", "runs", "index", "openers", "buckets", "gfm_bounds",
                  "bottoms", "pairs", "emphasis", "consumed")
 
-    def __init__(self, text, punct, runs):
+    def __init__(self, text: str, punct: Callable[[str], bool], runs: list[tuple[int, int]]) -> None:
         self.text = text
         self.punct = punct
         self.runs = runs
         self.index = 0
-        self.openers = []
+        self.openers: list[dict] = []
         self.buckets = {(mod, closes): [] for mod in range(3) for closes in (False, True)}
         self.gfm_bounds = punct is _bold_punct_gfm
         self.bottoms = {}
@@ -2193,11 +2266,11 @@ class _DelimiterStack:
         self.emphasis = []
         self.consumed = set()
 
-    def advance(self, stop):
+    def advance(self, stop: int) -> None:
         if stop > self.index:
             _delimiter_parse(self.text, self.punct, self.runs, self, stop)
 
-    def finds_opener(self, closer_length, can_open):
+    def finds_opener(self, closer_length: int, can_open: bool) -> bool:
         """今の状態で、長さ closer_length の閉じられる印が、組む相手を1つでも見つけるか。状態は変えない。
 
         advance の中で opener が None のままになるかどうかと同じ条件を見る。
@@ -2212,7 +2285,7 @@ class _DelimiterStack:
         return False
 
 
-def _star_extent(text, position):
+def _star_extent(text: str, position: int) -> tuple[int, int]:
     left = position
     while left > 0 and text[left - 1] == "*" and not _direct_escape(text, left - 1):
         left -= 1
@@ -2222,7 +2295,7 @@ def _star_extent(text, position):
     return left, right
 
 
-def _local_pair_ok(text, i, j):
+def _local_pair_ok(text: str, i: int, j: int) -> bool:
     left_start, left_end = _star_extent(text, i)
     right_start, right_end = _star_extent(text, j)
     for punct in (_bold_punct_gfm, _bold_punct_new):
@@ -2237,22 +2310,22 @@ def _local_pair_ok(text, i, j):
     return True
 
 
-def _bold_pairs_in_block(block_text: str):
+def _bold_pairs_in_block(block_text: str) -> list[tuple[int, int]]:
     if "**" not in block_text:
         return []
     runs = _star_runs(block_text)
     return _bold_pairs_from_runs(block_text, runs)
 
 
-def _bold_pairs_from_runs(block_text, runs):
+def _bold_pairs_from_runs(block_text: str, runs: list[tuple[int, int]]) -> list[tuple[int, int]]:
     return _bold_scan_runs(block_text, runs)[0]
 
 
-def _bold_scan_runs(block_text, runs):
+def _bold_scan_runs(block_text: str, runs: list[tuple[int, int]]) -> tuple[list[tuple[int, int]], set[tuple[int, int]], set[tuple[int, int]]]:
     return _bold_scan_context(block_text, runs)[:3]
 
 
-def _bold_scan_context(block_text, runs):
+def _bold_scan_context(block_text: str, runs: list[tuple[int, int]]) -> tuple[list[tuple[int, int]], set[tuple[int, int]], set[tuple[int, int]], dict]:
     gfm, used_gfm, emphasis_gfm = _delimiter_parse(block_text, _bold_punct_gfm, runs)
     common, used_common, emphasis_common = _delimiter_parse(block_text, _bold_punct_new, runs)
     pairs = set(gfm + common)
@@ -2299,17 +2372,17 @@ def _bold_close_of(s: str) -> int:
     return -1
 
 
-def _bold_fix(text: str, i: int, j: int, k: int):
+def _bold_fix(text: str, i: int, j: int, k: int) -> tuple[str | None, str]:
     """k 番目の太字（i と j の **）の直し方の案。(直したあとの部分, 直し方) を返す"""
     return _bold_fix_checked(text, i, j, k, known_pair=False)
 
 
-def _bold_fix_checked(text: str, i: int, j: int, k: int, known_pair: bool):
+def _bold_fix_checked(text: str, i: int, j: int, k: int, known_pair: bool) -> tuple[str | None, str]:
     """Verify the intended repaired pair under both renderers; do not trust ordinal alone."""
     return _bold_fix_with_context(text, i, j, k, known_pair, _repair_context(text))
 
 
-def _repair_context(text, runs=None):
+def _repair_context(text: str, runs: list[tuple[int, int]] | None = None) -> dict:
     if runs is None:
         runs = _star_runs(text)
     return {"runs": runs,
@@ -2319,7 +2392,7 @@ def _repair_context(text, runs=None):
                        for left, right, kind in inline_protected_spans(text)]}
 
 
-def _preserves_other_emphasis(original, repaired, i, j, delta):
+def _preserves_other_emphasis(original: Collection[tuple[int, int, int]], repaired: Collection[tuple[int, int, int]], i: int, j: int, delta: int) -> bool:
     """Every existing outside/enclosing delimiter pair keeps its source match."""
     repaired = set(repaired)
     for left, right, width in original:
@@ -2349,13 +2422,13 @@ def _preserves_other_emphasis(original, repaired, i, j, delta):
 # 後ろの組み合わせは変わらない。閉じる相手が見つからなかった位置の記録（bottoms）が食い違う場合だけ、
 # 手前の印の位置と比べて、後ろの組み合わせが変わりえないかを確かめる。
 _LINE_START_MARKS = frozenset(" \t>-+*.)#`~[")
-_REFERENCE_START = re.compile(r" {0,3}\[")
-_URL_START = re.compile(r"(?=https?://|www\.)")
-_WHITESPACE_CHAR = re.compile(r"\s")
-_LINK_DESTINATION_START = re.compile(r"\]\(")
+_REFERENCE_START = _lazy_compile(r" {0,3}\[")
+_URL_START = _lazy_compile(r"(?=https?://|www\.)")
+_WHITESPACE_CHAR = _lazy_compile(r"\s")
+_LINK_DESTINATION_START = _lazy_compile(r"\]\(")
 
 
-def _line_start_stopper(ch):
+def _line_start_stopper(ch: str) -> bool:
     """行頭の印（コンテナ、見出し、コードの柵など）を読む処理が、そこで必ず止まる文字か。
 
     行頭を読む処理が受ける文字は、半角スペース、タブ、> - + * . ) # ` ~ [ と数字だけ（数字は isdigit で広めにとる）。
@@ -2363,7 +2436,7 @@ def _line_start_stopper(ch):
     return ch != "" and ch not in _LINE_START_MARKS and not ch.isdigit()
 
 
-def _merged_intervals(spans):
+def _merged_intervals(spans: list[tuple[int, int, str]]) -> tuple[list[tuple[int, int]], list[int]]:
     merged = []
     for left, right in sorted((left, right) for left, right, _ in spans):
         if merged and left <= merged[-1][1]:
@@ -2373,23 +2446,23 @@ def _merged_intervals(spans):
     return merged, [right for _, right in merged]
 
 
-def _interval_overlaps(intervals, ends, left, right):
+def _interval_overlaps(intervals: list[tuple[int, int]], ends: list[int], left: int, right: int) -> bool:
     index = bisect_right(ends, left)
     return index < len(intervals) and intervals[index][0] < right
 
 
-def _interval_covers(intervals, ends, position):
+def _interval_covers(intervals: list[tuple[int, int]], ends: list[int], position: int) -> bool:
     index = bisect_right(ends, position)
     return index < len(intervals) and intervals[index][0] <= position
 
 
-def _interval_splits(intervals, ends, position):
+def _interval_splits(intervals: list[tuple[int, int]], ends: list[int], position: int) -> bool:
     """position の直前と直後の文字が、同じ範囲（つながった範囲）に入るか。"""
     index = bisect_right(ends, position)
     return index < len(intervals) and intervals[index][0] < position
 
 
-def _bold_run_index(context):
+def _bold_run_index(context: dict) -> dict[tuple[int, int], int]:
     """context のランから、ランの番号を引く表を作る（1回だけ）。"""
     run_index = context.get("run_index")
     if run_index is None:
@@ -2397,7 +2470,7 @@ def _bold_run_index(context):
     return run_index
 
 
-def _bold_repair_index(text, context):
+def _bold_repair_index(text: str, context: dict) -> _BoldRepairIndex | None:
     """ブロックごとに1回だけ作る。速く確かめられないブロックでは None を返す（今までどおり解析し直す）。"""
     if "repair_index" in context:
         return context["repair_index"]
@@ -2418,7 +2491,7 @@ def _bold_repair_index(text, context):
 class _BoldRepairIndex:
     """1つのブロックの元の解析の結果。案を確かめるときに使う。"""
 
-    def __init__(self, text, context, analysis):
+    def __init__(self, text: str, context: dict, analysis: dict) -> None:
         self.text = text
         self.runs = context["runs"]
         self.run_index = _bold_run_index(context)
@@ -2441,7 +2514,7 @@ class _BoldRepairIndex:
         self.parsers = {}
         self.emphasis = {_bold_punct_gfm: set(context["gfm"]), _bold_punct_new: set(context["common"])}
 
-    def _first_stopper(self, line):
+    def _first_stopper(self, line: int) -> int:
         position = self.first_stoppers.get(line)
         if position is None:
             text, position, end = self.text, self.line_starts[line], self.line_ends[line]
@@ -2450,7 +2523,7 @@ class _BoldRepairIndex:
             self.first_stoppers[line] = position
         return position
 
-    def _line_start_kept(self, edit, inserted, char_after):
+    def _line_start_kept(self, edit: int, inserted: bool, char_after: Callable[[int], str]) -> bool:
         """edit より前を変えない書き換えで、その行の行頭の読み方が変わらないか。"""
         line = bisect_right(self.line_starts, edit) - 1
         if line < 0 or edit < self.content_starts[line]:
@@ -2469,14 +2542,14 @@ class _BoldRepairIndex:
             return before and after
         return False
 
-    def _parser(self, punct, index):
+    def _parser(self, punct: Callable[[str], bool], index: int) -> _DelimiterStack:
         parser = self.parsers.get(punct)
         if parser is None or parser.index > index:
             parser = self.parsers[punct] = _DelimiterStack(self.text, punct, self.runs)
         parser.advance(index)
         return parser
 
-    def decide(self, i, j, shape, middle):
+    def decide(self, i: int, j: int, shape: str, middle: str) -> bool | None:
         """案で直した文が、ブロックを解析し直して確かめたときに通るなら True、通らないなら False、ここで決められないなら None。"""
         text = self.text
         before = self.run_index.get((i, i + 2))
@@ -2509,7 +2582,7 @@ class _BoldRepairIndex:
             first, second, delta = i + left, j + left, left + right
         end = i + len(middle)
 
-        def char_after(position):
+        def char_after(position: int) -> str:
             """書き換えたあとの文字（範囲の外は空の文字列）。"""
             if position < 0:
                 return ""
@@ -2601,7 +2674,7 @@ class _BoldRepairIndex:
         return verdict
 
 
-def _bold_fix_with_context(text, i, j, k, known_pair, context):
+def _bold_fix_with_context(text: str, i: int, j: int, k: int, known_pair: bool, context: dict) -> tuple[str | None, str]:
     """Only a proved target repair is suggested; ambiguous star runs stay manual."""
     open_start, open_end = _star_extent(text, i)
     close_start, close_end = _star_extent(text, j)
@@ -2695,7 +2768,7 @@ def _bold_fix_with_context(text, i, j, k, known_pair, context):
     return None, "手で直す"
 
 
-def _line_containers(line: str):
+def _line_containers(line: str) -> tuple[bool, int, str]:
     """行のコンテナ（リストマーカー、引用の深さ）と、内部のコンテンツを簡易解析する"""
     is_list = False
     m_list = re.match(r"^\s{0,3}(?:[*+-]|\d+[.)])\s+", line)
@@ -2722,7 +2795,7 @@ def _line_containers(line: str):
     return is_list, depth, content
 
 
-def bold_problems(text: str, skip_frontmatter: bool = True):
+def bold_problems(text: str, skip_frontmatter: bool = True) -> list[dict]:
     """Inspect visible leaf blocks; code, destinations and HTML atoms are protected."""
     if "**" not in text:
         return []
@@ -2730,7 +2803,7 @@ def bold_problems(text: str, skip_frontmatter: bool = True):
     return _bold_problems_with_analysis(text, analysis)
 
 
-def _bold_problems_with_analysis(text, analysis):
+def _bold_problems_with_analysis(text: str, analysis: dict) -> list[dict]:
     """Internal reuse for the combined lint; preserve the public two-arg API."""
     if "**" not in text:
         return []
@@ -2778,11 +2851,11 @@ def _bold_short(s: str) -> str:
     return s if len(s) <= 30 else s[:12] + "…" + s[-12:]
 
 
-def _extra_negation_line_numbers(analysis):
+def _extra_negation_line_numbers(analysis: dict) -> set[int]:
     """Find the construction across soft line breaks, never across blocks."""
     hit_lines = set()
 
-    def scan(parts):
+    def scan(parts: list[tuple[int, str]]) -> None:
         if not parts:
             return
         joined = "".join(visible for _, visible in parts)
@@ -2819,32 +2892,32 @@ def _extra_negation_line_numbers(analysis):
 
 # AIへの指示残りは作者の意図を断定できないため info にとどめる。
 # 書く行為の予告と、書き方・除外の条件が同居する型だけを見る。
-_WRITING_ACTION = re.compile(
+_WRITING_ACTION = _lazy_compile(
     r"(?:書(?:きます|く|いてみます|いていきます)|(?:説明|紹介|解説)し(?:ます|ていきます)|"
     r"まとめ(?:ます|る|ていきます)|お伝えし(?:ます|ていきます)|述べ(?:ます|る)|"
     r"振り返(?:ります|る|っていきます)|お話し?し(?:ます|ていきます)|お届けします|話していきます)[。！？!?]?$"
 )
 # 書き方の条件は、敬体の予告か、記事の範囲を示す書き出しの文だけで見る（小説の地の文や規程の文を除く）。
 _RESIDUE_OPENER = r"^(?:この記事|本記事|本稿|このブログ|ここ|以下|今回)(?:では|は)"
-_RESIDUE_OPENER_RE = re.compile(_RESIDUE_OPENER)
-_WRITING_STYLE = re.compile(
+_RESIDUE_OPENER_RE = _lazy_compile(_RESIDUE_OPENER)
+_WRITING_STYLE = _lazy_compile(
     r"(?:トーン|文体|口調)で|(?:専門用語|箇条書き)を\s*(?:できるだけ|なるべく)?"
     r"(?:使わず|用いず|避け)|(?:AI|ＡＩ)(?:っぽさ|らしさ)(?:が出ないよう|を(?:抑え|なく|避け))|"
     r"飾らない言葉で|語り口で|トーンを意識|(?<![0-9０-９])[0-9０-９]+文?字(?:程度|以内|前後)?で"
 )
-_WRITING_LIMIT = re.compile(r"に(?:絞って|限定して|焦点を(?:当てて|絞って))|触れず|扱わず|立ち入らず|[はを]抜きにして")
-_SCOPE_EXCLUSION = re.compile(
+_WRITING_LIMIT = _lazy_compile(r"に(?:絞って|限定して|焦点を(?:当てて|絞って))|触れず|扱わず|立ち入らず|[はを]抜きにして")
+_SCOPE_EXCLUSION = _lazy_compile(
     _RESIDUE_OPENER + r"[^。！？!?]*"
     r"(?:扱いません|扱わない|触れません|触れない|省きます|省く|割愛します|省略します)[。！？!?]?$"
 )
-_READER_SCOPE = re.compile(r"^(?:この|本)?(?:マニュアル|手順書|ガイド|論文|研究)(?:では|は)")
-_SCOPE_REFERENCE = re.compile(
+_READER_SCOPE = _lazy_compile(r"^(?:この|本)?(?:マニュアル|手順書|ガイド|論文|研究)(?:では|は)")
+_SCOPE_REFERENCE = _lazy_compile(
     r"参照|ご覧|別途|付録|後述|後ほど|別の?[^。！？!?]{0,8}(?:記事|ページ|章|節|報告書?|資料|文書|ガイド)|"
     r"(?:後|次|前)の(?:章|節)|第[0-9０-９一二三四五六七八九十]+章"
 )
 
 
-def _rule9_context(analysis):
+def _rule9_context(analysis: dict) -> dict[int, list[tuple[str, str]]]:
     """New rules alone use unquoted prose and the immediately following sentence.
 
     Mask balanced quotes before splitting sentences, including paragraph breaks.
@@ -2879,7 +2952,7 @@ def _rule9_context(analysis):
     return contexts
 
 
-def _has_instruction_residue(sentence, following):
+def _has_instruction_residue(sentence: str, following: str) -> bool:
     writing = _WRITING_ACTION.search(sentence)
     if (writing and ("ます" in writing.group() or _RESIDUE_OPENER_RE.search(sentence))
             and _WRITING_STYLE.search(sentence)):
@@ -2891,7 +2964,7 @@ def _has_instruction_residue(sentence, following):
                 or _SCOPE_REFERENCE.search(sentence) or _SCOPE_REFERENCE.search(following))
 
 
-def _has_instruction_residue_core(sentence, following, closers=_END_CLOSERS):
+def _has_instruction_residue_core(sentence: str, following: str, closers: str = _END_CLOSERS) -> bool:
     """文末の後ろの飾り（「〜書いていきます 🚀」）を除いた文で、もう一度確かめる。飾りがなければ確かめない。
 
     句点の代わりに絵文字を置いて続けた文（「〜扱いません🙏 詳しくは〜」）は、分けた文ごとに次の文と合わせて確かめる。"""
@@ -2908,12 +2981,12 @@ def _has_instruction_residue_core(sentence, following, closers=_END_CLOSERS):
 
 # 短い主語・主題の読点。判定は a〜t の順で、当てはまる除外条件があれば残す。
 _PAUSE_KANJI = r"一-龥々〆ヵヶ"
-_PAUSE_WORD = re.compile(r"[" + _PAUSE_KANJI + r"ぁ-んァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
+_PAUSE_WORD = _lazy_compile(r"[" + _PAUSE_KANJI + r"ぁ-んァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
 _PAUSE_OPEN = "「『（(“【［["
 _PAUSE_CLOSE = "」』）)”】］]"
 _PAUSE_BOUNDARY = "、，,。！？!?：:"
 _PAUSE_LEAD_SYMBOLS = " \t　・※•●○◆◇■□▶▷→＊*-"
-_PAUSE_CHECKBOX = re.compile(r"^\[[ xX]\]\s*")
+_PAUSE_CHECKBOX = _lazy_compile(r"^\[[ xX]\]\s*")
 
 # 助詞のかたまり（長いものから）。
 _PAUSE_COMPOUND = sorted(set([
@@ -2923,7 +2996,9 @@ _PAUSE_COMPOUND = sorted(set([
     "までも", "へも", "ても",
 ]), key=len, reverse=True)
 # 拾わない助詞のかたまり（接続・逆接・譲歩）
-_PAUSE_SKIP_CHUNKS = {"でも", "ても", "とも", "としても", "によっては"}
+# 3.2.0: 定義の「〜とは、」（ブランチとは、〜の仕組みです）も拾わない。読点を残したほうが読みやすく、AI の文と人の文で
+# 出る数の差も小さい（「ことは、」「あとは、」「ひとは、」は「は」のかたまりなので今までどおり）
+_PAUSE_SKIP_CHUNKS = {"でも", "ても", "とも", "としても", "によっては", "とは"}
 
 # 文頭の接続・前置き・手紙の定型。句全体がこれに当たれば拾わない。
 _PAUSE_CONNECTIVE = {
@@ -2931,45 +3006,52 @@ _PAUSE_CONNECTIVE = {
     "ただ", "もっとも", "それとも", "そもそも", "つきましては", "少なくとも", "そのためには",
     "今でも", "なかでも", "中でも", "それには", "まずは", "最後には", "さらには", "ひいては", "ついては",
     "このたびは", "この度は", "平素は", "日頃は", "日ごろは", "先日は", "昨日は", "本日は", "今回も",
+    # 3.2.0: 副詞の「実は」「要は」は主題ではない（句全体がこの語のときだけ。「事実は、」「概要は、」は今までどおり拾う）
+    "実は", "要は",
+    # 3.3.0: は・が・も で終わる接続の語、副詞、挨拶
+    "ところが", "あるいは", "または", "もしくは", "というのも", "じつは", "ときには", "時には", "こんにちは", "こんばんは",
 }
-_PAUSE_CONNECTIVE_END = re.compile(r"的には$|的にも$")
+_PAUSE_CONNECTIVE_END = _lazy_compile(r"的には$|的にも$")
 # ほかの規則（meta_intro、meta_filler）がすでに拾う文頭の句。1つの読点に2つの候補を出さない。
-_PAUSE_COVERED = re.compile(r"^(?:本記事では|ポイントは|(?:まず|ここで)?(?:重要|大切|大事)なのは|避けたいのは)$")
+_PAUSE_COVERED = _lazy_compile(r"^(?:本記事では|ポイントは|(?:まず|ここで)?(?:重要|大切|大事)なのは|避けたいのは)$")
 
 # 「が」の前が述語の終わり（逆接・前置きの「が、」）
-_PAUSE_GA_CONJ_END = re.compile(
+_PAUSE_GA_CONJ_END = _lazy_compile(
     r"(?:です|ます|でした|ました|ません|ませんでした|だ|だった|である|であった|た|る|い|ない|なかった|"
     r"う|く|ぐ|す|つ|ぬ|ぶ|む|よう|たい|らしい|ん|ある|いる|した|する|れる|せる|ている|ていた|ておく|けれど)$")
-_PAUSE_GA_NOUN_HIRA = re.compile(r"(?:さん|さま|様|くん|ちゃん|こと|もの|とき|ところ|ほう|ため|の|さ|たち|ら|など|だけ|まで|ばかり|"
+_PAUSE_GA_NOUN_HIRA = _lazy_compile(r"(?:さん|さま|様|くん|ちゃん|こと|もの|とき|ところ|ほう|ため|の|さ|たち|ら|など|だけ|まで|ばかり|"
                           r"くらい|ぐらい|ほど|こそ|もと|うち|あと|まえ|わけ|はず|よう|みんな|それ|これ|あれ|どれ|ここ|そこ|どこ|誰|僕|私)$")
-_PAUSE_NOUNISH_END = re.compile(r"[" + _PAUSE_KANJI + r"ァ-ヴーｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ」』）)\]>%％]$")
+# 3.2.0: 動詞の中の「が」（つながる、つながり、ながら、したがって）。読点のあとの句で、直前が平仮名で（_PAUSE_GA_NOUN_HIRA の
+# 語の終わりを除く）、すぐあとが「ら」「り」「る」「れ」「ろ」「っ」の「が」は、別の主語の「が」に数えない。
+# 直前が漢字の「が」（広がる、上がる）は見分けない
+_PAUSE_GA_KANA_BEFORE = _lazy_compile(r"[ぁ-ん]$")
+_PAUSE_GA_VERB_AFTER = _lazy_compile(r"[らりるれろっ]")
+_PAUSE_NOUNISH_END = _lazy_compile(r"[" + _PAUSE_KANJI + r"ァ-ヴーｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ」』）)\]>%％]$")
 
 _PAUSE_VERB_ATTR = (r"(?:[るたうくすつぬむぶぐ]|ない|ている|ていた|された|される|できる|した|する|った|んだ|いた|えた|れた|せた|"
              r"きた|だった|ような)")
-_PAUSE_CLAUSE_IN = re.compile(r"(?<=[" + _PAUSE_KANJI + r"ぁ-んァ-ヴー])" + _PAUSE_VERB_ATTR +
+_PAUSE_CLAUSE_IN = _lazy_compile(r"(?<=[" + _PAUSE_KANJI + r"ぁ-んァ-ヴー])" + _PAUSE_VERB_ATTR +
                        r"(?=[" + _PAUSE_KANJI + r"ァ-ヴーｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ【「『（(［\[]|の|こと|もの|とき|ところ|ほう)")
-_PAUSE_OKURI_NOUN = re.compile(r"(?:問い合わせ|打ち合わせ|取り消し|申し込み|引き渡し|割り当て|振り込み|書き込み|読み込み|受け付け|"
+_PAUSE_OKURI_NOUN = _lazy_compile(r"(?:問い合わせ|打ち合わせ|取り消し|申し込み|引き渡し|割り当て|振り込み|書き込み|読み込み|受け付け|"
                         r"立ち上げ|切り替え|切り出し|入れ替え|洗い出し|聞き取り|見積もり|取り込み|呼び出し|払い戻し|"
                         r"組み合わせ|貸し出し|締め|売り場|手当て|付け直し|使い方|考え方|進め方|書き方|作り)")
 # 分裂文（〜のは、〜のが、〜ことが、）。
-_PAUSE_CLEFT = re.compile(_PAUSE_VERB_ATTR + r"(?:の|こと)$|(?:かった|しい|たい|ない|な|だった)の$")
+_PAUSE_CLEFT = _lazy_compile(_PAUSE_VERB_ATTR + r"(?:の|こと)$|(?:かった|しい|たい|ない|な|だった)の$")
 # 条件・場面・時の枠
-_PAUSE_FRAME = re.compile(_PAUSE_VERB_ATTR + r"(?:場合|とき|時|際|ころ|あと|後|うち|ため|上|うえ|前|間|限り|範囲|以上|"
+_PAUSE_FRAME = _lazy_compile(_PAUSE_VERB_ATTR + r"(?:場合|とき|時|際|ころ|あと|後|うち|ため|上|うえ|前|間|限り|範囲|以上|"
                    r"あいだ|のち|直前|直後|最中|途中|以降|以前|前後)(?:に|で)?$|"
                    r"(?:場合|とき|際)(?:に|で)?$|" + _PAUSE_VERB_ATTR + r"$")
 _PAUSE_FRAME_CHUNKS = {"は", "も", "には", "では", "からは", "までは"}
 # 人と指示語だけの主題（随筆の語りの間）
-_PAUSE_PERSON = re.compile(r"(?:僕|ぼく|私|わたし|わたくし|俺|おれ|あたし|自分|彼女|彼|我々|われわれ|あなた|君|きみ)(?:たち|ら|達)?$|(?:の人|人たち|人々)$")
-_PAUSE_DEMONSTRATIVE = re.compile(r"^(?:それ|これ|あれ|そこ|ここ|あそこ|こちら|そちら|どれ|どこ)$")
-_PAUSE_FIXED_SUBJ = re.compile(r"(?:必要|こと|可能性|恐れ|おそれ|余地)$")
-_PAUSE_NOMINAL_END = re.compile(r"(?:こと|もの)$|" + _PAUSE_VERB_ATTR + r"の$")
+_PAUSE_PERSON = _lazy_compile(r"(?:僕|ぼく|私|わたし|わたくし|俺|おれ|あたし|自分|彼女|彼|我々|われわれ|あなた|君|きみ)(?:たち|ら|達)?$|(?:の人|人たち|人々)$")
+_PAUSE_DEMONSTRATIVE = _lazy_compile(r"^(?:それ|これ|あれ|そこ|ここ|あそこ|こちら|そちら|どれ|どこ)$")
+_PAUSE_FIXED_SUBJ = _lazy_compile(r"(?:必要|こと|可能性|恐れ|おそれ|余地)$")
+_PAUSE_NOMINAL_END = _lazy_compile(r"(?:こと|もの)$|" + _PAUSE_VERB_ATTR + r"の$")
 # 手紙の時候の挨拶「皆様には、ますます〜」（お客様は除く）
-_PAUSE_LETTER_ADDRESS = re.compile(r"(?<!客)(?:様|さま|各位)$")
-_PAUSE_LETTER_GREETING = re.compile(r"(?:ますます|益々|いよいよ|一層)")
-# 並べの項目の前の句（名詞で終わる）。今回、現在のような副詞の名詞は1つだけでは並べにしない
-_PAUSE_ADVERBIAL_NOUN = re.compile(r"(?:結果|ため|上|うえ|際|場合|とき|ところ|一方|今回|現在|今後|以前|当日|通常|実際|最初|最後|当初|従来)$")
-_PAUSE_ITEM_START = re.compile(r"^\s*(?:[-*+•]|\d+[.)．])\s")
-_PAUSE_LABEL_LINE = re.compile(r"^[^、，,]{0,12}$(?<![ぁ-ん。！？!?」』）)])")
+_PAUSE_LETTER_ADDRESS = _lazy_compile(r"(?<!客)(?:様|さま|各位)$")
+_PAUSE_LETTER_GREETING = _lazy_compile(r"(?:ますます|益々|いよいよ|一層)")
+_PAUSE_ITEM_START = _lazy_compile(r"^\s*(?:[-*+•]|\d+[.)．])\s")
+_PAUSE_LABEL_LINE = _lazy_compile(r"^[^、，,]{0,12}$(?<![ぁ-ん。！？!?」』）)])")
 # 「て」「で」で終わっても動詞のて形でない語（助詞の「について」「として」、つなぎの「そして」、副詞の「すべて」「改めて」）。
 # pause_comma の掛かり先の形（_PAUSE_TE）と ai_phrase のて形の体言止めで使う
 _TE_NOT_VERB = ("について", "によって", "として", "に関して", "に対して", "を通して", "にとって", "につれて", "において",
@@ -2989,12 +3071,12 @@ _TE_NOT_VERB = ("について", "によって", "として", "に関して", "�
 _PAUSE_TE = (r"(?:(?<=[っいしきぎちにびみりえけげせぜてねべめれ])て|(?<=[見出寝着似煮経])て|(?<=[んい])で)"
              + "".join("(?<!" + re.escape(word) + ")" for word in _TE_NOT_VERB)
              + r"(?!い[るたなま]|る|き[たてま]|お[りくいき]|あ[るりげ]|は|も)")
-_PAUSE_TE_ATTR_OBJECT = re.compile(r"[^、，,。！？!?]{1,8}?" + _PAUSE_TE + r"[^、，,。！？!?]{1,10}?" + _PAUSE_VERB_ATTR
-                                   + r"[" + _PAUSE_KANJI + r"ァ-ヴー]{1,8}を")
+_PAUSE_TE_ATTR_OBJECT = _lazy_compile(r"[^、，,。！？!?]{1,8}?" + _PAUSE_TE + r"[^、，,。！？!?]{1,10}?" + _PAUSE_VERB_ATTR
+                                      + r"[" + _PAUSE_KANJI + r"ァ-ヴー]{1,8}を")
 # 2.5.0: 目的語の「を、」のあとに連体の形の節と名詞、助詞が続く形（鍵を、なくした人に届けた。資料を、急いで作った担当者に渡した）。
 # 読点を外すと目的語が節の動詞の目的語に読めるので、この読点も掛かり先を決めている
-_PAUSE_OBJECT_ATTACH = re.compile(r"(?:[^、，,。！？!?]{1,8}?" + _PAUSE_TE + r")?[^、，,。！？!?]{0,10}?" + _PAUSE_VERB_ATTR
-                                  + r"[" + _PAUSE_KANJI + r"ァ-ヴー]{1,8}(?:に|へ|と|から|より|を)")
+_PAUSE_OBJECT_ATTACH = _lazy_compile(r"(?:[^、，,。！？!?]{1,8}?" + _PAUSE_TE + r")?[^、，,。！？!?]{0,10}?" + _PAUSE_VERB_ATTR
+                                     + r"[" + _PAUSE_KANJI + r"ァ-ヴー]{1,8}(?:に|へ|と|から|より|を)")
 # 2.5.0: 6字以内の短い目的語の「を、」（設定を、変更したときに）。目的語は名詞（漢字、カタカナ、英数字）だけか、「名詞の名詞」で、
 # 前に「この」「その」などを付けてよい。並べ（Aを、Bを、。AとBを、は名詞だけの形に当たらない）、7字以上の目的語、節の目的語
 # （読んだ本を、）、送り仮名やカギ括弧、括弧を含む目的語、指示語と疑問の語だけの目的語（これを、何を、）、引用の中は拾わない。
@@ -3004,16 +3086,23 @@ _PAUSE_OBJECT_ATTACH = re.compile(r"(?:[^、，,。！？!?]{1,8}?" + _PAUSE_TE 
 _PAUSE_OBJECT_MAX = 6
 _PAUSE_OBJECT_LIST_ITEM = 8
 _PAUSE_OBJECT_QUESTION = frozenset(("何", "誰", "何か", "誰か", "何事", "何もの"))
-_PAUSE_OBJECT_COMMA = re.compile(r"(?=を[、，,])")
-_PAUSE_OBJECT_NOUN = re.compile(r"(?:この|その|あの|どの)?[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ・]+"
-                                r"(?:の[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]+)?")
+_PAUSE_OBJECT_COMMA = _lazy_compile(r"(?=を[、，,])")
+_PAUSE_OBJECT_NOUN = _lazy_compile(r"(?:この|その|あの|どの)?[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ・]+"
+                                   r"(?:の[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]+)?")
 
-_PAUSE_MAX_LEN = 15
+# 3.3.0: 拾う句の長さを15字から20字にした
+_PAUSE_MAX_LEN = 20
 _PAUSE_LIST_ITEM_MAX = 18
 _PAUSE_SHORT_CLAUSE = 10
+# 3.3.0: 句の中に節がある主題（_PAUSE_CLAUSE_IN）を外すのは、句が14字を超えるときだけ（問いの節の「か」は10字のまま）
+_PAUSE_CLAUSE_TOPIC = 14
+# 3.3.0: 条件や場面の枠（_PAUSE_FRAME）を外すのは、句が7字を超えるときだけ（そのときは、この利点を得るには、は拾う）
+_PAUSE_SHORT_FRAME = 7
+# 3.3.0: 主題と主語の読点を残すのは、読点のあと12字の中に別の主語か主題があるときだけ（3.2.3 までは60字）
+_PAUSE_NEAR_SUBJECT = 12
 
 
-def _pause_comma_chunk(t, i):
+def _pause_comma_chunk(t: str, i: int) -> tuple[str, int]:
     for comp in _PAUSE_COMPOUND:
         st = i + 1 - len(comp)
         if st >= 0 and t[st:i + 1] == comp:
@@ -3027,7 +3116,9 @@ def _pause_comma_chunk(t, i):
             return comp, st
     return t[i], i
 
-def _pause_comma_next_subject(after):
+def _pause_comma_next_subject(after: str, window: int = 60) -> bool:
+    """読点のあとの after に、別の主語「Xが」か主題「Xは」があるか。助詞が after の初めの window 字にあるときだけ数える。
+    3.3.0: 主題と主語の読点（_pause_comma_hits）は _PAUSE_NEAR_SUBJECT 字に狭めた。目的語の読点は60字のまま。"""
     parts = re.split(r"(、|。)", after)
     text = ""
     for k in range(0, len(parts), 2):
@@ -3039,7 +3130,7 @@ def _pause_comma_next_subject(after):
         if not is_list_item:
             break
         text += "、"
-    for m in re.finditer(r"(が|は)", text[:60]):
+    for m in re.finditer(r"(が|は)", text[:window]):
         before = text[:m.start()]
         if not before or before[-1] in "、":
             continue
@@ -3048,6 +3139,9 @@ def _pause_comma_next_subject(after):
                 continue
             if _PAUSE_FIXED_SUBJ.search(before) and re.match(r"(?:あ|な|でき|大き|高)", text[m.end():]):
                 continue
+            if (_PAUSE_GA_KANA_BEFORE.search(before) and not _PAUSE_GA_NOUN_HIRA.search(before)
+                    and _PAUSE_GA_VERB_AFTER.match(text, m.end())):
+                continue    # 3.2.0: 動詞の中の「が」（つながります、切り替わりながら）
         # 「〜ことが」「〜するのが」は名詞化した主語なので、助詞の「と」「の」と分ける。
         nominal = _PAUSE_NOMINAL_END.search(before)
         if m.group(1) == "は" and not nominal:
@@ -3058,7 +3152,7 @@ def _pause_comma_next_subject(after):
         return True
     return False
 
-def _pause_comma_quote_blocks(phrase):
+def _pause_comma_quote_blocks(phrase: str) -> list[str]:
     """句の中のかっこの中身を返す。"""
     out, depth, cur = [], 0, []
     for ch in phrase:
@@ -3076,7 +3170,7 @@ def _pause_comma_quote_blocks(phrase):
             cur.append(ch)
     return out
 
-def _pause_comma_context(text):
+def _pause_comma_context(text: str) -> tuple[list[int], list[int], list[int], list[tuple[int, int]], list[int]]:
     """深さ、句の頭、文の範囲、文頭判定の累積表を行につき1回作る。"""
     depths, phrase_starts, sentence_ids, spans = [], [0], [], []
     nonlead = [0]
@@ -3100,13 +3194,12 @@ def _pause_comma_context(text):
     return depths, phrase_starts, sentence_ids, spans, nonlead
 
 
-_PAUSE_PARTICLE_COMMA = re.compile(r"(?=(は|が|も)、)")
+_PAUSE_PARTICLE_COMMA = _lazy_compile(r"(?=(は|が|も)、)")
 # 「Aも、Bも〜」のあとの「も」（「最も」「もの」は除く）
-_PAUSE_LATER_MO = re.compile(r"(?<!最)[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9）」』]も(?!の)")
-_PAUSE_LIST_AND = re.compile(r"[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9さみ](?:と|や)[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9]")
+_PAUSE_LATER_MO = _lazy_compile(r"(?<!最)[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9）」』]も(?!の)")
 
 
-def _pause_comma_phrase_end(t, k, depth):
+def _pause_comma_phrase_end(t: str, k: int, depth: list[int]) -> int:
     """位置 k から、深さ0の次の句の区切りの位置を返す。"""
     n = len(t)
     while k < n and not (depth[k] == 0 and t[k] in _PAUSE_BOUNDARY):
@@ -3114,7 +3207,7 @@ def _pause_comma_phrase_end(t, k, depth):
     return k
 
 
-def _pause_comma_prev_segment(t, j, starts):
+def _pause_comma_prev_segment(t: str, j: int, starts: list[int]) -> tuple[str | None, int]:
     """句の頭 j の直前が読点のとき、その前の句を返す（なければ None）。"""
     if j < 2 or t[j - 1] not in "、，,":
         return None, 0
@@ -3122,18 +3215,7 @@ def _pause_comma_prev_segment(t, j, starts):
     return t[k:j - 1].lstrip(_PAUSE_LEAD_SYMBOLS), k
 
 
-def _pause_comma_list_before(t, j, starts):
-    """句が、並んだ名詞の最後の項目か（「A、B、Cは、」「AやB、Cは、」）。"""
-    prev, k = _pause_comma_prev_segment(t, j, starts)
-    if not prev or not _PAUSE_NOUNISH_END.search(prev) or _PAUSE_ADVERBIAL_NOUN.search(prev):
-        return False
-    if _PAUSE_LIST_AND.search(prev):
-        return True
-    prev2, _ = _pause_comma_prev_segment(t, k, starts)
-    return bool(prev2 and _PAUSE_NOUNISH_END.search(prev2) and not _PAUSE_ADVERBIAL_NOUN.search(prev2))
-
-
-def _pause_comma_hits(plain_text):
+def _pause_comma_hits(plain_text: str) -> list[tuple[int, str, str]]:
     """見える1行から (助詞の位置, かたまり, 句) を出現順に返す。"""
     t = plain_text
     if not any(p in t for p in ("は、", "が、", "も、")):
@@ -3189,7 +3271,7 @@ def _pause_comma_hits(plain_text):
             continue
         if chunk == "には" and _PAUSE_LETTER_ADDRESS.search(phrase) and _PAUSE_LETTER_GREETING.match(t, i + 2):
             continue
-        # j: 引用を含む主語。k: 空白を除いて15字を超える句。
+        # j: 引用を含む主語。k: 空白を除いて20字を超える句。
         if re.search(r"[」』”）)]と", phrase):
             continue
         if any(re.search(r"[、。！？!?]", inner) or len(inner) > 12
@@ -3198,35 +3280,33 @@ def _pause_comma_hits(plain_text):
         plen = len(re.sub(r"\s", "", phrase))
         if plen > _PAUSE_MAX_LEN:
             continue
-        # l: 分裂文。m: 条件・場面。n: 問いの節。
+        # l: 分裂文。m: 7字を超える条件・場面。n: 問いの節。
         if chunk in ("は", "が") and _PAUSE_CLEFT.search(phrase):
             continue
-        if chunk in _PAUSE_FRAME_CHUNKS and _PAUSE_FRAME.search(phrase):
+        if chunk in _PAUSE_FRAME_CHUNKS and _PAUSE_FRAME.search(phrase) and plen > _PAUSE_SHORT_FRAME:
             continue
         if phrase.endswith("か") and plen > _PAUSE_SHORT_CLAUSE:
             continue
-        # o: 句の中の主語。p: 送り仮名の名詞を伏せて節を調べる。
+        # o: 句の中の主語。p: 送り仮名の名詞を伏せて節を調べる（14字を超える句だけ）。
         if len(phrase) > 1 and re.search(r"[^、]が(?!、)|[^でにとて]は(?!、)", phrase[:-1]):
             continue
         masked = _PAUSE_OKURI_NOUN.sub(lambda m: "名" * len(m.group(0)), phrase)
-        if plen > _PAUSE_SHORT_CLAUSE and _PAUSE_CLAUSE_IN.search(masked):
+        if plen > _PAUSE_CLAUSE_TOPIC and _PAUSE_CLAUSE_IN.search(masked):
             continue
-        # q: あとの主語。先頭60字と、その直後の定型を判定できれば足りる。
+        # q: あとの主語と主題（読点のあと12字の中）。並べの項目を読み飛ばすので、先頭60字と、その直後の定型を判定できれば足りる。
         # 並んだ語句の1項目（18字まで）の終わりを見分ける余裕も含め84字に限り、長い接尾辞をコピーしない。
         # かっこの中（引用や題名）の助詞と読点は、あとの主語や並べに数えない。
         if unquoted is None:
             unquoted = "".join("〇" if d else ch for ch, d in zip(t, depth))
         after = unquoted[i + 2:min(send + 1, i + 2 + 84)]
-        if _pause_comma_next_subject(after) or _PAUSE_TE_ATTR_OBJECT.match(after):
+        if _pause_comma_next_subject(after, _PAUSE_NEAR_SUBJECT) or _PAUSE_TE_ATTR_OBJECT.match(after):
             continue
-        # r: 同じ文で並んだ句、句の中で並んだ語、直前の「と、」「や、」。
+        # r: 同じ文で並んだ句、句の中で並んだ語、直前の「と、」「や、」。3.3.0 から、並んだ名詞の最後の項目（A、B、Cは、）は拾う。
         if counts[sentence_ids[i]].get(chunk, 0) > 1:
             continue
         if re.search(r"[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9さみ](と|や)[" + _PAUSE_KANJI + r"ァ-ヴーA-Za-z0-9]", phrase):
             continue
         if j >= 2 and t[j - 2] in "とや" and t[j - 1] == "、":
-            continue
-        if _pause_comma_list_before(t, j, starts):
             continue
         if chunk.endswith("も") and _PAUSE_LATER_MO.search(t[i + 2:_pause_comma_phrase_end(t, i + 2, depth)]):
             continue
@@ -3239,7 +3319,7 @@ def _pause_comma_hits(plain_text):
     return hits
 
 
-def _pause_comma_object_hits(plain_text):
+def _pause_comma_object_hits(plain_text: str) -> list[tuple[int, str, str]]:
     """2.5.0: 見える1行から、短い目的語の「を、」の (「を」の位置, "を", 目的語) を出現順に返す。"""
     t = plain_text
     if not any(p in t for p in ("を、", "を，", "を,")):
@@ -3271,13 +3351,53 @@ def _pause_comma_object_hits(plain_text):
     return hits
 
 
-def _pause_comma_line_hits(analysis, objects=False):
+# 3.2.0: 文頭の場面の枠（この記事では、この画面には、）のあとで文が長いとき、pause_comma の message の最後に足す1文。
+# 指摘はそのまま出し（件数、行、severity、snippet は変えない）、残してよい場合だけを書き添える。当てるのは、拾った読点の
+# どれかが文頭の句に続く「では、」「には、」で、その読点のあと、次の読点か文末までが空白を除いて20字以上ある行
+_PAUSE_FRAME_NOTE = "文頭の場面の枠（「この記事では、」など）のあとの句が長く、読点を外すと区切りが見えにくくなるなら残してかまいません。"
+# 3.3.0: pause_comma の message の、当たった言い方のあとに続く文
+_PAUSE_MESSAGE = ("間を作るだけの読点はAIの文章らしく見えます。次のときは読点を残してください。"
+                  "読点のすぐあとに別の主語や主題が来るとき、長い条件や場面の枠を区切るとき、語を並べているとき、"
+                  "外すと語がつながったり掛かり先が変わったりするときです。"
+                  "小説や随筆で書き手が間として置いた読点も残してかまいません。"
+                  "それ以外は読点だけを外し、語順と述語は変えないでください。")
+_PAUSE_FRAME_NOTE_CHUNKS = ("では", "には")
+_PAUSE_FRAME_NOTE_MIN = 20
+
+
+def _pause_comma_frame_notes(plain_text: str, hits: Sequence[tuple[int, str, str]]) -> set[int]:
+    """3.2.0: hits（_pause_comma_hits と同じ形）のうち、_PAUSE_FRAME_NOTE を足す読点の助詞の位置。
+    文頭は _pause_comma_hits と同じく、文の頭から句の頭までに箇条書きの記号と開きかっこのほかの字がないこと。
+    読点のあとの字数は、かっこの外の次の読点か文末までを、空白を除いて数える。"""
+    if not any(chunk in _PAUSE_FRAME_NOTE_CHUNKS for _, chunk, _ in hits):
+        return set()
+    t = plain_text
+    depth, starts, sentence_ids, spans, nonlead = _pause_comma_context(t)
+    found = set()
+    for i, chunk, _ in hits:
+        if chunk not in _PAUSE_FRAME_NOTE_CHUNKS or i + 1 >= len(t):
+            continue
+        sstart, send = spans[sentence_ids[i]]
+        if nonlead[starts[i + 1 - len(chunk)]] != nonlead[sstart]:
+            continue    # 文頭の句ではない（なお、この記事では、）
+        end = i + 2
+        while end < send and not (depth[end] == 0 and t[end] in "、，,"):
+            end += 1
+        if len(re.sub(r"\s", "", t[i + 2:end])) >= _PAUSE_FRAME_NOTE_MIN:
+            found.add(i)
+    return found
+
+
+def _pause_comma_line_hits(analysis: dict, objects: bool = False,
+                           notes: set[tuple[int, int]] | None = None) -> dict[int, list[tuple[int, str, str]]]:
     """段落と箇条書きの1項目ごとに、見える行をつないで当てる（行をまたぐ文と引用を1つに読む）。
     行番号から、その行の見える文字での (助詞の位置, かたまり, 句) の並びへの表を返す。
-    objects が真なら、短い目的語の「を、」（_pause_comma_object_hits）も位置の順に混ぜる（2.5.0）。"""
+    objects が真なら、短い目的語の「を、」（_pause_comma_object_hits）も位置の順に混ぜる（2.5.0）。
+    notes を渡すと、message に _PAUSE_FRAME_NOTE を足す読点の (行番号, その行の見える文字での位置) を入れる（3.2.0。
+    つないだ段落の文字で、文頭と読点のあとの字数を見る）。"""
     out = {}
 
-    def flush(unit, kind):
+    def flush(unit: list[tuple[int, str]], kind: str) -> None:
         if not unit:
             return
         joined = "".join(plain for _, plain in unit)
@@ -3294,11 +3414,14 @@ def _pause_comma_line_hits(analysis, objects=False):
         hits = _pause_comma_hits(joined)
         if objects:
             hits = sorted(hits + _pause_comma_object_hits(joined))
+        framed = _pause_comma_frame_notes(joined, hits) if notes is not None else set()
         for i, chunk, phrase in hits:
             if i > tail:
                 continue
             k = bisect_right(offsets, i) - 1
             out[unit[k][0]].append((i - offsets[k], chunk, phrase))
+            if notes is not None and i in framed:
+                notes.add((unit[k][0], i - offsets[k]))
         del unit[:]
 
     for block in analysis["blocks"]:
@@ -3334,7 +3457,7 @@ _V220_RULES = ("calque", "metaphor_label", "say_hedge", "thin_evaluation", "kata
 _DASH_RULES = ("dash_decoration", "dash_insertion", "dash_list_ending")
 
 
-def _rule_penalty_score(findings, prose_chars, dash_hits):
+def _rule_penalty_score(findings: list[dict], prose_chars: int, dash_hits: int) -> int:
     """行の候補の密度と文書単位の候補から、整数だけで目安を計算する。"""
     if not findings:
         return 100
@@ -3362,32 +3485,17 @@ def _rule_penalty_score(findings, prose_chars, dash_hits):
 # 1行に同じ規則の候補は1件まで。当たった語は候補の内部の欄 _words に入れる（語の一覧の allow.txt で外すため。出力には出ない）。
 # 速さのため、文書全体に一度だけ、どれかの規則の手掛かりの語（_V220_TRIGGER_LITERALS と2つの一覧の語）を当て、
 # 当たった行と、見出しと1行目のうちラベルになりうる行だけを細かく見る。
-class _V220Lazy:
-    """初めて使うときに組む正規表現（2.2.0 の規則の正規表現は、当たる手掛かりがある文書でだけ要るので、読み込みのときには
-    組まない。lint を CLI で1文書ずつ動かすときの起動の時間を延ばさないため）。組んだあとは re.Pattern の関数をそのまま持つ。"""
-
-    def __init__(self, pattern, flags=0):
-        self.pattern = pattern
-        self._flags = flags
-
-    def __getattr__(self, name):
-        if name.startswith("__"):
-            raise AttributeError(name)
-        compiled = re.compile(self.pattern, self._flags)
-        for method in ("search", "match", "fullmatch", "finditer", "findall", "sub", "split"):
-            setattr(self, method, getattr(compiled, method))
-        return getattr(compiled, name)
-
 
 _V220_MESSAGE_TAIL = "の候補です。文脈を見て、誰が何をどうするかを書き直すか確かめてください。"
 _CALQUE_TYPE_NAMES = {1: "型1: 機械やシステムが人の動作をする言い方",
                       2: "型2: 実物の名前の代わりに場所のたとえを使う名詞",
                       3: "型3: 英語の言い方を一語ずつ写した句",
-                      4: "型4: 英語の短い術語に当てた漢字1字の名詞"}
+                      4: "型4: 英語の短い術語に当てた漢字1字の名詞",
+                      5: "型5: 英語の術語に当てた2字以上の名詞"}
 # 伏せる所: 引用符の中（カギ括弧は _mask_quoted_segments で伏せる）と、英数字の識別子
-_V220_QUOTES = _V220Lazy(r"“[^”\n]*”|\"[^\"\n]*\"|‘[^’\n]*’")
-_V220_IDENTIFIER = _V220Lazy(r"(?<![A-Za-z0-9])[A-Za-z0-9]+(?:[_./\\][A-Za-z0-9]+)+[_./]?|(?<![a-z])[a-z]+[A-Z][A-Za-z0-9]*|[_./\\][A-Za-z0-9_]+")
-_V220_SENTENCE = _V220Lazy(r"[^。．！？!?|｜]+[。．！？!?]*")
+_V220_QUOTES = _lazy_compile(r"“[^”\n]*”|\"[^\"\n]*\"|‘[^’\n]*’")
+_V220_IDENTIFIER = _lazy_compile(r"(?<![A-Za-z0-9])[A-Za-z0-9]+(?:[_./\\][A-Za-z0-9]+)+[_./]?|(?<![a-z])[a-z]+[A-Z][A-Za-z0-9]*|[_./\\][A-Za-z0-9_]+")
+_V220_SENTENCE = _lazy_compile(r"[^。．！？!?|｜]+[。．！？!?]*")
 
 # 型1: 機械やシステムが主語の文（主語の語に「は」「が」「も」「こそ」が付く）で、人や物の動作の動詞を使う形。
 # 主語の語のあとに漢字やカタカナが続いて人や組織の語で終わるとき（サーバー管理者、情報システム部）は主語にしない。
@@ -3401,13 +3509,13 @@ _CALQUE_SUBJECTS = tuple((
     "プラグイン 拡張機能 バックエンド フロントエンド テスト 体重計 計測器 cron CI "
 ).split())
 _CALQUE_PERSON_END = r"(?:者|員|人|さん|様|さま|氏|チーム|部|課|室|班|係|担当|会社|社|陣|部門|部署)"
-_CALQUE_SUBJECT_WORD = _V220Lazy(r"(?<![A-Za-z])(?:" + "|".join(sorted(map(re.escape, _CALQUE_SUBJECTS), key=len, reverse=True))
-                                  + r")")
+_CALQUE_SUBJECT_WORD = _lazy_compile(r"(?<![A-Za-z])(?:" + "|".join(sorted(map(re.escape, _CALQUE_SUBJECTS), key=len, reverse=True))
+                                      + r")")
 _CALQUE_SUBJECT_EXT = 6           # 主語の語のあとに続いてよい漢字、カタカナ、英数字の数（再送ジョブ管理画面が）
 _CALQUE_SUBJECT_PARTICLES = ("こそ", "は", "が", "も")
-_CALQUE_PERSON_SUBJECT = _V220Lazy(
+_CALQUE_PERSON_SUBJECT = _lazy_compile(
     r"(?:" + _CALQUE_PERSON_END[3:-1] + r"|私|僕|わたし|ぼく|我々|皆さん|みなさん|お客様|彼|彼女|あなた)(?:は|が|も|こそ)")
-_CALQUE_PERSON_EXT = _V220Lazy(_CALQUE_PERSON_END + r"$")
+_CALQUE_PERSON_EXT = _lazy_compile(_CALQUE_PERSON_END + r"$")
 # (辞書の形, 正規表現)。活用の形まで書き、名詞の使い方（引き続き、通りに、足し算、食い違い）は外す。
 # 動詞の漢字の前が漢字のとき（不足して、共通する、電話します、補足すると）は、_calque_type1 が外す（_CALQUE_COMPOUND_OK の動詞を除く）
 _CALQUE_VERBS = (
@@ -3440,7 +3548,7 @@ _CALQUE_VERBS = (
 _CALQUE_COMPOUND_OK = ("引き込む", "抱える", "見張る", "受け止める", "飲み込む", "覚える", "忘れる", "投げる", "喋る", "助ける",
                        "手伝う", "文句を言う")
 # 動詞ごとの (語幹の字, 辞書の形, 正規表現)。文に語幹の字があるときだけ、その動詞の正規表現を組んで当てる
-_CALQUE_VERB_EACH = tuple((re.sub(r"^(?:\(\?<![^)]*\))*(?:\[[^\]]*\])?", "", pattern)[0], name, _V220Lazy(pattern))
+_CALQUE_VERB_EACH = tuple((re.sub(r"^(?:\(\?<![^)]*\))*(?:\[[^\]]*\])?", "", pattern)[0], name, _lazy_compile(pattern))
                           for name, pattern in _CALQUE_VERBS)
 # 2.5.0: 定着した言い方（テストが通る、キャッシュが効く）の助詞と動詞の間に入れてよい副詞。どの主語の行でも同じ一覧を使う。
 # 副詞は2つまで続いてよく、助詞と副詞のあとの読点も許す（テストが、まだ通らない。CIはもう全部通りました）。
@@ -3471,11 +3579,11 @@ _CALQUE_ESTABLISHED_TYPE1 = (
     r"落とし物を拾", r"(?:例外|エラー|exception|Exception)を投げ",
     r"(?:課題|問題|負債|リスク|不安|悩み|弱点|欠陥|バグ|不具合|矛盾)を(?:多く|いくつも|たくさん)?抱え",
 )
-_CALQUE_ESTABLISHED_TYPE1_RE = _V220Lazy("|".join(_CALQUE_ESTABLISHED_TYPE1))
-_CALQUE_KANA_RUN = _V220Lazy(r"[ぁ-ん]*")
+_CALQUE_ESTABLISHED_TYPE1_RE = _lazy_compile("|".join(_CALQUE_ESTABLISHED_TYPE1))
+_CALQUE_KANA_RUN = _lazy_compile(r"[ぁ-ん]*")
 # 主語から動詞までの字数の上限と、間にあれば主語と動詞を結ばない記号（括弧、矢印。例を並べた文）
 _CALQUE_SUBJECT_REACH = 30
-_CALQUE_SUBJECT_BREAK = _V220Lazy(r"[（()）「」『』→←]")
+_CALQUE_SUBJECT_BREAK = _lazy_compile(r"[（()）「」『』→←]")
 _CALQUE_REQUEST = ("てください", "て下さい", "てくださ", "いでくださ", "いで下さ", "なさい", "ましょう", "てほしい", "て欲しい",
                    "ていただ", "てもらえ")
 _CALQUE_ATTRIBUTIVE_END = ("た", "る", "う", "く", "す", "つ", "む", "ぶ", "ぐ", "だ", "ない", "いる")
@@ -3485,31 +3593,31 @@ _CALQUE_ATTRIBUTIVE_END = ("た", "る", "う", "く", "す", "つ", "む", "ぶ
 # あるときだけ拾い、実物の場所（駅の入口）と組織の窓口（総務部の窓口）は外す
 # 後ろに漢字やカタカナが続く語（入口付近、窓口業務、口座）は _calque_type2 が外す。動詞のあとの「口」（トークンを出す口）は、
 # 実物の口（水を出す口、切符を受け取る口）と分けるため、機械やシステムの語がある文だけで拾う
-_CALQUE_PLACE_ALWAYS = _V220Lazy(r"受け口|(?:向け|用)の口|(?:出す|受ける|受け取る|返す|渡す|発行する)口(?=[はがをにでもへと、。]|$)")
-_CALQUE_PLACE_CONTEXT = _V220Lazy(r"(?:入り?口|出口|窓口|玄関口?|関所|関門|裏口|勝手口|抜け道|裏道|通り道|合流地点|合流点"
-                                   r"|防波堤|砦)|の口(?=[はがをにでもへと、。]|$)")
+_CALQUE_PLACE_ALWAYS = _lazy_compile(r"受け口|(?:向け|用)の口|(?:出す|受ける|受け取る|返す|渡す|発行する)口(?=[はがをにでもへと、。]|$)")
+_CALQUE_PLACE_CONTEXT = _lazy_compile(r"(?:入り?口|出口|窓口|玄関口?|関所|関門|裏口|勝手口|抜け道|裏道|通り道|合流地点|合流点"
+                                       r"|防波堤|砦)|の口(?=[はがをにでもへと、。]|$)")
 # 実物の場所の入口（駅の入口、正面入口、2番入口）と、組織の窓口（総務部の窓口）
-_CALQUE_PLACE_REAL = _V220Lazy(
+_CALQUE_PLACE_REAL = _lazy_compile(
     r"(?:駅|正面|[東西南北]|番|建物|ビル|店|会場|公園|館|門|地下|トンネル|洞窟|港|校舎|病院|施設|部屋|通用|非常|改札|階段"
     r"|空港|ホーム|ホール|劇場|球場|庭|家|屋敷|森|山|川|村|町|街|道|高速|本館|別館|棟|フロア|階"
     # 2.2.1: 機械を置く部屋（サーバールーム、データセンター）。名前に技術の語があっても実物の場所
     r"|(?:サーバー?|マシン|コンピューター?|電算|計算機)(?:ルーム|室)|データセンター)の?$")
 # 2.2.1: 同じ文に技術の語がない入口と出口（技術の文書の判定）で、ほかに外す実物の場所（サーバールーム、北側の出口、
 # 駐車場の出口）。同じ文に技術の語がある文は、2.2.0 のとおり _CALQUE_PLACE_REAL だけで外す
-_CALQUE_PLACE_REAL_DOC = _V220Lazy(
+_CALQUE_PLACE_REAL_DOC = _lazy_compile(
     r"(?:ルーム|室|センター|オフィス|倉庫|工場|店舗|売り場|ロビー|受付|玄関|フロント|(?:[東西南北]|正面|裏|表|反対|道路|線路)側"
     r"|(?:駐車|駐輪|乗り|広|運動|工事)場|鉄|トイレ|学校|社屋|建屋|非常用|団地|園|マンション|通路)の?$")
 # 入口の前で人が待つ、集まる形（入口の前でお待ちください）と、入口の前の物（入口の前のインターホン）は、技術の語のない文では
 # 実物の場所として外す
-_CALQUE_ENTRY_WAIT = _V220Lazy(r"の前(?:の|(?:で|に)(?:は、?)?(?:お?待|集ま|並|立))")
-_CALQUE_PLACE_ORG = _V220Lazy(
+_CALQUE_ENTRY_WAIT = _lazy_compile(r"の前(?:の|(?:で|に)(?:は、?)?(?:お?待|集ま|並|立))")
+_CALQUE_PLACE_ORG = _lazy_compile(
     r"(?:部|課|室|係|局|センター|デスク|担当|相談|問い合わせ|問合せ|受付|事務所|事務局|総合|専用|役所|役場|銀行|郵便局"
     r"|市役所|区役所|窓口|申請|手続き|手続)の?$")
-_CALQUE_MOUTH_REAL = _V220Lazy(
+_CALQUE_MOUTH_REAL = _lazy_compile(
     r"(?:人|彼|彼女|私|僕|子|犬|猫|魚|鳥|瓶|びん|袋|ボトル|缶|容器|鍋|壺|樽|筒|穴|管|ホース|川|洞窟|トンネル|火山|傷|蛇)の口$")
-_CALQUE_MOUTH_IDIOM = _V220Lazy(r"口(?:に合|が(?:堅|固|軽|悪|うま|上手|重|滑|すべ|裂)|を(?:出|挟|はさ|開|ひら|閉|とざ|揃|そろ"
-                                 r"|つぐ|きく|利|割))")
-_CALQUE_TECH = _V220Lazy(
+_CALQUE_MOUTH_IDIOM = _lazy_compile(r"口(?:に合|が(?:堅|固|軽|悪|うま|上手|重|滑|すべ|裂)|を(?:出|挟|はさ|開|ひら|閉|とざ|揃|そろ"
+                                     r"|つぐ|きく|利|割))")
+_CALQUE_TECH = _lazy_compile(
     r"(?<![A-Za-z])(?:" + "|".join(sorted(map(re.escape, _CALQUE_SUBJECTS), key=len, reverse=True))
     + r"|データ|URL|リクエスト|レスポンス|接続|通信|トラフィック|ログイン|認証|ポータル|ページ|画面|サイト|フォーム"
     r"|アドレス|ポート|エンドポイント|ネットワーク|テーブル|ファイル|ログ|エラー|通知|CSV|JSON|HTTP|送信|受信|集計|決済"
@@ -3524,15 +3632,15 @@ _CALQUE_DOC_TECH_GENERAL = frozenset((
     "ドライブ ファイル データ コード 設定 チェック テスト 監視 ツール サービス アプリ 端末 機器 装置 デバイス 処理 "
     "センサー 体重計 計測器 エラー 鍵 テーブル クラス"
 ).split())
-_CALQUE_ENTRY_FLOW = _V220Lazy(r"(?:の前|を通|に通|へ通|に集め|へ集め|にまとめ|へまとめ|に届|へ届|で受け|を経由|から入)")
+_CALQUE_ENTRY_FLOW = _lazy_compile(r"(?:の前|を通|に通|へ通|に集め|へ集め|にまとめ|へまとめ|に届|へ届|で受け|を経由|から入)")
 # 人を呼ぶ、人が要求する文（来客の呼び出しがあったら、組合の要求を受けて）は外すため、「〜は」「〜も」の主題だけを見る
-_CALQUE_ENTRY_SUBJECT = _V220Lazy(r"(?:要求|呼び出し|リクエスト|トラフィック|パケット|接続|通信)(?:は|も)")
+_CALQUE_ENTRY_SUBJECT = _lazy_compile(r"(?:要求|呼び出し|リクエスト|トラフィック|パケット|接続|通信)(?:は|も)")
 # 窓口は、コードの部品の語が同じ文にあり、組織の名前（総務部、情報システム課、サポートセンター）がないときだけ
 # （決済の窓口をこのモジュールに集める）
 _CALQUE_ORG_WORDS = ("センター", "デスク", "担当", "事務局")
 _CALQUE_ORG_SUFFIXES = "部課室係局班"
-_CALQUE_CODE = _V220Lazy(r"(?<![A-Za-z])(?:モジュール|関数|クラス|API|エンドポイント|サーバー|サーバ|コード|ライブラリ|メソッド"
-                          r"|インターフェース|SDK|ミドルウェア|プロキシ|ゲートウェイ)")
+_CALQUE_CODE = _lazy_compile(r"(?<![A-Za-z])(?:モジュール|関数|クラス|API|エンドポイント|サーバー|サーバ|コード|ライブラリ|メソッド"
+                              r"|インターフェース|SDK|ミドルウェア|プロキシ|ゲートウェイ)")
 # 「〜先」: 漢字1字と動詞の連用形の送り仮名（し、せ、げ など）のあとの「先」（逃がし先、寄せ先）と、場所のたとえの漢語の「先」
 # （_CALQUE_SAKI_KANJI。着地先）。漢字2字の「〜先」の多くは定着した語（保存先、接続先、修飾先）なので、一覧の語だけを拾う。
 # 後ろに漢字やカタカナが続く語（先日、先方）と、助詞や「て」のあとの「先」（何を先に、置いて先に、項より先）は除く
@@ -3564,7 +3672,7 @@ _CALQUE_ESTABLISHED_SAKI = tuple((
     "少し先 一つ先 二つ先 三つ先 ひとつ先 以上先 以下先 "
 ).split())
 # 時や距離の「先」（数年先、一歩先、数時間先）
-_CALQUE_SAKI_TIME = _V220Lazy(r"[年月日週間時分秒歩手里キロメートル]先$|[たうくるだつむぬぶぐす]先$")
+_CALQUE_SAKI_TIME = _lazy_compile(r"[年月日週間時分秒歩手里キロメートル]先$|[たうくるだつむぬぶぐす]先$")
 
 # 型3: 英語の言い方を一語ずつ写した句（試験で守る）。(名前, 正規表現)
 _CALQUE_PHRASES = (
@@ -3622,8 +3730,8 @@ _CALQUE_PHRASES_V250 = (
     # ある表（users テーブル、設定テーブル、下のテーブル）は外す
     ("テーブルにある", r"(?<![一-龥々ァ-ヴーA-Za-z0-9\s　の])テーブル(?:の上)?に(?:あ(?:る|り)|載って|乗って|載せ|乗せ)"),
 )
-_CALQUE_PHRASE = _V220Lazy("|".join("(?:{})".format(pattern) for _, pattern in _CALQUE_PHRASES + _CALQUE_PHRASES_V250))
-_CALQUE_PHRASE_EACH = tuple((name, _V220Lazy(pattern)) for name, pattern in _CALQUE_PHRASES + _CALQUE_PHRASES_V250)
+_CALQUE_PHRASE = _lazy_compile("|".join("(?:{})".format(pattern) for _, pattern in _CALQUE_PHRASES + _CALQUE_PHRASES_V250))
+_CALQUE_PHRASE_EACH = tuple((name, _lazy_compile(pattern)) for name, pattern in _CALQUE_PHRASES + _CALQUE_PHRASES_V250)
 # 「〜から効く」は、薬や冷房の効き方（_KIKU_RE の文字どおりの語が同じ文にある）なら出さない
 _CALQUE_PHRASE_KIKU = "から効く"
 # 対応表から足した句と、型1の同じ動詞（型1が当てた文では句を重ねない）
@@ -3633,46 +3741,46 @@ _CALQUE_PHRASE_VERB = {"ときに効く": "効く", "に響く": "響く", "デ�
 # 「のが」「のは」のあとの名詞が文字どおりの語で終わる文（そこで効くのが、わさびです）、同じ文に薬や冷房の語（ソフトウェアの語は
 # 除く）か分や時間の長さがある文（薬を飲むと、ここで効いてくるのが分かります）では出さない。前の行の語は見ない
 _CALQUE_PHRASE_MATTERS = "ここで効くのが"
-_CALQUE_MATTERS_FOCUS = _V220Lazy(r"[、，,]?[^。、，,]{0,8}?(?:" + _KIKU_LITERAL + r")(?:です|でした|だ|だった|である)?[。．！!]*$")
+_CALQUE_MATTERS_FOCUS = _lazy_compile(r"[、，,]?[^。、，,]{0,8}?(?:" + _KIKU_LITERAL + r")(?:です|でした|だ|だった|である)?[。．！!]*$")
 # 2.5.0: 「テーブルにある」の主語（案、選択肢、提案、議題、条件）。答案、図案、草案、文案のような紙の物は外す。
 # 「テーブルの上にある資料」のように、すぐあとに名詞が続く連体の形も外す（_CALQUE_TABLE_ATTRIBUTIVE）
-_CALQUE_TABLE_SUBJECT = _V220Lazy(r"(?:(?<![答図草文])案|選択肢|提案|議題|条件)(?:は|が|も|だけが|こそ)[、，,]?[^。]{0,20}$")
-_CALQUE_TABLE_ATTRIBUTIVE = _V220Lazy(r"(?:いる|いた|おり)?[一-龥々ァ-ヴーA-Za-z0-9]")
-_CALQUE_TURN_CONTEXT = _V220Lazy(r"指示|会話|依頼|プロンプト|モデル|エージェント|LLM|Claude|Codex|ツール|呼び出|読み込"
-                                 r"|応答|返答|トークン|コンテキスト|セッション")
+_CALQUE_TABLE_SUBJECT = _lazy_compile(r"(?:(?<![答図草文])案|選択肢|提案|議題|条件)(?:は|が|も|だけが|こそ)[、，,]?[^。]{0,20}$")
+_CALQUE_TABLE_ATTRIBUTIVE = _lazy_compile(r"(?:いる|いた|おり)?[一-龥々ァ-ヴーA-Za-z0-9]")
+_CALQUE_TURN_CONTEXT = _lazy_compile(r"指示|会話|依頼|プロンプト|モデル|エージェント|LLM|Claude|Codex|ツール|呼び出|読み込"
+                                     r"|応答|返答|トークン|コンテキスト|セッション")
 # ゲームの手番の「ターン」（毎ターン山札から引く、敵の AI は毎ターン行動を選ぶ）
-_CALQUE_TURN_GAME = _V220Lazy(r"ゲーム|カード|山札|手札|プレイヤー|将棋|囲碁|チェス|手番|モンスター|敵|攻撃|対戦|駒|盤")
+_CALQUE_TURN_GAME = _lazy_compile(r"ゲーム|カード|山札|手札|プレイヤー|将棋|囲碁|チェス|手番|モンスター|敵|攻撃|対戦|駒|盤")
 # 「ときに効く」は、構成や運用を決める話（what matters）か、機械やシステムの語がある文だけ（疲れたときに効くストレッチは外す）
-_CALQUE_KIKU_DECIDE = _V220Lazy(r"構成|設計|選ぶ|選び|決め|判断|見積|運用|導入|移行|方針|検討")
+_CALQUE_KIKU_DECIDE = _lazy_compile(r"構成|設計|選ぶ|選び|決め|判断|見積|運用|導入|移行|方針|検討")
 # 「に響く」の文字どおりの音と心（心に響く、音が部屋に響く）
-_CALQUE_HIBIKU_LITERAL = _V220Lazy(r"(?:心|胸|耳|琴線)に(?:まで|も)?響|(?:音|声|鐘|足音|歌)(?:が|は|も)")
+_CALQUE_HIBIKU_LITERAL = _lazy_compile(r"(?:心|胸|耳|琴線)に(?:まで|も)?響|(?:音|声|鐘|足音|歌)(?:が|は|も)")
 # 「全〇〇に響く」の形と、前からある語の一覧の形（クライアントに響く など）
 # 2.2.1: 「全〇〇に響く」（全運転手に響きます）。技術の文書のときだけ、_CALQUE_PHRASES とは別に探す（合わせた正規表現に
 # 入れると、中の「3ターン」などの句の一致を飲み込むため）。安全、健全の「全」と、全然、全く、全体として は外す
-_CALQUE_HIBIKU_ALL = _V220Lazy(r"(?<![安完健保万不十])全(?!然|く|体として|体的)[^。、のをがは\s]{1,6}に(?:まで|も)?響(?:く|き|い|か)")
+_CALQUE_HIBIKU_ALL = _lazy_compile(r"(?<![安完健保万不十])全(?!然|く|体として|体的)[^。、のをがは\s]{1,6}に(?:まで|も)?響(?:く|き|い|か)")
 # 「全〇〇に響く」で外す音や言葉。「全〇〇」より前の主語（警報が鳴り、全フロアに響きます、社長の言葉は、全社員に響きました）
 # と、「響く」のすぐあとの名詞（全社員に響く言葉、全館に響く爆音で、サーバーが止まりました）。1字の語は電話、録音のような
 # 語の一部では当てず、「思いがけない」も外す
-_CALQUE_HIBIKU_ALL_LITERAL = _V220Lazy(
+_CALQUE_HIBIKU_ALL_LITERAL = _lazy_compile(
     r"(?:(?<![一-鿿])(?:話|音|声|歌|鐘|雷)|言葉|一言|スピーチ|訓示|あいさつ|挨拶|ニュース|演説|呼びかけ|呼び掛け|思い|想い|理念"
     r"|名声|名曲|痛み|衝撃|振動|揺れ|アラーム|アラート|サイレン|警報|ベル|チャイム|ブザー|汽笛|放送|アナウンス|メロディー|うなり"
     r"|着信|爆音|騒音|低音|足音|大声|拍手|歓声)(?:が|は|も)(?!け)")
 # 「響く」のすぐあとの名詞は、音で終わる短い複合語（警告音、着信音、大音量）も外す
 # 「全〇〇に響く」で機械の語に数える「〜機」（貸出機、券売機、機械）。危機、契機、動機、待機のような語に当てないよう、
 # 機械の名前の一覧で見る
-_CALQUE_HIBIKU_MACHINE = _V220Lazy(
+_CALQUE_HIBIKU_MACHINE = _lazy_compile(
     r"(?:券売|貸出|貸し出し|発券|自販|自動販売|複合|印刷|洗濯|精算|改札|読取|読み取り|端末|飛行|旅客|撮影|計算|工作|送風|空調"
     r"|掃除|乾燥|食洗|発電|充電|交換|配膳|給湯|注文|受付|両替|入金|出金|預け払い|搬送|仕分け|検品|梱包|包装|成形|射出|切削|溶接"
     r"|検査|測定|計測|加工|[0-9０-９]+号)機|機械")
-_CALQUE_HIBIKU_ALL_NOUN = _V220Lazy(
+_CALQUE_HIBIKU_ALL_NOUN = _lazy_compile(
     r"(?:[一-鿿ァ-ヴー]{0,3}(?:音|声|音量)|言葉|話|一言|スピーチ|訓示|あいさつ|挨拶|メッセージ|ニュース|演説|呼びかけ|呼び掛け"
     r"|思い|想い|名前|名声|名曲|痛み|衝撃|振動|揺れ|アラーム|アラート|サイレン|警報|ベル|チャイム|ブザー|汽笛|放送|アナウンス"
     r"|メロディー|うなり|鐘|歌|音楽|拍手|歓声)")
-_CALQUE_HIBIKU_LISTED = _V220Lazy(_CALQUE_PHRASES[[name for name, _ in _CALQUE_PHRASES].index("に響く")][1])
+_CALQUE_HIBIKU_LISTED = _lazy_compile(_CALQUE_PHRASES[[name for name, _ in _CALQUE_PHRASES].index("に響く")][1])
 # 「に響く」の料金や費用は、機械やシステムの語がある文だけ（円安が費用に響く は外す）
 _CALQUE_HIBIKU_COST = ("料金", "費用", "コスト", "請求")
 # 「機械どうし」は、通信ややり取りの話のときだけ（工場の機械同士の間隔は外す）
-_CALQUE_MACHINE_TALK = _V220Lazy(r"通信|やり取り|やりとり|接続|データ|API|連携|認証|リクエスト|メッセージ|プロトコル|経路")
+_CALQUE_MACHINE_TALK = _lazy_compile(r"通信|やり取り|やりとり|接続|データ|API|連携|認証|リクエスト|メッセージ|プロトコル|経路")
 
 # metaphor_label: 見出しか文書の1行目が、記号を除いて8字以下で、「〜の横」「〜のそば」「〜係」「〜番」で終わるか一語だけで、
 # そのラベルが本文のほかの行に出てこないとき。よく使う節の名前（試験で守る）と、関係、一番などは外す
@@ -3700,11 +3808,11 @@ _LABEL_COMMON = frozenset((
     "お詫び おわび ご報告 ご連絡 ご依頼 ご提案 募集 求人 告示 公告 通達 時系列 経過 "
     "タイムライン あらすじ 登場人物 配役 見出し 本文 題名 題 タイトル 件名 "
 ).split())
-_LABEL_NUMBERING = _V220Lazy(r"^(?:[0-9０-９]+[.)．）]|[（(][0-9０-９]+[)）]|[①-⑳]|第[0-9０-９一二三四五六七八九十]+[章節部回条])")
+_LABEL_NUMBERING = _lazy_compile(r"^(?:[0-9０-９]+[.)．）]|[（(][0-9０-９]+[)）]|[①-⑳]|第[0-9０-９一二三四五六七八九十]+[章節部回条])")
 _LABEL_MARKS = "「『“\"（("
 # 漢字と仮名でない字（伏せる前の行から、ラベルになりうる字だけを残すのに使う。漢字の範囲の正規表現はこの1つだけにする）
-_LABEL_ASCII = _V220Lazy(r"[A-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
-_LABEL_NOT_JAPANESE = _V220Lazy(r"[^ぁ-んァ-ヴー一-龥々〆ヵヶ]+")
+_LABEL_ASCII = _lazy_compile(r"[A-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
+_LABEL_NOT_JAPANESE = _lazy_compile(r"[^ぁ-んァ-ヴー一-龥々〆ヵヶ]+")
 _LABEL_ENDINGS = ("の横", "のそば", "係", "番")
 # 「関係」「番号」などと、宛名や人の呼び方（田中様、各位、御中）で終わる語はラベルにしない
 _LABEL_NOT_ENDINGS = ("関係", "連係", "一番", "二番", "順番", "番号", "様", "さま", "殿", "各位", "御中", "さん", "くん", "ちゃん",
@@ -3713,7 +3821,7 @@ _LABEL_NOT_ENDINGS = ("関係", "連係", "一番", "二番", "順番", "番号"
 # 比喩の手掛かりにならない）
 _LABEL_MIN_BODY = 60
 # 語と語を区切る記号（設計 — 実装、確認・修正、手順：準備）。見出しの中にあれば一語のラベルではない
-_LABEL_SEPARATED = _V220Lazy(r"[^\s—―─━・/／:：、，,|｜~〜\-–]\s*[\s—―─━・/／:：、，,|｜~〜\-–]+\s*[^\s—―─━・/／:：、，,|｜~〜\-–]")
+_LABEL_SEPARATED = _lazy_compile(r"[^\s—―─━・/／:：、，,|｜~〜\-–]\s*[\s—―─━・/／:：、，,|｜~〜\-–]+\s*[^\s—―─━・/／:：、，,|｜~〜\-–]")
 # 一語の近似: 漢字やカタカナのあとに助詞か「な」（の、と、や、を、に、が、は、で、へ、も、な）が続かず、
 # 動詞や形容詞が名詞を修飾する形（使った技術、新しい道具）も、「から」「まで」などの句も、動詞で終わる形（いつ読むか）もないこと。
 # 正規表現にすると漢字の範囲の字の組を組むのに時間がかかる（CLI の起動が遅くなる）ので、字ごとに調べる
@@ -3732,28 +3840,28 @@ _LABEL_ABSTRACT_ENDINGS = (
 )
 
 
-def _v220_kanji(char):
+def _v220_kanji(char: str) -> bool:
     return "一" <= char <= "龥" or char in "々〆ヵヶ"
 
 
-def _v220_katakana(char):
+def _v220_katakana(char: str) -> bool:
     return "ァ" <= char <= "ヴ" or char == "ー"
 
 
-def _v220_hiragana(char):
+def _v220_hiragana(char: str) -> bool:
     return "ぁ" <= char <= "ん"
 
 
-def _v220_word_char(char):
+def _v220_word_char(char: str) -> bool:
     """漢字かカタカナ（長音を除く）。"""
     return _v220_kanji(char) or "ァ" <= char <= "ヴ"
 
 
-def _v220_alnum(char):
+def _v220_alnum(char: str) -> bool:
     return (char.isascii() and char.isalnum()) or "０" <= char <= "９" or "Ａ" <= char <= "Ｚ" or "ａ" <= char <= "ｚ"
 
 
-def _label_is_phrase(label):
+def _label_is_phrase(label: str) -> bool:
     """ラベルが一語でなく句か（助詞、名詞を修飾する形、から・まで・より、動詞で終わる形）。"""
     if any(char in _LABEL_ANYWHERE for char in label) or "から" in label or "まで" in label or "より" in label:
         return True
@@ -3785,7 +3893,7 @@ def _label_is_phrase(label):
     return False
 
 
-def _label_kanji_runs(text):
+def _label_kanji_runs(text: str) -> list[tuple[str, str]]:
     """漢字の続き（2字以上）とカタカナの続き（2字以上）。"""
     runs = []
     current = ""
@@ -3858,7 +3966,7 @@ _V220_LIST_PROBLEMS = {}
 _V220_LIST_ABSENT = (FileNotFoundError, NotADirectoryError)
 
 
-def _v220_parse_list(text, pattern=False):
+def _v220_parse_list(text: str, pattern: bool = False) -> tuple:
     """一覧のファイルの中身を読む（yomiyasu_diff.parse_list と同じ書き方）。空行と「#」で始まる行は読み飛ばす。
     正規表現の誤りはここでは確かめない（組むのに時間がかかるので、初めて使うときに _v220_thin_match が確かめる）。"""
     if text.startswith("\ufeff"):
@@ -3879,7 +3987,7 @@ def _v220_parse_list(text, pattern=False):
     return tuple(out)
 
 
-def _v220_load_list(name):
+def _v220_load_list(name: str) -> tuple[tuple, str]:
     """一覧を読む（yomiyasu_diff._load_list と同じ読み方）。(項目のタプル, 出どころ) を返す。出どころは
     "references/lists/<名前>.txt" か "builtin"。スクリプトの隣の ../references/lists/<名前>.txt を utf-8-sig で読む。
     ないときは何も言わずに内蔵の一覧で動き、読めないとき（UTF-8 でない、書き方の誤り、開けない）は、理由を
@@ -3888,9 +3996,9 @@ def _v220_load_list(name):
         return _V220_LIST_CACHE[name]
     pattern = name == "thin-evaluation"
     items, problem = None, None
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "references", "lists", name + ".txt")
+    path = Path(os.path.normpath(__file__)).absolute().parent / os.pardir / "references" / "lists" / (name + ".txt")
     try:
-        with open(path, "rb") as handle:
+        with Path(path).open("rb") as handle:
             data = handle.read()
     except _V220_LIST_ABSENT:
         data = None
@@ -3929,15 +4037,18 @@ _V220_TRIGGER_LITERALS = tuple((
     "質問を持 真剣に取 目を保 テーブルに置 テーブルに載 テーブルに乗 テーブルに出 次のレベルに 機械 ターン "
     # 2.5.0 の型3の句（ここで効くのが は型1の動詞の頭で拾う）
     "レベルの テーブルにあ テーブルの上に "
-    # 型4（2.4.0）の漢字1字の名詞
-    "版 印 頭 "
+    # 型4（2.4.0）の漢字1字の名詞と、3.0.0 で足した字
+    "版 印 頭 枝 題 罫 段 門 "
+    # 型5（3.0.0）の2字以上の名詞（上罫、下罫などは、型4の罫の形が前の漢字で外すので、型5で拾う）
+    "背景 基準線 時間窓 上罫 下罫 左罫 右罫 偽緑 根因 生成器 検査器 飛行中 見張り 台本 "
 ).split())
 _V220_TYPE1_END = _V220_TRIGGER_LITERALS.index("口")
 _V220_TYPE2_END = _V220_TRIGGER_LITERALS.index("秒を取")
 _V220_TYPE3_END = _V220_TRIGGER_LITERALS.index("版")
+_V220_TYPE4_END = _V220_TRIGGER_LITERALS.index("背景")
 
 
-def _v220_literal_re(literals):
+def _v220_literal_re(literals: Iterable[str]) -> re.Pattern[str]:
     """文字列のどれかに当たる正規表現。先頭の字ごとにまとめる（re は分かれ道を1つずつ試すので、同じ字で始まる語を
     1つの分かれ道にまとめると、その字の位置で試す数が減る）。長い語を先に試す。"""
     groups = {}
@@ -3952,14 +4063,15 @@ def _v220_literal_re(literals):
             parts.append(re.escape(head) + re.escape(tails[0]))
         else:
             parts.append(re.escape(head) + "(?:" + "|".join(map(re.escape, tails)) + ")")
-    return _V220Lazy("|".join(parts))
+    return _lazy_compile("|".join(parts))
 
 
 # 文ごとに、型の手掛かりの語があるかを先に見る（ない文は型の正規表現を当てない）
 _CALQUE_VERB_STEMS = frozenset(stem for stem, _, _ in _CALQUE_VERB_EACH)     # どれも1字
 _CALQUE_PLACE_HEAD = _v220_literal_re(_V220_TRIGGER_LITERALS[_V220_TYPE1_END:_V220_TYPE2_END])
 _CALQUE_PHRASE_HEAD = _v220_literal_re(_V220_TRIGGER_LITERALS[_V220_TYPE2_END:_V220_TYPE3_END] + ("効", "足す", "足し", "響", "引", "通"))
-_CALQUE_KANJI1_CHARS = frozenset(_V220_TRIGGER_LITERALS[_V220_TYPE3_END:])     # どれも1字
+_CALQUE_KANJI1_CHARS = frozenset(_V220_TRIGGER_LITERALS[_V220_TYPE3_END:_V220_TYPE4_END])     # どれも1字
+_CALQUE_TERM_HEAD = _v220_literal_re(_V220_TRIGGER_LITERALS[_V220_TYPE4_END:])
 
 # thin_evaluation: 文が「（20字以下の読点のない前置き）名詞（が|は|も）（程度の副詞）述語（です|だ など）。」の形
 _THIN_PREFIX_MAX = 20
@@ -3968,7 +4080,7 @@ _THIN_TAIL = r"(?:です|でした|だ|だった|である|でございます|�
 _V220_COMPILED = {}
 
 
-def _v220_patterns():
+def _v220_patterns() -> tuple[re.Pattern[str] | None, re.Pattern[str] | None, tuple[str, ...], tuple[re.Pattern[str], ...]]:
     """一覧から組んだ正規表現（katakana_term、thin_evaluation、文書全体の手掛かり）。一覧ごとに1回だけ組む。"""
     katakana, katakana_source = _v220_load_list("katakana-terms")
     thin, thin_source = _v220_load_list("thin-evaluation")
@@ -3978,16 +4090,16 @@ def _v220_patterns():
     katakana_re = None
     if katakana:
         # 番号や記号を付けた項目の名前（マイルストーン1、マイルストーン B）は、何を指すかが決まっているので外す
-        katakana_re = _V220Lazy("(?:" + "|".join(map(re.escape, sorted(set(katakana), key=len, reverse=True)))
-                                 + r")(?![ 　]?[0-9０-９A-Za-zＡ-Ｚａ-ｚ])")
+        katakana_re = _lazy_compile("(?:" + "|".join(map(re.escape, sorted(set(katakana), key=len, reverse=True)))
+                                     + r")(?![ 　]?[0-9０-９A-Za-zＡ-Ｚａ-ｚ])")
     thin_re = None
     nouns = ()
     if thin:
         nouns = tuple(sorted(set(noun for noun, _ in thin), key=len, reverse=True))
         body = "|".join("(?:{}(?:が|は|も){}(?:{}))".format(re.escape(noun), _THIN_ADVERB, predicate)
                         for noun, predicate in thin)
-        thin_re = _V220Lazy(r"^(?P<prefix>[^、，,]{0," + str(_THIN_PREFIX_MAX) + r"}?)(?P<body>" + body + r")" + _THIN_TAIL
-                             + r"[。．！!]*$")
+        thin_re = _lazy_compile(r"^(?P<prefix>[^、，,]{0," + str(_THIN_PREFIX_MAX) + r"}?)(?P<body>" + body + r")" + _THIN_TAIL
+                                 + r"[。．！!]*$")
     # 手掛かりの語は、先読みや後読み、捕まえる組のない文字列だけをつなぐ（re が先頭の字の候補で位置を飛ばせて速い）。
     # 先頭の平仮名は外し、漢字で始まる語とカタカナで始まる語を別の正規表現にする（1つにまとめると、よく出る字の位置で
     # すべての語を試すので遅い）
@@ -4003,18 +4115,21 @@ def _v220_patterns():
     return value
 
 
-def _v220_thin_match(sentence):
+def _v220_thin_match(sentence: str) -> re.Match[str] | None:
     """thin_evaluation の正規表現を文に当てる。一覧のファイルの正規表現に誤りがあれば、理由を残して内蔵の一覧で当てる。"""
     thin_re = _v220_patterns()[1]
+    if thin_re is None:
+        return None
     try:
         return thin_re.match(sentence)
     except re.error as error:
         _V220_LIST_CACHE["thin-evaluation"] = (tuple(_V220_BUILTIN_LISTS["thin-evaluation"]), "builtin")
         _V220_LIST_PROBLEMS["thin-evaluation"] = "正規表現の誤り（{}）".format(error)
-        return _v220_patterns()[1].match(sentence)
+        fallback = _v220_patterns()[1]
+        return fallback.match(sentence) if fallback is not None else None
 
 
-def _v220_scan_text(analysis, line_no):
+def _v220_scan_text(analysis: dict, line_no: int) -> str:
     """新しい語の規則が見る行の文字。見える文字から、カギ括弧と引用符の中、英数字の識別子を空白にする。"""
     visible = _prose_visible_text(analysis, line_no).replace("__", "").replace("*", "")
     if "「" in visible or "『" in visible or "[" in visible:
@@ -4024,7 +4139,7 @@ def _v220_scan_text(analysis, line_no):
     return _V220_IDENTIFIER.sub(lambda m: " " * len(m.group()), visible)
 
 
-def _v220_noun_start(text, position):
+def _v220_noun_start(text: str, position: int) -> bool:
     """position の字が漢字かカタカナか英字か。"""
     if position >= len(text):
         return False
@@ -4032,12 +4147,12 @@ def _v220_noun_start(text, position):
     return _v220_kanji(char) or _v220_katakana(char) or (char.isascii() and char.isalpha())
 
 
-def _v220_has_verb_stem(text):
+def _v220_has_verb_stem(text: str) -> bool:
     """型1の動詞の語幹の字があるか。"""
     return not _CALQUE_VERB_STEMS.isdisjoint(text)
 
 
-def _calque_subject_end(sentence, limit):
+def _calque_subject_end(sentence: str, limit: int) -> int:
     """limit より前で最後の、機械やシステムの語が主語の「は」「が」「も」「こそ」の終わりの位置（なければ -1）。
     主語の語のあとに漢字やカタカナが続いて、人や組織の語で終わるとき（サーバー管理者は）は主語にしない。"""
     last = -1
@@ -4058,7 +4173,7 @@ def _calque_subject_end(sentence, limit):
     return last
 
 
-def _calque_type1(sentence, words):
+def _calque_type1(sentence: str, words: list[str]) -> bool:
     """型1に当たれば True（当たった動詞の辞書の形を words に足す）。"""
     if not _v220_has_verb_stem(sentence) or not _CALQUE_SUBJECT_WORD.search(sentence):
         return False
@@ -4084,7 +4199,9 @@ def _calque_type1(sentence, words):
             established = [m.span() for m in _CALQUE_ESTABLISHED_TYPE1_RE.finditer(sentence)]
         if any(left <= start < right for left, right in established):
             continue
-        kana = _CALQUE_KANA_RUN.match(sentence, match.end()).group()
+        kana_match = _CALQUE_KANA_RUN.match(sentence, match.end())
+        assert kana_match is not None
+        kana = kana_match.group()
         if (match.group() + kana).endswith(_CALQUE_ATTRIBUTIVE_END) \
                 and _v220_noun_start(sentence, match.end() + len(kana)):
             continue    # 名詞を修飾する形（拾った通知、話した内容）
@@ -4095,12 +4212,12 @@ def _calque_type1(sentence, words):
     return found
 
 
-def _v220_noun_or_alnum(text, position):
+def _v220_noun_or_alnum(text: str, position: int) -> bool:
     return 0 <= position < len(text) and (_v220_kanji(text[position]) or _v220_katakana(text[position])
                                           or _v220_alnum(text[position]))
 
 
-def _calque_saki_spans(sentence):
+def _calque_saki_spans(sentence: str) -> list[tuple[int, int]]:
     """「〜先」の当たり（_CALQUE_SAKI_KANJI の語か、漢字1字と連用形の送り仮名のあとの「先」）の (始め, 終わり)。"""
     spans = []
     position = sentence.find("先")
@@ -4124,7 +4241,7 @@ def _calque_saki_spans(sentence):
     return spans
 
 
-def _calque_has_org(sentence):
+def _calque_has_org(sentence: str) -> bool:
     """文に組織の名前（総務部、情報システム課、サポートセンター）があるか。"""
     if any(word in sentence for word in _CALQUE_ORG_WORDS):
         return True
@@ -4135,12 +4252,12 @@ def _calque_has_org(sentence):
     return False
 
 
-def _v220_doc_tech(text):
+def _v220_doc_tech(text: str) -> bool:
     """技術の文書か（_CALQUE_TECH の語のうち、_CALQUE_DOC_TECH_GENERAL を除いた語が _CALQUE_DOC_TECH_MIN 種類以上）。"""
     return len(set(_CALQUE_TECH.findall(text)) - _CALQUE_DOC_TECH_GENERAL) >= _CALQUE_DOC_TECH_MIN
 
 
-def _entry_subject_end(sentence, cache):
+def _entry_subject_end(sentence: str, cache: dict[str, int]) -> int:
     """要求や呼び出しの主題（_CALQUE_ENTRY_SUBJECT）のいちばん早い終わり（なければ -1）。入口の一致ごとに文頭から
     読み直さず、文1つにつき1回だけ探す。"""
     if "subject" not in cache:
@@ -4149,7 +4266,7 @@ def _entry_subject_end(sentence, cache):
     return cache["subject"]
 
 
-def _calque_type2(sentence, words, doc_tech=False):
+def _calque_type2(sentence: str, words: list[str], doc_tech: bool = False) -> bool:
     """型2に当たれば True（当たった名詞を words に足す）。doc_tech は技術の文書か（入口と出口の拾い方に使う）。"""
     if not _CALQUE_PLACE_HEAD.search(sentence):
         return False
@@ -4212,7 +4329,7 @@ def _calque_type2(sentence, words, doc_tech=False):
     return found
 
 
-def _calque_type3(sentence, words, doc_tech=False):
+def _calque_type3(sentence: str, words: list[str], doc_tech: bool = False) -> bool:
     """型3に当たれば True（当たった句の名前を words に足す）。doc_tech は技術の文書か（「全〇〇に響く」の拾い方に使う）。
     文ごとに決まる値（機械やシステムの語があるか など）は、句の一致ごとに文を読み直さず、文1つにつき1回だけ求める。"""
     if not _CALQUE_PHRASE_HEAD.search(sentence):
@@ -4308,7 +4425,7 @@ def _calque_type3(sentence, words, doc_tech=False):
     return found
 
 
-def _label_text(analysis, row, scan):
+def _label_text(analysis: dict, row: dict, scan: str) -> str:
     """見出しか1行目のラベル（記号と番号を除いた文字。英数字は残す）。"""
     text = scan.strip()
     if row["kind"] == "heading":
@@ -4318,7 +4435,7 @@ def _label_text(analysis, row, scan):
                    or _v220_alnum(char))
 
 
-def _label_shape(label):
+def _label_shape(label: str) -> bool:
     """ラベルの形の条件（8字以下で、よく使う節の名前でなく、「〜の横」「〜のそば」「〜係」「〜番」で終わるか一語）。"""
     if not label or len(label) < 2 or len(label) > _LABEL_MAX or label in _LABEL_COMMON:
         return False
@@ -4337,7 +4454,7 @@ def _label_shape(label):
     return not _label_is_phrase(label)
 
 
-def _label_may_fit(row):
+def _label_may_fit(row: dict) -> bool:
     """見出しか1行目が、伏せる前の文字でラベルになりうるか（長い見出しと、ふつうの見出しを先に飛ばす）。
     伏せる所（識別子、コード）は英数字か記号なので、漢字と仮名だけを残した文字で見る。"""
     raw = row["raw"]
@@ -4347,7 +4464,7 @@ def _label_may_fit(row):
     return _label_shape(quick)
 
 
-def _metaphor_label(analysis, row, scan):
+def _metaphor_label(analysis: dict, row: dict, scan: str) -> str | None:
     """metaphor_label のラベルを返す（当たらなければ None）。"""
     if row["kind"] not in ("heading", "paragraph"):
         return None     # 1行目が表や箇条書きのときは見ない
@@ -4396,23 +4513,67 @@ def _metaphor_label(analysis, row, scan):
 #     文に出版物の語（_PUBLICATION_WORDS と、版画、印刷、新聞、映画、吹き替え など）があれば出さない（第2版、吹き替え版）。
 # 印: 1字で使う印（×印、目印、焼き印、お印は外す）。文に検査や推敲の語（lint、diff、検証、ログ、推敲 など）があるときだけ出す。
 # 頭: 行、一覧、出力、ログなどの「頭」（先頭の意味）と、PR やブランチの「頭」（HEAD）。体や慣用の頭（頭が痛い、曲の頭）は形で外れる。
-_CALQUE_VERSION_PUB = _V220Lazy(_PUBLICATION_WORDS + r"|版画|木版|活版|銅版|印刷|新聞|雑誌|刷|号|映画|吹き?替え|字幕|劇場|DVD"
-                                r"|ブルーレイ|Blu-?ray|BD|ゲーム|コミック|漫画|マンガ|小説|写真集|楽譜|彫|刷り")
+_CALQUE_VERSION_PUB = _lazy_compile(_PUBLICATION_WORDS + r"|版画|木版|活版|銅版|印刷|新聞|雑誌|刷|号|映画|吹き?替え|字幕|劇場|DVD"
+                                    r"|ブルーレイ|Blu-?ray|BD|ゲーム|コミック|漫画|マンガ|小説|写真集|楽譜|彫|刷り")
 _CALQUE_VERSION = (
-    _V220Lazy(r"(?:(?<=[たいなる])|(?<=の)|(?<=同じ))版(?=[はがをにでのもへと、。（(\s]|から|まで|ごと|だけ|より|$)(?!を重ね|を組|を彫|を刷)"),
-    _V220Lazy(r"(?<![一-龥々ァ-ヴーA-Za-z0-9０-９])(?<![A-Za-z0-9０-９][ 　])版(?:ごと|の(?:文字列?|番号|数字|名前|違い|差)|を(?:またい|分け|そろえ|揃え|固め))"))
-_CALQUE_MARK = _V220Lazy(r"(?<![一-龥々×○◎◆★☆▲△■□●◇◯※✓✔✕✖✗〇])(?<!焼き)(?<!バツ)(?<!マル)(?<!まる)(?<!チェック)(?<!という)"
-                         r"(?<!示す)(?<!お)印(?![一-龥々])(?!として|の線|付近|の部分|の位置|のところ|す|され|さ|である|だった|を?押|鑑)")
-_CALQUE_MARK_CONTEXT = _V220Lazy(r"(?<![A-Za-z])(?:lint|diff|check|CI|PR|info|warn|calque|規則|検査|検証|判定|推敲|レビュー|出力|ログ"
-                                 r"|レコード|フラグ|推量|引用|概数|直訳語|最終稿|(?:候補|記録|原文)(?![一-龥々]))")
-_CALQUE_HEAD = _V220Lazy(r"(?<![ァ-ヴー])(?:行|文|段落|項目|一覧|出力|リスト|ファイル|ログ|配列|キュー|表|節|章|ページ|見出し|箇条書き|並び|後半|前半"
-                         r"|列挙|ブロック|コマンド|キー|パス|run|check|README|PR|プルリク|ブランチ|branch|main|master|手元|リモート"
-                         r"|ローカル)\s?の頭(?![一-龥々])"
-                         r"|(?<![一-龥々])頭の(?:一覧|行|[0-9０-９一二三四五六七八九十]+(?:行|件|字|文|個|項目)|数行|並び)(?![一-龥々])")
+    _lazy_compile(r"(?:(?<=[たいなる])|(?<=の)|(?<=同じ))版(?=[はがをにでのもへと、。（(\s]|から|まで|ごと|だけ|より|$)(?!を重ね|を組|を彫|を刷)"),
+    _lazy_compile(r"(?<![一-龥々ァ-ヴーA-Za-z0-9０-９])(?<![A-Za-z0-9０-９][ 　])版(?:ごと|の(?:文字列?|番号|数字|名前|違い|差)|を(?:またい|分け|そろえ|揃え|固め))"))
+_CALQUE_MARK = _lazy_compile(r"(?<![一-龥々×○◎◆★☆▲△■□●◇◯※✓✔✕✖✗〇])(?<!焼き)(?<!バツ)(?<!マル)(?<!まる)(?<!チェック)(?<!という)"
+                             r"(?<!示す)(?<!お)印(?![一-龥々])(?!として|の線|付近|の部分|の位置|のところ|す|され|さ|である|だった|を?押|鑑)")
+_CALQUE_MARK_CONTEXT = _lazy_compile(r"(?<![A-Za-z])(?:lint|diff|check|CI|PR|info|warn|calque|規則|検査|検証|判定|推敲|レビュー|出力|ログ"
+                                     r"|レコード|フラグ|推量|引用|概数|直訳語|最終稿|(?:候補|記録|原文)(?![一-龥々]))")
+_CALQUE_HEAD = _lazy_compile(r"(?<![ァ-ヴー])(?:行|文|段落|項目|一覧|出力|リスト|ファイル|ログ|配列|キュー|表|節|章|ページ|見出し|箇条書き|並び|後半|前半"
+                             r"|列挙|ブロック|コマンド|キー|パス|run|check|README|PR|プルリク|ブランチ|branch|main|master|手元|リモート"
+                             r"|ローカル)\s?の頭(?![一-龥々])"
+                             r"|(?<![一-龥々])頭の(?:一覧|行|[0-9０-９一二三四五六七八九十]+(?:行|件|字|文|個|項目)|数行|並び)(?![一-龥々])")
 
 
-def _calque_type4(sentence, words, skip_version=False):
-    """型4（英語の短い術語に当てた漢字1字の名詞）。当たった字（版、印、頭）を words に足す。"""
+# 3.0.0 で足した型4の字（枝、題、罫）。字ごとに、技術の文書でしか使わない形か文脈の語に限る（人の文の木の枝、作文の題、
+# 便箋の罫を拾わないため。livedoor、human_oga、自分の文書で0件の形）。
+# 枝: 前後に漢字のない1字の枝で、同じ文に git の語（_CALQUE_BRANCH_CONTEXT）があるとき（branch）。マージンとブランチ（brunch）は
+#     git の語に数えない。
+# 題: PR、コミット、issue、README の「題」（title）の形だけ。自己PR、商品PR、ブランドPR のような前に漢字かカタカナが付く PR は外す。
+# 罫: 前後に漢字のない1字の罫で、同じ文にスタイルの語（_CALQUE_STYLE_CONTEXT。CSS、border、px、HTML）があるとき（border）。
+#     「表の罫」「セルの罫」は組版や表計算で使う言い方なので、それだけでは当てない。
+_CALQUE_BRANCH = _lazy_compile(r"(?<![一-龥々〆ヵヶ])枝(?![一-龥々〆ヵヶ])")
+_CALQUE_BRANCH_CONTEXT = _lazy_compile(r"(?<![A-Za-z])(?:git|Git|GitHub|main|master|rebase|worktree)(?![A-Za-z])|マージ(?!ン)|プルリク")
+_CALQUE_TITLE = _lazy_compile(r"(?:(?<![A-Za-z一-龥々〆ヵヶァ-ヴー])PR|(?<![A-Za-z])(?:プルリク(?:エスト)?|コミット|issue|Issue|イシュー|README))"
+                              r"\s?の題(?![一-龥々〆ヵヶ])")
+_CALQUE_RULE = _lazy_compile(r"(?<![一-龥々〆ヵヶ])(?<!飾り)罫(?![一-龥々〆ヵヶ])")
+_CALQUE_STYLE_CONTEXT_PATTERN = r"(?<![A-Za-z])(?:CSS|border|px|HTML)(?![A-Za-z])"
+_CALQUE_STYLE_CONTEXT = _lazy_compile(_CALQUE_STYLE_CONTEXT_PATTERN)
+
+
+# 段: 処理の流れの stage に当てた段。第2段、各段、次の段、英語の語に付く段（refine 段）、「抽出の段で」の形で、
+#     同じ文に処理の流れの語（_CALQUE_STAGE_CONTEXT）があるとき。前後に漢字のある段（段落、段階、手段、値段、段位、段数、階段、
+#     前段、後段、次段）、数の後の段（2 段の LSTM、棚の2段目）、「この段」「その段」（その段はご容赦ください）は外す。
+#     名前の段（段A、段1。段のあとに大文字か数字）は、処理の流れの語がなくても当てる（人の文になく、AI が書く stage の
+#     大半がこの形）。どの形も、同じ文に段位の語（_CALQUE_STAGE_RANK。囲碁、将棋、昇段、柔道 など）があれば当てない。
+# 門: CI やレビューの gate に当てた門。「レビューの門」「CI の門」の形で、同じ文に検査の語（_CALQUE_GATE_CONTEXT）があるとき。
+#     前後に漢字のある門（正門、校門、関門、門番）と、建物の門（お寺の門をくぐる）は、検査の語が無いので当たらない。
+#     英語の語のあとの門は2字以上の英字を含む語だけに当てる（東京ドームのA門 は外す）。
+# 文脈の語は 枝 と同じく、人の文の別の語に入る形を外す（マージン、コミットメント、学習塾）。
+_CALQUE_STAGE = _lazy_compile(
+    r"第\s?[0-9０-９]+\s?段(?![一-龥々〆ヵヶ])"
+    r"|(?<![一-龥々〆ヵヶ])各段(?![一-龥々〆ヵヶ])"
+    r"|(?<![一-龥々〆ヵヶァ-ヴー0-9０-９A-Za-z])段(?=[A-ZＡ-Ｚ0-9０-９])"
+    r"|(?<![A-Za-z0-9_-])[A-Za-z][A-Za-z0-9_-]+ ?段(?![一-龥々〆ヵヶ])"
+    r"|(?:次|前|後|最初|最後)の段(?=[でにをはがのへも、。])"
+    r"|(?<![こそあ])の段(?=[でにをはがへも、。])")
+_CALQUE_STAGE_CONTEXT = _lazy_compile(
+    r"(?<![A-Za-z])(?:CI|pipeline|stage|job|build|lint|LLM|GPU|CPU|ETL)(?![A-Za-z])"
+    r"|パイプライン|ジョブ|ビルド|デプロイ|ワークフロー|前処理|後処理|推論|学習(?!塾)|抽出|検査|レビュー|スクリプト|エージェント")
+_CALQUE_STAGE_LABEL = _lazy_compile(
+    r"(?<![一-龥々〆ヵヶァ-ヴー0-9０-９A-Za-zＡ-Ｚａ-ｚ])段(?:[A-ZＡ-Ｚ]|[0-9０-９]+)(?![A-Za-zＡ-Ｚａ-ｚ])")
+_CALQUE_STAGE_RANK = _lazy_compile(
+    r"碁|棋|段位|昇段|初段|有段|段級|級|柔道|剣道|空手|合気道|弓道|居合|薙刀|なぎなた|書道|茶道|華道|珠算|そろばん|師範|黒帯")
+_CALQUE_GATE = _lazy_compile(r"(?:の|(?<![A-Za-z0-9_-])[A-Za-z][0-9_-]*[A-Za-z][A-Za-z0-9_-]*\s?)門(?![一-龥々〆ヵヶ])")
+_CALQUE_GATE_CONTEXT = _lazy_compile(
+    r"(?<![A-Za-z])(?:CI|PR|lint|hook|review|merge)(?![A-Za-z])|レビュー|検査|フック|マージ(?!ン)|コミット(?!メント)|テスト")
+
+
+def _calque_type4(sentence: str, words: list[str], skip_version: bool = False) -> bool:
+    """型4（英語の短い術語に当てた漢字1字の名詞）。当たった字（版、印、頭、枝、題、罫、段、門）を words に足す。"""
     found = False
     if not skip_version and "版" in sentence and not _CALQUE_VERSION_PUB.search(sentence) \
             and any(pattern.search(sentence) for pattern in _CALQUE_VERSION):
@@ -4424,10 +4585,74 @@ def _calque_type4(sentence, words, skip_version=False):
     if "頭" in sentence and _CALQUE_HEAD.search(sentence):
         words.append("頭")
         found = True
+    if "枝" in sentence and _CALQUE_BRANCH.search(sentence) and _CALQUE_BRANCH_CONTEXT.search(sentence):
+        words.append("枝")
+        found = True
+    if "の題" in sentence and _CALQUE_TITLE.search(sentence):
+        words.append("題")
+        found = True
+    if "罫" in sentence and _CALQUE_RULE.search(sentence) and _CALQUE_STYLE_CONTEXT.search(sentence):
+        words.append("罫")
+        found = True
+    if "段" in sentence and not _CALQUE_STAGE_RANK.search(sentence) \
+            and (_CALQUE_STAGE_LABEL.search(sentence)
+                 or (_CALQUE_STAGE.search(sentence) and _CALQUE_STAGE_CONTEXT.search(sentence))):
+        words.append("段")
+        found = True
+    if "門" in sentence and _CALQUE_GATE.search(sentence) and _CALQUE_GATE_CONTEXT.search(sentence):
+        words.append("門")
+        found = True
     return found
 
 
-def _v220_word_findings(analysis):
+# 型5（3.0.0）: 英語の術語に2字以上の漢語を当てた名詞（背景実行 background job、基準線 baseline、時間窓 time window、
+# 根因 root cause、台本 script、見張り watcher など）。人の文で文字どおりに使う語（写真の背景、舞台の台本、見張りに立つ）は、
+# 語ごとに技術の文書でしか使わない形か文脈に限る（livedoor、human_oga、自分の文書で0件の形）。
+# (手掛かりの字, 語の正規表現, 前に要る形か None, 同じ文に要る語か None)。前に要る形は語の前の文字の終わりに当て、
+# 語の正規表現の当たり（match.group(0)）を当たった言い方（_words）にする（allow.txt に本文の字のまま書けば外れる）
+_CALQUE_NOT_KANJI_BEFORE = r"(?<![一-龥々〆ヵヶ])"
+_CALQUE_BEFORE_WINDOW = 20      # 前に要る形の字数の上限（どれも12字以下）
+_CALQUE_TERMS_V300 = tuple((head, _lazy_compile(pattern), _lazy_compile(before) if before else None,
+                            _lazy_compile(context) if context else None) for head, pattern, before, context in (
+    ("背景", r"背景実行", None, None),
+    ("背景", _CALQUE_NOT_KANJI_BEFORE + r"背景(?=で(?:実行|走らせ|回し|動かし|待機))", None, None),
+    ("背景", _CALQUE_NOT_KANJI_BEFORE + r"背景(?:ジョブ|タスク)", None, None),
+    ("基準線", _CALQUE_NOT_KANJI_BEFORE + r"基準線", None, r"性能|処理時間|ベンチマーク"),
+    ("時間窓", _CALQUE_NOT_KANJI_BEFORE + r"時間窓", None, r"直近|集計|件数|ログ|メトリクス"),
+    ("罫", _CALQUE_NOT_KANJI_BEFORE + r"[上下左右]罫(?!線)(?![一-龥々〆ヵヶ])", None, _CALQUE_STYLE_CONTEXT_PATTERN),
+    ("偽緑", r"偽緑", None, None),
+    ("根因", _CALQUE_NOT_KANJI_BEFORE + r"根因", None, None),
+    ("生成器", r"(?<![一-龥々〆ヵヶァ-ヴー])生成器", None, None),
+    ("検査器", r"(?<![一-龥々〆ヵヶァ-ヴー])検査器",
+     r"(?:入力|スキーマ|型|構文|書式|形式|値|引数|設定|JSON|YAML|XML|リクエスト|レスポンス|パラメーター?|フォーム)\s?の$", None),
+    ("飛行中", _CALQUE_NOT_KANJI_BEFORE + r"飛行中(?=の?(?:リクエスト|要求|ジョブ|タスク|書き込み|呼び出し|RPC|トランザクション))",
+     None, None),
+    ("見張り", r"見張り(?=の(?:ジョブ|プロセス|スクリプト))", None, None),
+    ("見張り", r"見張り", r"(?<![A-Za-z])(?:CI|cron|ジョブ|プロセス|ログ|サーバー|キュー)\s?の$", None),
+    ("台本", r"(?<![一-龥々〆ヵヶ])台本(?![一-龥々〆ヵヶ])(?=を(?:実行(?!委員)|走らせ))", None, None),
+    ("台本", r"(?<![一-龥々〆ヵヶ])台本(?![一-龥々〆ヵヶ])",
+     r"(?<![A-Za-z])(?:シェル|bash|移行|デプロイ|ビルド|セットアップ|E2E|e2e)\s?の$", None),
+))
+
+
+def _calque_type5(sentence: str, words: list[str]) -> bool:
+    """型5（英語の術語に当てた2字以上の名詞）。当たった言い方（本文の字のまま）を words に足す。"""
+    found = False
+    for head, pattern, before, context in _CALQUE_TERMS_V300:
+        if head not in sentence:
+            continue
+        if context is not None and not context.search(sentence):
+            continue
+        for match in pattern.finditer(sentence):
+            # 前に要る形は短いので、語の前の _CALQUE_BEFORE_WINDOW 字だけを見る（同じ語が多い長い文で手間を行の長さに比例させる）
+            if before is None or before.search(sentence, max(0, match.start() - _CALQUE_BEFORE_WINDOW), match.start()):
+                words.append(match.group(0))
+                found = True
+                break
+    return found
+
+
+def _v220_word_findings(analysis: dict) -> list[dict]:
     """calque、metaphor_label、katakana_term、thin_evaluation の候補。
 
     既存の規則の候補は analysis["_findings"] から読む（同じ行に metaphor_verb があれば calque を出さない。
@@ -4502,7 +4727,9 @@ def _v220_word_findings(analysis):
             if not _CALQUE_KANJI1_CHARS.isdisjoint(scan):
                 # 同じ行に「版」の translated_term があれば、型4の「版」は重ねない（ほかの語の translated_term では止めない）
                 finders.append((4, functools.partial(_calque_type4, skip_version=line_no in blocked_version)))
-        thin_possible = thin_re is not None and thin_noun_re.search(scan) is not None
+            if _CALQUE_TERM_HEAD.search(scan):
+                finders.append((5, _calque_type5))
+        thin_possible = thin_re is not None and thin_noun_re is not None and thin_noun_re.search(scan) is not None
         sentences = ()
         if finders or thin_possible:
             sentences = [part for part in (piece.strip() for piece in _V220_SENTENCE.findall(scan)) if part]
@@ -4538,7 +4765,7 @@ def _v220_word_findings(analysis):
     return out
 
 
-def _calque_message(types, word_types):
+def _calque_message(types: Sequence[int], word_types: Sequence[tuple[str, int]]) -> str:
     """calque の message。1行に1件なので、当たった言い方を並べる（同じ行の2つ目を読み落とさないため。置き換え先の語は出さない）。"""
     hit = tuple(dict.fromkeys(word for word, _ in word_types))
     shown = "。当たった言い方: " + "、".join(hit) if hit else ""
@@ -4566,7 +4793,7 @@ _RENYO_AFTER = (r"(?=が(?!た[いかくけさそ])|を|は|に(?!く[いかく�
 _RENYO_COMPILED = {}
 
 
-def _renyo_pattern():
+def _renyo_pattern() -> tuple[re.Pattern[str] | None, re.Pattern[str] | None, dict[str, tuple[str, ...]]]:
     """一覧から組んだ正規表現（文書全体の絞り込み用と、行の見える文字用）と、語ごとに外す後ろの文字列のタプル。
     一覧ごとに1回だけ組む。一覧が空なら (None, None, {})。絞り込みは前後の先読みを持たず、「の」と語のあいだの「*」「_」
     を許す（太字の印 ** が「の」と語のそばにあっても、見える文字では消えるので、その行を見落とさないため）。"""
@@ -4612,33 +4839,33 @@ _SLIDE_CONJ = (r"(?:だから|それでも|それで|そして|しかし|しか�
 _SLIDE_START = r"(?:^|(?<=[。！？!?]))[ 　]*"
 _SLIDE_PERSON_KANA = r"(?:たち|さん|さま|ちゃん|くん|彼ら|僕ら|私ら|みんな|わたし|ぼく|誰も|誰か|皆さん|どなたか)"
 _SLIDE_COMMA = (
-    ("つなぎ", _V220Lazy(_SLIDE_START + _SLIDE_CONJ + r"、")),
-    ("ば", _V220Lazy(_SLIDE_START + r"(?:[^、。！？!?＿]{1,6}で|簡単に|一言で|今|いま|あとから|後から)?"
-                     r"(?:言えば|いえば|言ってみれば|言われてみれば|思えば|振り返れば|考えてみれば)、")),
-    ("場面", _V220Lazy(_SLIDE_START + r"(?:その日のうちに|[^、。！？!?]{3,10}(?:のうちに|うちに|までに|のあとで|あとで|の後で|後で|のちに|たびに))、")),
-    ("主題", _V220Lazy(_SLIDE_START + r"(?!" + _SLIDE_CONJ + r"、)[^、。！？!?]{1,15}?"
-                       r"(?:(?<!ため)(?<![うくぐすつぬぶむる])(?<!とき)(?<!場合)(?<![際時])には|では|とは"
-                       r"|(?<![てに])(?<!以上)(?<!とき)(?<!場合)(?<![際時])は|(?<![てでどらつと])(?<!とき)(?<!場合)(?<![際時])も)、")),
-    ("主語", _V220Lazy(_SLIDE_START + r"[^、。！？!?]{0,9}(?:[一-龥々ァ-ヴーA-Za-z0-9０-９」＿]|" + _SLIDE_PERSON_KANA + r")[ 　]?が、")),
-    ("目的語", _V220Lazy(r"を、")),
+    ("つなぎ", _lazy_compile(_SLIDE_START + _SLIDE_CONJ + r"、")),
+    ("ば", _lazy_compile(_SLIDE_START + r"(?:[^、。！？!?＿]{1,6}で|簡単に|一言で|今|いま|あとから|後から)?"
+                         r"(?:言えば|いえば|言ってみれば|言われてみれば|思えば|振り返れば|考えてみれば)、")),
+    ("場面", _lazy_compile(_SLIDE_START + r"(?:その日のうちに|[^、。！？!?]{3,10}(?:のうちに|うちに|までに|のあとで|あとで|の後で|後で|のちに|たびに))、")),
+    ("主題", _lazy_compile(_SLIDE_START + r"(?!" + _SLIDE_CONJ + r"、)[^、。！？!?]{1,15}?"
+                           r"(?:(?<!ため)(?<![うくぐすつぬぶむる])(?<!とき)(?<!場合)(?<![際時])には|では|とは"
+                           r"|(?<![てに])(?<!以上)(?<!とき)(?<!場合)(?<![際時])は|(?<![てでどらつと])(?<!とき)(?<!場合)(?<![際時])も)、")),
+    ("主語", _lazy_compile(_SLIDE_START + r"[^、。！？!?]{0,9}(?:[一-龥々ァ-ヴーA-Za-z0-9０-９」＿]|" + _SLIDE_PERSON_KANA + r")[ 　]?が、")),
+    ("目的語", _lazy_compile(r"を、")),
 )
 # 主題の読点のあとの別の主語（「が」か「は」）。あるかないかや数を言う述語の「が」は主語に数えない
-_SLIDE_ACTOR_AFTER = _V220Lazy(r"[ 　]*[^、。！？!?]{0,18}?(?:[一-龥々ァ-ヴーA-Za-z0-9０-９」）＿]|" + _SLIDE_PERSON_KANA + r")[ 　]?"
-                               r"(?:が(?!、|ない|なく|ある|あり|多い|多く(?!の)|少ない|少なく|いる|いない)|は(?!、))")
-_SLIDE_LIST_AFTER = _V220Lazy(r"[ 　]*[^、。！？!?]{1,15}(?:、[^、。！？!?]{1,15})+(?:[。！？!?]|$)")
+_SLIDE_ACTOR_AFTER = _lazy_compile(r"[ 　]*[^、。！？!?]{0,18}?(?:[一-龥々ァ-ヴーA-Za-z0-9０-９」）＿]|" + _SLIDE_PERSON_KANA + r")[ 　]?"
+                                   r"(?:が(?!、|ない|なく|ある|あり|多い|多く(?!の)|少ない|少なく|いる|いない)|は(?!、))")
+_SLIDE_LIST_AFTER = _lazy_compile(r"[ 　]*[^、。！？!?]{1,15}(?:、[^、。！？!?]{1,15})+(?:[。！？!?]|$)")
 # 同じ助詞の句の並び（Aを、Bを、 / Aが、Bが、）の、次の句
-_SLIDE_SAME_NEXT = {"を、": _V220Lazy(r"[ 　]*[^、。！？!?]{1,12}を、"), "が、": _V220Lazy(r"[ 　]*[^、。！？!?]{1,12}が、")}
+_SLIDE_SAME_NEXT = {"を、": _lazy_compile(r"[ 　]*[^、。！？!?]{1,12}を、"), "が、": _lazy_compile(r"[ 　]*[^、。！？!?]{1,12}が、")}
 # 行頭の印: 見出しの #、箇条の印（入れ子も）、「・」「■」「①」「(1)」「1．」、【】、「結論：」のようなラベル
-_SLIDE_LEAD = _V220Lazy(r"^[ \t　]*(?:#{1,6}[ 　]+)?(?:(?:[-*+]|\d+[.)]|[（(]\d+[)）]|\d+．|[①-⑳]|[・■□●○◆◇▪▶►✅✔☑])[ 　]*)*"
-                        r"(?:【[^】]{1,12}】[ 　]*)?(?:[^、。！？!?：:]{1,12}[：:](?![0-9０-９])[ 　]*)?")
-_SLIDE_BULLET = _V220Lazy(r"^[ \t　]*(?:[-*+]|\d+[.)])[ \t]|^[ \t　]*(?:[（(]\d+[)）]|\d+．|[①-⑳]|[・■□●○◆◇▪▶►✅✔☑])")
+_SLIDE_LEAD = _lazy_compile(r"^[ \t　]*(?:#{1,6}[ 　]+)?(?:(?:[-*+]|\d+[.)]|[（(]\d+[)）]|\d+．|[①-⑳]|[・■□●○◆◇▪▶►✅✔☑])[ 　]*)*"
+                            r"(?:【[^】]{1,12}】[ 　]*)?(?:[^、。！？!?：:]{1,12}[：:](?![0-9０-９])[ 　]*)?")
+_SLIDE_BULLET = _lazy_compile(r"^[ \t　]*(?:[-*+]|\d+[.)])[ \t]|^[ \t　]*(?:[（(]\d+[)）]|\d+．|[①-⑳]|[・■□●○◆◇▪▶►✅✔☑])")
 # 行頭の箇条の印と引用の印（見える文字では空白になる）。この範囲より後ろで見える文字が空白になった字（コード、リンクの URL）は「＿」にする
-_SLIDE_MARKER_ZONE = _V220Lazy(r"^[ \t　]*(?:(?:[-*+>]|\d+[.)])[ \t]+)*")
+_SLIDE_MARKER_ZONE = _lazy_compile(r"^[ \t　]*(?:(?:[-*+>]|\d+[.)])[ \t]+)*")
 _SLIDE_MESSAGE = ("スライドの見出しや1行の箇条で、間を作るだけの読点（当たった言い方: {}）の候補です。逆接、条件、理由、名詞の並びの読点と、"
                   "外すと読み違える読点は残し、ほかは外すか確かめてください。")
 
 
-def _v240_slide_single_lines(analysis):
+def _v240_slide_single_lines(analysis: dict) -> list[int]:
     """1行で終わる見出し、箇条、段落の行の番号。続きの行がある箇条と、複数行の段落の行は入れない。"""
     rows = analysis["lines"]
     out = []
@@ -4654,9 +4881,9 @@ def _v240_slide_single_lines(analysis):
         previous = rows[index - 1] if index else None
         following = rows[index + 1] if index + 1 < len(rows) else None
 
-        def continues(other):
-            return (other is not None and other["raw"].strip() and other["kind"] in ("list", "paragraph")
-                    and other["quote_depth"] == row["quote_depth"] and not _SLIDE_BULLET.match(other["raw"]))
+        def continues(other: dict | None) -> bool:
+            return bool(other is not None and other["raw"].strip() and other["kind"] in ("list", "paragraph")
+                        and other["quote_depth"] == row["quote_depth"] and not _SLIDE_BULLET.match(other["raw"]))
 
         if not bullet and previous is not None and previous["raw"].strip() and previous["kind"] in ("list", "paragraph"):
             continue
@@ -4666,12 +4893,14 @@ def _v240_slide_single_lines(analysis):
     return out
 
 
-def _v240_slide_texts(analysis, line_no):
+def _v240_slide_texts(analysis: dict, line_no: int) -> tuple[str, str, list[int]]:
     """(見える文字、伏せた所を「＿」にした文字、見える文字の各字の元の行での位置)。太字の記号は外す。"""
     raw = analysis["lines"][line_no - 1]["raw"]
     visible_raw = _prose_visible_text(analysis, line_no)
     if len(visible_raw) == len(raw):
-        zone = _SLIDE_MARKER_ZONE.match(raw).end()
+        marker = _SLIDE_MARKER_ZONE.match(raw)
+        assert marker is not None
+        zone = marker.end()
         visible_raw = "".join("＿" if (char == " " and index >= zone and raw[index] not in " \t　") else char
                               for index, char in enumerate(visible_raw))
     keep = [i for i, char in enumerate(visible_raw) if char != "*"]
@@ -4695,7 +4924,7 @@ def _v240_slide_texts(analysis, line_no):
     return visible, placeholder, positions
 
 
-def _v240_slide_hit_text(raw, positions, begin, end):
+def _v240_slide_hit_text(raw: str, positions: list[int], begin: int, end: int) -> str:
     """当たった言い方の字（元の行から切り出し、リンクは文字だけ、太字の記号は外す。20字より長ければ頭に「…」）。"""
     if not positions or begin >= end:
         return ""
@@ -4708,7 +4937,7 @@ def _v240_slide_hit_text(raw, positions, begin, end):
     return text
 
 
-def _v240_slide_comma_findings(analysis, findings, doc_type):
+def _v240_slide_comma_findings(analysis: dict, findings: list[dict], doc_type: str | None) -> list[dict]:
     """slide_comma の候補（slides のときだけ数える。ほかの種類では作らない）。同じ行に pause_comma があれば、主題と主語の読点は重ねない。
     2.5.0: pause_comma が拾った短い目的語の「を、」は、目的語の読点として重ねない（同じ行のほかの目的語の読点は出す）。
     pause_comma が「を、」だけを拾った行では、主題と主語の読点も出す（重ねる読点がないので）。"""
@@ -4724,7 +4953,9 @@ def _v240_slide_comma_findings(analysis, findings, doc_type):
         if "、" not in row["raw"]:
             continue
         visible, scan, positions = _v240_slide_texts(analysis, line_no)
-        lead = _SLIDE_LEAD.match(scan).end()
+        marker = _SLIDE_LEAD.match(scan)
+        assert marker is not None
+        lead = marker.end()
         body = scan[lead:].rstrip()
         if not body or len(body) > _SLIDE_LINE_MAX:
             continue
@@ -4754,12 +4985,13 @@ def _v240_slide_comma_findings(analysis, findings, doc_type):
     return out
 
 
-def _v230_renyo_findings(analysis):
+def _v230_renyo_findings(analysis: dict) -> list[dict]:
     """renyo_noun の候補。文書全体に一度だけ一覧の語を当て、当たった行を見える文字で調べる。"""
     pattern, prefilter, skip_after = _renyo_pattern()
     rows = analysis["lines"]
     if pattern is None or not rows:
         return []
+    assert prefilter is not None
     text = analysis["text"]
     starts = None
     candidate_lines = set()
@@ -4800,37 +5032,50 @@ def _v230_renyo_findings(analysis):
 # - なんよ: 地の文の文末の「なんよ」「なんよね」。台詞の script と読み物の essay では外す
 # - て形の体言止め: 段落の文で「〜して、〜を＋漢語の名詞。」で終わる形（見直して、速度を改善。）。見出し、箇条書き、表は見ない。
 #   slides、minutes、promo、script では外す。「について、」「に応じて、」「にて、」「のせいで、」のような、動詞でない「て」「で」は数えない
+# - 多岐にわたる（3.2.0）: 「多岐にわたる」「多岐に渡り」「多岐にわたって」。何が多いのかを確かめる候補
+# - が求められている（3.2.0）: 「が求められている」「が求められています」「が求められており」など。誰が何を求めているのかを
+#   確かめる候補。「を求められている」「が求められる」は当てない
+#   この2つは段落の文だけに当て（見出し、箇条書き、表は見ない）、script と essay では外す
 # 見るのは新しい語の規則と同じ見える文字（カギ括弧と引用符の中、英数字の識別子を伏せた字）。引用（> の行）、コード、frontmatter、
 # HTML は見ない。1行に1件で、当たった言い方を _words に並べる。
 _V250_RULES = ("ai_phrase",)
 _AI_PHRASE_MESSAGE = "AIの文章によく出る言い回し（当たった言い方: {}）" + _V220_MESSAGE_TAIL
-_AI_PHRASE_HEAD = _V220Lazy(r"見立て|潜|招く|欠かせない存在|挙動を|なんよ|を[一-龥々]{2,}[。．]")
+_AI_PHRASE_HEAD = _lazy_compile(r"見立て|潜|招く|欠かせない存在|挙動を|なんよ|を[一-龥々]{2,}[。．]")
+# 3.2.0 で足した2つの形の手掛かり。この手掛かりだけが当たった行では、3.2.0 の2つの形だけを調べる（2.5.0 からの7つの形の
+# 当たり方は、同じ行に新しい語があるかで変えない。強調の記号を挟んだ「を**改善**。」は、2.5.0 の手掛かりに当たらない）
+_AI_PHRASE_HEAD_V320 = _lazy_compile(r"多岐に|求められて")
+# 3.2.0 で足した形。段落の文だけに当て、script と essay では外す
+_AI_PHRASE_PARAGRAPH_ONLY = ("多岐にわたる", "が求められている")
 # 判断した人と招く人や組織の語。語のあとに「たち」「ら」「ども」「陣」「側」が付いてもよい
 _AI_PERSON_WORDS = (r"人|者|員|士|医|さん|様|さま|氏|先生|医師|専門家|アナリスト|エコノミスト|記者|筆者|編集部|当社|弊社|同社|会社"
                     r"|政府|当局|警察|検察|日銀|銀行|気象台|省|庁|局|都|府|県|市|区|町|村|国|自治体|委員会|協会|機関|大学|研究所"
                     r"|チーム|部|課|業界|社長|会長|部長|課長|店長|院長|監督|代表|教授|首相|大臣|知事|市長|私|僕|わたし|ぼく|我々"
                     r"|われわれ|彼|彼女|あなた|皆さん")
 _AI_PERSON_PLURAL = r"(?:たち|ら|ども|陣|側)?"
-_AI_JUDGE = _V220Lazy(r"(?:" + _AI_PERSON_WORDS + r")" + _AI_PERSON_PLURAL + r"(?:は|が|も|の|では|によると|によれば|としては)")
+_AI_JUDGE = _lazy_compile(r"(?:" + _AI_PERSON_WORDS + r")" + _AI_PERSON_PLURAL + r"(?:は|が|も|の|では|によると|によれば|としては)")
 _AI_HIDDEN = r"(?:リスク|問題|課題|罠|わな|落とし穴|危険性?|本質|闇|バグ)"
 # 「〜に潜む」と潜むものの間に挟んでよい語
 _AI_HIDDEN_BEFORE = r"(?:各種の|様々な|さまざまな|多くの|数々の|大きな|思わぬ|見えない|本当の|深刻な|重大な|新たな)?"
-_AI_INVITER = _V220Lazy(r"(?:" + _AI_PERSON_WORDS + r"|上司|父|母|親|夫|妻|兄|姉|弟|妹|祖父|祖母|息子|娘|子ども|子供|家族|友人"
-                        r"|知人|友達|先輩|後輩|同僚|店|当店|学校|団体|館|団|主催者|運営)" + _AI_PERSON_PLURAL + r"$")
+_AI_INVITER = _lazy_compile(r"(?:" + _AI_PERSON_WORDS + r"|上司|父|母|親|夫|妻|兄|姉|弟|妹|祖父|祖母|息子|娘|子ども|子供|家族|友人"
+                            r"|知人|友達|先輩|後輩|同僚|店|当店|学校|団体|館|団|主催者|運営)" + _AI_PERSON_PLURAL + r"$")
 _AI_PHRASE_FORMS = (
-    ("見立てです", _V220Lazy(r"(?:という|との|の)見立て(?:です|でした|だ|だった|である)[。．！!]*$")),
-    ("潜む", _V220Lazy(_AI_HIDDEN + r"(?:が|も|は)[、，,]?潜(?:む|ん[でだ]|み|ま|め)|に潜(?:む|んでいる|んでいた|んだ)"
-                     + _AI_HIDDEN_BEFORE + _AI_HIDDEN + r"(?!な)")),
-    ("が招く", _V220Lazy(r"が招く(?=[一-龥々ァ-ヴー])")),
-    ("欠かせない存在", _V220Lazy(r"今や[^。]*?欠かせない存在|欠かせない存在と(?:なって|なりつつ)")),
-    ("という挙動を排除", _V220Lazy(r"という挙動を(?:排除|防止|阻止)")),
-    ("なんよ", _V220Lazy(r"なんよね?[。．！!？?]*$")),
-    ("て形の体言止め", _V220Lazy(r"(?:[ぁ-ん]て|[んい]で|[一-龥々]て)[、，,][^。、，,]{1,20}?を[一-龥々]{2,}[。．]$")),
+    ("見立てです", _lazy_compile(r"(?:という|との|の)見立て(?:です|でした|だ|だった|である)[。．！!]*$")),
+    ("潜む", _lazy_compile(_AI_HIDDEN + r"(?:が|も|は)[、，,]?潜(?:む|ん[でだ]|み|ま|め)|に潜(?:む|んでいる|んでいた|んだ)"
+                         + _AI_HIDDEN_BEFORE + _AI_HIDDEN + r"(?!な)")),
+    ("が招く", _lazy_compile(r"が招く(?=[一-龥々ァ-ヴー])")),
+    ("欠かせない存在", _lazy_compile(r"今や[^。]*?欠かせない存在|欠かせない存在と(?:なって|なりつつ)")),
+    ("という挙動を排除", _lazy_compile(r"という挙動を(?:排除|防止|阻止)")),
+    ("なんよ", _lazy_compile(r"なんよね?[。．！!？?]*$")),
+    ("て形の体言止め", _lazy_compile(r"(?:[ぁ-ん]て|[んい]で|[一-龥々]て)[、，,][^。、，,]{1,20}?を[一-龥々]{2,}[。．]$")),
+    # 3.2.0
+    ("多岐にわたる", _lazy_compile(r"多岐に(?:わた|渡)(?:る|り|っ)")),
+    ("が求められている", _lazy_compile(r"が求められて(?:いる|います|いた|いました|おり)")),
 )
 
 
-def _v250_ai_phrase_findings(analysis, doc_type):
-    """ai_phrase の候補。文書全体に一度だけ手掛かり（_AI_PHRASE_HEAD）を当て、当たった行を見える文字で調べる。"""
+def _v250_ai_phrase_findings(analysis: dict, doc_type: str | None) -> list[dict]:
+    """ai_phrase の候補。文書全体に一度だけ手掛かり（_AI_PHRASE_HEAD と、3.2.0 の _AI_PHRASE_HEAD_V320）を当て、当たった行を
+    見える文字で調べる。_AI_PHRASE_HEAD_V320 だけが当たった行は、3.2.0 の2つの形だけを調べる。"""
     rows = analysis["lines"]
     if not rows:
         return []
@@ -4841,8 +5086,15 @@ def _v250_ai_phrase_findings(analysis, doc_type):
         if starts is None:
             starts = [row["start"] for row in rows]
         candidate_lines.add(bisect_right(starts, match.start()))
+    new_only = set()
+    for match in _AI_PHRASE_HEAD_V320.finditer(text):
+        if starts is None:
+            starts = [row["start"] for row in rows]
+        line_no = bisect_right(starts, match.start())
+        if line_no not in candidate_lines:
+            new_only.add(line_no)
     out = []
-    for line_no in sorted(candidate_lines):
+    for line_no in sorted(candidate_lines | new_only):
         row = rows[line_no - 1]
         if row["kind"] not in ("paragraph", "list", "heading", "table") or row["quote_depth"]:
             continue
@@ -4852,6 +5104,8 @@ def _v250_ai_phrase_findings(analysis, doc_type):
             if not sentence:
                 continue
             for name, pattern in _AI_PHRASE_FORMS:
+                if line_no in new_only and name not in _AI_PHRASE_PARAGRAPH_ONLY:
+                    continue
                 match = pattern.search(sentence)
                 if match is None or name in words:
                     continue
@@ -4864,6 +5118,8 @@ def _v250_ai_phrase_findings(analysis, doc_type):
                 if name == "て形の体言止め" and (doc_type in ("slides", "minutes", "promo", "script")
                                               or row["kind"] != "paragraph"
                                               or sentence[:match.start() + 2].endswith(_TE_NOT_VERB)):
+                    continue
+                if name in _AI_PHRASE_PARAGRAPH_ONLY and (doc_type in ("script", "essay") or row["kind"] != "paragraph"):
                     continue
                 words.append(name)
         if words:
@@ -4885,43 +5141,43 @@ _SHAPE_RULE_MESSAGES = {
 # 文書の元の文字で、3つの規則のどれかに当たりうる所（速さのための絞り込み）。当たった行だけを見える文字で調べる。
 # 見える文字では「*」「_」が消えるので、読点と句点の前の「*」「_」は許す
 _SHAPE_GATE_WORDS = ("えるでしょう",)
-_SHAPE_COMMA_GATE = re.compile(
+_SHAPE_COMMA_GATE = _lazy_compile(
     r"[ないたのうくぐすつぬぶむるか][*_]*、(?:[^、。\n]{1,14}。|[^。\n]{0,30}、[^、。\n]{0,30}[うくぐすつぬぶむる][*_]*。)")
-_SHAPE_HEADING_MARK = re.compile(r"^\s*#{1,6}(?:\s+|$)|\s+#+\s*$")
+_SHAPE_HEADING_MARK = _lazy_compile(r"^\s*#{1,6}(?:\s+|$)|\s+#+\s*$")
 _SHAPE_QUOTE_MARKS = ("「", "『", "[", "“", '"')
-_SHAPE_CURLY_QUOTED = re.compile(r"“[^“”]*”|\"[^\"]*\"")
-_SHAPE_SENTENCE = re.compile(r"[^。！？!?]+(?:[。！？!?]+|$)")
+_SHAPE_CURLY_QUOTED = _lazy_compile(r"“[^“”]*”|\"[^\"]*\"")
+_SHAPE_SENTENCE = _lazy_compile(r"[^。！？!?]+(?:[。！？!?]+|$)")
 # 文末の「と言えるでしょう」。問いの「でしょうか」は含めない
-_SAY_HEDGE = re.compile(r"(.{0,4})と(?:言|い)えるでしょう[。！!]?$")
+_SAY_HEDGE = _lazy_compile(r"(.{0,4})と(?:言|い)えるでしょう[。！!]?$")
 # 直前が体言（漢字かカタカナで終わる）なら、ある語に当たるかの判断（「契約と言えるでしょう」）として出さない
-_SAY_HEDGE_NOUN_END = re.compile(r"[一-龯々〆ヵヶァ-ヴーｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
+_SAY_HEDGE_NOUN_END = _lazy_compile(r"[一-龯々〆ヵヶァ-ヴーｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ]")
 # ただし、形容動詞の語幹（「有効」「効果的」など）のあとは評価のぼかしとして出す（「有効と言えるでしょう」）
-_SAY_HEDGE_NA_ADJECTIVE = re.compile(r"(?:的|重要|有効|必要|適切|十分|妥当|有用|大切|確実|可能|重大|有益|顕著|明確|"
-                                     r"不可欠|理想|最適|容易|困難|安全|安心)$")
+_SAY_HEDGE_NA_ADJECTIVE = _lazy_compile(r"(?:的|重要|有効|必要|適切|十分|妥当|有用|大切|確実|可能|重大|有益|顕著|明確|"
+                                        r"不可欠|理想|最適|容易|困難|安全|安心)$")
 # 「〜に当たると言えるでしょう」も、ある区分に当たるかの判断として出さない
-_SAY_HEDGE_JUDGE = re.compile(r"(?:に|へ)(?:当た|あた)る(?:と(?:言|い)えるでしょう)|に該当する(?:と(?:言|い)えるでしょう)")
+_SAY_HEDGE_JUDGE = _lazy_compile(r"(?:に|へ)(?:当た|あた)る(?:と(?:言|い)えるでしょう)|に該当する(?:と(?:言|い)えるでしょう)")
 # 「な、」「い、」「た、」「の、」のあとに6字以下の名詞（か名詞＋を）で「。」。名詞は漢字、仮名、英数字だけ
-_COPY_COMMA_NOUN = re.compile(r"(?:^|、)([^、]+?[ないたの])、([一-龯々〆ヵヶぁ-ゖァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]{1,7})。$")
+_COPY_COMMA_NOUN = _lazy_compile(r"(?:^|、)([^、]+?[ないたの])、([一-龯々〆ヵヶぁ-ゖァ-ヴーA-Za-z0-9０-９Ａ-Ｚａ-ｚ]{1,7})。$")
 # 読点の前の部分に助詞の「を」「は」「が」「で」があれば、修飾語ではなく節とみて出さない（「条件を残した、やや長い出力。」）
-_COPY_MODIFIER_PARTICLE = re.compile(r"を|[はがで](?![ぁ-ゖ])")
+_COPY_MODIFIER_PARTICLE = _lazy_compile(r"を|[はがで](?![ぁ-ゖ])")
 # 読点の前が感動詞、接続詞、指示語なら出さない（「はい、了解。」「また、今度。」）
 _COPY_NOT_MODIFIER = frozenset(("はい", "いいえ", "いい", "また", "まあ", "あの", "その", "この", "どの", "あのね",
                                 "ええ", "いや", "おい", "なお", "ただ", "しかし", "ちなみ", "つまり", "さて", "では"))
 # 名詞のほうが述語や助詞で終わるなら名詞ではない（「迷った、決めた。」「ある、です。」）。「の」を含む名詞句（「内部の誤り」）も外す
 _COPY_I_NOUNS = frozenset(("思い", "想い", "願い", "違い", "匂い", "出会い", "味わい", "祝い", "誓い", "迷い", "笑い", "住まい",
                            "佇まい", "問い", "扱い", "装い", "幸い"))
-_COPY_NOUN_NOT = re.compile(r"(?:[るたすだてでねよわかぞぜさうくぐつぬぶむずじ]|ない|ません|しい|たい)$|[はがにでの]")
+_COPY_NOUN_NOT = _lazy_compile(r"(?:[るたすだてでねよわかぞぜさうくぐつぬぶむずじ]|ない|ません|しい|たい)$|[はがにでの]")
 # 終止形（う段の仮名）か「終止形＋か」で終わる部分
-_BARE_VERB_PART = re.compile(r"[一-龯々ぁ-ゖァ-ヴー]*[うくぐすつぬぶむる]か?$")
-_BARE_VERB_LAST = re.compile(r"[一-龯々ぁ-ゖァ-ヴー]*[うくぐすつぬぶむる]$")
-_BARE_VERB_POLITE = re.compile(r"(?:ます|です|ません)か?$")
+_BARE_VERB_PART = _lazy_compile(r"[一-龯々ぁ-ゖァ-ヴー]*[うくぐすつぬぶむる]か?$")
+_BARE_VERB_LAST = _lazy_compile(r"[一-龯々ぁ-ゖァ-ヴー]*[うくぐすつぬぶむる]$")
+_BARE_VERB_POLITE = _lazy_compile(r"(?:ます|です|ません)か?$")
 # 動詞ではないのに、う段の仮名で終わる部分（「一つ、二つ、三つ。」の数、「楽しく」の形容詞）
-_BARE_VERB_NOT_VERB = re.compile(r"(?:^[一二三四五六七八九十百千0-9０-９いくひとふたみよ]+つ|しく)か?$")
+_BARE_VERB_NOT_VERB = _lazy_compile(r"(?:^[一二三四五六七八九十百千0-9０-９いくひとふたみよ]+つ|しく)か?$")
 # 助詞の「は」「が」「に」: 後ろが平仮名でない（漢字やカタカナの語が続く）ものを助詞とみる。「を」はいつも助詞
-_BARE_VERB_PARTICLE = re.compile(r"を|[はがに](?![ぁ-ゖ])")
+_BARE_VERB_PARTICLE = _lazy_compile(r"を|[はがに](?![ぁ-ゖ])")
 
 
-def _shape_visible_text(analysis, row):
+def _shape_visible_text(analysis: dict, row: dict) -> str:
     """形の規則で見る行の文字。見ない行は空の文字列。引用の中身は空白で伏せる。"""
     if row["kind"] not in ("paragraph", "list", "heading") or row["quote_depth"]:
         return ""
@@ -4936,7 +5192,7 @@ def _shape_visible_text(analysis, row):
     return text
 
 
-def _say_hedge_sentence(sentence):
+def _say_hedge_sentence(sentence: str) -> bool:
     match = _SAY_HEDGE.search(sentence)
     if not match:
         return False
@@ -4948,7 +5204,7 @@ def _say_hedge_sentence(sentence):
     return True
 
 
-def _copy_comma_noun_sentence(sentence):
+def _copy_comma_noun_sentence(sentence: str) -> bool:
     if len(sentence) > 20 or not sentence.endswith("。"):
         return False
     match = _COPY_COMMA_NOUN.search(sentence)
@@ -4966,7 +5222,7 @@ def _copy_comma_noun_sentence(sentence):
     return not _COPY_NOUN_NOT.search(noun)
 
 
-def _bare_verb_chain_sentence(sentence):
+def _bare_verb_chain_sentence(sentence: str) -> bool:
     if len(sentence) > 30 or not sentence.endswith("。"):
         return False
     parts = [part.strip() for part in sentence[:-1].split("、")]
@@ -4981,7 +5237,7 @@ def _bare_verb_chain_sentence(sentence):
             and not _BARE_VERB_NOT_VERB.search(last))
 
 
-def _v220_shape_findings(analysis, findings, doc_type):
+def _v220_shape_findings(analysis: dict, findings: list[dict], doc_type: str | None) -> list[dict]:
     """say_hedge、copy_comma_noun、bare_verb_chain の候補。findings は既存の規則の候補（読むだけ。いまは使わない）。
 
     1行に同じ規則の候補は1件まで。copy_comma_noun は promo では文書の中で2回目に当たったものから出す。
@@ -5043,25 +5299,25 @@ _DOCUMENT_SKIP_KINDS = frozenset(("code", "frontmatter", "html_block", "referenc
 _QUOTE_PAIRS = {"「": "」", "『": "』"}
 _QUOTE_CLOSERS = frozenset(_QUOTE_PAIRS.values())
 # 「名前：台詞」の行。名前は空白、句読点、括弧を含まない12字以下（全角と半角のコロン）
-_SPEAKER_LINE = re.compile(r"^\s*(?:[-*+]\s+|\d+\.\s+)?([^\s：:「」『』（）()、。！？!?，,．.]{1,12})[ \t　]*[：:][ \t　]*(.+)$")
+_SPEAKER_LINE = _lazy_compile(r"^\s*(?:[-*+]\s+|\d+\.\s+)?([^\s：:「」『』（）()、。！？!?，,．.]{1,12})[ \t　]*[：:][ \t　]*(.+)$")
 # 音と音楽の指示（SE、M、BGM）は台詞ではない。数字だけの名前（10:00）も外す
 # コマ、ページ、場所や時間の柱、ト書きの見出しは話し手ではない（ナレーションは話し手として数える）
-_NOT_SPEAKER = re.compile(r"^(?:SE|ＳＥ|M|Ｍ|BGM|ＢＧＭ|[0-9０-９]+|(?:[0-9０-９]+)?(?:コマ|ページ|P|Ｐ)目?[0-9０-９]*|場所|時間|時|"
-                          r"人物|登場人物|柱|ト書き?|注|メモ|備考)$", re.I)
+_NOT_SPEAKER = _lazy_compile(r"^(?:SE|ＳＥ|M|Ｍ|BGM|ＢＧＭ|[0-9０-９]+|(?:[0-9０-９]+)?(?:コマ|ページ|P|Ｐ)目?[0-9０-９]*|場所|時間|時|"
+                             r"人物|登場人物|柱|ト書き?|注|メモ|備考)$", re.I)
 # 台詞の前後のト書き（「ハル：屁理屈（笑う）」の（笑う））
-_EDGE_STAGE_NOTE = re.compile(r"^[（(][^（）()]*[）)]\s*|\s*[（(][^（）()]*[）)]$")
+_EDGE_STAGE_NOTE = _lazy_compile(r"^[（(][^（）()]*[）)]\s*|\s*[（(][^（）()]*[）)]$")
 # 一人称（たち、ら、ども などの複数の形も同じ語として1回に数える）。仮名の語は、前が仮名でなく、動詞の続き
 # （手わたします、おれた、など）でないときだけ。「私」は公私、私立、私鉄のような熟語を外す
-_FIRST_PERSON = re.compile(
+_FIRST_PERSON = _lazy_compile(
     r"(?<![公無])私(?![立鉄的物有服用語設費学道塾刑権財欲情事信案邸宅募企営益生淑書])"
     r"|(?<![ぁ-ゖ手受引見])(?:わたくし|わたし(?!て|た(?!ち)|ます|まし|ませ)|ぼく(?![じしさめ])|おれ(?!い|る|た(?!ち)|て|ま|ば|ず|ろ|そ))"
     r"|僕|俺|自分|筆者")
 # 数字の続き（全角を含む。1,000 や 1.5 は1つ）。英字のすぐあとの数字（版の番号や見出しの記号）は識別子として数えない
-_NARRATIVE_NUMBER = re.compile(r"(?<![A-Za-z_0-9０-９.,．，])[0-9０-９]+(?:[.,．，][0-9０-９]+)*(?![_0-9０-９])")
-_ASCII_IDENTIFIER = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z_][A-Za-z0-9_]*(?:[./][A-Za-z0-9_]+)+|(?<![A-Za-z])[A-Za-z]+_[A-Za-z0-9_]+")
+_NARRATIVE_NUMBER = _lazy_compile(r"(?<![A-Za-z_0-9０-９.,．，])[0-9０-９]+(?:[.,．，][0-9０-９]+)*(?![_0-9０-９])")
+_ASCII_IDENTIFIER = _lazy_compile(r"(?<![A-Za-z0-9_])[A-Za-z_][A-Za-z0-9_]*(?:[./][A-Za-z0-9_]+)+|(?<![A-Za-z])[A-Za-z]+_[A-Za-z0-9_]+")
 
 
-def _top_quote_contents(text):
+def _top_quote_contents(text: str) -> list[str]:
     """1行の中の、いちばん外の「」と『』の中身。閉じていない括弧は数えない。"""
     contents = []
     stack = []
@@ -5075,7 +5331,7 @@ def _top_quote_contents(text):
     return contents
 
 
-def _dialogue_lines(analysis):
+def _dialogue_lines(analysis: dict) -> list[tuple[int, str]]:
     """台詞の (行番号, 中身) の並び。「」と『』の中身、「名前「…」」の行、「名前：…」の行の中身を数える。
     見出し、コード、表、引用（> の行）は数えない。「」が1つもない行だけ「名前：…」の形を見る。"""
     dialogue = []
@@ -5098,7 +5354,7 @@ def _dialogue_lines(analysis):
     return dialogue
 
 
-def _narrative_counts(analysis):
+def _narrative_counts(analysis: dict) -> tuple[int, int, int, int, int | None]:
     """地の文の (字数, 一人称の数, 数字の数, 箇条書きの項目の数, 最初の行の番号)。
     見出し、コード、表、引用（> の行）、画像だけの行は数えない。字数は空白を除いた見える文字。一人称と数字は、
     カギ括弧の中と英数字の識別子を伏せてから数える。"""
@@ -5131,11 +5387,11 @@ def _narrative_counts(analysis):
     return chars, first_person, numbers, bullets, first_line
 
 
-def _per_thousand(count, chars):
+def _per_thousand(count: int, chars: int) -> float:
     return count * 1000 / chars if chars else 0.0
 
 
-def _v220_document_findings(analysis, doc_type):
+def _v220_document_findings(analysis: dict, doc_type: str | None) -> list[dict]:
     """dialogue_period と narrative_density の候補（文書に1件）。種類を限って当てる規則なので、その種類のときだけ数える。"""
     findings = []
     if doc_type == "script":
@@ -5156,6 +5412,7 @@ def _v220_document_findings(analysis, doc_type):
         person_rate = _per_thousand(first_person, chars)
         density = _per_thousand(numbers + bullets, chars)
         if chars >= NARRATIVE_MIN_CHARS and person_rate < FIRST_PERSON_MAX and density >= DENSITY_MIN:
+            assert first_line is not None
             findings.append({
                 "rule": "narrative_density",
                 "line": first_line,
@@ -5171,16 +5428,41 @@ def _v220_document_findings(analysis, doc_type):
 # 語の一覧の allow.txt の語で外す規則（規則ID の順。context.words.allow_removed の並び）
 _ALLOW_RULES = ("ai_phrase", "calque", "katakana_term", "metaphor_label", "metaphor_verb", "project_term", "renyo_noun",
                 "slop_vocabulary", "translated_term")
-_LABEL_WORD = re.compile(r"「([^」]+)」")
+_LABEL_WORD = _lazy_compile(r"「([^」]+)」")
 # 語の一覧の flag.txt の語の message。その行に出た flag の語を「語の一覧（flag.txt）の語（依存先、承認）」のように並べる
 _PROJECT_TERM_MESSAGE = "語の一覧（flag.txt）の語（{}）" + _V220_MESSAGE_TAIL
+# 3.0.0: flag-patterns.txt のパターンに当たった行の message。パターンだけなら名前を、flag.txt の語と同じ行なら両方を並べる
+_PROJECT_TERM_PATTERN_MESSAGE = "語の一覧（flag-patterns.txt）の語（{}）" + _V220_MESSAGE_TAIL
+_PROJECT_TERM_BOTH_MESSAGE = "語の一覧（flag.txt、flag-patterns.txt）の語（{}）" + _V220_MESSAGE_TAIL
+
+
+def _project_term_message(words: Sequence[str], pattern_names: Collection[str], flag_hits: Collection[str] | None = None,
+                          replacements: dict[str, str] | None = None) -> str:
+    """project_term の message。words は行の語（flag.txt の語とパターンの名前）、pattern_names はそのうちのパターンの名前、
+    flag_hits はそのうちの flag.txt の語（None なら、パターンの名前でない語）。パターンの名前と flag.txt の語が同じ字でも、
+    両方が当たった行では両方のファイルを並べる。replacements は flag.txt の語の使う語で、括弧の外の末尾に添え、
+    check が読む括弧の中は変えない。"""
+    from_patterns = any(word in pattern_names for word in words)
+    flag_words = [word for word in words if word not in pattern_names] if flag_hits is None else [word for word in words if word in flag_hits]
+    from_flag = bool(flag_words)
+    if not from_patterns:
+        message = _PROJECT_TERM_MESSAGE.format("、".join(words))
+    elif not from_flag:
+        message = _PROJECT_TERM_PATTERN_MESSAGE.format("、".join(words))
+    else:
+        message = _PROJECT_TERM_BOTH_MESSAGE.format("、".join(words))
+    replacements = replacements or {}
+    suggestions = ["{} → {}".format(word, replacements[word]) for word in flag_words if word in replacements]
+    return message + ("使う語: " + "、".join(suggestions) + "。" if suggestions else "")
 # 英数字で始まるか終わる語は、識別子（snake_case、camelCase、ドットや / を含む語）の一部では数えない
-_WORD_ASCII = re.compile(r"[A-Za-z0-9_]")
+_WORD_ASCII = _lazy_compile(r"[A-Za-z0-9_]")
 _WORD_BEFORE = r"(?<![A-Za-z0-9_./\\-])"
 _WORD_AFTER = r"(?![A-Za-z0-9_])(?![./\\-][A-Za-z0-9_])"
+_WORD_KANJI_BEFORE = r"(?<![一-龥々〆ヵヶ])"
+_WORD_KANJI_AFTER = r"(?![一-龥々〆ヵヶ])"
 
 
-def _hit_words(label, match):
+def _hit_words(label: str, match: re.Match[str] | None) -> tuple[str, ...]:
     """候補の内部の欄 _words の値。message に出る規則の表の語（label。「」があればその中身）、そこから「〜」と英語の
     注記を除いた語、当たった文字列（前後の空白を除く）を、重ねずにこの順で並べる。"""
     words = []
@@ -5193,7 +5475,7 @@ def _hit_words(label, match):
     return tuple(words)
 
 
-def _flag_pattern(flag):
+def _flag_pattern(flag: Iterable[str]) -> re.Pattern[str] | None:
     """flag.txt の語を1つの正規表現にする（長い語を先に。英数字の端には識別子の境目を付ける）。語がなければ None。"""
     words = sorted(set(flag), key=lambda word: (-len(word), word))
     if not words:
@@ -5205,16 +5487,59 @@ def _flag_pattern(flag):
             part = _WORD_BEFORE + part
         if _WORD_ASCII.match(word[-1]):
             part += _WORD_AFTER
+        # 3.0.0: 漢字と仮名を両方含む語（根の、の木）は、漢字の端の前後に漢字が続く所（大根の、の木構造）では数えない。
+        # 漢字だけの語（公開鍵）と仮名だけの語は、今のとおり語の一部にも当たる
+        if any(_v220_kanji(char) for char in word) and any(_v220_hiragana(char) or _v220_katakana(char) for char in word):
+            if _v220_kanji(word[0]):
+                part = _WORD_KANJI_BEFORE + part
+            if _v220_kanji(word[-1]):
+                part += _WORD_KANJI_AFTER
         parts.append(part)
     return re.compile("|".join(parts))
 
 
-def _project_term_findings(analysis, words):
+_REPLACEMENT_BEFORE = _lazy_compile(_WORD_BEFORE)
+_REPLACEMENT_AFTER = _lazy_compile(_WORD_AFTER)
+
+
+def _replacement_bounded(text: str, start: int, replacement: str) -> bool:
+    """text の start にある使う語が、英数字の端で識別子や別の英単語（backend user の中の end user）の一部になって
+    いないか。flag.txt の語の端（_flag_pattern）と同じ境目を、使う語の端にも当てる。日本語の字の端では見分けない。"""
+    if _WORD_ASCII.match(replacement[0]) and not _REPLACEMENT_BEFORE.match(text, start):
+        return False
+    return not _WORD_ASCII.match(replacement[-1]) or bool(_REPLACEMENT_AFTER.match(text, start + len(replacement)))
+
+
+def _in_replacement(text: str, match: re.Match[str], replacements: dict[str, str]) -> bool:
+    """flag.txt の語の当たりが、その語の使う語の中に収まっているか。使う語が語を含む組（サーバ → サーバー、
+    問い合わせ → お問い合わせ）で、もう使う語で書いてある所を数えないために使う。英数字で始まるか終わる使う語は、
+    その端が語の境目にある所だけを使う語とみなす（_replacement_bounded）。"""
+    word = match.group(0)
+    replacement = replacements.get(word)
+    if not replacement or word not in replacement:
+        return False
+    offset = replacement.find(word)
+    while offset >= 0:
+        start = match.start() - offset
+        if start >= 0 and text.startswith(replacement, start) and _replacement_bounded(text, start, replacement):
+            return True
+        offset = replacement.find(word, offset + 1)
+    return False
+
+
+def _project_term_findings(analysis: dict, words: dict | None) -> list[dict]:
     """語の一覧の flag.txt の語の候補（project_term）。見える文字（コード、URL、リンク先、HTML、frontmatter を伏せた行）に
-    flag の語が出る行に1件。引用（> の行）とカギ括弧・二重カギ括弧の中は数えない。_words にその行の flag の語。"""
-    if not words or not words.get("flag"):
+    flag の語が出る行に1件。引用（> の行）とカギ括弧・二重カギ括弧の中は数えない。_words にその行の flag の語。
+    3.0.0: flag-patterns.txt のパターンも同じ所に当て、当たったパターンの名前を _words に足す（flag の語のあと）。
+    パターンごとの当たった文字列は内部の欄 _pattern_matches に入れる（allow.txt で外すため）。パターンは、一番上の選択肢の
+    どれかの必ず当たる字が全部ある行にだけ当てる。当たった flag.txt の語の使う語は内部の欄 _replacements に入れる
+    （allow.txt で一部の語を外したときに message を作り直すため）。使う語が語を含む組では、使う語の中に収まる当たりは
+    数えない（もう使う語で書いてある所に、同じ指摘を出さない）。"""
+    if not words or not (words.get("flag") or words.get("flag_patterns")):
         return []
-    pattern = _flag_pattern(words["flag"])
+    pattern = _flag_pattern(words["flag"]) if words.get("flag") else None
+    patterns = words.get("flag_patterns") or ()
+    flag_replacements = words.get("flag_replacements") or {}
     found = []
     for row in analysis["lines"]:
         if row["kind"] in ("code", "frontmatter", "html_block", "reference_definition", "quote") or row["quote_depth"]:
@@ -5222,15 +5547,34 @@ def _project_term_findings(analysis, words):
         visible = _prose_visible_text(analysis, row["line"])
         if not visible.strip():
             continue
-        hits = tuple(dict.fromkeys(match.group(0) for match in pattern.finditer(_mask_quoted_segments(visible))))
-        if hits:
-            found.append({"rule": "project_term", "line": row["line"], "severity": "info",
-                          "message": _PROJECT_TERM_MESSAGE.format("、".join(hits)), "snippet": row["raw"].strip(),
-                          "_words": hits})
+        masked = _mask_quoted_segments(visible)
+        hits = () if pattern is None else tuple(dict.fromkeys(
+            match.group(0) for match in pattern.finditer(masked)
+            if not (flag_replacements and _in_replacement(masked, match, flag_replacements))))
+        matches = {}
+        for name, _, compiled, required in patterns:
+            if not any(all(literal in masked for literal in runs) for runs in required):
+                continue
+            strings = tuple(dict.fromkeys(match.group(0) for match in compiled.finditer(masked)))
+            if strings:
+                matches[name] = tuple(dict.fromkeys(matches.get(name, ()) + strings))
+        if hits or matches:
+            shown = tuple(dict.fromkeys(hits + tuple(matches)))
+            replacements = {word: flag_replacements[word] for word in hits if word in flag_replacements}
+            finding = {"rule": "project_term", "line": row["line"], "severity": "info",
+                       "message": _project_term_message(shown, matches, hits, replacements),
+                       "snippet": row["raw"].strip(),
+                       "_words": shown}
+            if replacements:
+                finding["_replacements"] = replacements
+            if matches:
+                finding["_pattern_matches"] = matches
+                finding["_flag_hits"] = hits
+            found.append(finding)
     return found
 
 
-def _apply_words(findings, words):
+def _apply_words(findings: list[dict], words: dict | None) -> tuple[list[dict], dict | None]:
     """語の一覧の allow.txt の語で候補を外す。(残った候補, context に入れる words の値か None) を返す。
 
     外すのは _ALLOW_RULES の規則の候補で、候補の _words のどれかが allow の語と同じもの。残った候補の順は変えない。
@@ -5246,8 +5590,13 @@ def _apply_words(findings, words):
         kept = []
         for finding in findings:
             hit = finding.get("_words") or ()
-            if finding["rule"] in removed and any(word in allow for word in hit):
-                rest = tuple(word for word in hit if word not in allow)
+            allowed = allow
+            if finding.get("_pattern_matches"):
+                # flag-patterns.txt のパターンは、名前が allow にあるか、その行で当たった文字列がどれも allow にあれば外す
+                allowed = allow | frozenset(name for name, strings in finding["_pattern_matches"].items()
+                                            if all(string in allow for string in strings))
+            if finding["rule"] in removed and any(word in allowed for word in hit):
+                rest = tuple(word for word in hit if word not in allowed)
                 if finding["rule"] in _ALLOW_PARTIAL_RULES and rest:
                     kept.append(_finding_with_words(finding, rest))
                 else:
@@ -5263,7 +5612,7 @@ def _apply_words(findings, words):
 _ALLOW_PARTIAL_RULES = ("ai_phrase", "calque", "katakana_term", "project_term", "renyo_noun")
 
 
-def _finding_with_words(finding, rest):
+def _finding_with_words(finding: dict, rest: tuple[str, ...]) -> dict:
     """許していない語（rest）だけを残した候補の写し。calque、project_term、renyo_noun、ai_phrase は message も作り直す。"""
     out = dict(finding, _words=rest)
     if finding["rule"] == "calque":
@@ -5271,7 +5620,8 @@ def _finding_with_words(finding, rest):
         out["_word_types"] = word_types
         out["message"] = _calque_message(list(dict.fromkeys(number for _, number in word_types)), word_types)
     elif finding["rule"] == "project_term":
-        out["message"] = _PROJECT_TERM_MESSAGE.format("、".join(rest))
+        out["message"] = _project_term_message(rest, finding.get("_pattern_matches") or {}, finding.get("_flag_hits"),
+                                               finding.get("_replacements"))
     elif finding["rule"] == "renyo_noun":
         out["message"] = _RENYO_MESSAGE.format("、".join("の" + word for word in rest))
     elif finding["rule"] == "ai_phrase":
@@ -5279,19 +5629,19 @@ def _finding_with_words(finding, rest):
     return out
 
 
-def _public_finding(finding):
+def _public_finding(finding: dict) -> dict:
     """候補の内部の欄（_ で始まるキー。_words など）を除いた写し。"""
     return {key: value for key, value in finding.items() if not key.startswith("_")}
 
 
-def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str, Any]:
+def lint_text(text: str, *, doc_type: str | None = None, reader: str | None = None, words: dict | None = None) -> Dict[str, Any]:
     """文章全体を総合検査する。
 
     doc_type（文書の種類）を渡すと、DOC_TYPE_SKIP_RULES のその種類の規則の候補を除き、除いた件数を context に入れる。
     reader（読者）は context に入れるだけで、候補は変えない。値は中で正規化し、使えない値は ValueError。
     words は語の一覧（allow.txt と flag.txt）。None なら一覧なしとして動く。"""
     doc_type, reader = normalize_doc_type(doc_type), normalize_reader(reader)
-    findings = []
+    findings: list[dict] = []
     analysis = analyze_markdown(text)
     rule9_context = _rule9_context(analysis)
     extra_negation_lines = _extra_negation_line_numbers(analysis)
@@ -5358,10 +5708,11 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
             "snippet": f"{p['found']} → {p['suggest']}" if p["suggest"] else p["found"]
         })
 
-    def _vocabulary_findings(plain_text, line_no, snippet):
+    def _vocabulary_findings(plain_text: str, line_no: int, snippet: str) -> None:
         """AI頻出語彙と比喩動詞。見出しの行にも当てる（文頭と文末を前提にした型は当てない）。"""
         # スロップ語彙
         # 語の一覧の allow.txt で外すため、候補の内部の欄 _words に当たった語（型の語は、型の名前と当たった文字列）を入れる
+        slop_hits: list[tuple[str, tuple[str, ...]]]
         if narrowed is None:
             slop_hits = [(word, (word,)) for word in SLOP_WORDS if word in plain_text]
             slop_hits += [(word, _hit_words(word, match)) for word, match in
@@ -5399,7 +5750,8 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
                         "rule": "metaphor_verb",
                         "line": line_no,
                         "severity": "warn",
-                        "message": f"{desc}が検出されました。不自然な比喩動詞であれば、ふだん使う動詞や客観的な表現に書き直してください。ただし、文字どおりの動作や状態変化を表している場合は無理に言い換える必要はありません。",
+                        "message": desc + "が検出されました。"
+                                   + _METAPHOR_VERB_MESSAGE_TAILS.get(pattern.pattern, _METAPHOR_VERB_MESSAGE_TAIL),
                         "snippet": snippet,
                         "_words": _hit_words(desc, m)
                     })
@@ -5417,13 +5769,15 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
                     "rule": "metaphor_verb",
                     "line": line_no,
                     "severity": "warn",
-                    "message": f"{desc}が検出されました。不自然な比喩動詞であれば、ふだん使う動詞や客観的な表現に書き直してください。ただし、文字どおりの動作や状態変化を表している場合は無理に言い換える必要はありません。",
+                    "message": desc + "が検出されました。"
+                               + _METAPHOR_VERB_MESSAGE_TAILS.get(pattern.pattern, _METAPHOR_VERB_MESSAGE_TAIL),
                     "snippet": snippet,
                     "_words": _hit_words(desc, m)
                 })
 
     # 3. 語彙・構文パターン検査
     pause_lines = None
+    pause_notes: set[tuple[int, int]] = set()    # 3.2.0: message に _PAUSE_FRAME_NOTE を足す読点（_pause_comma_line_hits が入れる）
     for row in analysis["lines"]:
         line_no, line = row["line"], row["raw"]
         if row["kind"] in ("code", "frontmatter", "html_block", "reference_definition"):
@@ -5647,16 +6001,19 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
                 "snippet": line.strip()
             })
 
-        # 表にない規則は当て、表にある規則は指定した種類が含まれるときだけ検出する。
-        if "pause_comma" not in DOC_TYPE_ONLY_RULES or doc_type in DOC_TYPE_ONLY_RULES["pause_comma"]:
+        # 種類を限って当てる規則と種類によって出さない規則の表を見て、当てる種類のときだけ検出する。
+        if _rule_applies("pause_comma", doc_type):
             if pause_lines is None:
-                pause_lines = _pause_comma_line_hits(analysis, objects=doc_type != "essay")
+                # 目的語の「を、」は essay のときだけ拾わない（3.3.0 から、種類なしでも article と同じく拾う）
+                pause_lines = _pause_comma_line_hits(analysis, objects=doc_type != "essay", notes=pause_notes)
             if line_no in pause_lines:
                 pause_hits = pause_lines[line_no]
+                frame_note = any((line_no, i) in pause_notes for i, _, _ in pause_hits)
             else:
                 pause_hits = _pause_comma_hits(plain_text)
                 if doc_type != "essay":
                     pause_hits = sorted(pause_hits + _pause_comma_object_hits(plain_text))
+                frame_note = bool(_pause_comma_frame_notes(plain_text, pause_hits))
             if pause_hits:
                 phrases = "".join("「{}{}、」".format(phrase, chunk) for _, chunk, phrase in pause_hits[:3])
                 if len(pause_hits) > 3:
@@ -5669,7 +6026,10 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
                     "rule": "pause_comma",
                     "line": line_no,
                     "severity": "info",
-                    "message": f"{where}のすぐあとに読点があります（{phrases}）。間を作るだけの読点は、AIの文章らしく見えます。読点のあとに別の主語が来る、条件や場面の枠を示す、並べている、外すと語がつながったり掛かり先が変わったりする、のどれにも当たらなければ、読点だけを外してください（語順と述語は変えません）。小説や随筆で書き手が間として置いた読点は残してかまいません。",
+                    # 3.3.0: 文を短くし、残すときの条件を先に並べる。message が自分の読点の形に当たらないようにした
+                    "message": f"{where}のすぐあとに読点があります（{phrases}）。" + _PAUSE_MESSAGE
+                               # 3.2.0: 文頭の場面の枠のあとで文が長い行だけ（ほかの行の message は 3.1.0 と同じ）
+                               + (_PAUSE_FRAME_NOTE if frame_note else ""),
                     "snippet": line.strip(),
                     "_objects": objects,
                     "_heads": heads
@@ -5704,18 +6064,19 @@ def lint_text(text: str, *, doc_type=None, reader=None, words=None) -> Dict[str,
     findings.extend(_project_term_findings(analysis, words))
 
     # 文書の種類で外す規則。検出が終わったあと、件数と点数を数える前に、前から順に
-    # 除いて規則ごとに数える。残った候補の順は変えない。種類を指定しないときは、種類を限って当てる規則だけを除く
+    # 除いて規則ごとに数える。残った候補の順は変えない。種類を指定しないときは、種類を限って当てる規則だけを除く。
+    # 種類によって出さない規則（DOC_TYPE_OFF_RULES）は、出さない種類のときに除き、外した候補には数えない
     skipped = dict((rule, 0) for rule in DOC_TYPE_SKIP_RULES[doc_type]) if doc_type is not None else {}
     partial = DOC_TYPE_SKIP_PATTERNS.get(doc_type, {})
     skipped.update((rule, 0) for rule in partial)
-    if skipped or DOC_TYPE_ONLY_RULES:
+    if skipped or DOC_TYPE_ONLY_RULES or DOC_TYPE_OFF_RULES:
         kept = []
         for finding in findings:
             rule = finding["rule"]
             if (rule in DOC_TYPE_SKIP_RULES.get(doc_type, ())
                     or finding["message"].startswith(partial.get(rule, ()))):
                 skipped[rule] += 1
-            elif rule not in DOC_TYPE_ONLY_RULES or doc_type in DOC_TYPE_ONLY_RULES[rule]:
+            elif _rule_applies(rule, doc_type):
                 kept.append(finding)
         findings = kept
     # 語の一覧の allow.txt の語で外す候補。件数と点数を数える前に除く
@@ -5789,7 +6150,7 @@ def render_findings(result: Dict[str, Any]) -> str:
     return "\n\n".join(blocks)
 
 
-def _context_line(result):
+def _context_line(result: dict) -> str | None:
     """種類か読者を指定したときの4行目。指定しないときは None。"""
     context = result.get("context") or {}
     doc_type, reader = context.get("doc_type"), context.get("reader")
@@ -5808,7 +6169,7 @@ def _context_line(result):
     return line
 
 
-def _words_line(result):
+def _words_line(result: dict) -> str | None:
     """語の一覧を使ったときの行（種類か読者の4行目のあと。なければ4行目）。使わないときは None。"""
     words = (result.get("context") or {}).get("words")
     if not isinstance(words, dict):
@@ -5842,12 +6203,12 @@ _MEANING_RISK_MESSAGE = (
 _EXIT_CODES = """終了コード:
   0  検査を最後まで実行し、--strict と --fail-on の条件に当たらなかった（候補の有無によらない）。-h と --version も0
   1  --strict か --fail-on の条件に当たった
-  2  使い方か入力の誤り（ファイルを開けない、UTF-8 として読めない、標準入力を読めない、使えない --fail-on、--doc-type、--reader の値、語の一覧を読めない（--words のフォルダがない、UTF-8 でない、1万行を超える）、--words と --no-words を一緒に指定した）
+  2  使い方か入力の誤り（ファイルを開けない、読まないファイル（作業フォルダの外、名前が点で始まる部分を含むパス）を渡した、UTF-8 として読めない、標準入力を読めない、使えない --fail-on、--doc-type、--reader の値、語の一覧を読めない（--words のフォルダがない、UTF-8 でない、1万行を超える、flag.txt か flag-patterns.txt に使えない行がある。ファイルの中身の誤りは、ファイルの名前と行番号を出す）、--words と --no-words を一緒に指定した）
   3  予期しない内部の誤り（標準エラーにトレースバックを出す）か、出力先が閉じられて結果を最後まで書けなかった"""
 
 
-def _doc_type_table():
-    """ヘルプの終了コードの表の前に置く、種類ごとの規則の一覧（SKIP と ONLY の表から作る）。"""
+def _doc_type_table() -> str:
+    """ヘルプの終了コードの表の前に置く、種類ごとの規則の一覧（SKIP、ONLY、OFF の表から作る）。"""
     lines = ["文書の種類ごとに外す規則（--doc-type）:"]
     for value, rules in DOC_TYPE_SKIP_RULES.items():
         lines.append("  {:<10}{}".format(value, "、".join(rules) if rules else "なし"))
@@ -5860,18 +6221,23 @@ def _doc_type_table():
         else:
             scope = "{} を除く{}種類".format("、".join(excluded), len(allowed)) if excluded else "全{}種類".format(len(allowed))
         lines.append("種類を指定したときだけ当てる規則: {}（{}。種類を指定しないときは出しません）".format(rule, scope))
+    for rule, off in DOC_TYPE_OFF_RULES.items():
+        # 3.3.0: 種類を指定しないときも当て、表に並べた種類でだけ出さない規則（pause_comma）
+        others = len([row for row in DOC_TYPES if row[0] not in off])
+        lines.append("種類によって出さない規則: {}（{} では出しません。種類を指定しないときとほかの{}種類では当てます）".format(
+            rule, "、".join(off), others))
     lines.append("外した候補は、見直し候補の件数と --strict、--fail-on の判定に入れません。")
     return "\n".join(lines)
 
 
-def _choices(rows):
+def _choices(rows: Sequence[tuple]) -> str:
     return "、".join("{}（{}）".format(row[0], row[1]) for row in rows)
 
 
 class _ConditionAction(argparse.Action):
     """--strict と --fail-on を、指定した順に1つの並びに集める。"""
 
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: object, option_string: str | None = None) -> None:
         conditions = list(getattr(namespace, "conditions", None) or [])
         conditions.append(("strict", option_string) if self.nargs == 0 else ("fail-on", values))
         setattr(namespace, "conditions", conditions)
@@ -5882,7 +6248,7 @@ class _ArgumentParser(argparse.ArgumentParser):
     # ヘルプが標準エラーに出る）。3.10 までは標準エラーがないと使い方の誤りで AttributeError になる。
     # pythonw や 2>&- のときも、書く先がなければ何も書かずに同じ終了コードで終える。
 
-    def error(self, message):
+    def error(self, message: str) -> NoReturn:
         stream = sys.stderr
         if stream is None:
             self.exit(2)
@@ -5894,7 +6260,7 @@ class _ArgumentParser(argparse.ArgumentParser):
         stream.write("引数の誤りです。{} -h で使い方を確かめてください。\n".format(self.prog))
         self.exit(2)
 
-    def print_help(self, file=None):
+    def print_help(self, file: _TextWriter | None = None) -> None:
         if file is None:
             file = sys.stdout
         if file is not None:
@@ -5902,7 +6268,7 @@ class _ArgumentParser(argparse.ArgumentParser):
 
 
 class _HelpFormatter(argparse.RawDescriptionHelpFormatter):
-    def add_usage(self, usage, actions, groups, prefix=None):
+    def add_usage(self, usage: str | None, actions: Iterable[argparse.Action], groups: Iterable[argparse._MutuallyExclusiveGroup], prefix: str | None = None) -> None:
         if prefix is None:
             prefix = "使い方: "
         return super().add_usage(usage, actions, groups, prefix)
@@ -5922,17 +6288,23 @@ _PENALTY_HELP = """rule_penalty_score（--json の目安）:
 """
 
 
-_WORDS_HELP = ("語の一覧（allow.txt と flag.txt）のフォルダ。省くと、作業ディレクトリから上へたどった git の最上位"
-               "（.git のあるフォルダ。git の外では作業ディレクトリ）の .yomiyasu-words/ を探します（下の「語の一覧」）。")
+_WORDS_HELP = ("語の一覧（allow.txt と flag.txt。名前と正規表現を書く flag-patterns.txt も置けます）のフォルダ。"
+               "省くと、作業ディレクトリから上へたどった git の最上位"
+               "（.git のあるフォルダ。git の外では作業ディレクトリ）の .yomiyasu-words/ を探します（下の「語の一覧」）。"
+               "linked worktree にこのフォルダがなければ、元の checkout の一覧を探します。")
 _WORDS_EPILOG = """語の一覧（--words、--no-words）:
   allow.txt の語は、次の規則の候補から外し、外した件数を出します: ai_phrase、calque、katakana_term、metaphor_label、
   metaphor_verb、project_term、renyo_noun、slop_vocabulary、translated_term。flag.txt の語には project_term（info）の
   指摘を出します。どちらも1行に1語（UTF-8。# で始まる行と空の行は読み飛ばします）。
+  flag.txt は「使わない語<TAB>使う語」とも書けます（<TAB> は実際のタブ文字）。TAB の左だけを探し、使う語も指摘に出します。
+  使う語は80字までで、使う語の中に TAB がある行（3列の行）は使えません。
+  flag-patterns.txt（なくてもよい）には1行に「名前<TAB>正規表現」を書き、当たった行に、パターンの名前を入れた
+  project_term（info）の指摘を出します。
 """
 _NO_WORDS_HELP = "語の一覧を探さず、読みません（--words と一緒には使えません）。"
 
 
-def _build_parser():
+def _build_parser() -> argparse.ArgumentParser:
     parser = _ArgumentParser(
         prog="yomiyasu_lint.py",
         description=("日本語の表現とMarkdownの書式を、決まった規則で点検します。結果は見直し候補です。"
@@ -5973,17 +6345,18 @@ def _build_parser():
     return parser
 
 
-def _version_line():
+def _version_line() -> str:
     return "yomiyasu_lint.py {} (JSON format {})".format(__version__, LINT_FORMAT_VERSION)
 
 
-def _use_utf8(stream, **options):
+def _use_utf8(stream: object, **options: str) -> None:
     # 改行は OS によらず "\n" で書く（Windows の既定では "\r\n" になり、記録や CLI の出力が OS で変わる）
-    if stream is not None and hasattr(stream, "reconfigure"):
-        stream.reconfigure(encoding="utf-8", newline="\n", **options)
+    reconfigure = getattr(stream, "reconfigure", None)
+    if callable(reconfigure):
+        reconfigure(encoding="utf-8", newline="\n", **options)
 
 
-def _error(message):
+def _error(message: str) -> None:
     """標準エラーに1行書く。標準エラーがないとき（pythonw など）は何もしない。"""
     stream = sys.stderr
     if stream is None:
@@ -5996,7 +6369,7 @@ def _error(message):
         pass
 
 
-def _conditions(raw):
+def _conditions(raw: Sequence[tuple[str, str]]) -> tuple[list[str] | None, str | None]:
     """--strict と --fail-on の並びを、条件の名前の並びにする。使えない値があれば誤りの文を返す。
 
     meaning-risk は、ほかの値と混ぜても、ほかの誤りより先に断る。
@@ -6024,11 +6397,20 @@ def _conditions(raw):
     return names, None
 
 
-def _read_input(path):
+def _path_problem(path: str | None) -> str | None:
+    """コマンドラインで渡されたファイルを読まないときの誤りの文か None（3.0.0。markdown_visibility.input_path_problem）。"""
+    reason = input_path_problem(path) if path is not None else None
+    if reason is None:
+        return None
+    return "Error opening file {}: {}。このファイルを検査するときは、標準入力から渡してください（ファイルの名前の代わりに - を渡すか、省きます）".format(
+        path, reason)
+
+
+def _read_input(path: str | None) -> tuple[str | None, str | None]:
     """ファイルか標準入力を読み、(文字列, None) か (None, 誤りの文) を返す。"""
     if path is not None and path != "-":
         try:
-            with open(path, "rb") as handle:
+            with open(path, "rb") as handle:  # noqa: PTH123 -- open the given string as is, so 'x.md/' fails as in 3.0.0
                 data = handle.read()
         except (OSError, ValueError) as error:
             reason = getattr(error, "strerror", None) or error
@@ -6054,7 +6436,7 @@ def _read_input(path):
         return None, "Error reading stdin: UTF-8 として読めません"
 
 
-def _run(argv):
+def _run(argv: list[str] | None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
     if args.version:
@@ -6078,11 +6460,16 @@ def _run(argv):
     except WordsError as error:
         _error(str(error))
         return 2
+    problem = _path_problem(args.file)
+    if problem:
+        _error(problem)
+        return 2
     content, problem = _read_input(args.file)
     if problem:
         _error(problem)
         return 2
 
+    assert content is not None and conditions is not None
     result = lint_text(content, doc_type=doc_type, reader=reader, words=words)
 
     hit = []
@@ -6105,14 +6492,14 @@ def _run(argv):
     return 1 if hit else 0
 
 
-def _closed_output_on_windows(error):
+def _closed_output_on_windows(error: Exception) -> bool:
     """Windows で、読む側が閉じたパイプに書いたときの例外か。Windows では BrokenPipeError ではなく、errno が EINVAL の
     OSError になる。ファイル名のある OSError（Windows で名前に使えない字を含むパスなど）と、POSIX では、ほかの誤りとして扱う。"""
     return (os.name == "nt" and type(error) is OSError and error.errno == errno.EINVAL
             and error.filename is None and error.filename2 is None)
 
 
-def _silence_stdout():
+def _silence_stdout() -> None:
     """標準出力を os.devnull に向け直す。インタプリタの終わりでもう一度書き出しに失敗しないようにする。"""
     try:
         devnull = os.open(os.devnull, os.O_WRONLY)
@@ -6121,7 +6508,7 @@ def _silence_stdout():
         pass
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """CLI。終了コードを返す（0: 条件に当たらない、1: 条件に当たった、2: 使い方か入力の誤り、3: 内部の誤り）。"""
     try:
         if _IMPORT_ERROR is not None:

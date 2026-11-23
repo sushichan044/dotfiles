@@ -92,6 +92,8 @@ const summarizer = await Summarizer.create({
 });
 ```
 
+**MANDATORY:** if the output language is different from the overall page language, you **MUST** apply the `lang` attribute to the container element for the summary, and set its value to match the BCP 47 language code set using the `outputLanguage` property.
+
 ## Summarization Methods
 
 ### 1. Batch Summarization
@@ -124,9 +126,11 @@ for await (const chunk of stream) {
   device.
 - **Cross-Origin**: Access can be granted to iframes using the Permission
   Policy.
+
   ```html
   <iframe src="https://example.com/" allow="summarizer"></iframe>
   ```
+
 - **Web Workers**: Currently not supported.
 
 ## Fallback Strategy

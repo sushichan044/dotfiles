@@ -1,6 +1,6 @@
 # Anchor Positioning Tab Underline
 
-In a tab menu, you should provide visual hints to users about what page they are on. One option is by underlining the tab. With anchor positioning, you can create a smooth animation between the positions of the underline. This does not work when changing the active tab loads a new web page.
+In a tab menu, provide a visual indicator showing users which tab is active by underlining the active tab item. With anchor positioning, you can create a smooth animation between the positions of the underline as the active tab changes. This does not work when changing the active tab loads a new web page.
 
 You can also use this effect to add an animated dot to indicate the active tab in a vertical tab bar.
 
@@ -44,13 +44,12 @@ ul::before {
 }
 ```
 
-Add a height and other visual styles.
+Draw the underline with a border. DO NOT use a background or `box-shadow`: forced colors mode removes both, leaving no indicator.
 
 ```css
 ul::before {
   /* Apply your project's styles for the indicator */
-  block-size: 0.25lh;
-  background: red;
+  border-block-end: 0.25lh solid red;
 }
 ```
 
@@ -84,8 +83,8 @@ This is only a visual indicator, and must not be a replacement for setting the a
 ## Fallback strategies
 
 Browser support for Anchor positioning: Limited availability.
-Supported by: Safari 27 (Sep 2026).
-Unsupported in: Chrome, Edge, and Firefox.
+Supported by: Chrome 157 (Nov 2026), Edge 157 (Nov 2026), and Safari 27 (Sep 2026).
+Unsupported in: Firefox.
 
 If anchor positioning is not supported in the browser, use a `border-bottom` to add an underline. It will not be animated.
 

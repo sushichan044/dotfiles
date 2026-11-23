@@ -38,7 +38,7 @@ performance, availability, and operational requirements:
 Cloud SQL supports the following database engines (see [supported
 versions](https://docs.cloud.google.com/sql/docs/db-versions.md.txt)):
 
-- **MySQL:** Versions 5.6, 5.7, 8.0, and 8.4.
+- **MySQL:** Versions 5.6, 5.7, 8.0, 8.4 (default), and 9.7.
 
 - **PostgreSQL:** Versions 9.6, 10, 11, 12, 13, 14, 15, 16, 17, and 18
   (default).

@@ -195,8 +195,7 @@ function preflightJsonText(contents) {
   function beginString() {
     const container = currentContainer();
     if (
-      container &&
-      container.type === "object" &&
+      container?.type === "object" &&
       (container.state === "firstKeyOrEnd" || container.state === "key")
     ) {
       container.fields++;
@@ -276,14 +275,13 @@ function preflightJsonText(contents) {
       closeContainer("object");
     } else if (character === ":") {
       const container = currentContainer();
-      if (!container || container.type !== "object" || container.state !== "colon") {
+      if (container?.type !== "object" || container.state !== "colon") {
         fail("has malformed JSON object structure");
       }
       container.state = "value";
     } else if (character === ",") {
       const container = currentContainer();
-      if (!container || container.state !== "commaOrEnd")
-        fail("has malformed JSON collection structure");
+      if (container?.state !== "commaOrEnd") fail("has malformed JSON collection structure");
       container.state = container.type === "array" ? "value" : "key";
     } else {
       beginValue();

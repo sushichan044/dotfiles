@@ -757,7 +757,7 @@ test(
         timeout: CLI_TIMEOUT_MS,
       });
       const output = cliOutput(result);
-      assert.notEqual(result.error && result.error.code, "ETIMEDOUT", output);
+      assert.notEqual(result.error?.code, "ETIMEDOUT", output);
       assert.equal(result.status, 1, output);
       assert.match(output, /input must be a regular file/);
       assert.doesNotMatch(output, /stack|at validate-coverage-ledger/i);
@@ -782,7 +782,7 @@ test(
         timeout: CLI_TIMEOUT_MS,
       });
       const output = cliOutput(result);
-      assert.notEqual(result.error && result.error.code, "ETIMEDOUT", output);
+      assert.notEqual(result.error?.code, "ETIMEDOUT", output);
       assert.equal(result.status, 1, output);
       assert.match(output, /input must not be a symlink/);
       assert.doesNotMatch(output, /stack|at validate-coverage-ledger/i);
@@ -800,7 +800,7 @@ test("rejects deeply nested input without recursion failure", () => {
 
   const result = runCli(`${"[".repeat(20000)}0${"]".repeat(20000)}`);
   const output = cliOutput(result);
-  assert.notEqual(result.error && result.error.code, "ETIMEDOUT", output);
+  assert.notEqual(result.error?.code, "ETIMEDOUT", output);
   assert.equal(result.status, 1, output);
   assert.match(output, /exceeds nesting depth limit 64/);
   assert.doesNotMatch(output, /RangeError|Maximum call stack|stack|at validate-coverage-ledger/i);
@@ -818,7 +818,7 @@ test(
         timeout: HOSTILE_CLI_TIMEOUT_MS,
       });
       const output = cliOutput(result);
-      assert.notEqual(result.error && result.error.code, "ETIMEDOUT", output);
+      assert.notEqual(result.error?.code, "ETIMEDOUT", output);
       assert.equal(result.status, 1, output);
       assert.match(output, /exceeds nesting depth limit 64/);
       assert.doesNotMatch(
@@ -838,7 +838,7 @@ test("caps malformed 10000-unit validation output", () => {
 
   const result = runCli(JSON.stringify(Array.from({ length: LIMITS.units }, () => null)));
   const output = cliOutput(result);
-  assert.notEqual(result.error && result.error.code, "ETIMEDOUT", output);
+  assert.notEqual(result.error?.code, "ETIMEDOUT", output);
   assert.equal(result.status, 1, output);
   assert.match(output, /output capped at 100/);
   assert(output.length < 20000, `unexpected output length ${output.length}`);

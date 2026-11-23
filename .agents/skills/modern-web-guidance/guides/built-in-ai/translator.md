@@ -150,12 +150,18 @@ The API supports a wide range of BCP 47 language codes: Here are the languages s
 - **zh**: Chinese
 - **zh-Hant**: Chinese (Traditional)
 
+## Accessibility considerations
+
+**MANDATORY:** Apply the `lang` attribute to the container element for the translated content, and make sure that its value matches the BCP 47 language code for the target language, for example `lang="es"` for Spanish.
+
 ## Security & Performance
 
 - **Permissions Policy:** Cross-origin iframes require explicit permission.
+
   ```html
   <iframe src="https://example.com/" allow="translator"></iframe>
   ```
+
 - **Web Workers:** Currently **not supported** due to Permission Policy
   complexities.
 - **Privacy:** No data is sent to Google servers during the translation process

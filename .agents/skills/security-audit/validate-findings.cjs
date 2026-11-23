@@ -610,7 +610,7 @@ function collectFindingSemanticErrors(findings) {
     }
 
     if (Array.isArray(finding.trace) && finding.trace.length === 1) {
-      const kind = finding.trace[0] && finding.trace[0].kind;
+      const kind = finding.trace[0]?.kind;
       if (kind !== "entrypoint" && kind !== "sink") {
         errors.push(`${base}.trace[0].kind: a one-line trace must be "entrypoint" or "sink"`);
       }
@@ -657,8 +657,8 @@ function collectFindingSemanticErrors(findings) {
       ) {
         errors.push(`${base}: confirmed finding requires visible remediation`);
       }
-      const overall = finding.severity && finding.severity.overall_severity;
-      const impact = finding.severity && finding.severity.impact && finding.severity.impact.score;
+      const overall = finding.severity?.overall_severity;
+      const impact = finding.severity?.impact?.score;
       if (
         SEVERITY_RANK.has(overall) &&
         SEVERITY_RANK.has(impact) &&
@@ -781,7 +781,7 @@ function enforceJsonTextLimits(contents) {
 
   function markArrayItem() {
     const container = containers[containers.length - 1];
-    if (!container || container.type !== "array" || !container.expectsItem) return;
+    if (container?.type !== "array" || !container.expectsItem) return;
     container.expectsItem = false;
     container.items++;
     if (container.items > LIMITS.arrayItems) {
@@ -821,7 +821,7 @@ function enforceJsonTextLimits(contents) {
       containers.pop();
     } else if (character === ",") {
       const container = containers[containers.length - 1];
-      if (container && container.type === "array") container.expectsItem = true;
+      if (container?.type === "array") container.expectsItem = true;
     } else if (!/\s/.test(character)) {
       markArrayItem();
     }

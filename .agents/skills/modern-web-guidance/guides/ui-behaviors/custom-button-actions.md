@@ -91,6 +91,8 @@ For the best performance, you should only load the polyfill if the browser doesn
 
 **NOTE:** This polyfill does not manage ARIA states (like `aria-pressed` or `aria-expanded`) for custom commands. You must manually synchronize these states in your event listener to ensure your site is accessible.
 
+#### Conditionally load the Invoker Commands polyfill
+
 ```javascript
 // 1. Conditionally load the polyfill
 const hasNativeSupport = "commandForElement" in HTMLButtonElement.prototype;
@@ -105,7 +107,11 @@ if (!hasNativeSupport) {
     }
   })();
 }
+```
 
+#### Manually manage ARIA states in your listener
+
+```javascript
 // 2. Manually manage ARIA states in your listener
 document.getElementById("action-target").addEventListener("command", (event) => {
   const command = event.command;
@@ -142,25 +148,25 @@ if (!globalThis.CommandEvent) {
       this.command = command;
     }
   };
+
+  // 3. The fallback: Dispatch events manually if native support is missing
+  document.addEventListener("click", (event) => {
+    const button = event.composedPath().find((el) => el.matches?.("button[commandfor]"));
+    if (!button) return;
+
+    const target = document.getElementById(button.getAttribute("commandfor"));
+    const command = button.getAttribute("command");
+
+    if (target && command) {
+      target.dispatchEvent(
+        new CommandEvent("command", {
+          command,
+          source: button,
+        }),
+      );
+    }
+  });
 }
-
-// 3. The fallback: Dispatch events manually if native support is missing
-document.addEventListener("click", (event) => {
-  const button = event.composedPath().find((el) => el.matches?.("button[commandfor]"));
-  if (!button) return;
-
-  const target = document.getElementById(button.getAttribute("commandfor"));
-  const command = button.getAttribute("command");
-
-  if (target && command) {
-    target.dispatchEvent(
-      new CommandEvent("command", {
-        command,
-        source: button,
-      }),
-    );
-  }
-});
 
 // 4. **Mandatory:** Register the unified listener directly on the target element
 document.getElementById("action-target").addEventListener("command", (event) => {

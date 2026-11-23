@@ -1,358 +1,414 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "agent-browser": {
       "source": "vercel-labs/agent-browser",
       "sourceType": "github",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "computedHash": "60a9cbe5af176150582c019e16e5d3703a41bb02d88438e881349876120d7944"
+      "computedHash": "a0dfac7503f69bcf529b2660fc79964064c4f179eb65695904ddc45fc0d99d20",
+      "commit": "d2dfc782ccdd79d25a9b4f0acced9321789cecb8"
     },
     "alloydb-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/alloydb-basics/SKILL.md",
-      "computedHash": "b96d800fbf8a5d9c5321a089c5fcb5bbaad460a92aab6a5714847674e7c9ebdb"
+      "computedHash": "4cc0669d0f3c430e0d948197456fc97efd77f72e7ea0bff6ccf280c393b2ece4",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "animate": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
-      "computedHash": "354414a934957f9d54a71468abe81888304d35b47a4fe8e27fff08f60b457d53"
+      "computedHash": ""
     },
     "ast-grep": {
       "source": "ast-grep/agent-skill",
       "sourceType": "github",
       "skillPath": "ast-grep/skills/ast-grep/SKILL.md",
-      "computedHash": "55ab409e6afd238ebab8f29d9a5230d513b6d0102e0eb9f71c554a95d1344bd6"
+      "computedHash": "66228b33a8e8327e2f3eeef8b7c9135bfd0e9ed11990529b0f1cef4d8fc7bf55",
+      "commit": "0613dc7f82bbfb3b557380b54726b92f73358460"
     },
     "bigquery-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/bigquery-basics/SKILL.md",
-      "computedHash": "e891bf45a3ec599a6652170d6d0443369c609f891dca39237627727ab738b983"
+      "computedHash": "985c8b675a5f8187a585da4af49bdfaaa3a29cb32ad35de3c53b013daaff3e25",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "cloud-logging-configuration-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-configuration-basics/SKILL.md",
-      "computedHash": "1a84d08787c8ac1e549e7736a831cabef366695351b84c6f76ca343682cbcd02"
+      "computedHash": "f3d52961f9fd51ff4f16a1e52686908baf4f1ba34ffa36559107210a251a0ee2",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "cloud-logging-query-generation": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-logging-query-generation/SKILL.md",
-      "computedHash": "bbcd604f8667db9e4cf77f6057fa91ad937513ba4af1e7e41d4f2cfe652196d1"
+      "computedHash": "cf2b7ec98ca0361e451613fea5d0f6fc48cfd20efb35c47fa34a96cf9d3cb8d8",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "cloud-run-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-run-basics/SKILL.md",
-      "computedHash": "0c1323791e24cc34e977e7b4f41b016863c0faec9dc855a590db402dfb3ab7c5"
+      "computedHash": "83f13114e493276c91dae5462494c1334f0a2456a049aebd0c5ff0be93898fac",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "cloud-sql-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/cloud-sql-basics/SKILL.md",
-      "computedHash": "7e9e276b9c12acbfe0126c118d73082a4e5d248b91d488a302757d1dea2edd32"
+      "computedHash": "d7d13c246ad0aeca180941ffa84b43ae63360cc7a0553b98fc703e0e89e3a96e",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "contextual-commit": {
       "source": "berserkdisruptors/contextual-commits",
       "sourceType": "github",
       "skillPath": "skills/contextual-commit/SKILL.md",
-      "computedHash": "3ec7893fcabb2f1a3ab2e6cdf001354982aade9ed539047f44cb21858879eff0"
+      "computedHash": "4fc4616fc6e1cab29a0f69db57b475979cc3bc9169442e17aa4c6ff3ca12f694",
+      "commit": "12efb1d7a8e182270ab240f22f84bc44790ce300"
     },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "skillPath": "skills/frontend-design/SKILL.md",
-      "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
+      "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
     },
     "gcloud": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/gcloud/SKILL.md",
-      "computedHash": "f9bedf763490d4c446c315cc988c38fd6f2aed8a3b17d797adf99dbca48442f1"
+      "computedHash": "ad29fb77d1e07f1401bfab1c023d016915d09b2b1fd37c2a9d7c92c6d732e55c",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "gh-stack": {
       "source": "github/gh-stack",
       "sourceType": "github",
       "skillPath": "skills/gh-stack/SKILL.md",
-      "computedHash": "e54bf50370987f13ca2803b3be829f36350b68a79dc36ffd3b27350bc6d2fde1"
+      "computedHash": "4ff26e30a0103af77552e5eebbabfbf80734fd23b1485f0c513a0b35a3126613",
+      "commit": "80b6d6e910cc1b7eaa26b961d7721ade21084fed"
     },
     "golang-benchmark": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-benchmark/SKILL.md",
-      "computedHash": "990a156c09355a9c87c603f3ca1f43c5fd28d3c2c73ce49cf91c9446a13355e7"
+      "computedHash": "fbe3a79a9459ab233c8cac5a815cf7b3ad560bda28e842c1bb0ea4fa7a988c97",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-cli": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-cli/SKILL.md",
-      "computedHash": "24db08f64df0fba352d24ebd23188ce6a697cd22387081f618bf170f67931808"
+      "computedHash": "7a706a3cd9dd80261dd5c39119a951b0aaffea4a647788524aa24f822e435cc3",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-code-style": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-code-style/SKILL.md",
-      "computedHash": "8ce09e462ef435cedc78307c124adb0c83848366b4bc51cd0942d3c79fff1e71"
+      "computedHash": "8013e3aeeb53e66e8dd52a1dd2d2f622ed59cde7426fad7f42c77de7fca424f8",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-concurrency": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-concurrency/SKILL.md",
-      "computedHash": "f76a7af92805c94c91b7aea0f743e20c4613ca346203cbd7f0e9d296a7970385"
+      "computedHash": "c6c1829be72bba6eb7b2346561bb895605c65eacf35a2535bfca9828006a69e0",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-context": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-context/SKILL.md",
-      "computedHash": "5f4f7696bb5228139f200faf3918dcb8b796c94717ede72794d06e9da72f094f"
+      "computedHash": "b3d709c734ef05f0ad6a48719d64f2b942f1ae1ef11e5d77975201c95c2a06e0",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-data-structures": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-data-structures/SKILL.md",
-      "computedHash": "3f4f2fc087ee3c9031e88dd5694fbede9da8d30652608143aaac6a309cf94d34"
+      "computedHash": "be9c0ff5f12c6b0f2a37a4310b6c7d0ccbbe77a6af0bfed049cb05d20c5e9c5c",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-design-patterns": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-design-patterns/SKILL.md",
-      "computedHash": "796b9e2252c844fc400a0cf59937480535d11680d3178836a4c2ec14b2f4ea4c"
+      "computedHash": "d3e4f4be5506709261b6fa43eee3d52f968c37ca5d83f4408c43a1d1f9c0da86",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-documentation": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-documentation/SKILL.md",
-      "computedHash": "30eb4877c93ed2aa84c374d4ca130b6c5ffd8a62be581fe4a11c285787a01677"
+      "computedHash": "5cbd30122d143c70c06ef2f903db21d12586cc532ad285da9bce9c647c6ba03a",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-error-handling": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-error-handling/SKILL.md",
-      "computedHash": "7b872085d11457427db2d5559f530d9a7c4d93e09c4709a030731868084db6d3"
+      "computedHash": "81f5c3fcd0324c4ed9b8ee50d3375b0f3074b0308ee9b5c0778d6cbf32bedf9c",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-how-to": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-how-to/SKILL.md",
-      "computedHash": "afc168dab3d9f54bd873c41f2095dd8de8d93f69dea9769962c148f8bb82dc00"
+      "computedHash": "17f53db31d588f0798df5736dedf3f6b4655d658a2669a92d72bd33f0de7717b",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-lint": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-lint/SKILL.md",
-      "computedHash": "386edc2ea3e124ead8c03adec369070aa569bf4fe6b0e02a5e59566a2991e665"
+      "computedHash": "a1aec81b2c6b8441dd8e5bba762ea1b679bd01cd88879730edc2404af0601503",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-naming": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-naming/SKILL.md",
-      "computedHash": "cb920729431ee7a80a06779c4247744f778500a1f8b9fc26595c60e67c053a6f"
+      "computedHash": "81ff21a879a65ded0f26cd2f71edf913f07bcd4f4c4521b260875fd15df8fc94",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-observability": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-observability/SKILL.md",
-      "computedHash": "0fbf2e9487a4c1b82b0d32de997eb886e4a9dd7910d3c6efa835f8b439691ea7"
+      "computedHash": "380d7e4e3dc126ad3b3154e8a6c13928f8a78f30dca94c58f6faa4d89edc8bdc",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-performance": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-performance/SKILL.md",
-      "computedHash": "80d84fb4b2ca42ec2ec9f177ccc9b3d183b4fa900c1d52c40fd698b8f8b46452"
+      "computedHash": "d27f7392a17e63117abd26def53f53bf1b8e3e551fa9f89e8b46303f5813847c",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-popular-libraries": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-popular-libraries/SKILL.md",
-      "computedHash": "e030bd4d9815a008adb8fa35cf01813ec9ed25b993097480e8a2771b99f20779"
+      "computedHash": "08945176dc8da8031223533ef2f6d0339422602427929626877779df2f931889",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-project-layout": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-project-layout/SKILL.md",
-      "computedHash": "33cb4d7b0ad983e521f4b70a8d03652fbf4e4f7bf026e2ca6bf94d8475755013"
+      "computedHash": "bd8ad6f0fd05ba05a135af9eb766fdf7d838c33cb07aa4625bfd16a9fbe76903",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-safety": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-safety/SKILL.md",
-      "computedHash": "f0f2ae4454460c1df68085aac47a0ff13043d8546703ad627a703e55ace85705"
+      "computedHash": "6e1aab5624f6a99e3384bfe6b7a8810d5063df9362f7633ce38812fcaf52eb17",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-security": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-security/SKILL.md",
-      "computedHash": "9a3ddcef7515b6be2ebe20415e4c5fb16f79f5c26b5df6c69f5b54f81e85d7a0"
+      "computedHash": "050d04076da4c392e80620b26688de64aab74da46f486f1fc784fa8a2f3b0444",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-stretchr-testify": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-stretchr-testify/SKILL.md",
-      "computedHash": "0b7542f4a301aee1f00e638dfe790fdd419f496906da71b2fea53a3440891195"
+      "computedHash": "d3d9d426c156fba7e3c1c2271a1fa18aa26d148d9d90ff1f1a25d7de6db00c03",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-structs-interfaces": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-structs-interfaces/SKILL.md",
-      "computedHash": "150bb7cdb43e1efab246e90d17bde6a871c2fdbbc81eb7260b9914f7d45f52ac"
+      "computedHash": "1620e9c6087f4dc3014c356a341f3458484d2f22783bb1ef4cf04d7b3c3484a0",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-testing": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-testing/SKILL.md",
-      "computedHash": "31b691f568f4c00d8d7bedc65a38d9966d9f3d353712929a1a8805eaa3f88b00"
+      "computedHash": "adfaf95d45383e8e579de1770ea0f25d0729b3e94e0b003ea08d1646646f7247",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "golang-troubleshooting": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
       "skillPath": "skills/golang-troubleshooting/SKILL.md",
-      "computedHash": "5e754f70758a1096b9e0fd6c0b24cc2200e2808b4f0285ea8dcf2e6c4981fd2a"
+      "computedHash": "c234f844f87c46cd6ab66f1ba2b2fad54997c03a78b441d7ab39d94649589ff3",
+      "commit": "d68d80aec298e1b74b37c2a472c002b5217248b3"
     },
     "google-analytics-data-api-basics": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/analytics/google-analytics-data-api-basics/SKILL.md",
-      "computedHash": "8fc87cddba9e36cbb16f3dc9a3b2c82818420f98ea3272274ed9a3176b02cdc3"
+      "computedHash": "05d2f897b126b882bf42af1d9625a5fb2d011015dcb54516faf9c9d0cfaa18d2",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "google-cloud-waf-cost-optimization": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-cost-optimization/SKILL.md",
-      "computedHash": "741225d89091acd165cbd421ae43b9aee8d1086a84002aeb15ac7569a61ab002"
+      "computedHash": "af4730b265ebab4d705b4e2f26cd265add93397a826f6c88cdb053dae9c73715",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "google-cloud-waf-performance-optimization": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-performance-optimization/SKILL.md",
-      "computedHash": "22f122556c1f2b9c81bb0e86ca01aee10002a58345cee407f171ac400566d335"
+      "computedHash": "a62214669f36bae67a3c68dae0d8403972d6e97543c8a4df2fc0573e92730f1f",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "google-cloud-waf-reliability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-reliability/SKILL.md",
-      "computedHash": "559973663110e2f12feef00f7c4d32038ae65637ac39c2e425a934210698df0f"
+      "computedHash": "c705cc3c0729bcdae969ac5ed86c2e2165a0ac984a4de95fcab75debd948306d",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "google-cloud-waf-security": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-security/SKILL.md",
-      "computedHash": "718c219336d4c390c45168b3624fb5946cc5a85040d02ad95fdf33878d0690d3"
+      "computedHash": "eb715b41f9141a080d5240a17a60000899cab4052bc59c6a07b2995264b4d046",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "google-cloud-waf-sustainability": {
       "source": "google/skills",
       "sourceType": "github",
       "skillPath": "skills/cloud/google-cloud-waf-sustainability/SKILL.md",
-      "computedHash": "c35ff26b1f6ab3257ae9d42be69625cd0c6136f3874a115473447a50c7f93130"
+      "computedHash": "418bc90b5faad320720dd792d87169923951db8b33a83065bd804e3a08ee3b14",
+      "commit": "22afb84b8e1afc7bf13dd8854c452fd0a747a01a"
     },
     "grilling": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/grilling/SKILL.md",
-      "computedHash": "e40cc1d348f6d935e28f1e24474302d7368f0a400429271a43b35fe154891dc5"
+      "computedHash": "485451958784497cd4c4dbea13cb5bbb579da58fac0d0e45f3bcb310fab68ac7",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823"
     },
     "modern-web-guidance": {
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "c614730bccf763448d84ed2b5c71164b0ad7410a0823da3639e62e9d9bf2b641"
+      "computedHash": "d9f3ceba8b5c77b12ae6f852932a349843ce086d03ce76ab5e2257e7e5acd16d",
+      "commit": "64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65"
     },
     "mysql": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
       "skillPath": "skills/mysql/SKILL.md",
-      "computedHash": "6cb0725d61db4940f9eab79436753fe4ecb261f57ae8a08b2ac28676f82cbecc"
+      "computedHash": "4e83e190ae1dfc5ffde49f1a4154effa7477f21180e15cdd0030aa7b664bc8ab",
+      "commit": "f6ed002d03084cb39c01d1d58904d47a36f5322a"
     },
     "natural-japanese": {
       "source": "coji/natural-japanese",
       "sourceType": "github",
       "skillPath": "skills/natural-japanese/SKILL.md",
-      "computedHash": "cc03ed3294dbaf4744de05e078c197b6e42340e32945e653f2c5cdd5eebede7d"
+      "computedHash": "40683c3c92259a33ba7e52cd5c65311de55103a4c9275ab832408704a6b6e81b",
+      "commit": "840bd400cbcb64c8b64d492a144da54fc05776c5"
     },
     "neki": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
       "skillPath": "skills/neki/SKILL.md",
-      "computedHash": "917ffd07cd75336d806669de66201c3614eb61ab4164a7bd16d9f1411edc1f9c"
+      "computedHash": "9b61b21edb75e07b14441761be4dbfe56833aeca21239f83698f63dcfc455be0",
+      "commit": "f6ed002d03084cb39c01d1d58904d47a36f5322a"
     },
     "postgres": {
       "source": "planetscale/database-skills",
       "sourceType": "github",
       "skillPath": "skills/postgres/SKILL.md",
-      "computedHash": "3d4b3c578b7fcbc61e89b2731a248175e2aa740dc228a106b1a8b29b05ab000f"
+      "computedHash": "16e451102fbc0c5daf2f8fe01c860b68a7fd272207f8f59ccf8dbfda98254442",
+      "commit": "f6ed002d03084cb39c01d1d58904d47a36f5322a"
     },
     "request-copilot-review": {
       "source": "k1LoW/gh-copilot-review",
       "sourceType": "github",
       "skillPath": "skills/request-copilot-review/SKILL.md",
-      "computedHash": "bdd19ec728b5868c1dcdc8f8c24c4ffde6532de111651434ad14b8df27bcfecf"
+      "computedHash": "e1e928ee2b6ec9ef2cd70c760aa2fa3fa64e143e9c2bbfcfca249cb5a97e6523",
+      "commit": "5690af1ea8d067a6dc7d3e5f4f6b5c8de9036ee6"
     },
     "resolving-merge-conflicts": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/resolving-merge-conflicts/SKILL.md",
-      "computedHash": "63b2dcadbe9124caeb3448f1378286fe18dcefb2494f60e136831b8b4986ca27"
+      "computedHash": "d92926f681907a75982f280875dfd1f06610a39680a00f361ae08a88bf2233cc"
     },
     "retrospective": {
       "source": "lacolaco/claude-plugins",
       "sourceType": "github",
       "skillPath": "retrospective/skills/retrospective/SKILL.md",
-      "computedHash": "0ec1a6477f18e9d272064b01f96f1f84248c4875542934dbb3800648d97e6c85"
+      "computedHash": ""
     },
     "security-audit": {
       "source": "cloudflare/security-audit-skill",
       "sourceType": "github",
       "skillPath": "skills/security-audit/SKILL.md",
-      "computedHash": "98b97aad2873b3b9a8e064007c25e7827b493ba27fda8bfbdb41dab586767973"
+      "computedHash": "8513eb3b2c39b8d05ef4f47b32ef4d18280b93a5efb91d8df6272f7435034af5",
+      "commit": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8"
     },
     "semgrep": {
       "source": "semgrep/skills",
       "sourceType": "github",
       "skillPath": "skills/semgrep/SKILL.md",
-      "computedHash": "2ea1b9502a5cebbc74b5791dcabac00090bb00fc9a67d87a54bbd895c74a1cd6"
+      "computedHash": "6cdc130d58362cc9c01451194ea0714d755087a261f91b089c14e1cdf92b79df",
+      "commit": "68177b8830f96cd9d10dacbb14dde2566360503d"
     },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "skillPath": "skills/skill-creator/SKILL.md",
-      "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
+      "computedHash": "2d7f889e6ae93c6c27d699856942c336b5b8644537496987d5571043d059b1dc",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
     },
     "spark-recipe-label-organize": {
       "source": "readdle/spark-cli-skills",
       "sourceType": "github",
       "skillPath": "skills/recipe-label-organize/SKILL.md",
-      "computedHash": "20bf16db7c2af2c609173bbd2f0e59a1e3ffae457e06428a4c9185df9d578966"
+      "computedHash": "7b9932cbbab8990a69986cbbe59f1108c2809507519e5415cd7812991c466118",
+      "commit": "5f2a94d9aa67fa3bd4422f4cb3ee70d91d2ab54f"
     },
     "stop-describing-ui": {
       "source": "artouc/stop-describing-ui",
       "sourceType": "github",
       "skillPath": "skills/stop-describing-ui/SKILL.md",
-      "computedHash": "ad8da9645ed5b9f01398582e1b9388250f900b73a8960be3a4bd1be183761005"
+      "computedHash": "2412dcf96fb705159a157bce1efce2034b7c06649f254d9f778868b409ac110e",
+      "commit": "251a859f6e40645030e1ae69fa4b501c851eac9c"
     },
     "triage-pr-reviews": {
       "source": "k1LoW/gh-pr-reviews",
       "sourceType": "github",
       "skillPath": "skills/triage-pr-reviews/SKILL.md",
-      "computedHash": "f7edd623a3ef253e96fc50df2a0237fda64e7b5de2b4604b7d1ce6c085caed6f"
+      "computedHash": "90be14de59a47390bb5744a011af2ef80b8e4681e64bf4a34d881a499b04b82c",
+      "commit": "d2c1c7695e24aa51b408f969ff1d93a3ab94efe0"
     },
     "use-spark": {
       "source": "readdle/spark-cli-skills",
       "sourceType": "github",
       "skillPath": "skills/use-spark/SKILL.md",
-      "computedHash": "435a3060c490184e03cb6e3e1a34c54ba28517489d7c7b505452536e763f966d"
+      "computedHash": "089488eb851415c113f5351cf01f7a1dc18db9aad68560f723513049d97b48d1",
+      "commit": "5f2a94d9aa67fa3bd4422f4cb3ee70d91d2ab54f"
     },
     "writing-for-agents": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/writing-for-agents/SKILL.md",
-      "computedHash": "95da47fc97af998e85b7d7e6d57b3ac76727c1e290cfe9ea09005aacb826959f"
+      "computedHash": "e79a2476b2417b228922453478d9505a6b9af19f3a412e560728ce62ed3555ca",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823"
     },
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
       "sourceType": "github",
       "skillPath": "skills/yomiyasu/SKILL.md",
-      "computedHash": "931929b8d7be2c1413927dec7c7ad44b2fba5caee2cd8394a52e7727d3a2c959"
+      "computedHash": "e932db01ae30a709e6a5ce96941bb3774f2d2c130fd167140de0ee8a0ffb2e8e",
+      "commit": "ddf365b5d5b36a7aa4ffab798dce1b694dbb1afd"
     }
   }
 }

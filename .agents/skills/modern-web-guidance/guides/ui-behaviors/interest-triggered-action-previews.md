@@ -54,7 +54,7 @@ The start and end delay for an interest invoker (i.e. the element with the `inte
 ### Fallbacks & browser support for Interest invokers
 
 Browser support for Interest invokers: Limited availability.
-Supported by: Chrome 142 (Oct 2025) and Edge 142 (Oct 2025).
+Supported by: Chrome 149 (Jun 2026) and Edge 149 (Jun 2026).
 Unsupported in: Firefox and Safari.
 
 Interest invokers must be conditionally polyfilled using the `interestfor` polyfill package from NPM. Prefer bundling the polyfill over using the CDN.
@@ -63,7 +63,7 @@ Interest invokers must be conditionally polyfilled using the `interestfor` polyf
 
 ```html
 <script type="module">
-  if (!HTMLButtonElement.prototype.hasOwnProperty("interestForElement")) {
+  if (!("interestForElement" in HTMLButtonElement.prototype)) {
     // CDN link only used for example, prefer bundling.
     await import("https://unpkg.com/interestfor@latest");
   }
@@ -95,5 +95,13 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
   interest-delay-start: var(--interest-delay-start);
   --interest-delay-end: 0.1s;
   interest-delay-end: var(--interest-delay-end);
+}
+```
+
+Set the initial delay to `0s` if an interest-triggered popover is already open and users are likely to move through multiple triggers in quick succession.
+
+```css
+.container:has([interestfor]:is(:interest-source, .interest-source)) [interestfor] {
+  --interest-delay-start: 0s;
 }
 ```

@@ -47,8 +47,6 @@ The `loading=lazy` attribute prevents images from being downloaded at all when s
 
     <!-- Omit fetchpriority for images with standard priority -->
     <img src="/images/standard-image.jpg" alt="Standard Image" width="400" height="300" />
-  </div>
-</div>
 ```
 
 ## Best practices

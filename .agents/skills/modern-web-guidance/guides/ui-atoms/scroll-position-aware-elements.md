@@ -54,10 +54,14 @@ Use the `@container` rule with the `scroll-state` function. To check if the user
 }
 ```
 
+### 4. Manage Focus and Scroll Container Semantics
+
+When hiding elements that are dependent on scroll position, account for loss of focus when the control disappears. For example, if someone is focused on a "Back to Top" control and uses `Page Up` or `Home` to scroll the container in the background without activating the control directly, the control becomes hidden (`visibility: hidden`) at the top of the scrollable region and focus would otherwise reset to the `<body>` element. Listen for `focusout` and move focus to the scrollable region when the hidden control loses focus without transferring focus to another element:
+
 ## Fallback strategies
 
 Browser support for Container scroll-state queries: Limited availability.
-Supported by: Chrome 133 (Feb 2025) and Edge 133 (Feb 2025).
+Supported by: Chrome 144 (Jan 2026) and Edge 144 (Jan 2026).
 Unsupported in: Firefox and Safari.
 
 ### Basic Fallback
