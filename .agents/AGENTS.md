@@ -2,12 +2,16 @@
 
 ## Skills
 
-- Use the project's language conventions.
 - Use `natural-japanese` for Japanese documents and `yomiyasu` for explicitly
   requested proofreading. Ordinary conversation does not require either skill.
 - Use `git-workflow` for Git and GitHub operations.
 - Use `writing-for-agents` for skills, `AGENTS.md`, `CLAUDE.md`, and their references.
 - Use `sanitize-artifacts` for durable documents, including Issues and PRs.
+
+## Communications
+
+- Use the project's language conventions.
+- For pull requests and patch notes, it is necessary to focus on what changes from the perspective of the affected parties, and concisely describe the content and points that require attention.
 
 ## Scope and authority
 
