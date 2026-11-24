@@ -12,6 +12,7 @@
 
 - Use the project's language conventions.
 - For pull requests and patch notes, it is necessary to focus on what changes from the perspective of the affected parties, and concisely describe the content and points that require attention.
+- When stopping, send a structured message in the following order: overview / next human action and decision criteria / others.
 
 ## Scope and authority
 
