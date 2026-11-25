@@ -4,6 +4,7 @@
 
 - Use `natural-japanese` for Japanese documents and `yomiyasu` for explicitly
   requested proofreading. Ordinary conversation does not require either skill.
+  - Please do not force technical terms into Japanese.
 - Use `git-workflow` for Git and GitHub operations.
 - Use `writing-for-agents` for skills, `AGENTS.md`, `CLAUDE.md`, and their references.
 - Use `sanitize-artifacts` for durable documents, including Issues and PRs.
