@@ -1,6 +1,6 @@
 # Visual effects
 
-### Depth and texture
+## Depth and texture
 
 - Layer multiple shadows for realistic soft depth effects.
 - Use `filter: drop-shadow()` instead of `box-shadow` for non-rectangular shapes or transparent PNGs.
@@ -13,7 +13,7 @@
 }
 ```
 
-### Gradients and `color-mix()`
+## Gradients and `color-mix()`
 
 Use `in oklab` or `in oklch` to explicitly specify the interpolation color space for gradients or `color-mix()`.
 
@@ -22,7 +22,7 @@ Use `in oklab` or `in oklch` to explicitly specify the interpolation color space
 - `in oklch` preserves chroma better when interpolating gradients between two distinct saturated chromatic hues, but can more easily get out of device gamut, especially for bigger differences between colors. Avoid using `in oklch` for alpha transparency fades or mixing neutral colors.
 - _DON'T_ use `in srgb` unless you have a specific reason to do so (e.g. you are building a color picker that needs to interpolate in srgb).
 
-#### Fallback
+### Fallback
 
 Some pre-2024 browsers do not support gradient color interpolation space.
 To support these browsers, use the token only when its usage is safe by defining a variable:
@@ -52,7 +52,7 @@ Then use like:
 - **Important:** If you use this technique, make sure there is always a non-empty gradient preamble without it, otherwise it will be a syntax error in older browsers.
 - You do NOT need this for `color-mix()`. If a browser supports `color-mix()`, it also supports its `in <color-space>` argument.
 
-### Patterns
+## Patterns
 
 Many patterns can be created via CSS gradients + hard stops, and these can be more flexible and performant than SVGs or external images as they can have access to CSS variables and lengths from the surrounding context.
 You don't need to repeat the position twice — just use `0` or `0%` and gradient fixup will auto-adjust it.
@@ -106,3 +106,15 @@ Simple pie chart:
 ```
 
 **Important:** Because CSS backgrounds are not exposed to assistive technologies, always pair gradient charts with an accessible textual representation of the data — for example, visible percentage text or an accessible label for a simple proportion, or a semantic `<table>` or `<dl>` for multi-part breakdowns.
+
+## Accessibility considerations
+
+Text and icons placed over a gradient or pattern background, and text filled with a gradient, need enough contrast against every color in the gradient. Check them against each color stop: at least 4.5:1 for text, 3:1 for large text (at least 24px, or at least 18.66px bold), and 3:1 for icons (WCAG 1.4.3 Contrast (Minimum), WCAG 1.4.11 Non-text Contrast). For more on contrast, see `color` (via `npx -y modern-web-guidance@latest retrieve "color"`).
+
+```css
+.myButton {
+  /* The label color has at least 4.5:1 contrast against both gradient stops. */
+  color: #111111;
+  background: linear-gradient(in oklab, #ffffff, #aaaaff);
+}
+```

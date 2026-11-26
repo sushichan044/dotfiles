@@ -297,8 +297,8 @@
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "d9f3ceba8b5c77b12ae6f852932a349843ce086d03ce76ab5e2257e7e5acd16d",
-      "commit": "64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65"
+      "computedHash": "1a97aea5d1c5abbf1b7b022ae7a2833a014627f741ba3cbd8cb6249a3ab359db",
+      "commit": "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f"
     },
     "mysql": {
       "source": "planetscale/database-skills",
@@ -328,19 +328,6 @@
       "computedHash": "16e451102fbc0c5daf2f8fe01c860b68a7fd272207f8f59ccf8dbfda98254442",
       "commit": "f6ed002d03084cb39c01d1d58904d47a36f5322a"
     },
-    "request-copilot-review": {
-      "source": "k1LoW/gh-copilot-review",
-      "sourceType": "github",
-      "skillPath": "skills/request-copilot-review/SKILL.md",
-      "computedHash": "e1e928ee2b6ec9ef2cd70c760aa2fa3fa64e143e9c2bbfcfca249cb5a97e6523",
-      "commit": "5690af1ea8d067a6dc7d3e5f4f6b5c8de9036ee6"
-    },
-    "resolving-merge-conflicts": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "skillPath": "skills/engineering/resolving-merge-conflicts/SKILL.md",
-      "computedHash": "d92926f681907a75982f280875dfd1f06610a39680a00f361ae08a88bf2233cc"
-    },
     "retrospective": {
       "source": "lacolaco/claude-plugins",
       "sourceType": "github",
@@ -367,13 +354,6 @@
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "2d7f889e6ae93c6c27d699856942c336b5b8644537496987d5571043d059b1dc",
       "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
-    },
-    "spark-recipe-label-organize": {
-      "source": "readdle/spark-cli-skills",
-      "sourceType": "github",
-      "skillPath": "skills/recipe-label-organize/SKILL.md",
-      "computedHash": "7b9932cbbab8990a69986cbbe59f1108c2809507519e5415cd7812991c466118",
-      "commit": "5f2a94d9aa67fa3bd4422f4cb3ee70d91d2ab54f"
     },
     "stop-describing-ui": {
       "source": "artouc/stop-describing-ui",
@@ -407,8 +387,8 @@
       "source": "nanaism/yomiyasu",
       "sourceType": "github",
       "skillPath": "skills/yomiyasu/SKILL.md",
-      "computedHash": "e932db01ae30a709e6a5ce96941bb3774f2d2c130fd167140de0ee8a0ffb2e8e",
-      "commit": "ddf365b5d5b36a7aa4ffab798dce1b694dbb1afd"
+      "computedHash": "cbce4c2feb9fe12deea34ed6b9c65c04fc218bff71f4e35b1b6a62a2e80aca1e",
+      "commit": "3979c750b5e1fe9892bd47bb354f0fb51d534ff2"
     }
   }
 }
